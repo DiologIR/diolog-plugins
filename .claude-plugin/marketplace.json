@@ -17,6 +17,17 @@
       },
       "source": "./plugins/discovery-sentinel",
       "category": "productivity"
+    },
+    {
+      "name": "product-strategist",
+      "description": "Generate validated, prioritized product feature concepts and outcome-based roadmaps for AI-assisted IR/compliance/governance SaaS. Supports feature ideation, roadmap construction, feature evaluation, data ingestion, and comparative prioritization.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/product-strategist",
+      "category": "productivity"
     }
   ]
 }
