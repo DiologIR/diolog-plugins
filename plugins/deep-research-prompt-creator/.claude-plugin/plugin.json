@@ -1,0 +1,9 @@
+{
+  "name": "deep-research-prompt-creator",
+  "version": "1.0.0",
+  "description": "Turns a vague research need into a single copy-paste-ready Google Gemini 3.1 Pro Deep Research prompt — with pseudo-XML scaffolding, archetype-specific overrides (technical / competitive / regulatory / academic / forecasting), epistemic bounding tags, inline citation protocol, and wrap-around Operator Notes (Plan Review, decomposition, adversarial audit) that empirically matter as much as the prompt itself.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
