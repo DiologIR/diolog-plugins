@@ -39,6 +39,17 @@
       },
       "source": "./plugins/deep-research-prompt-creator",
       "category": "productivity"
+    },
+    {
+      "name": "code-review",
+      "description": "High-signal code review for NestJS APIs and Next.js (App Router) + React 19 apps. Modular router skill that delegates to framework-specific checklists (NestJS, Next.js, TypeScript, OWASP security), enforces a >85% confidence threshold, and runs a Chain-of-Verification pass to suppress hallucinated findings. Reports in a fixed CRITICAL/HIGH/MEDIUM/LOW taxonomy with file:line, exact quote, and fix snippet. Read-only — reports findings, does not modify code.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/code-review",
+      "category": "development"
     }
   ]
 }
