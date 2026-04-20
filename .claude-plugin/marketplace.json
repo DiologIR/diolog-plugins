@@ -61,6 +61,17 @@
       },
       "source": "./plugins/design-md-from-screenshots",
       "category": "development"
+    },
+    {
+      "name": "doc-summarizer",
+      "description": "Compress a verbose source document — README, API docs, research paper, technical guide, library docs — into a maximally dense, semantically complete Markdown reference (written to a `<source>.summary.md` file) that another LLM or a skimming human can consume in a fraction of the tokens. Uses a triage-tag system ([CRITICAL]/[WORKFLOW]/[POWER-USER]/[GOLDEN-NUGGET]/[DEPRECATED]), contextually integrated tips, solution-first problem framing, multi-tier feature capture, and a mandatory Strategic Synthesis footer (Maturity Model + Feature Selection Matrix + Workflow Progression Ladder). Target compression 60–80% while retaining 100% of semantically unique information. Tuned for Claude Opus 4.7.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/doc-summarizer",
+      "category": "productivity"
     }
   ]
 }
