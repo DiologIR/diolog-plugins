@@ -50,6 +50,17 @@
       },
       "source": "./plugins/code-review",
       "category": "development"
+    },
+    {
+      "name": "design-md-from-screenshots",
+      "description": "Reverse-engineer a product's visual design system from one or more website/app screenshots and produce a single authoritative DESIGN.md — a framework-agnostic, token-based spec (palette, typography, spacing, shape, motion, component inventory, voice, do/don't) with per-token provenance marks, so another AI (Stitch, Claude, v0, Cursor, AI Elements) can generate new screens that unmistakably belong to the same product.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/design-md-from-screenshots",
+      "category": "development"
     }
   ]
 }
