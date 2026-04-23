@@ -74,6 +74,17 @@
       "category": "productivity"
     },
     {
+      "name": "presentation-design-md-from-screenshots",
+      "description": "Reverse-engineer a slide deck's visual design system from one or more slide screenshots and produce a single authoritative PRESENTATION_DESIGN.md — a tool-agnostic, token-based spec (canvas, palette, typography, slide archetypes, chart style, image treatment, iconography, motion, do/don't) hard-capped at 1,700 characters so another AI (Gamma, Beautiful.ai, Pitch, Keynote/PowerPoint co-pilots, Stitch, v0, Claude, Cursor) can generate new slides that unmistakably belong to the same deck. Sibling to design-md-from-screenshots but tuned for slides: fixed 16:9 canvas, slide archetypes, chart data-ink discipline, image treatment conventions, and on-slide positional grammar.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/presentation-design-md-from-screenshots",
+      "category": "development"
+    },
+    {
       "name": "create-persona",
       "description": "Generates dense, agent-ready persona definitions from a target role — identity kernel, responsibility matrix with classification tags ([CRITICAL] / [WORKFLOW] / [POWER-USER] / [GOLDEN-NUGGET]), decision frameworks, maturity model, selection matrix, capability heat map, dependency graph, metrics, constraints, and two interaction examples. Tuned for Claude Opus 4.7 (literalism, adaptive thinking, positive framing). Evidence base from 2025 persona research (EmoCharacter, LABE, PPA, CPER, Over-Specification Paradox) ships in references/playbook.md.",
       "version": "1.0.0",

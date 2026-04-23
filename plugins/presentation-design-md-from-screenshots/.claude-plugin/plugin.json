@@ -1,0 +1,9 @@
+{
+  "name": "presentation-design-md-from-screenshots",
+  "version": "1.0.0",
+  "description": "Reverse-engineer a slide deck's visual design system from one or more slide screenshots and produce a single authoritative PRESENTATION_DESIGN.md — a tool-agnostic, token-based spec (canvas, palette, typography, slide archetypes, chart style, image treatment, iconography, motion, do/don't) hard-capped at 1,700 characters so another AI (Gamma, Beautiful.ai, Pitch, Keynote/PowerPoint co-pilots, Stitch, v0, Claude, Cursor) can generate new slides that unmistakably belong to the same deck. Sibling to design-md-from-screenshots but tuned for slides: fixed 16:9 canvas, slide archetypes, chart data-ink discipline, image treatment conventions, and on-slide positional grammar.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
