@@ -1,14 +1,17 @@
 # Process — Multi-Pass Review Pipeline
 
-This is the full, expanded definition of the five-phase pipeline that the main `SKILL.md` summarizes. The phases are ordered. Do not skip ahead. Each phase has a defined exit condition.
+This is the full, expanded definition of the six-phase pipeline that the main `SKILL.md` summarizes. The phases are ordered. Do not skip ahead. Each phase has a defined exit condition.
 
-The pipeline is adapted from the everything-claude-code `code-reviewer` agent (8-phase orchestration) and the verification-loop skill, condensed for the NestJS + Next.js scope.
+The pipeline is adapted from the everything-claude-code `code-reviewer` agent (8-phase orchestration) and the verification-loop skill, with two structural changes that have been validated against real review postmortems:
+
+1. **Sharding** (Phase 2.5) for large diffs, because single-context coverage degrades sharply past ~20 files.
+2. **Independent verifier fan-out** (Phase 4), because the same agent that pattern-matched a candidate is the wrong agent to evaluate whether it's real (confirmation bias).
 
 ---
 
 ## Phase 1 — Context Gathering
 
-**Goal:** Understand what changed, why, and how it integrates with the rest of the codebase. A reviewer who only sees the hunks misses everything that *isn't* changing but is now wrong because of what changed.
+**Goal:** Understand what changed, why, and how it integrates with the rest of the codebase.
 
 ### Steps
 
@@ -17,33 +20,34 @@ The pipeline is adapted from the everything-claude-code `code-reviewer` agent (8
    - Local mode: `git status`, `git diff --staged`, `git diff`. Combine staged + unstaged.
    - Branch-range mode: if the user names a base (e.g. "review feature-x against main"), use `git diff main...HEAD`.
 
-2. **Check CI is green** (PR mode only). If `mergeStateStatus` is `BLOCKED` due to failing required checks, surface this and ask the user whether to proceed. A red build typically masks the real defects under noise.
+2. **Capture diff size signals** that drive Phase 2.5.
+   - `fileCount` — `git diff --name-only <range> | wc -l`.
+   - `locDelta` — sum of insertions + deletions from `git diff --shortstat <range>`.
 
-3. **Read whole files.** For every file with non-trivial changes (>5 lines or any structural change), use `Read` to load the entire file. Diffs hide:
-   - The function signature above the modified body.
-   - Earlier validation/auth checks that the new code may already be covered by.
-   - Imports that already provide a "missing" utility you might otherwise suggest adding.
+3. **Check CI is green** (PR mode only). If `mergeStateStatus` is `BLOCKED` due to failing required checks, surface this and ask the user whether to proceed.
 
-4. **Trace usages of changed exports.** For every modified exported symbol, run `Grep` for its name across the repo (`Grep -n "<symbolName>" --glob "**/*.{ts,tsx}"`). Three patterns to specifically watch:
+4. **Read whole files.** For every file with non-trivial changes (>5 lines or any structural change), use `Read` to load the entire file. (In sharded mode this work is delegated to the shard agents — but the main context still needs to read 1–2 representative files to ground the routing decision.)
+
+5. **Trace usages of changed exports.** For every modified exported symbol, run `Grep` for its name across the repo. Three patterns to watch:
    - **Behavioral break:** a call site relies on the old behavior of a changed function.
    - **Type break:** a call site relies on the old return type / parameter shape.
-   - **Coupling smell:** the symbol has many call sites, suggesting the change has wider blast radius than the diff implies.
+   - **New caller of a scope-incomplete helper:** see `logic-bugs-checklist.md` §2.2.
 
-5. **Confirm test coverage exists.** `Glob` for sibling test files (`*.spec.ts`, `*.test.ts`, `*.e2e-spec.ts`). If a critical change has no test coverage, that's a finding.
+6. **Confirm test coverage exists.** `Glob` for sibling test files (`*.spec.ts`, `*.test.ts`, `*.e2e-spec.ts`).
 
-6. **Read repo-level conventions.** `Read CLAUDE.md` (or `AGENTS.md`, `CONVENTIONS.md`, `.cursorrules`) at repo root if present. Adapt your standards to match the project's stated style. Do not impose external conventions over established project ones.
+7. **Read repo-level conventions.** `Read CLAUDE.md` (or `AGENTS.md`, `CONVENTIONS.md`, `.cursorrules`) at repo root if present. Adapt your standards to match the project.
 
-7. **Read `package.json`** to determine framework versions. The review checklists in `nextjs-checklist.md` and `nestjs-checklist.md` are calibrated to specific major versions; you must know which apply.
+8. **Read `package.json`** to determine framework versions.
 
 ### Exit condition
 
-You can answer, for each modified file, *what changed and why*. If you can't, ask the user before proceeding.
+You can answer, for each modified file *area*, what changed and why. You have `fileCount` and `locDelta` for the routing decision. You haven't yet committed to either single-context or sharded execution.
 
 ---
 
 ## Phase 2 — Routing
 
-**Goal:** Load **only the checklists that match the diff**, to avoid the "interference patterns" observed in monolithic prompts (Arbiter, Mason 2026). A monolithic prompt with all NestJS + Next.js + TypeScript + security rules loaded simultaneously degrades reasoning through scope-overlap and mandate-prohibition conflict.
+**Goal:** Load **only the checklists that match the diff**, to avoid the "interference patterns" observed in monolithic prompts (Arbiter, Mason 2026).
 
 ### Routing matrix
 
@@ -68,11 +72,15 @@ Touches auth, sessions, cookies, JWT, bcrypt/argon2,    → security-checklist.m
   file uploads, deserialization, redirects,
   public POST endpoints, headers, CSP, CORS
 
+Any backend service / controller that mutates state,    → logic-bugs-checklist.md
+  consumes LLM output, runs in cron / queue worker,         (default-on for backend)
+  performs per-tenant queries, coordinates external syncs
+
 Always                                                   → output-format.md
                                                             (taxonomy + schema)
 ```
 
-If the diff touches none of the patterns above, you are likely outside the skill's scope (e.g., a pure config/CI/markdown change). Confirm with the user whether to proceed; this skill's value is heavily concentrated in NestJS and Next.js code.
+If the diff touches none of the patterns above, you are likely outside the skill's scope (e.g., a pure config/CI/markdown change). Confirm with the user whether to proceed.
 
 ### Exit condition
 
@@ -80,71 +88,221 @@ The exact set of reference files you have loaded matches the file patterns in th
 
 ---
 
-## Phase 3 — Analysis (coverage mode)
+## Phase 2.5 — Sharding
 
-**Goal:** Generate the **complete** candidate list of findings by walking each loaded checklist against the diff. Coverage matters more than precision in this phase — the verification step in Phase 4 is the dedicated filter. A real bug silently dropped here cannot be recovered later; a false positive surfaced here is removed at almost no cost.
+**Goal:** When a diff is too large for one context to walk faithfully, split the Find work across parallel agents that each own a manageable subset of the diff.
+
+### Trigger condition
+
+Skip this phase if the diff is small. Single-context Find (Phase 3) is faster and simpler when it fits.
+
+```
+fileCount  ≥ 30   OR  locDelta ≥ 2000   →   shard
+otherwise                                →   skip Phase 2.5, go to Phase 3
+```
+
+These thresholds are calibrated against real reviews — the failure mode being avoided is what the postmortem after the staging-vs-main review showed: a 200-file / 25k-LoC diff produced only 2 of ~10+ real findings because most files were never read.
+
+### Bucketing
+
+Group the changed files into 3–8 buckets. Each bucket should be:
+
+- **Small enough** for one Explore-class agent to walk: ~10–25 files, ideally < 5k LoC.
+- **Cohesive enough** that the agent can reason across the bucket without needing files from other buckets.
+
+Recommended axes (in order of preference):
+
+1. **Domain.** Group by product feature: `auth`, `oauth-and-calendar`, `surveys`, `regulatory`, `inbox`, `ai-and-llm-handling`, `cron-and-queues`, `bff-routes`. Best for product-feature diffs.
+2. **Layer.** Group by `apps/api/*`, `apps/web/*`, `libs/*`. Best when the diff touches an even slice across many features (e.g. a refactor or framework upgrade).
+3. **Risk class.** `auth-touching`, `state-mutating`, `read-only`, `pure-config`. Best when one PR mixes obvious-low-risk refactors (rename, formatting) with a small high-risk change.
+
+Buckets with only 1–2 files can be merged into the closest neighbor.
+
+### Working directory
+
+Pick a stable run id (`date +%Y%m%d-%H%M%S` or the PR number). Create `.claude/tmp/code-review/<run-id>/` and store:
+
+- `candidates.jsonl` — appended by shard agents (Phase 3) and verifier agents (Phase 4).
+- `verifications.jsonl` — appended by verifier agents.
+- `buckets.json` — the bucket-to-files mapping for traceability.
+
+### Shard agent prompt template
+
+Use this verbatim per shard, filling in the bracketed fields. Dispatch via `Agent` with `subagent_type: "Explore"` (preferred — fast, file-walking-shaped).
+
+> **You are a code-review Find agent for the `<bucket-name>` shard of a larger diff review.**
+>
+> **Your job is to walk every file listed below, apply the listed checklists, and emit candidate findings as JSON lines appended to `<candidates-jsonl-path>`.** You are in coverage mode — surface every candidate you identify, including ones you are uncertain about. Do not pre-filter on confidence; a separate verifier pass will refute or confirm each candidate.
+>
+> **Files to review (read each one in full, not just the diff hunks):**
+> ```
+> <absolute file paths, one per line>
+> ```
+>
+> **Checklists to apply (Read each, then walk every item against the files above):**
+> ```
+> <absolute paths to the relevant references/*.md files>
+> ```
+>
+> **Diff context** (use this to focus on what changed; but findings can cite any line in the file, not just hunks):
+> ```bash
+> git diff <base>..<head> -- <files>
+> ```
+>
+> **Hard rules:**
+> - No stylistic findings (formatting, quote style, naming case — anything ESLint/Prettier handles).
+> - Stay scoped to the diff. Exception: a CRITICAL security issue or a multi-tenant scoping bug newly exploitable because of a new caller in the diff.
+> - Consolidate identical violations across N locations into a single candidate listing all N.
+> - **Do not write the user-facing report.** Your output is JSON lines only.
+>
+> **Candidate schema** (one JSON object per line, append to `<candidates-jsonl-path>`):
+> ```json
+> {
+>   "id": "<bucket-name>-<3-digit-counter>",
+>   "file": "<repo-relative path>",
+>   "lines": "<single line or range>",
+>   "title": "<one-sentence imperative title>",
+>   "severity": "CRITICAL|HIGH|MEDIUM|LOW",
+>   "confidence": <0-100>,
+>   "rule": "<which checklist rule, in plain language>",
+>   "claim": "<2-3 sentences with the exact code quoted inline>",
+>   "fix": "<smallest code change that resolves the issue>",
+>   "shard": "<bucket-name>"
+> }
+> ```
+>
+> When done, reply with a single line: `Shard <bucket-name>: <N> candidates appended to <candidates-jsonl-path>`.
+
+### Parallel dispatch
+
+Launch all shard agents in **a single message** containing one `Agent` tool call per bucket. They run concurrently. Wait for all to return before proceeding to Phase 4.
+
+### Deduplication
+
+Once all shards have returned, scan `candidates.jsonl` for cross-shard duplicates (two shards both flagged the same file:line range with the same rule). Merge them per Mandate #4 — keep one row, list both shards in the `shard` field as a comma-separated value.
+
+### Exit condition
+
+`candidates.jsonl` exists and contains every candidate from every shard, deduplicated. The orchestrator (you) has not read any source files for the bucket contents — that work was delegated.
+
+---
+
+## Phase 3 — Find (single-context, only when Phase 2.5 was skipped)
+
+**Goal:** Generate the complete candidate list directly, without sharding.
 
 ### Method
 
-For each item in each loaded checklist:
+For each loaded checklist:
 
-1. Search the diff for the pattern the checklist item targets.
-2. If found — even if you're uncertain — draft a candidate finding:
-   - Quote the exact code line(s) from the diff.
-   - State which checklist rule was violated, in plain language.
-   - Estimate severity using `output-format.md` (CRITICAL / HIGH / MEDIUM / LOW).
-   - Estimate confidence as a number 0–100. Be honest. **Do not drop the finding here for being below 85.** Phase 4 (Gate 0) applies the threshold.
-3. Move to the next checklist item. Do not write the final report yet.
+1. Search the diff for the patterns the checklist targets.
+2. For every match — including uncertain ones — append a candidate row to `candidates.jsonl` using the schema in Phase 2.5.
+3. Do not pre-filter on confidence. Phase 5 (Gate 0) is the dedicated filter; it runs after the verifier fan-out has had a chance to refute or confirm each candidate.
 
-### Hard rules during analysis
+### Hard rules during Find
 
-- **No stylistic findings.** Pure formatting, quote style, semicolons, import ordering, snake-vs-camel naming, trailing commas — anything ESLint or Prettier would auto-fix — does not make it onto the candidate list at all. Anything that affects runtime behavior, type safety, security, performance, or business-logic correctness is *not* stylistic; surface it.
-- **No findings in unchanged code** — *unless* a CRITICAL security issue exists in unchanged code that is now reachable because of a change in the diff (e.g. the diff exposes a previously-private function via a new route). Mark these clearly.
-- **Consolidate.** If five controllers all violate the same rule, that is one finding ("5 controllers missing X validation, listed below") — not five.
+- **No stylistic findings.** Per Mandate #2.
+- **No findings in unchanged code** unless covered by Mandate #3.
+- **Consolidate.** Per Mandate #4.
 - **One finding, one fix.** If the same line has three distinct problems, three findings — but each must have its own fix snippet.
 
 ### Exit condition
 
-You have a candidate list of findings, each with: file, line(s), exact quote, rule violated, severity estimate, numeric confidence estimate. The list is held internally — nothing has been written to the user-facing report yet.
+`candidates.jsonl` exists and contains every candidate. The list is on disk; nothing has been written to the user-facing report yet.
 
 ---
 
-## Phase 4 — Verification (filtering pass)
+## Phase 4 — Verify (independent verifier fan-out)
 
-**Goal:** Filter the Phase 3 candidate list down to the findings that are demonstrably real and worth reporting. This is the dedicated filtering step — confidence thresholds, API existence checks, and proportionality all live here, not earlier.
+**Goal:** Independently refute or confirm each candidate, without relying on the agent that proposed it. This is where hallucinated findings get caught.
 
-See `references/verification-loop.md` for the full procedure. Summary:
+### Method
 
-1. **Gate 0, confidence threshold.** A candidate survives only if confidence ≥ 85, OR severity is CRITICAL/HIGH and confidence ≥ 70 (asymmetric cost — false negatives on serious findings are far worse than false positives, so they get a lower bar).
+Read `candidates.jsonl`. For each row, dispatch a separate `Agent` (general-purpose) with the prompt template below. Run in **batches of 5–8 concurrent verifiers** — multiple `Agent` tool uses in the same message — so subagent quota doesn't deadlock and so each batch's results are visible before the next batch launches.
 
-2. **Gate 1, API existence.** If a finding's suggested fix names a function, type, hook, or import path, `Grep` for it. If it doesn't exist with the suggested signature in the project source or a declared dependency, **rewrite the suggestion to use what does exist, or drop the finding.**
+### Verifier agent prompt template
 
-3. **Gate 2, version compatibility.** If the finding cites framework behavior, confirm the framework version in `package.json` matches. Do not flag `await cookies()` as required on a Next.js 14 project.
+Use this verbatim per candidate, filling in the bracketed fields:
 
-4. **Gate 3, out-of-hunk satisfaction.** If the finding claims "X is missing", re-read the whole file (not just the hunk). The thing you think is missing is frequently 30 lines above the diff.
+> **You are a code-review verifier. Your job is to refute or confirm one specific finding, from a fresh context, with no prior knowledge of why it was raised.**
+>
+> **Candidate finding:**
+> ```json
+> <single JSON line from candidates.jsonl>
+> ```
+>
+> **Procedure (run each gate in order; the first gate that fails determines your verdict):**
+>
+> 1. **Gate 1 — API existence.** If the proposed `fix` names a function, type, hook, decorator, import path, or package, `Grep` for it across the project. If it doesn't exist with the proposed signature in the project source or in a dependency declared in `package.json`, the fix is hallucinated — set `status: refuted` with `evidence` citing the failed grep.
+> 2. **Gate 2 — Version compatibility.** If the `claim` cites framework behavior (e.g. "must `await cookies()`"), confirm `package.json` pins a version that supports it. If not, refute or downgrade.
+> 3. **Gate 3 — Out-of-hunk satisfaction.** Use `Read` to load the entire file at `<file>`, not just the cited lines. The thing the finder thought was missing is frequently 30 lines above the hunk, in `main.ts`, in a parent layout, or on a base class. If the missing element is satisfied elsewhere, refute.
+> 4. **Gate 4 — Proportionality.** If the proposed `fix` is dramatically larger than the change being reviewed (introduces a new abstraction, renames many files, requires a new dependency), downgrade `final_severity` and rewrite the fix smaller, but do not refute on this gate alone.
+>
+> **Active refutation, not passive confirmation.** Try to find a reason this finding is wrong. Look for the validation 30 lines up, the guard one decorator level up, the import that already exists. Confirmation is the answer when you have actively looked for the refutation and failed to find it.
+>
+> **Output one JSON line, exactly this shape, on a line by itself in your final reply:**
+> ```json
+> {
+>   "id": "<id from input>",
+>   "status": "confirmed|refuted|needs-info",
+>   "evidence": "<1-3 sentences, cite file:line of what you checked>",
+>   "final_severity": "CRITICAL|HIGH|MEDIUM|LOW",
+>   "final_confidence": <0-100>,
+>   "fix_verified": <true|false>
+> }
+> ```
+>
+> Use `needs-info` only when you cannot determine confirmation/refutation without knowledge outside the repo (e.g. "depends on what `RESEND_RATE_LIMIT` is set to in production"). Do not use it as a hedge.
 
-5. **Gate 4, proportionality.** If a candidate would force the developer to change >50 lines or introduce a new abstraction the project doesn't have, your finding might be too big for the diff being reviewed. Downgrade severity to MEDIUM/LOW with a "future cleanup" note, or rewrite the suggestion as a smaller incremental fix.
+### Result handling
 
-6. **Discard silently.** Findings dropped at any gate do not appear anywhere in the report. Do not write "I considered flagging X but verified it was fine" — that is noise.
+Append each verifier's JSON line to `verifications.jsonl`. After all batches finish, merge `verifications.jsonl` back into `candidates.jsonl` (e.g. with a quick `jq` join keyed on `id`) so each candidate has its `status`, `final_severity`, `final_confidence`, and `evidence` fields.
 
 ### Exit condition
 
-Every remaining finding has survived all five gates. Each is anchored to specific code that demonstrably exists.
+Every candidate has a corresponding verification row. No candidate is missing a verdict.
 
 ---
 
-## Phase 5 — Report
+## Phase 5 — Final filter (Gate 0)
+
+**Goal:** Apply the confidence threshold *after* verification has had its say.
+
+### Method
+
+For each candidate in the merged `candidates.jsonl`:
+
+- **Drop** any with `status: refuted`.
+- **Drop** any with `status: confirmed` but `final_confidence < 70` for `CRITICAL`/`HIGH`, or `final_confidence < 85` for `MEDIUM`/`LOW`.
+- **Keep** `status: needs-info` only when `final_severity` is `CRITICAL` AND `final_confidence ≥ 60`. Surface as a single MEDIUM-severity "Verifier could not confirm" finding listing the relevant locations, so the human reviewer knows where to look.
+
+This is the *only* place confidence filtering happens. Earlier filtering (during Find) caused real bugs to be silently dropped — the staging-vs-main review surfaced this failure mode directly.
+
+### Exit condition
+
+A list of survivors, ready for the report.
+
+---
+
+## Phase 6 — Report
 
 **Goal:** Emit a structured report that a human can triage in under 60 seconds.
 
+### Method
+
 Use the exact format from `references/output-format.md`. Briefly:
 
-1. Order findings by severity, then by file path.
-2. Each finding: severity tag, file:line, one-sentence description, one-line fix snippet (or short multi-line snippet if needed).
-3. End with exactly one verdict line:
-   - `BLOCK` — at least one CRITICAL finding.
-   - `WARNING` — at least one HIGH finding, no CRITICAL.
-   - `APPROVE` — zero CRITICAL, zero HIGH, at least one MEDIUM or LOW finding.
-   - `LGTM — no high-severity issues identified.` — literally zero findings of any severity.
+1. Emit the optional PR header (PR mode only).
+2. Emit the verification stats line:
+   ```
+   Find: <total> candidates · Verify: <confirmed> confirmed · <refuted> refuted · <needs-info> needs-info
+   ```
+3. Emit each surviving finding using the `### [SEVERITY] …` schema.
+4. Order findings by severity, then by file path.
+5. End with exactly one verdict line.
 
-Do **not** add a Summary, Closing Thoughts, or Recommendations section after the verdict. The report ends at the verdict line.
+Do **not** add a Summary, Closing Thoughts, or Recommendations section after the verdict.
+
+### Exit condition
+
+The report is in the user-facing output. The intermediate `candidates.jsonl` / `verifications.jsonl` remain on disk for traceability and post-hoc analysis.

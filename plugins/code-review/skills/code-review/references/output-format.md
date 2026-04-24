@@ -40,7 +40,7 @@ Each finding must use exactly this structure (outer fence shown with `~~~` so th
 // the smallest possible code change that resolves the issue
 ```
 
-**Confidence:** 90 (numeric 0–100; emit your honest estimate — Phase 4 Gate 0 enforces the threshold)
+**Confidence:** 90 (numeric 0–100; this is the verifier's `final_confidence` after Phase 4 — Phase 5 (Gate 0) enforces the threshold)
 ~~~
 
 ### Worked example
@@ -92,7 +92,7 @@ When the same rule is violated in multiple places, list them inside one finding:
 **Confidence:** 95
 ~~~
 
-> **Why numeric (0–100) rather than a percentage tag?** Phase 3 (Analysis) generates candidates in coverage mode and tags each with a numeric confidence so Phase 4 (Verification) can filter at Gate 0. The number you emit here is the same one you used internally during Analysis — just preserved verbatim in the report so a downstream reviewer can see the model's calibration.
+> **Why numeric (0–100) rather than a percentage tag?** Phase 3 (Find) generates candidates in coverage mode with a finder-estimated confidence; Phase 4 (Verify) refutes/confirms each one and adjusts confidence based on evidence; Phase 5 (Gate 0) filters on the verifier's `final_confidence`. The number that appears in the report is the verifier's, preserved verbatim so a downstream reviewer can see the model's calibration.
 
 ---
 
@@ -111,9 +111,9 @@ The report **must** end with exactly one of these four lines, on its own line, n
 
 ---
 
-## Header (optional, only when reviewing a PR)
+## Header
 
-If the review was triggered by a PR reference (`gh pr view <ref>`), emit this header before the first finding:
+For PR-mode reviews, emit this two-line header before the first finding:
 
 ```
 # Code Review — PR #<num>: <title>
@@ -121,7 +121,25 @@ If the review was triggered by a PR reference (`gh pr view <ref>`), emit this he
 Base: <baseRef>  •  Head: <headRef>  •  Files changed: <count>  •  CI: <PASS|FAIL|PENDING>
 ```
 
-For local reviews, omit the header.
+For local reviews, omit the PR title block but always emit the next line.
+
+### Verification stats line (always emit)
+
+After any PR header, before the first finding, emit a single line summarizing the Find/Verify pass:
+
+```
+Find: <total> candidates · Verify: <X> confirmed · <Y> refuted · <Z> needs-info
+```
+
+For very small reviews where Phase 2.5 (Sharding) was skipped and Phase 4 (Verifier fan-out) ran in single-context mode, still emit this line — `<total>` is the candidate count from Find, and the verify counts come from running the gates in the orchestrator context.
+
+If Stage-2 (build/lint/test) was run, append a second line:
+
+```
+Build: <PASS|FAIL>  ·  Lint: <PASS|FAIL>  ·  Tests: <PASS|FAIL>
+```
+
+Pre-existing CI breakage unrelated to the diff is suffixed `(pre-existing)` rather than treated as a finding.
 
 ---
 
