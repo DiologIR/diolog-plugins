@@ -122,9 +122,11 @@ Target ~15 files per bucket when file count permits. After initial grouping, if 
 
 ### Working directory
 
-Pick a stable run id (`date +%Y%m%d-%H%M%S` or the PR number). Create `${CLAUDE_PROJECT_DIR}/.claude/tmp/code-review/<run-id>/` and store:
+Pick a stable run id (`date +%Y%m%d-%H%M%S` or the PR number). The orchestrator (you) creates `${CLAUDE_PROJECT_DIR}/.code-review/<run-id>/` **once, before dispatching any shards**, via `Bash mkdir -p`. Shard agents must NOT re-`mkdir` — the directory already exists when they run, and a duplicate `mkdir -p` inside each shard prompt burns permission prompts. The shard prompt template below deliberately omits any `mkdir` instruction.
 
-> **One-time setup:** the first run after plugin install will prompt for `Write` permission on each per-shard path. Tell the user to add `"Write(.claude/tmp/code-review/**)"` to `.claude/settings.local.json` (and add `.claude/tmp/` to `.gitignore`) so subsequent runs don't re-prompt. See SKILL.md → "First-run setup".
+The directory stores:
+
+> **One-time setup:** the first run after plugin install will prompt for `Write` (and potentially `Bash(mkdir -p ...)`) permissions. Tell the user to add `"Write(.code-review/**)"` and `"Bash(mkdir -p .code-review/**)"` to `.claude/settings.local.json` (and add `.code-review/` to `.gitignore`) so subsequent runs don't re-prompt. See SKILL.md → "First-run setup".
 
 
 - `candidates-<bucket>.jsonl` — one file **per shard**, written exclusively by that shard's agent. This is how concurrent-write races are avoided: see the "Why per-shard files" note below.
@@ -159,8 +161,10 @@ Use verbatim per shard. Dispatch via `Agent` with `subagent_type: "general-purpo
 > <absolute paths to references/*.md files that match this bucket>
 > ```
 >
-> **Output path (you are the SOLE writer — use `Write`):**
+> **Output path (you are the SOLE writer — use `Write` directly, no `mkdir`):**
 > `${RUN_DIR}/candidates-<bucket-name>.jsonl`
+>
+> The output directory already exists — the orchestrator created it before dispatching you. **Do not run `mkdir`, `ls`, or `test -d` on the output directory.** Go straight to `Write`. Running `Bash mkdir` or directory checks triggers extra permission prompts for no reason.
 >
 > **Candidate schema** (one JSON object per line):
 > ```json
@@ -172,6 +176,7 @@ Use verbatim per shard. Dispatch via `Agent` with `subagent_type: "general-purpo
 > - No stylistic findings (formatting, naming case, anything ESLint/Prettier handles).
 > - Consolidate identical violations across N locations into one candidate listing all N.
 > - Grep to verify any symbol your `fix` names exists in the project. Findings whose fix names a nonexistent symbol get dropped at Verify.
+> - No `mkdir`, no directory probing. Write directly to the path above.
 >
 > When done, reply with exactly: `Shard <bucket-name>: <N> candidates written to <path>`. No other prose.
 
@@ -184,8 +189,8 @@ Launch all shard agents in **a single message** containing one `Agent` tool call
 Once all shards have returned, the orchestrator assembles the shared `candidates.jsonl` by concatenating the per-shard files — single-threaded, no race:
 
 ```bash
-cat .claude/tmp/code-review/<run-id>/candidates-*.jsonl \
-  > .claude/tmp/code-review/<run-id>/candidates.jsonl
+cat .code-review/<run-id>/candidates-*.jsonl \
+  > .code-review/<run-id>/candidates.jsonl
 ```
 
 ### Dedupe (required, before Phase 4)
@@ -212,7 +217,7 @@ Dedup is NOT optional — skipping it inflates the verification budget and produ
 For each shard, compare the agent's reply count against the line count of its per-shard file:
 
 ```bash
-wc -l .claude/tmp/code-review/<run-id>/candidates-*.jsonl
+wc -l .code-review/<run-id>/candidates-*.jsonl
 ```
 
 ```bash

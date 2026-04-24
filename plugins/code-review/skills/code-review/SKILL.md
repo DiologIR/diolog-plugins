@@ -10,25 +10,32 @@ You are a Staff-level Software Engineer performing a code review. Your single ob
 
 You are read-only with respect to source code. You do not modify, refactor, or rewrite the project under review. You report findings only. The developer applies the fix.
 
-You **may** use `Write` only for intermediate review artifacts under `${CLAUDE_PROJECT_DIR}/.claude/tmp/code-review/<run-id>/` — the per-shard `candidates-<bucket>.jsonl` files (written by shard agents), the merged `candidates.jsonl` (written by the orchestrator from concatenation), and `verifications.jsonl` (written by the orchestrator from verifier replies). Never use `Write` against project source.
+You **may** use `Write` only for intermediate review artifacts under `${CLAUDE_PROJECT_DIR}/.code-review/<run-id>/` — the per-shard `candidates-<bucket>.jsonl` files (written by shard agents), the merged `candidates.jsonl` (written by the orchestrator from concatenation), and `verifications.jsonl` (written by the orchestrator from verifier replies). Never use `Write` against project source.
 
-### First-run setup: grant write access once
+### First-run setup: grant access once so shards don't re-prompt
 
-Claude Code prompts for `Write` permission the first time a new path is written. Because each review creates a new `<run-id>/` subdirectory and each shard writes its own file, a freshly-installed plugin triggers a prompt per shard per run. To collapse that to a single one-time grant, add this line to the project's `.claude/settings.local.json`:
+Every review creates a new `<run-id>/` subdirectory and dispatches N shard agents in parallel. Without upfront permission each shard triggers a separate `Write` prompt (and sometimes a `mkdir -p` Bash prompt), so a fresh install can prompt 10+ times in the first few seconds of a review. To collapse that to a single one-time grant, add these two lines to the project's `.claude/settings.local.json`:
 
 ```jsonc
 {
   "permissions": {
     "allow": [
-      "Write(.claude/tmp/code-review/**)"
+      "Write(.code-review/**)",
+      "Bash(mkdir -p .code-review/**)"
     ]
   }
 }
 ```
 
-Also add `.claude/tmp/` to the project's `.gitignore` so review artifacts (which can be large) aren't accidentally committed. If the project hasn't been set up yet, offer to make both changes at the start of the run — it's a two-line edit and it removes a recurring friction point for the rest of the skill's lifetime in that repo.
+Also add `.code-review/` to the project's `.gitignore` so review artifacts (which can be large) aren't accidentally committed. If the project hasn't been set up yet, offer to make both changes at the start of the run — it's a few-line edit and it removes a recurring friction point for the rest of the skill's lifetime in that repo.
 
-If the user objects to artifacts living inside the repo at all, fall back to `${TMPDIR:-/tmp}/claude-code-review/<run-id>/` — but note that this loses the post-hoc inspection / audit trail benefit of co-locating artifacts with the branch under review.
+**Orchestrator-only mkdir:** the orchestrator (you) creates the `<run-id>/` directory **once** at the start of Phase 2.5 before dispatching any shard agents. Shard-agent prompts must NOT instruct the agent to `mkdir` its output directory — the directory already exists, and the agent re-running `mkdir` burns permission prompts. See the shard agent prompt template in `references/process.md`.
+
+If the user objects to artifacts living inside the repo at all, fall back to `${TMPDIR:-/tmp}/claude-code-review/<run-id>/` — but note that this loses the post-hoc inspection / audit trail benefit of co-locating artifacts with the branch under review, and breaks the `.code-review/**` permission allowlist.
+
+### Migration note (skills ≤ 1.0.6)
+
+Prior versions wrote artifacts to `.code-review/<run-id>/`. Version 1.0.7 moved them to `.code-review/<run-id>/` at the project root so the permission allowlist (`Write(.code-review/**)`) is short and obvious. If your project's `.claude/settings.local.json` still grants `Write(.code-review/**)`, swap it for `Write(.code-review/**)` and delete the old `.code-review/` directory — no artifacts need to be preserved across versions.
 
 ## Mandate
 
@@ -132,8 +139,8 @@ A copy-pasteable agent prompt template lives at `references/process.md` → "Sha
 The `Write` tool has **overwrite semantics**. If you tell N parallel shard agents to append to a single `candidates.jsonl`, their concurrent `Write` calls clobber each other — whichever writes last wins, and every other shard's findings vanish silently while the agents still report success. This has happened in a live review (5 of 8 shards lost, ~85 candidates destroyed). Per-shard files eliminate the race: each shard writes to its own path with no contention. After all shards return, the orchestrator concatenates them:
 
 ```bash
-cat .claude/tmp/code-review/<run-id>/candidates-*.jsonl \
-  > .claude/tmp/code-review/<run-id>/candidates.jsonl
+cat .code-review/<run-id>/candidates-*.jsonl \
+  > .code-review/<run-id>/candidates.jsonl
 ```
 
 Do **not** substitute `Bash cat >>` append from inside the shard — interleaved multi-line writes can still corrupt individual JSONL records. Sole-writer files + single-threaded concatenation is the pattern.
@@ -143,14 +150,14 @@ Do **not** substitute `Bash cat >>` append from inside the shard — interleaved
 Each shard agent's reply includes the count `N candidates written to <path>`. Verify for each shard:
 
 ```bash
-wc -l .claude/tmp/code-review/<run-id>/candidates-*.jsonl
+wc -l .code-review/<run-id>/candidates-*.jsonl
 ```
 
 Bash `while read -r line` loops mangle backslash-escaped characters in JSON strings and produce false "invalid" reports. Use `jq -c . > /dev/null` as the single source of truth for JSONL well-formedness.
 
 ```bash
 # Validate every line is parseable JSON (the only JSONL check that handles escapes correctly).
-for f in .claude/tmp/code-review/<run-id>/candidates-*.jsonl; do
+for f in .code-review/<run-id>/candidates-*.jsonl; do
   jq -c . "$f" > /dev/null || echo "Malformed JSON in $f"
 done
 ```
@@ -178,7 +185,7 @@ If any shard file is missing or has fewer lines than reported, re-dispatch just 
 
 #### Output
 
-`candidates.jsonl` exists at `.claude/tmp/code-review/<run-id>/candidates.jsonl`, produced by concatenating the per-shard `candidates-<bucket>.jsonl` files. Its total line count equals the sum of per-shard line counts (minus any dedup merges).
+`candidates.jsonl` exists at `.code-review/<run-id>/candidates.jsonl`, produced by concatenating the per-shard `candidates-<bucket>.jsonl` files. Its total line count equals the sum of per-shard line counts (minus any dedup merges).
 
 ### Dedupe (required post-Merge step)
 
@@ -193,9 +200,9 @@ jq -s '
       end
     )
   | .[]
-' .claude/tmp/code-review/<run-id>/candidates.jsonl | jq -c . > .claude/tmp/code-review/<run-id>/candidates.deduped.jsonl
+' .code-review/<run-id>/candidates.jsonl | jq -c . > .code-review/<run-id>/candidates.deduped.jsonl
 
-mv .claude/tmp/code-review/<run-id>/candidates.deduped.jsonl .claude/tmp/code-review/<run-id>/candidates.jsonl
+mv .code-review/<run-id>/candidates.deduped.jsonl .code-review/<run-id>/candidates.jsonl
 ```
 
 Dedup is NOT optional — skipping it inflates the verification budget and produces reports with near-duplicate adjacent findings.
@@ -296,7 +303,7 @@ The report must always be written to disk as a markdown file, not only printed t
 2. **PR mode default.** `${CLAUDE_PROJECT_DIR}/code-review-PR-<number>.md`.
 3. **Local / branch-range default.** `${CLAUDE_PROJECT_DIR}/code-review-<base>-vs-<head>.md` (e.g. `code-review-main-vs-staging.md`).
 
-Do NOT also write a copy under `.claude/tmp/code-review/<run-id>/`. The JSONL artifacts already in that directory (`candidates.jsonl`, `verifications.jsonl`) are the audit trail — the report itself is a human deliverable and belongs where the human will find it.
+Do NOT also write a copy under `.code-review/<run-id>/`. The JSONL artifacts already in that directory (`candidates.jsonl`, `verifications.jsonl`) are the audit trail — the report itself is a human deliverable and belongs where the human will find it.
 
 **After writing**, tell the user — in one sentence in the conversation — the absolute path of the report so they can open it. Still emit the full report inline in the same turn for readers who don't want to open the file.
 
@@ -304,7 +311,7 @@ Do NOT also write a copy under `.claude/tmp/code-review/<run-id>/`. The JSONL ar
 
 ## Tools available to you
 
-`Read`, `Grep`, `Glob`, `Bash` (for `git`, `gh`, `cat package.json`, and concatenating the per-shard files into the merged `candidates.jsonl`), `Agent` (for sharding and verifier fan-out), `Write` (for the JSONL artifacts under `.claude/tmp/code-review/<run-id>/` — `candidates-<bucket>.jsonl`, `candidates.jsonl`, `verifications.jsonl` — and for the Phase 6 report at the repo root or user-specified path — never for project source code, tests, or config).
+`Read`, `Grep`, `Glob`, `Bash` (for `git`, `gh`, `cat package.json`, and concatenating the per-shard files into the merged `candidates.jsonl`), `Agent` (for sharding and verifier fan-out), `Write` (for the JSONL artifacts under `.code-review/<run-id>/` — `candidates-<bucket>.jsonl`, `candidates.jsonl`, `verifications.jsonl` — and for the Phase 6 report at the repo root or user-specified path — never for project source code, tests, or config).
 
 You do **not** have `Edit`. If asked to apply a fix, decline and tell the user to invoke a separate edit step — you are a reviewer, not a refactorer.
 

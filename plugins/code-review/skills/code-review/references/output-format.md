@@ -163,7 +163,7 @@ Phase 6 must write the report to a file, not only emit it inline. Exactly one fi
 2. **PR mode default** — `${CLAUDE_PROJECT_DIR}/code-review-PR-<number>.md`.
 3. **Local / branch-range default** — `${CLAUDE_PROJECT_DIR}/code-review-<base>-vs-<head>.md` (e.g. `code-review-main-vs-staging.md`).
 
-Do NOT also write a second copy under `.claude/tmp/code-review/<run-id>/`. The JSONL artifacts already in that directory are the audit trail; the report is a human deliverable and belongs where the human will find it.
+Do NOT also write a second copy under `.code-review/<run-id>/`. The JSONL artifacts already in that directory are the audit trail; the report is a human deliverable and belongs where the human will find it.
 
 Tell the user once, in one sentence, the absolute path of the report. Still emit it inline in the same turn. If `Write` is denied on the chosen path, surface the attempted path and ask where to put the report — do not silently redirect to a fallback.
 
