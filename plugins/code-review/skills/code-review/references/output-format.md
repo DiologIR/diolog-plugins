@@ -157,15 +157,15 @@ Pre-existing CI breakage unrelated to the diff is suffixed `(pre-existing)` rath
 
 ## Report output location (required)
 
-Phase 6 must write the report to a file, not only emit it inline. Destination precedence:
+Phase 6 must write the report to a file, not only emit it inline. Exactly one file is written per run. Destination precedence:
 
 1. **User-specified path** — if the invocation names a file or directory, write there. A directory-only path gets `code-review-<base>-vs-<head>.md` appended.
-2. **PR mode default** — `${CLAUDE_PROJECT_DIR}/.claude/tmp/code-review/<run-id>/report.md` (audit copy) + `${CLAUDE_PROJECT_DIR}/code-review-PR-<number>.md` (repo-root copy).
-3. **Local / branch-range default** — `${CLAUDE_PROJECT_DIR}/.claude/tmp/code-review/<run-id>/report.md` + `${CLAUDE_PROJECT_DIR}/code-review-<base>-vs-<head>.md` (e.g. `code-review-main-vs-staging.md`).
+2. **PR mode default** — `${CLAUDE_PROJECT_DIR}/code-review-PR-<number>.md`.
+3. **Local / branch-range default** — `${CLAUDE_PROJECT_DIR}/code-review-<base>-vs-<head>.md` (e.g. `code-review-main-vs-staging.md`).
 
-Both the audit copy and the repo-root copy receive identical content (byte-for-byte). If `Write` is denied on the repo-root path, fall back to the audit copy alone and surface that path to the user — never skip the write.
+Do NOT also write a second copy under `.claude/tmp/code-review/<run-id>/`. The JSONL artifacts already in that directory are the audit trail; the report is a human deliverable and belongs where the human will find it.
 
-Tell the user once, in one sentence, the absolute path of the repo-root copy (or the audit copy on fallback). Still emit the report inline in the same turn.
+Tell the user once, in one sentence, the absolute path of the report. Still emit it inline in the same turn. If `Write` is denied on the chosen path, surface the attempted path and ask where to put the report — do not silently redirect to a fallback.
 
 ---
 
