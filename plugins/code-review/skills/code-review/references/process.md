@@ -120,7 +120,10 @@ Buckets with only 1–2 files can be merged into the closest neighbor.
 
 ### Working directory
 
-Pick a stable run id (`date +%Y%m%d-%H%M%S` or the PR number). Create `.claude/tmp/code-review/<run-id>/` and store:
+Pick a stable run id (`date +%Y%m%d-%H%M%S` or the PR number). Create `${CLAUDE_PROJECT_DIR}/.claude/tmp/code-review/<run-id>/` and store:
+
+> **One-time setup:** the first run after plugin install will prompt for `Write` permission on each per-shard path. Tell the user to add `"Write(.claude/tmp/code-review/**)"` to `.claude/settings.local.json` (and add `.claude/tmp/` to `.gitignore`) so subsequent runs don't re-prompt. See SKILL.md → "First-run setup".
+
 
 - `candidates-<bucket>.jsonl` — one file **per shard**, written exclusively by that shard's agent. This is how concurrent-write races are avoided: see the "Why per-shard files" note below.
 - `candidates.jsonl` — produced by the orchestrator after all shards return, by concatenating the per-shard files. This is the input to Phase 4.
