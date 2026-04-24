@@ -117,7 +117,7 @@ Aim for ~10–25 files per bucket. Buckets with only 1–2 files can be merged i
 
 #### Bucket dispatch
 
-For each bucket, launch a single `Agent` call (preferably `subagent_type: "Explore"`) in **parallel** (multiple `Agent` tool calls in the same response). The prompt for each shard agent must include:
+For each bucket, launch a single `Agent` call with `subagent_type: "general-purpose"` in **parallel** (multiple `Agent` tool calls in the same response). Shard agents must be general-purpose because they write per-shard JSONL files via `Write`; Explore agents are read-only and will return JSONL inline, defeating the per-shard-file contract. The prompt for each shard agent must include:
 
 - The exact file list for the bucket (absolute paths).
 - The set of checklist files to load (paths under `references/`), tailored to the bucket's contents.
@@ -146,6 +146,15 @@ Each shard agent's reply includes the count `N candidates written to <path>`. Ve
 wc -l .claude/tmp/code-review/<run-id>/candidates-*.jsonl
 ```
 
+Bash `while read -r line` loops mangle backslash-escaped characters in JSON strings and produce false "invalid" reports. Use `jq -c . > /dev/null` as the single source of truth for JSONL well-formedness.
+
+```bash
+# Validate every line is parseable JSON (the only JSONL check that handles escapes correctly).
+for f in .claude/tmp/code-review/<run-id>/candidates-*.jsonl; do
+  jq -c . "$f" > /dev/null || echo "Malformed JSON in $f"
+done
+```
+
 If any shard file is missing or has fewer lines than reported, re-dispatch just that shard. Two common failure modes to watch for:
 - The agent decided it was "read-only" and returned JSONL inline in its reply instead of calling `Write`. Re-dispatch with an explicit reminder that it has `Write` permission.
 - The agent produced malformed JSON. Validate with `jq -c . <file> > /dev/null` before merging.
@@ -169,7 +178,27 @@ If any shard file is missing or has fewer lines than reported, re-dispatch just 
 
 #### Output
 
-`candidates.jsonl` exists at `.claude/tmp/code-review/<run-id>/candidates.jsonl`, produced by concatenating the per-shard `candidates-<bucket>.jsonl` files. Its total line count equals the sum of per-shard line counts (minus any dedup merges). Deduplicate (same file + same rule + overlapping lines = consolidate per Mandate #4) before proceeding.
+`candidates.jsonl` exists at `.claude/tmp/code-review/<run-id>/candidates.jsonl`, produced by concatenating the per-shard `candidates-<bucket>.jsonl` files. Its total line count equals the sum of per-shard line counts (minus any dedup merges).
+
+### Dedupe (required post-Merge step)
+
+Before Phase 4, collapse candidates that violate the same rule at overlapping locations in the same file. Use:
+
+```bash
+jq -s '
+  group_by(.file + "|" + .rule)
+  | map(
+      if length == 1 then .[0]
+      else (.[0] + { lines: (map(.lines) | join(", ")), consolidated_from: [.[].id] })
+      end
+    )
+  | .[]
+' .claude/tmp/code-review/<run-id>/candidates.jsonl | jq -c . > .claude/tmp/code-review/<run-id>/candidates.deduped.jsonl
+
+mv .claude/tmp/code-review/<run-id>/candidates.deduped.jsonl .claude/tmp/code-review/<run-id>/candidates.jsonl
+```
+
+Dedup is NOT optional — skipping it inflates the verification budget and produces reports with near-duplicate adjacent findings.
 
 ### Phase 3 — Find (single-context mode, only if Phase 2.5 was skipped)
 
@@ -186,6 +215,8 @@ Output of this phase: `candidates.jsonl` with one row per candidate. Do not writ
 ### Phase 4 — Verify (independent verifier fan-out)
 
 Read `candidates.jsonl`. For every candidate, dispatch a **separate** `Agent` (general-purpose) whose entire job is to refute or confirm the finding from a fresh context — no memory of why the candidate was raised. The verifier reads the cited file, applies the verification gates, and writes back a verdict.
+
+**Which candidates to send to Verify:** verify exactly the candidates that would survive Gate 0's confidence thresholds if confirmed — HIGH/CRITICAL with `confidence ≥ 60`, MEDIUM with `confidence ≥ 80`, LOW with `confidence ≥ 85`. Candidates below those thresholds will be dropped by Gate 0 regardless of verifier outcome, so verifying them burns Agent budget for no report impact. This is deterministic: two runs over the same `candidates.jsonl` must verify the same subset.
 
 Run verifiers in **batches of 5–8 concurrent Agent calls** (multiple `Agent` tool uses in the same response). Wait for each batch to finish before launching the next, so subagent quota doesn't deadlock and so each batch's results can be appended to `verifications.jsonl` before the next launches.
 
@@ -222,6 +253,21 @@ Now — *after* verification, not before — apply the confidence threshold:
 - **Keep** `status: needs-info` candidates only if their `final_severity` is `CRITICAL` AND `final_confidence ≥ 60` — surface them as a single MEDIUM-severity "Verifier could not confirm; please review manually" finding with the relevant locations listed.
 
 Survivors of this gate are the findings that go into the report.
+
+### Phase 5.5 — Stage-2 build/lint/test (required for large diffs)
+
+When `fileCount ≥ 30` OR `locDelta ≥ 2000`, run a type-check pass over the survivors of Gate 0. Full procedure lives in `references/verification-loop.md` → "Stage-2 build/test gate".
+
+```bash
+# monorepo project-references mode
+npx tsc -b --pretty false 2>&1 | tail -50
+# or single-tsconfig mode
+npx tsc --noEmit --pretty false 2>&1 | tail -50
+```
+
+If `tsc` reports errors introduced by the diff, add one HIGH finding to the report ("TypeScript errors introduced by diff — see N locations"). Pre-existing failures unrelated to the diff get a single `(pre-existing CI red)` suffix on the Build/Lint/Tests header line per `output-format.md`, not a finding.
+
+Do not run `tsc` for small diffs — the wall-clock cost dwarfs the per-finding signal.
 
 ### Phase 6 — Report
 

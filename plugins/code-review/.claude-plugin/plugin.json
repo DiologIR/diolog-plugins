@@ -1,6 +1,6 @@
 {
   "name": "code-review",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "High-signal code review for NestJS APIs and Next.js (App Router) + React 19 apps. Implements a modular router skill that delegates to framework-specific checklists, enforces a >85% confidence threshold, and runs a Chain-of-Verification pass before reporting findings — combining patterns from the everything-claude-code reviewer agents, awesome-copilot NestJS instructions, awesome-cursorrules Next.js 15 / React 19 rules, the Arbiter modular-prompt findings, and the official NestJS / Next.js / React docs.",
   "author": {
     "name": "DiologIR",

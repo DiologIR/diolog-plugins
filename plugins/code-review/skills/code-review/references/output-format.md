@@ -43,6 +43,16 @@ Each finding must use exactly this structure (outer fence shown with `~~~` so th
 **Confidence:** 90 (numeric 0–100; this is the verifier's `final_confidence` after Phase 4 — Phase 5 (Gate 0) enforces the threshold)
 ~~~
 
+### Which fix snippet to use
+
+For each finding that survives Gate 0, the report's `**Fix:**` block is populated in this order of preference:
+
+1. The verifier's `fix_rewritten` field, if present.
+2. The candidate's original `fix`, if the verifier's `fix_verified: true`.
+3. (No third case. A candidate with `fix_verified: false` AND no `fix_rewritten` means the fix is unreliable — prefix the `**Fix:**` block with the italicised note *"No reliable fix — the original fix named a symbol that does not exist. Issue confirmed; remediation requires further investigation."* and keep the `**Issue:**` paragraph.)
+
+Rationale: Gate 4 rewrites exist specifically to prevent proportionality runaway in the report. Skipping `fix_rewritten` and falling back to the shard-finder's original fix nullifies Gate 4.
+
 ### Worked example
 
 ~~~
@@ -133,13 +143,15 @@ Find: <total> candidates · Verify: <X> confirmed · <Y> refuted · <Z> needs-in
 
 For very small reviews where Phase 2.5 (Sharding) was skipped and Phase 4 (Verifier fan-out) ran in single-context mode, still emit this line — `<total>` is the candidate count from Find, and the verify counts come from running the gates in the orchestrator context.
 
-If Stage-2 (build/lint/test) was run, append a second line:
+When Stage-2 (build/lint/test) was run — required for `fileCount ≥ 30` OR `locDelta ≥ 2000`, optional otherwise — append a second line:
 
 ```
 Build: <PASS|FAIL>  ·  Lint: <PASS|FAIL>  ·  Tests: <PASS|FAIL>
 ```
 
-Pre-existing CI breakage unrelated to the diff is suffixed `(pre-existing)` rather than treated as a finding.
+For small diffs where Stage-2 was skipped on purpose, omit the line entirely (do NOT emit `Build: SKIPPED`).
+
+Pre-existing CI breakage unrelated to the diff is suffixed `(pre-existing)` rather than treated as a finding. Distinguish diff-introduced failures from pre-existing ones by running the check against the base ref too — see `verification-loop.md` → "Stage-2 build/test gate".
 
 ---
 

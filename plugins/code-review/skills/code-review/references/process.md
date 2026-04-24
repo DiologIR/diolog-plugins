@@ -107,7 +107,7 @@ These thresholds are calibrated against real reviews — the failure mode being 
 
 Group the changed files into 3–8 buckets. Each bucket should be:
 
-- **Small enough** for one Explore-class agent to walk: ~10–25 files, ideally < 5k LoC.
+- **Small enough** for one shard agent to walk: ~10–25 files, ideally < 5k LoC.
 - **Cohesive enough** that the agent can reason across the bucket without needing files from other buckets.
 
 Recommended axes (in order of preference):
@@ -116,7 +116,9 @@ Recommended axes (in order of preference):
 2. **Layer.** Group by `apps/api/*`, `apps/web/*`, `libs/*`. Best when the diff touches an even slice across many features (e.g. a refactor or framework upgrade).
 3. **Risk class.** `auth-touching`, `state-mutating`, `read-only`, `pure-config`. Best when one PR mixes obvious-low-risk refactors (rename, formatting) with a small high-risk change.
 
-Buckets with only 1–2 files can be merged into the closest neighbor.
+### Balance
+
+Target ~15 files per bucket when file count permits. After initial grouping, if any bucket is ≥ 2× the median bucket size, split it along a secondary axis (e.g. a `surveys` bucket of 25 splits into `surveys-backend` / `surveys-frontend`). Conversely, merge any bucket with fewer than 3 files into the closest neighbor. Wall-clock is determined by the slowest shard — balance matters more than minimizing bucket count.
 
 ### Working directory
 
@@ -138,58 +140,44 @@ Do **not** work around this by telling shards to `Bash cat >>` the shared file. 
 
 ### Shard agent prompt template
 
-Use this verbatim per shard, filling in the bracketed fields. Dispatch via `Agent` with `subagent_type: "Explore"` (preferred — fast, file-walking-shaped).
+Use verbatim per shard. Dispatch via `Agent` with `subagent_type: "general-purpose"` (Write access is required to produce the per-shard JSONL; Explore is read-only).
 
-> **You are a code-review Find agent for the `<bucket-name>` shard of a larger diff review.**
+> You are the `<bucket-name>` shard of a code-review Find pass.
 >
-> **Your job is to walk every file listed below, apply the listed checklists, and emit candidate findings as JSON lines to `<per-shard-candidates-jsonl-path>`.** You are in coverage mode — surface every candidate you identify, including ones you are uncertain about. Do not pre-filter on confidence; a separate verifier pass will refute or confirm each candidate.
->
-> **Output file (you are the SOLE writer):** `<per-shard-candidates-jsonl-path>` — e.g. `.claude/tmp/code-review/<run-id>/candidates-<bucket-name>.jsonl`. Use `Write` to create this file with your full JSONL payload. Because no other agent writes to this path, overwrite is safe. Do NOT write to `candidates.jsonl` (the shared merged file) — the orchestrator assembles that from all shards after they return.
->
-> **If you do not have `Write` access, stop and report that back to the orchestrator instead of returning JSONL inline in your reply.** Inline returns defeat the per-shard file contract and the orchestrator cannot reliably recover them.
->
-> **Files to review (read each one in full, not just the diff hunks):**
+> **Files (read each in full):**
 > ```
-> <absolute file paths, one per line>
+> <absolute paths>
 > ```
 >
-> **Checklists to apply (Read each, then walk every item against the files above):**
-> ```
-> <absolute paths to the relevant references/*.md files>
-> ```
->
-> **Diff context** (use this to focus on what changed; but findings can cite any line in the file, not just hunks):
+> **Diff context:**
 > ```bash
 > git diff <base>..<head> -- <files>
 > ```
 >
-> **Hard rules:**
-> - No stylistic findings (formatting, quote style, naming case — anything ESLint/Prettier handles).
-> - Stay scoped to the diff. Exception: a CRITICAL security issue or a multi-tenant scoping bug newly exploitable because of a new caller in the diff.
-> - Consolidate identical violations across N locations into a single candidate listing all N.
-> - **Do not write the user-facing report.** Your output is JSON lines only.
->
-> **Candidate schema** (one JSON object per line in `<per-shard-candidates-jsonl-path>`):
-> ```json
-> {
->   "id": "<bucket-name>-<3-digit-counter>",
->   "file": "<repo-relative path>",
->   "lines": "<single line or range>",
->   "title": "<one-sentence imperative title>",
->   "severity": "CRITICAL|HIGH|MEDIUM|LOW",
->   "confidence": <0-100>,
->   "rule": "<which checklist rule, in plain language>",
->   "claim": "<2-3 sentences with the exact code quoted inline>",
->   "fix": "<smallest code change that resolves the issue>",
->   "shard": "<bucket-name>"
-> }
+> **Checklists (Read each and walk every item against the files above):**
+> ```
+> <absolute paths to references/*.md files that match this bucket>
 > ```
 >
-> When done, reply with a single line: `Shard <bucket-name>: <N> candidates written to <per-shard-candidates-jsonl-path>`.
+> **Output path (you are the SOLE writer — use `Write`):**
+> `${RUN_DIR}/candidates-<bucket-name>.jsonl`
+>
+> **Candidate schema** (one JSON object per line):
+> ```json
+> {"id":"<bucket>-<nnn>","file":"<path>","lines":"<range>","title":"<imperative>","severity":"CRITICAL|HIGH|MEDIUM|LOW","confidence":<0-100>,"rule":"<checklist rule>","claim":"<2-3 sentences with quoted code>","fix":"<smallest diff>","shard":"<bucket>"}
+> ```
+>
+> **Rules:**
+> - Coverage mode — surface every candidate, including uncertain ones. Phase 4 filters.
+> - No stylistic findings (formatting, naming case, anything ESLint/Prettier handles).
+> - Consolidate identical violations across N locations into one candidate listing all N.
+> - Grep to verify any symbol your `fix` names exists in the project. Findings whose fix names a nonexistent symbol get dropped at Verify.
+>
+> When done, reply with exactly: `Shard <bucket-name>: <N> candidates written to <path>`. No other prose.
 
 ### Parallel dispatch
 
-Launch all shard agents in **a single message** containing one `Agent` tool call per bucket. They run concurrently. Each is given a distinct `candidates-<bucket>.jsonl` path. Wait for all to return before proceeding to Merge.
+Launch all shard agents in **a single message** containing one `Agent` tool call per bucket, each with `subagent_type: "general-purpose"`. `general-purpose` is required because shards must `Write` their per-shard JSONL; Explore is read-only. They run concurrently. Each is given a distinct `candidates-<bucket>.jsonl` path. Wait for all to return before proceeding to Merge.
 
 ### Merge
 
@@ -200,6 +188,25 @@ cat .claude/tmp/code-review/<run-id>/candidates-*.jsonl \
   > .claude/tmp/code-review/<run-id>/candidates.jsonl
 ```
 
+### Dedupe (required, before Phase 4)
+
+Collapse candidates that violate the same rule in the same file into one consolidated candidate. Run exactly this:
+
+```bash
+jq -s '
+  group_by(.file + "|" + .rule)
+  | map(
+      if length == 1 then .[0]
+      else (.[0] + { lines: (map(.lines) | join(", ")), consolidated_from: [.[].id] })
+      end
+    )
+  | .[]
+' "${RUN_DIR}/candidates.jsonl" | jq -c . > "${RUN_DIR}/candidates.deduped.jsonl"
+mv "${RUN_DIR}/candidates.deduped.jsonl" "${RUN_DIR}/candidates.jsonl"
+```
+
+Dedup is NOT optional — skipping it inflates the verification budget and produces reports with near-duplicate adjacent findings. If two shards independently found the same bug, this merge is where they collapse.
+
 ### Sanity check (do not skip)
 
 For each shard, compare the agent's reply count against the line count of its per-shard file:
@@ -208,14 +215,21 @@ For each shard, compare the agent's reply count against the line count of its pe
 wc -l .claude/tmp/code-review/<run-id>/candidates-*.jsonl
 ```
 
+```bash
+# Validate every line is parseable JSON. Bash `while read -r line` mangles backslash-escaped
+# characters in JSON strings and produces false "invalid" reports. Use jq as the single
+# source of truth.
+for f in "${RUN_DIR}"/candidates-*.jsonl; do
+  jq -c . "$f" > /dev/null || { echo "Malformed JSON in $f"; exit 1; }
+done
+```
+
+If `jq` is not installed, `python3 -c "import json; [json.loads(l) for l in open('file')]"` is the acceptable fallback — loop it over each per-shard file and fail on the first exception.
+
 If a shard reported `N candidates written` but the file is missing or has fewer than `N` lines, re-dispatch just that shard. Common causes:
 - The agent decided it was read-only and returned JSONL inline instead of writing the file. Re-dispatch with an explicit reminder that it has `Write` access to its per-shard path.
-- The agent wrote malformed JSON. Validate with `jq -c . <file> > /dev/null` before merging; any line that fails parse should be re-requested from the same shard.
+- The agent wrote malformed JSON. The `jq -c .` loop above is the single source of truth; any line that fails parse should be re-requested from the same shard.
 - The merged `candidates.jsonl` line count does not equal the sum of per-shard line counts. This signals a silent truncation during `cat` (e.g., filename glob missed a file) — inspect and re-merge explicitly.
-
-### Deduplication
-
-After merging, scan `candidates.jsonl` for cross-shard duplicates (two shards both flagged the same file:line range with the same rule). Merge them per Mandate #4 — keep one row, list both shards in the `shard` field as a comma-separated value.
 
 ### Exit condition
 
@@ -289,6 +303,17 @@ Use this verbatim per candidate, filling in the bracketed fields:
 > ```
 >
 > Use `needs-info` only when you cannot determine confirmation/refutation without knowledge outside the repo (e.g. "depends on what `RESEND_RATE_LIMIT` is set to in production"). Do not use it as a hedge.
+
+### Batched verification (optional)
+
+For related candidates in the same file (e.g. three findings in the same controller), a single verifier call may examine all of them at once, amortizing the file-read cost. When batching:
+
+- Pass ALL candidate JSON lines in the verifier prompt (not just ids).
+- The verifier MUST return one JSON line per candidate, in the same order, separated by newlines (valid NDJSON).
+- The orchestrator appends all N lines to `verifications.jsonl` in order.
+- Cap batch size at 4 candidates per verifier — larger batches lose the fresh-context benefit.
+
+Do NOT batch candidates across different files, or candidates at different severity tiers — each verifier's "active refutation" mindset is calibrated per-candidate, and mixing contexts dilutes it.
 
 ### Result handling
 

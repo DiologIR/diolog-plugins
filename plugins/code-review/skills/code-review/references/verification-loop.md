@@ -87,7 +87,9 @@ If the proposed `fix` is dramatically larger than the change being reviewed:
 …then either:
 
 - **Downgrade** `final_severity` to MEDIUM/LOW and shorten the `fix` to the smallest incremental step that addresses the immediate symptom.
-- Set `fix_verified: false` if the original `fix` is no longer accurate, so the report knows to omit it.
+- **Write the shorter fix into `fix_rewritten`** (optional string field). The report generator will prefer `fix_rewritten` over the candidate's original `fix` when present. Leave `fix_verified: true` — the finding itself is real, only the original fix was too big.
+
+These options combine: you can both downgrade `final_severity` and write a `fix_rewritten`.
 
 Do **not** refute on Gate 4 alone — the underlying issue may still be real. Refute only when one of Gates 1–3 fails.
 
@@ -118,9 +120,12 @@ The verifier's final reply must contain exactly one JSON line, on its own line, 
   "evidence": "<1-3 sentences, cite file:line of what you checked>",
   "final_severity": "CRITICAL|HIGH|MEDIUM|LOW",
   "final_confidence": <0-100>,
-  "fix_verified": <true|false>
+  "fix_verified": <true|false>,
+  "fix_rewritten": "<optional — smaller/corrected fix when Gate 4 rewrote it, otherwise omit>"
 }
 ```
+
+`fix_rewritten` is OPTIONAL — omit the key entirely when the original `fix` is fine. When present, Phase 6 (Report) uses it instead of the candidate's original `fix`. `fix_verified` now indicates whether the original OR the rewritten fix is accurate, which for a confirmed finding is always true.
 
 Use `needs-info` only when confirmation/refutation depends on knowledge outside the repo (e.g. "depends on Resend's per-account rate limit"). Do not use it as a hedge for "I'm not sure" — the next-best alternative is `confirmed` with low `final_confidence`, which Phase 5 will filter appropriately.
 
@@ -128,9 +133,15 @@ Use `needs-info` only when confirmation/refutation depends on knowledge outside 
 
 ---
 
-## Optional Stage-2 build/test gate
+## Stage-2 build/test gate
 
-When the user explicitly asks for a *thorough* review (or you have access to run commands and the project is small enough), run the build/lint/test suite to ground findings further. This runs in the orchestrator context (not per-verifier), once after Phase 5 produces the survivor list, to catch any finding whose proposed fix doesn't compile.
+Stage-2 runs after Phase 5 (Gate 0) and before Phase 6 (Report). It exists to ground findings in whether the branch actually builds. It is:
+
+- **Required for large diffs** — `fileCount ≥ 30` OR `locDelta ≥ 2000`.
+- **Optional for small diffs** — the type-checker's wall-clock cost dwarfs the per-finding signal when only a handful of files changed.
+- **Always skipped** for doc-only diffs (`.md` / `.mdx` / `.txt` with no source changes).
+
+The orchestrator, not per-verifier, runs this once against the diff's head commit.
 
 ```bash
 # Detect package manager
@@ -145,9 +156,15 @@ npx tsc -b   # if monorepo with project references
 pnpm lint --silent || npm run lint --silent || yarn lint --silent
 ```
 
-If type-check or lint fails because of the diff, **add a HIGH finding** referencing the failure. (If failures are pre-existing breakage unrelated to the diff, mention once in the report's verification stats line as `(pre-existing CI red)` — do not flag.)
+If the repo uses project references (`tsconfig.json` has `references: [...]`), prefer `npx tsc -b --pretty false` which only re-checks projects reachable from changed files. For a flat `tsconfig.json`, use `npx tsc --noEmit --pretty false`.
 
-Do **not** run this gate by default for large monorepos. Type-check alone on a large monorepo can take minutes and provides limited per-finding signal.
+If type-check fails because of the diff:
+- Add ONE `HIGH` finding titled "TypeScript errors introduced by the diff" listing up to 5 representative `file:line: error` tuples and the total error count.
+- Do NOT try to fix the errors in the report. The report is read-only.
+
+If lint fails but type-check passes: add one `MEDIUM` finding with the same shape.
+
+If failures are pre-existing breakage on `main` unrelated to the diff: do NOT add a finding. Instead, suffix the report's verification stats line with `(pre-existing CI red)` per `output-format.md`. Confirm pre-existence with `git stash && npx tsc -b --pretty false` against base before flagging diff-introduced.
 
 ---
 
