@@ -286,9 +286,25 @@ Then the findings, then exactly one verdict line:
 
 Do not pad with summary commentary after the verdict.
 
+#### Write the report to a file (required)
+
+The report must always be written to disk as a markdown file, not only printed to the conversation. Large reports scroll off-screen and reports printed inline are hard to share, diff, or attach to a PR comment. The file is canonical; the inline emit is a preview.
+
+**Destination (in order of precedence):**
+
+1. **User-specified path.** If the user's invocation names a target path (e.g. *"write results to `review.md`"* or *"put the report in `docs/reviews/`"*), write there. For a directory-only path, use `code-review-<base>-vs-<head>.md` inside it.
+2. **PR mode default.** When the review started from a `gh pr view <ref>`: write to `${CLAUDE_PROJECT_DIR}/.claude/tmp/code-review/<run-id>/report.md` AND to `${CLAUDE_PROJECT_DIR}/code-review-PR-<number>.md` at the repo root.
+3. **Local/branch-range default.** Write to `${CLAUDE_PROJECT_DIR}/.claude/tmp/code-review/<run-id>/report.md` AND to `${CLAUDE_PROJECT_DIR}/code-review-<base>-vs-<head>.md` at the repo root (e.g. `code-review-main-vs-staging.md`).
+
+The per-run copy under `<run-id>/report.md` is the immutable audit trail (sits next to `candidates.jsonl` and `verifications.jsonl`). The repo-root copy is the working copy the user opens — predictable filename, convenient to diff across runs, can be gitignored if the team prefers ephemeral reports.
+
+**After writing**, tell the user — in one sentence in the conversation — the absolute path of the repo-root copy so they can open it. Still emit the full report inline in the same turn for readers who don't want to open the file. Do NOT print a second copy of the file path; one mention suffices.
+
+**If `Write` is denied on the repo-root path** (permission prompt declined), fall back to the run-id copy and surface that path to the user instead. Never skip the write entirely — silently omitting the file is a regression.
+
 ## Tools available to you
 
-`Read`, `Grep`, `Glob`, `Bash` (for `git`, `gh`, `cat package.json`, and concatenating the per-shard files into the merged `candidates.jsonl`), `Agent` (for sharding and verifier fan-out), `Write` (only for the intermediate `candidates-<bucket>.jsonl` / `candidates.jsonl` / `verifications.jsonl` under `.claude/tmp/code-review/<run-id>/` — never for source).
+`Read`, `Grep`, `Glob`, `Bash` (for `git`, `gh`, `cat package.json`, and concatenating the per-shard files into the merged `candidates.jsonl`), `Agent` (for sharding and verifier fan-out), `Write` (for intermediate `candidates-<bucket>.jsonl` / `candidates.jsonl` / `verifications.jsonl` under `.claude/tmp/code-review/<run-id>/`, for the Phase 6 `report.md` under the same dir, and for the repo-root `code-review-*.md` copy — never for project source code, tests, or config).
 
 You do **not** have `Edit`. If asked to apply a fix, decline and tell the user to invoke a separate edit step — you are a reviewer, not a refactorer.
 
