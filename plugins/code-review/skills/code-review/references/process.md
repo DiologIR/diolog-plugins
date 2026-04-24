@@ -122,9 +122,16 @@ Buckets with only 1–2 files can be merged into the closest neighbor.
 
 Pick a stable run id (`date +%Y%m%d-%H%M%S` or the PR number). Create `.claude/tmp/code-review/<run-id>/` and store:
 
-- `candidates.jsonl` — appended by shard agents (Phase 3) and verifier agents (Phase 4).
-- `verifications.jsonl` — appended by verifier agents.
+- `candidates-<bucket>.jsonl` — one file **per shard**, written exclusively by that shard's agent. This is how concurrent-write races are avoided: see the "Why per-shard files" note below.
+- `candidates.jsonl` — produced by the orchestrator after all shards return, by concatenating the per-shard files. This is the input to Phase 4.
+- `verifications.jsonl` — written by the orchestrator from verifier replies (verifiers do not touch disk; they return one JSON line per reply).
 - `buckets.json` — the bucket-to-files mapping for traceability.
+
+#### Why per-shard files (CRITICAL — do not skip)
+
+The `Write` tool has **overwrite semantics**, not append semantics. If N parallel shard agents all `Write` to the same `candidates.jsonl`, whichever shard writes last wins and every earlier shard's findings are silently destroyed. This has happened in a live review — 5 of 8 shards' candidates vanished, with the shard agents still reporting success. Per-shard files eliminate the race by construction: each shard is the sole writer to its own path, so overwrite is harmless.
+
+Do **not** work around this by telling shards to `Bash cat >>` the shared file. `>>` does append, but interleaved multi-line writes can still corrupt individual JSONL records when two agents are mid-write simultaneously. Per-shard files + single-threaded concatenation is the only reliable pattern.
 
 ### Shard agent prompt template
 
@@ -132,7 +139,11 @@ Use this verbatim per shard, filling in the bracketed fields. Dispatch via `Agen
 
 > **You are a code-review Find agent for the `<bucket-name>` shard of a larger diff review.**
 >
-> **Your job is to walk every file listed below, apply the listed checklists, and emit candidate findings as JSON lines appended to `<candidates-jsonl-path>`.** You are in coverage mode — surface every candidate you identify, including ones you are uncertain about. Do not pre-filter on confidence; a separate verifier pass will refute or confirm each candidate.
+> **Your job is to walk every file listed below, apply the listed checklists, and emit candidate findings as JSON lines to `<per-shard-candidates-jsonl-path>`.** You are in coverage mode — surface every candidate you identify, including ones you are uncertain about. Do not pre-filter on confidence; a separate verifier pass will refute or confirm each candidate.
+>
+> **Output file (you are the SOLE writer):** `<per-shard-candidates-jsonl-path>` — e.g. `.claude/tmp/code-review/<run-id>/candidates-<bucket-name>.jsonl`. Use `Write` to create this file with your full JSONL payload. Because no other agent writes to this path, overwrite is safe. Do NOT write to `candidates.jsonl` (the shared merged file) — the orchestrator assembles that from all shards after they return.
+>
+> **If you do not have `Write` access, stop and report that back to the orchestrator instead of returning JSONL inline in your reply.** Inline returns defeat the per-shard file contract and the orchestrator cannot reliably recover them.
 >
 > **Files to review (read each one in full, not just the diff hunks):**
 > ```
@@ -155,7 +166,7 @@ Use this verbatim per shard, filling in the bracketed fields. Dispatch via `Agen
 > - Consolidate identical violations across N locations into a single candidate listing all N.
 > - **Do not write the user-facing report.** Your output is JSON lines only.
 >
-> **Candidate schema** (one JSON object per line, append to `<candidates-jsonl-path>`):
+> **Candidate schema** (one JSON object per line in `<per-shard-candidates-jsonl-path>`):
 > ```json
 > {
 >   "id": "<bucket-name>-<3-digit-counter>",
@@ -171,19 +182,41 @@ Use this verbatim per shard, filling in the bracketed fields. Dispatch via `Agen
 > }
 > ```
 >
-> When done, reply with a single line: `Shard <bucket-name>: <N> candidates appended to <candidates-jsonl-path>`.
+> When done, reply with a single line: `Shard <bucket-name>: <N> candidates written to <per-shard-candidates-jsonl-path>`.
 
 ### Parallel dispatch
 
-Launch all shard agents in **a single message** containing one `Agent` tool call per bucket. They run concurrently. Wait for all to return before proceeding to Phase 4.
+Launch all shard agents in **a single message** containing one `Agent` tool call per bucket. They run concurrently. Each is given a distinct `candidates-<bucket>.jsonl` path. Wait for all to return before proceeding to Merge.
+
+### Merge
+
+Once all shards have returned, the orchestrator assembles the shared `candidates.jsonl` by concatenating the per-shard files — single-threaded, no race:
+
+```bash
+cat .claude/tmp/code-review/<run-id>/candidates-*.jsonl \
+  > .claude/tmp/code-review/<run-id>/candidates.jsonl
+```
+
+### Sanity check (do not skip)
+
+For each shard, compare the agent's reply count against the line count of its per-shard file:
+
+```bash
+wc -l .claude/tmp/code-review/<run-id>/candidates-*.jsonl
+```
+
+If a shard reported `N candidates written` but the file is missing or has fewer than `N` lines, re-dispatch just that shard. Common causes:
+- The agent decided it was read-only and returned JSONL inline instead of writing the file. Re-dispatch with an explicit reminder that it has `Write` access to its per-shard path.
+- The agent wrote malformed JSON. Validate with `jq -c . <file> > /dev/null` before merging; any line that fails parse should be re-requested from the same shard.
+- The merged `candidates.jsonl` line count does not equal the sum of per-shard line counts. This signals a silent truncation during `cat` (e.g., filename glob missed a file) — inspect and re-merge explicitly.
 
 ### Deduplication
 
-Once all shards have returned, scan `candidates.jsonl` for cross-shard duplicates (two shards both flagged the same file:line range with the same rule). Merge them per Mandate #4 — keep one row, list both shards in the `shard` field as a comma-separated value.
+After merging, scan `candidates.jsonl` for cross-shard duplicates (two shards both flagged the same file:line range with the same rule). Merge them per Mandate #4 — keep one row, list both shards in the `shard` field as a comma-separated value.
 
 ### Exit condition
 
-`candidates.jsonl` exists and contains every candidate from every shard, deduplicated. The orchestrator (you) has not read any source files for the bucket contents — that work was delegated.
+`candidates.jsonl` exists, its line count equals the sum of per-shard counts reported by the shard agents (minus any dedup merges), and every line parses as JSON. The orchestrator (you) has not read any source files for the bucket contents — that work was delegated.
 
 ---
 
@@ -256,7 +289,7 @@ Use this verbatim per candidate, filling in the bracketed fields:
 
 ### Result handling
 
-Append each verifier's JSON line to `verifications.jsonl`. After all batches finish, merge `verifications.jsonl` back into `candidates.jsonl` (e.g. with a quick `jq` join keyed on `id`) so each candidate has its `status`, `final_severity`, `final_confidence`, and `evidence` fields.
+Verifiers **return** their single JSON line in their reply; they do not write to disk. The **orchestrator** (you) collects each batch's replies and appends them to `verifications.jsonl` single-threaded — that way there is no concurrent-write race, unlike Phase 2.5 where the shard agents themselves write files. After all batches finish, merge `verifications.jsonl` back into `candidates.jsonl` (e.g. with a quick `jq` join keyed on `id`) so each candidate has its `status`, `final_severity`, `final_confidence`, and `evidence` fields.
 
 ### Exit condition
 
