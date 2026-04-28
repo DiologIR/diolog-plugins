@@ -178,6 +178,8 @@ Use verbatim per shard. Dispatch via `Agent` with `subagent_type: "general-purpo
 > - Grep to verify any symbol your `fix` names exists in the project. Findings whose fix names a nonexistent symbol get dropped at Verify.
 > - No `mkdir`, no directory probing. Write directly to the path above.
 >
+> **Reply discipline (output-token hygiene).** Skip the throat-clearing. Do **not** narrate "Let me read the file…", "Now I'll grep for…", "Looks good", "I'll check next…" between tool calls — go straight to the next tool. Do **not** summarize what you found before writing the file; the JSONL is the artifact. Do **not** quote findings back at the orchestrator after writing — the orchestrator will read the file. **Exception:** the JSON `claim` and `fix` fields inside each candidate must stay full-prose (2–3 sentences, quoted code, complete fix snippet) — the orchestrator copies these into the report so terseness there hurts the human reader. Compress your own narration, not the artifact.
+>
 > When done, reply with exactly: `Shard <bucket-name>: <N> candidates written to <path>`. No other prose.
 
 ### Parallel dispatch
@@ -273,7 +275,15 @@ For each loaded checklist:
 
 ### Method
 
-Read `candidates.jsonl`. For each row, dispatch a separate `Agent` (general-purpose) with the prompt template below. Run in **batches of 5–8 concurrent verifiers** — multiple `Agent` tool uses in the same message — so subagent quota doesn't deadlock and so each batch's results are visible before the next batch launches.
+Read `candidates.jsonl`. For each row, dispatch a separate `Agent` (general-purpose, **`model: "sonnet"`**) with the prompt template below. Run in **batches of 5–8 concurrent verifiers** — multiple `Agent` tool uses in the same message — so subagent quota doesn't deadlock and so each batch's results are visible before the next batch launches.
+
+### Verifier model: Sonnet, not Opus
+
+Pass `model: "sonnet"` on every verifier `Agent` call. Verifier scope is bounded by design: read one file in full, grep for one or two symbols, apply the four gates, return one JSON line. Sonnet handles that cleanly and the per-verifier cost drops materially versus Opus. Empirically (see the diolog full-codebase review run, 2026-04-28) Sonnet verifiers caught the same hallucinations Opus verifiers would have — the failure mode at this stage is "didn't grep" or "didn't read the whole file", not "didn't reason hard enough".
+
+The orchestrator and the shard finders stay on the inherited (typically Opus) model. They need the deeper read across many files. **Only the verifier fan-out moves down a tier.**
+
+If the verifier's `Agent` call is dispatched without `model: "sonnet"`, the agent will inherit the orchestrator's model (Opus) and silently overspend. There is no error, just a larger bill — so this is a discipline rule, not a runtime check. If you find yourself defending an Opus verifier ("the case is subtle"), surface the candidate to the human in the report instead of upgrading the model.
 
 ### Verifier agent prompt template
 
@@ -294,6 +304,8 @@ Use this verbatim per candidate, filling in the bracketed fields:
 > 4. **Gate 4 — Proportionality.** If the proposed `fix` is dramatically larger than the change being reviewed (introduces a new abstraction, renames many files, requires a new dependency), downgrade `final_severity` and rewrite the fix smaller, but do not refute on this gate alone.
 >
 > **Active refutation, not passive confirmation.** Try to find a reason this finding is wrong. Look for the validation 30 lines up, the guard one decorator level up, the import that already exists. Confirmation is the answer when you have actively looked for the refutation and failed to find it.
+>
+> **Reply discipline (output-token hygiene).** Skip throat-clearing — no "Let me read…", "Now I'll check…", "Looks like…" between tool calls. Go straight to the next tool. Do **not** restate the candidate's claim or recap what you found before printing the JSON; the JSON is the artifact. **Exception:** the `evidence` field must stay full-prose (1–3 sentences citing `file:line`) — the orchestrator surfaces it in the report. Compress your narration, not the JSON.
 >
 > **Output one JSON line, exactly this shape, on a line by itself in your final reply:**
 > ```json

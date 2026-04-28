@@ -111,6 +111,8 @@ Confirmation is the answer when you have actively looked for the refutation and 
 
 ## Verifier output
 
+**Reply discipline.** Skip throat-clearing — no "Let me read…", "Now I'll check…", "The finding looks…" between tool calls. Go straight to the next tool. Do **not** restate the candidate's claim or recap what you found before printing the JSON. The JSON is the artifact, not your prose. The `evidence` field is the one place full sentences belong (1–3, citing `file:line`); the orchestrator surfaces it verbatim in the report, so terseness there hurts the human reader. Compress narration, not the JSON.
+
 The verifier's final reply must contain exactly one JSON line, on its own line, in this shape:
 
 ```json

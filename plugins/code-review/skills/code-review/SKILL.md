@@ -221,7 +221,9 @@ Output of this phase: `candidates.jsonl` with one row per candidate. Do not writ
 
 ### Phase 4 — Verify (independent verifier fan-out)
 
-Read `candidates.jsonl`. For every candidate, dispatch a **separate** `Agent` (general-purpose) whose entire job is to refute or confirm the finding from a fresh context — no memory of why the candidate was raised. The verifier reads the cited file, applies the verification gates, and writes back a verdict.
+Read `candidates.jsonl`. For every candidate, dispatch a **separate** `Agent` (general-purpose, **`model: "sonnet"`**) whose entire job is to refute or confirm the finding from a fresh context — no memory of why the candidate was raised. The verifier reads the cited file, applies the verification gates, and writes back a verdict.
+
+**Model tier — verifier runs on Sonnet, not Opus.** Pass `model: "sonnet"` to every verifier `Agent` call. Verifier work is bounded: read one file, grep one symbol, return one JSON line. Sonnet handles it fine and the cost-per-verifier drops materially. The orchestrator and shard finders stay on the inherited (typically Opus) model — they need the deeper read. Only the verifier fan-out moves down a tier.
 
 **Which candidates to send to Verify:** verify exactly the candidates that would survive Gate 0's confidence thresholds if confirmed — HIGH/CRITICAL with `confidence ≥ 60`, MEDIUM with `confidence ≥ 80`, LOW with `confidence ≥ 85`. Candidates below those thresholds will be dropped by Gate 0 regardless of verifier outcome, so verifying them burns Agent budget for no report impact. This is deterministic: two runs over the same `candidates.jsonl` must verify the same subset.
 
