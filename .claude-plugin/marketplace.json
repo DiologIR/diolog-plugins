@@ -94,6 +94,17 @@
       },
       "source": "./plugins/create-persona",
       "category": "productivity"
+    },
+    {
+      "name": "log-bugs-to-linear",
+      "description": "Create Linear issues in the Diolog workspace from a code-review markdown report. Each `### [SEVERITY] Title` finding becomes one issue with severity (Critical/High/Medium/Low) and type (Vulnerability/Bug) labels and Todo status. Preserves the reviewer's exact prose, file:line citations, fix recommendations, and confidence scores. Triggers on phrases like 'log these to Linear', 'create Linear issues for each finding', 'import this code review into Linear', or any prompt that points at a markdown file with `[CRITICAL]`/`[HIGH]`/`[MEDIUM]`/`[LOW]` severity-tagged sections.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/log-bugs-to-linear",
+      "category": "development"
     }
   ]
 }

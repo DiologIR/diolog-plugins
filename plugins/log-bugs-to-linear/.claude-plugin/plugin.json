@@ -1,0 +1,9 @@
+{
+  "name": "log-bugs-to-linear",
+  "version": "1.0.0",
+  "description": "Create Linear issues in the Diolog workspace from a code-review markdown report. Each `### [SEVERITY] Title` finding becomes one issue with severity (Critical/High/Medium/Low) and type (Vulnerability/Bug) labels and Todo status. Preserves the reviewer's exact prose, file:line citations, fix recommendations, and confidence scores.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
