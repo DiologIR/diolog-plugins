@@ -38,7 +38,18 @@ When you use the `Workflow` tool to fan out subagents:
 - **Retry transient failures.** If an agent's result is an "API Error / Rate limited / temporarily limiting requests" string (or `null`), re-run it in a later small batch; never treat it as a real result or finding.
 - **Prefer plain-text returns for long, file-reading subagents.** Schema-forced agents that read many files often finish without emitting the structured output. Have each reader/reviewer return a fixed-shape **markdown** fragment, and reserve any `schema` for the single synthesis/aggregation step.
 
-Run these phases **in order; none may be skipped**:
+Run these phases **in order; none may be skipped**, and **carry the work all the way through to Phase F** — do not stop after implementation. Every phase A–F must actually run; the issue is not done until Phase F has completed.
+
+### Per-phase verification gate (after EVERY phase, before the next)
+
+At the end of each phase — A, B, C, D, E, and F — and **before** starting the next, verify that phase's output against **BOTH**: (1) the implementation plan at `docs/plans/<id>.md`, and (2) the **original Linear ticket** description + every comment (human corrections, the UI amendment). Look for drift, missing requirements, regressions, and guardrail violations introduced in that phase. **Fix any issue you find before advancing**, then re-verify. Do NOT move to the next phase while the current phase's output diverges from the plan or the ticket. (Phase D is the full, comprehensive acceptance review of the whole implementation; this gate is the lighter *incremental* check scoped to what the just-finished phase produced — both run. For a heavy phase you may run this gate as its own small reviewer workflow.)
+
+- After **A** — the build spec covers every plan step and every ticket functional + UI requirement; nothing is silently dropped or pushed out of scope.
+- After **B** — each implemented slice matches its plan step and the ticket; the typecheck / codegen / validate gates are green.
+- After **C** — the rebase preserved every requirement; no plan/ticket behaviour was lost while resolving conflicts; gates still green.
+- After **D** — findings are tagged at all severity levels and adversarially verified (this *is* the comprehensive check).
+- After **E** — every confirmed finding is actually resolved and re-verified against the plan/ticket; the fixes introduced no new drift.
+- After **F** — the final state satisfies the full plan + ticket; all gates pass.
 
 ### Phase A — Understand & specify (workflow)
 Fan out parallel reader subagents — one per plan slice / subsystem (backend module, schemas, chat orchestrator, settings, UI, etc.). Each reads the relevant existing code in `WT`, the plan steps it owns, and the ticket requirements it must satisfy, and returns: exact files to create/modify, interfaces/contracts, the closest existing analogue, and the ticket acceptance checks it fulfils. Synthesize into ONE dependency-ordered build spec: the ordered slice list, each slice's **file set (disjoint across any slices run in parallel)**, and the requirements it covers. The spec must exist before any code is written.
@@ -82,6 +93,6 @@ Then move the issue to `Developer Review` via `mcp__linear__save_issue` (skip on
 
 - Follow the target project's CLAUDE.md. Production-ready code only.
 - **Do NOT push the branch and do NOT open a PR.** The work stays local in the worktree, committed and rebased on `origin/staging`, for human review. Linear MCP is for the completion comment and the status update only.
-- Every phase (A–F) is mandatory; do not skip the spec phase, the rebase, the acceptance review, or the fix-resolution loop.
+- Every phase (A–F) is mandatory and must run to completion through Phase F; do not skip the spec phase, the rebase, the acceptance review, or the fix-resolution loop. Do not finalize (Phase F) until A–E have each completed AND passed their per-phase plan+ticket verification gate (above). After each phase, check the just-produced output against the plan and the original ticket and fix any issue before continuing — verification is continuous, not deferred to the end.
 - Do NOT block on plan size — decompose and deliver. Block only on genuine missing information: post a Linear blocker comment, do NOT change status, and stop. Never ship partial or stubbed work to dodge a block.
 - Cost note: heavy fan-out on Opus burns your interactive allowance fast. Route read/spec/review subagents to a cheaper model where the `Workflow` tool allows a per-agent model override, and reserve the strongest model for implementation and fixes.
