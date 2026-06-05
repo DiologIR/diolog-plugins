@@ -12,6 +12,7 @@ A marketplace of Claude Code plugins by [DiologIR](https://github.com/DiologIR).
 | **code-review** | High-signal code review for NestJS APIs and Next.js (App Router) + React 19 apps. Modular router skill that delegates to framework-specific checklists (NestJS, Next.js, TypeScript, OWASP security), enforces a >85% confidence threshold, and runs a Chain-of-Verification pass to suppress hallucinated findings. Reports in CRITICAL/HIGH/MEDIUM/LOW taxonomy with file:line and fix snippet. |
 | **design-md-from-screenshots** | Reverse-engineer a product's visual design system from one or more website/app screenshots and produce a single authoritative `DESIGN.md` — a framework-agnostic, token-based spec (palette, typography, spacing, shape, motion, component inventory, voice, do/don't) with per-token provenance marks, so another AI (Stitch, Claude, v0, Cursor, AI Elements) can generate new screens that belong to the same product. |
 | **presentation-design-md-from-screenshots** | Slide-deck sibling of `design-md-from-screenshots`. Reverse-engineer a deck's visual design system from slide screenshots and produce a single authoritative `PRESENTATION_DESIGN.md` — tool-agnostic, token-based spec (canvas, palette, typography, slide archetypes, chart style, image treatment, iconography, do/don't) hard-capped at 1,700 characters so another AI (Gamma, Beautiful.ai, Pitch, Keynote/PowerPoint co-pilots, Stitch, v0, Claude, Cursor) can generate new slides that belong to the same deck. |
+| **linear-issue-pipeline** | Three native skills — `linear-triage`, `linear-plan`, `linear-worker` — that run the Diolog Linear issue pipeline (triage → plan → worker) inside your interactive Claude Code session, with no Agent SDK (so usage draws from your interactive allowance, not the separate Agent SDK credit). Triage posts a non-technical readiness comment; plan writes `docs/plans/<id>.md` and comments its repo-relative path (no upload); worker implements a planned issue in an isolated worktree via dynamic ultracode workflows (understand → implement → rebase → acceptance review → resolve), leaving a local branch (no remote PR). |
 
 ## Installation
 
@@ -30,6 +31,7 @@ A marketplace of Claude Code plugins by [DiologIR](https://github.com/DiologIR).
 /plugin install code-review@diolog-plugins
 /plugin install design-md-from-screenshots@diolog-plugins
 /plugin install presentation-design-md-from-screenshots@diolog-plugins
+/plugin install linear-issue-pipeline@diolog-plugins
 ```
 
 ## Contributing
