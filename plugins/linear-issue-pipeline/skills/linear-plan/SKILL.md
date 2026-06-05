@@ -33,6 +33,13 @@ Runs **in your current session** with Linear MCP, `Read`/`Glob`/`Grep`/`Write`, 
 
 7. Print a short summary (tier + the repo-relative plan path). In dry-run, say the file was written locally and no Linear writes were made.
 
+## Workflow fan-out limits (avoid throttling)
+
+When step 3 uses the `Workflow` tool to investigate in parallel:
+- **Cap each wave at ≤4 concurrent agents.** Batch a larger fan-out into sequential waves of ≤4 — firing ~10+ agents at once trips a server-side rate limit ("temporarily limiting requests — not your usage limit") that fails most of the wave. Chunk the items and `await` each small `parallel(...)` batch before the next; don't pass all items to one `parallel()`.
+- **Retry transient failures.** If an agent's result is an "API Error / Rate limited / temporarily limiting requests" string (or `null`), re-run it in a later small batch; never treat it as a real finding.
+- **Prefer plain-text returns for long, file-reading subagents.** Schema-forced readers that read many files often finish without emitting the structured output; have each return a fixed-shape markdown fragment and reserve any `schema` for the single synthesis step.
+
 ## Guidelines
 
 - If the issue is ambiguous enough that planning would need multiple assumptions a human should make instead, don't invent a plan — flag what's missing, recommend a triage pass first, and end with `NEEDS TRIAGE`.

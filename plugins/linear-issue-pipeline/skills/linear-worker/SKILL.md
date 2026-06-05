@@ -31,6 +31,13 @@ You are the **orchestrator**, not a single-pass implementer. Drive the work as a
 
 **A large, multi-slice plan is the expected input — decompose it across workflows and deliver it in full. Do NOT bail merely because the plan is large; size is what this approach exists to handle.** Stop only on genuine missing information that makes safe implementation impossible — then post a Linear blocker comment and stop. Never ship partial or stubbed work (CLAUDE.md guardrails).
 
+### Workflow fan-out limits (avoid throttling) — apply to EVERY phase below
+
+When you use the `Workflow` tool to fan out subagents:
+- **Cap each wave at ≤4 concurrent agents.** Batch a larger fan-out into sequential waves of ≤4 (e.g. process 14 slices as four waves; review 12 findings as three waves). Firing ~10+ agents at once trips a server-side rate limit ("temporarily limiting requests — not your usage limit") that fails most of the wave. In the workflow script, chunk the items and `await` each small `parallel(...)` batch before the next — do not pass all items to one `parallel()`.
+- **Retry transient failures.** If an agent's result is an "API Error / Rate limited / temporarily limiting requests" string (or `null`), re-run it in a later small batch; never treat it as a real result or finding.
+- **Prefer plain-text returns for long, file-reading subagents.** Schema-forced agents that read many files often finish without emitting the structured output. Have each reader/reviewer return a fixed-shape **markdown** fragment, and reserve any `schema` for the single synthesis/aggregation step.
+
 Run these phases **in order; none may be skipped**:
 
 ### Phase A — Understand & specify (workflow)

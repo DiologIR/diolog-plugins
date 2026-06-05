@@ -31,6 +31,13 @@ This skill runs **in your current session** using Linear MCP, `Read`/`Glob`/`Gre
    - **Needs improvement** (≥1 essential gap per §4 of the framework, or any uncovered S3 gap, or a genuine contradiction only the author can resolve): post the Essential Questions comment (+ Assumptions block for the non-essential gaps). Set status to `Needs More Info`.
    - In **dry-run**, report the verdict and the comment you would post; make no Linear writes.
 
+## Workflow fan-out limits (avoid throttling)
+
+When step 2 uses the `Workflow` tool to triage issues / lenses in parallel:
+- **Cap each wave at ≤4 concurrent agents.** Batch a larger fan-out into sequential waves of ≤4 — firing ~10+ agents at once trips a server-side rate limit ("temporarily limiting requests — not your usage limit") that fails most of the wave. Chunk the items and `await` each small `parallel(...)` batch before the next; don't pass all items to one `parallel()`.
+- **Retry transient failures.** If an agent's result is an "API Error / Rate limited / temporarily limiting requests" string (or `null`), re-run it in a later small batch; never treat it as a real finding.
+- **Prefer plain-text returns for long, file-reading subagents.** Schema-forced subagents that read many files often finish without emitting the structured output; have each return a fixed-shape markdown fragment and reserve any `schema` for the single synthesis step.
+
 ## Hard rules
 
 - **Non-technical comments only.** No file paths, code identifiers, library/framework names, or architecture words (module, service, resolver, route, endpoint, schema, …) in any Linear comment. Translate to what the user sees or does. Full ban list + good/bad examples in `references/comment-format.md`.
