@@ -1,0 +1,9 @@
+{
+  "name": "marketing-docs-maintenance",
+  "version": "1.0.0",
+  "description": "Keep the Diolog marketing/feature documentation set in docs/marketing/ current when a feature ships or a Linear ticket lands. Updates the four-file set per area (features-build/final/XX-*.md + existing-features.md section 2.XX for technical detail; features-build/plain/XX-*.md + product-feature-guide.md section XX for plain language), plus outbound-contact-surfaces.md for new contact/sharing/delivery surfaces. Enforces the content standards (technical files carry component names, routes, GraphQL ops and exact copy with no opinions; plain files carry zero technical terms, second person, sentence case, no em dashes, no emojis), four-file consistency, the supersede-don't-accumulate currency rule, and the live-app > source > ticket source-of-truth hierarchy. Operationalises docs/marketing/MAINTENANCE.md.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
