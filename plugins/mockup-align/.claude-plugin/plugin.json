@@ -1,6 +1,6 @@
 {
   "name": "mockup-align",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Make a built UI match a reference design exactly by measuring computed styles, never by eyeballing CSS. Establishes a reference (HTML+CSS mockup, served prototype URL, or another rendered implementation) and a target (the React/component UI to fix), audits interaction architecture first (what each trigger opens — modal vs drawer vs popover, and where it sits in the DOM), then extracts getComputedStyle for every named element plus its pseudo-elements and states from both sides, diffs them property-by-property with full untruncated values, and fixes every mismatch. Framework-agnostic on the styling library (plain CSS, Tailwind, Chakra, CVA, styled-components) and on what the reference is. Splits large surfaces into one parallel sub-agent per modal/drawer/region. Knows agent-browser, playwright-cli, and Chrome MCP for browser-driven measurement.",
   "author": {
     "name": "DiologIR",

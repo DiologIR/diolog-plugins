@@ -151,6 +151,45 @@ Render the target the same way and extract the **same** base + pseudo-element + 
 
 ---
 
+## Phase 2b — Content verification (MANDATORY before any style diff)
+
+CSS alignment means nothing if the element is empty. Before diffing styles, verify that **every button, link, badge, and labelled element** actually renders its content in the DOM — not just in source code.
+
+For each interactive element (buttons, links, menu items) and every element carrying visible text (headings, labels, badges, status pills):
+
+1. **Extract `textContent` and `children.length`** from the live DOM:
+   ```js
+   // For every button/link in the overlay, card, modal:
+   buttons.forEach(b => console.log({
+     text: b.textContent,
+     childCount: b.children.length,
+     innerHTML: b.innerHTML.substring(0, 200)
+   }));
+   ```
+
+2. **Compare against the reference's rendered content** (not its source):
+
+   | Element | Reference textContent | Target textContent | Match? |
+   |---------|----------------------|-------------------|--------|
+   | Primary overlay btn | "Open in editor" | "" | ✗ FAIL |
+   | Ghost overlay btn | "Present" | "" | ✗ FAIL |
+
+3. **An element with `textContent: ""` that should have text is a CRITICAL FAIL** — it means the text exists in source but isn't reaching the DOM. Common causes:
+   - Component libraries (Chakra HStack/Stack, MUI Stack, Radix Slot) that silently drop bare text-node children — only React elements survive as children. **Fix:** wrap bare text in `<Text as="span">`, `<span>`, or the framework's text primitive.
+   - `overflow: hidden` + zero computed height collapsing the text
+   - `color: transparent` or `opacity: 0` without a hover/state trigger to reveal it
+   - `display: none` or `visibility: hidden` inherited from a parent
+   - Text rendered inside an SVG `<text>` element clipped by viewBox
+   - A conditional render (`{condition && <Text>...</Text>}`) where the condition is false
+
+4. **Icon-only elements must also be verified.** An `<Icon as={Pencil}>` that renders an empty `<svg>` (wrong import, tree-shaking stripped it, or the icon name doesn't exist in the library) looks like a blank square. Check `el.querySelector('svg path')` or `el.querySelector('svg line')` exists — an SVG with zero `<path>` children is a broken icon.
+
+5. **Count children, not just text.** A button that should show `[icon] + [text]` but only shows `[icon]` (childCount: 1 instead of 2) has a content bug even if its styles match perfectly. The reference's `innerHTML` structure is the spec for what must be in the DOM.
+
+This check runs BEFORE any style diffing — there is no point measuring the `font-size` of text that does not exist in the DOM.
+
+---
+
 ## Phase 3 — Diff table & fix
 
 Produce a diff table — **one row per property, per element, per pseudo-element/state**:
