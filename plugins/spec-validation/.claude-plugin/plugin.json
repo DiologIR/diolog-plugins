@@ -1,0 +1,9 @@
+{
+  "name": "spec-validation",
+  "version": "1.0.0",
+  "description": "Validate whether a specification, build plan, or Definition of Done is GENUINELY implemented in a large codebase — not just rendered, schema-valid, and passing tests. Classifies every claimed-done data field as REAL (a producer computes it from the filesystem / git / discovery / AI / a live API), AUTHORED (read from persisted state but only ever written by a UI round-trip or a seed — nothing computes it), or MOCK (only ever a fallback constant), each with file:line evidence. Fans the work out across parallel investigators, adversarially verifies the highest-impact findings before reporting, and writes a ranked, date-stamped living gap report that doubles as the resolution backlog. Built to catch demo-data-dressed-as-done and to re-validate after a prior '100% complete' claim — the core insight being that renders + schema-valid + tests-pass never proves a real producer exists.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
