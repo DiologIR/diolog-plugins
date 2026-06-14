@@ -149,6 +149,17 @@
       },
       "source": "./plugins/spec-validation",
       "category": "development"
+    },
+    {
+      "name": "design-craft",
+      "description": "Turn Claude into an opinionated, accessibility-aware, AI-slop-resistant design collaborator that produces intentional design artifacts in plain HTML/CSS/SVG/JS — landing pages, app screens, dashboards, interactive prototypes, slide decks, wireframes, hi-fi variations, design-token files, and component inventories. A router skill carries the full design philosophy (content discipline, purposeful aesthetics that reject AI-template tropes, visual hierarchy and rhythm, typography and color systems, WCAG accessibility, interaction states, system thinking) and routes to 14 phased procedures: discovery-questions, frontend-aesthetic-direction, wireframe, make-a-deck, make-a-prototype, make-tweakable, generate-variations, design-system-extract, component-extract, accessibility-audit, ai-slop-check, hierarchy-rhythm-review, interaction-states-pass, and polish-pass. Built for Claude Code: AskUserQuestion kickoff rounds, Agent-tool verifier fan-out, and self-contained deck-scaling / device-frame / tweak-panel code that runs as standalone files with no external dependencies.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/design-craft",
+      "category": "development"
     }
   ]
 }
