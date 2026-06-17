@@ -1,0 +1,9 @@
+{
+  "name": "ui-fidelity-audit",
+  "version": "1.0.0",
+  "description": "Verify that a built UI actually reproduces its reference design — and find WHY it doesn't — instead of trusting that it does. The verification step that should run before anyone says 'it matches': it kills the shared-components / same-design-system illusion (shared tokens ≠ shared primitives ≠ shared composites ≠ matching render), refuses to certify parity from source code or commit messages or 'presentation-only port' labels, inverts the burden of proof (a visible difference is a defect until a cited decision proves it intentional), greps the implementation for scaffold/deferral tells (TODO / later-wave / fallback / commented-out features), renders BOTH surfaces side by side, and produces a defect ledger with rendered evidence and a one-line root cause — then hands confirmed gaps to the mockup-align skill to measure and fix. Triggers on 'does this page actually match the mock?', 'why does it look off when it uses the same design system?', 'verify the migration didn't drift', 'audit this UI's fidelity', or any claim that a UI matches a reference that you want checked. Sibling to mockup-align (fixes by measuring computed styles) and spec-validation (checks real-vs-mocked data).",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
