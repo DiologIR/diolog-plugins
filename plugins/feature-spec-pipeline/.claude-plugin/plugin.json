@@ -1,0 +1,9 @@
+{
+  "name": "feature-spec-pipeline",
+  "version": "1.0.0",
+  "description": "Three native skills that run a Linear-free, markdown-doc feature pipeline — /triage, /plan, /work — entirely inside your interactive Claude Code session. /triage turns a feature idea (inline text or a notes file) into a versioned spec at docs/specs/spec-DIO-0001.md (id allocated from docs/feature-specs/LEDGER.md), running a codebase grounding pass plus a Specification Sentinel product/UX/compliance review and appending a non-technical readiness section. /plan classifies a tier, investigates the codebase, writes docs/plans/plan-DIO-0001.md and links it from the spec. /work implements the plan in an isolated worktree via dynamic ultracode workflows (understand → implement → rebase → acceptance review → resolve), appends a progress section to the spec, and leaves the branch local — no remote PR. The plan and work skills fan out parallel subagents via the Workflow tool (in small batches to avoid throttling). A doc-driven sibling of linear-issue-pipeline that needs no Linear MCP.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
