@@ -108,24 +108,13 @@
     },
     {
       "name": "linear-issue-pipeline",
-      "description": "Three native skills that run the Diolog Linear issue pipeline — triage, plan, and worker — entirely inside your interactive Claude Code session (no Agent SDK, so usage draws from your standard interactive allowance, not the separate Agent SDK credit). linear-triage runs a technical + Specification Sentinel product review and posts a non-technical readiness comment; linear-plan classifies a tier, investigates the codebase, writes docs/plans/<id>.md and comments the repo-relative path (no file upload); linear-worker implements a planned issue in an isolated worktree via dynamic ultracode workflows (understand → implement → rebase → acceptance review → resolve), with no remote PR. The plan and worker fan out parallel subagents via the Workflow tool (in small batches to avoid throttling) to speed up large investigations. The worker verifies each phase against the plan + ticket before advancing (not just at the end) and runs all phases through to completion.",
-      "version": "1.0.2",
+      "description": "Three native skills that run the Diolog Linear issue pipeline — triage, plan, and worker — entirely inside your interactive Claude Code session (no Agent SDK, so usage draws from your standard interactive allowance, not the separate Agent SDK credit). linear-triage runs a technical + Specification Sentinel product review and posts a non-technical readiness comment; linear-plan classifies a tier, investigates the codebase, writes docs/plans/{id}.md and comments the repo-relative path (no file upload); linear-worker implements a planned issue in an isolated worktree via dynamic ultracode workflows (understand → implement → rebase → acceptance review → resolve), with no remote PR. The plan and worker fan out parallel subagents via the Workflow tool (in small batches to avoid throttling) to speed up large investigations. The worker verifies each phase against the plan + ticket before advancing (not just at the end) and runs all phases through to completion.",
+      "version": "1.0.3",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
       },
       "source": "./plugins/linear-issue-pipeline",
-      "category": "development"
-    },
-    {
-      "name": "feature-spec-pipeline",
-      "description": "Three native skills that run a Linear-free, markdown-doc feature pipeline — /triage, /plan, /work — entirely inside your interactive Claude Code session. /triage turns a feature idea (inline text or a notes file) into a versioned spec at docs/specs/spec-DIO-0001.md (id allocated from docs/feature-specs/LEDGER.md), running a codebase grounding pass plus a Specification Sentinel product/UX/compliance review and appending a non-technical readiness section. /plan classifies a tier, investigates the codebase, writes docs/plans/plan-DIO-0001.md and links it from the spec. /work implements the plan in an isolated worktree via dynamic ultracode workflows (understand, implement, rebase, acceptance review, resolve), appends a progress section to the spec, and leaves the branch local — no remote PR. A doc-driven sibling of linear-issue-pipeline that needs no Linear MCP.",
-      "version": "1.0.0",
-      "author": {
-        "name": "DiologIR",
-        "email": "luke@diolog.com.au"
-      },
-      "source": "./plugins/feature-spec-pipeline",
       "category": "development"
     },
     {

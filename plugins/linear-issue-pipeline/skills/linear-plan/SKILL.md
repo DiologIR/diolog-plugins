@@ -1,6 +1,6 @@
 ---
 name: linear-plan
-description: Produce a detailed, codebase-grounded implementation plan for a Diolog Linear issue, write it to docs/plans/<id>.md, then post a Linear comment containing the repository-relative path to that file (it does NOT upload/attach the file) and move the issue to "Ready for AI". Classifies a plan-size tier (Trivial/Small/Standard/Large) and keeps plan length proportional. Use when the user says "plan DIO-1234", "write the implementation plan for this issue", "run the planner on DIO-1234", or asks for a build plan for a triaged Linear ticket. Runs in the current session (Linear MCP + Read/Glob/Grep/Write + the Workflow tool for parallel investigation) — no Agent SDK, so usage draws from your interactive allowance, not the Agent SDK credit.
+description: Produce a detailed, codebase-grounded implementation plan for a Diolog Linear issue, write it to docs/plans/{id}.md, then post a Linear comment containing the repository-relative path to that file (it does NOT upload/attach the file) and move the issue to "Ready for AI". Classifies a plan-size tier (Trivial/Small/Standard/Large) and keeps plan length proportional. Use when the user says "plan DIO-1234", "write the implementation plan for this issue", "run the planner on DIO-1234", or asks for a build plan for a triaged Linear ticket. Runs in the current session (Linear MCP + Read/Glob/Grep/Write + the Workflow tool for parallel investigation) — no Agent SDK, so usage draws from your interactive allowance, not the Agent SDK credit.
 ---
 
 # Linear Issue Planner
