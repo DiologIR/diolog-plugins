@@ -53,6 +53,7 @@ function probeFidelity(opts) {
       font: cs.fontWeight + ' ' + cs.fontSize + '/' + cs.lineHeight + ' ' + (cs.fontFamily || '').split(',')[0],
       letterSpacing: cs.letterSpacing,
       pad: [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].join(' '),
+      margin: [cs.marginTop, cs.marginRight, cs.marginBottom, cs.marginLeft].join(' '),
       gap: cs.rowGap + ' ' + cs.columnGap,
       opacity: cs.opacity, visibility: cs.visibility
     };
@@ -242,6 +243,7 @@ Diff the reference JSON against the target JSON — every Step 3 signal is alrea
 **Then the per-region styling fields (Step 3B):**
 
 - **Region containers / separators** — compare `regions[].style` (`bg`, `border*`, `radius`, `shadow`): a reference region with a background/border/shadow whose target counterpart reads bare is a missing wrapper/divider.
+- **Container spacing** — diff `regions[].style.pad` / `margin` / `gap` (and the same on `named` records) between sides: the *same* wrapper with a different padding / label margin / gap is a spacing drift (the rail that's looser or tighter than the reference, even when the outer container's padding matches). Flag it with the measured numbers; hand the exact alignment to mockup-align — don't let it fall through "the wrapper is there ✓".
 - **Editors & rich affordances** — reference `editors` non-empty but target `editors` empty (or the same region's `editor:false`) ⇒ a rich editor rendered as static text.
 - **Data-driven emptiness / thin renders** — `empty:true`, `textLen:0` where the reference has text, or `box.h` near zero ⇒ content didn't reach the DOM.
 - **Broken icons** — `controls[].brokenIcon` / a `named` record with `svg.hasSvg && svg.paths===0` ⇒ an icon that renders a blank square.
