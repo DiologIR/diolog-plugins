@@ -2,6 +2,8 @@
 
 The audit's biggest time sink is **re-navigating to the same surface to check one more thing**. Each visit costs a login + load + state-setup, and Step 3 has ~8 render-time checks; doing them as separate visits multiplies that cost. This probe collapses all of them into **one `eval` per surface/state**: it runs inside the already-rendered page and returns a JSON snapshot carrying every render-time signal the audit needs. Capture once, then classify offline from the JSON (and the screenshot) — never re-open the page to re-check a single property.
 
+It carries **two axes**, and Step 3 reads them in order: a **structural axis** for the frame-first diff (Step 3A) — `skeleton` (the nested landmark-region tree) and each control's `id` (stable identity) + `anchor` (containment path + position within its container), which is how you catch a *relocated* control without comparing meaningless absolute coordinates — and a **styling axis** for the per-region pass (Step 3B) — region `style`, fingerprints, thin/empty flags, broken icons, editors.
+
 What it is and isn't:
 - It **augments** the screenshots — it does not replace rendering. The probe only runs because the page is rendered, so its output is *rendered evidence* (the live DOM), exactly what this skill demands — never source-read inference. Screenshots remain mandatory ledger evidence.
 - It is a **detection** snapshot (enough signal to find, prove, and classify drift), **not** mockup-align's per-property alignment. Hand confirmed stylistic gaps to mockup-align; don't try to pixel-diff here.
@@ -62,6 +64,66 @@ function probeFidelity(opts) {
     if (!svg) return { hasSvg: false, paths: 0 };
     return { hasSvg: true, paths: svg.querySelectorAll('path,line,circle,rect,polygon,polyline').length };
   }
+
+  var ctlSel = 'button,a[href],[role="button"],[role="tab"],[role="menuitem"],input,select,textarea,[contenteditable="true"]';
+
+  // --- structural identity + placement (3A: skeleton / anchor diff) ----------
+  // A stable cross-surface identity. Absolute coords differ between two surfaces
+  // (a 59px icon sidebar vs a 250px labelled one shifts everything); identity +
+  // containment do NOT — so this is what you pair controls by, never box.x.
+  function stableId(el) {
+    var al = el.getAttribute && (el.getAttribute('aria-label') || el.getAttribute('title'));
+    if (al && al.trim()) return al.trim().slice(0, 40);
+    var t = (el.textContent || '').trim();
+    if (t) return t.slice(0, 40);
+    var nm = el.getAttribute && el.getAttribute('name');
+    if (nm) return '@' + nm;
+    return el.tagName.toLowerCase()
+      + (el.getAttribute && el.getAttribute('role') ? '[' + el.getAttribute('role') + ']' : '')
+      + (svgInfo(el).hasSvg ? '{icon}' : '');
+  }
+  // Is this a structural "landmark" region — a node worth a row in the skeleton
+  // and a segment in a control's containment path? Semantic tags, ARIA, or a
+  // sizeable box that paints its own surface (bg/border).
+  function isLandmark(el) {
+    if (!el || el === document.body || el.nodeType !== 1) return false;
+    var tag = el.tagName.toLowerCase();
+    if (/^(header|nav|main|aside|section|footer|form|dialog|ul|ol|table)$/.test(tag)) return true;
+    if (el.getAttribute && (el.getAttribute('role') || el.getAttribute('aria-label'))) return true;
+    var r = el.getBoundingClientRect();
+    if (r.width < 80 || r.height < 28) return false;
+    var cs = getComputedStyle(el);
+    var hasBg = cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent';
+    var hasBorder = ['top', 'right', 'bottom', 'left'].some(function (sd) { return parseFloat(cs.getPropertyValue('border-' + sd + '-width')) > 0; });
+    return hasBg || hasBorder;
+  }
+  function landmarkLabel(el) {
+    var al = el.getAttribute && (el.getAttribute('aria-label') || el.getAttribute('role'));
+    var c = cls(el) ? '.' + ('' + cls(el)).trim().split(/\s+/).slice(0, 2).join('.') : '';
+    return el.tagName.toLowerCase() + (al ? '[' + al + ']' : '') + (el.id ? '#' + el.id : c);
+  }
+  // The nearest landmark ancestor of `el`, or null.
+  function nearestLandmark(el) {
+    var n = el.parentElement, h = 0;
+    while (n && n !== document.body && h < 40) { if (isLandmark(n)) return n; n = n.parentElement; h++; }
+    return null;
+  }
+  // Containment anchor: the chain of landmark ancestors (outer→inner) + the
+  // control's position WITHIN its nearest landmark (left/centre/right) + sibling
+  // index. Diff THIS across surfaces, not box.x — a different `container` means a
+  // relocated control (the kebab moved from `header > nav` to the right cluster).
+  function anchorOf(el) {
+    var path = [], n = el.parentElement, hops = 0;
+    while (n && n !== document.body && hops < 40 && path.length < 4) { if (isLandmark(n)) path.unshift(landmarkLabel(n)); n = n.parentElement; hops++; }
+    var within = '', container = nearestLandmark(el);
+    if (container) {
+      var cr = container.getBoundingClientRect(), er = el.getBoundingClientRect();
+      if (cr.width > 0) { var f = (er.left + er.width / 2 - cr.left) / cr.width; within = f < 0.34 ? 'left' : (f > 0.66 ? 'right' : 'center'); }
+    }
+    var sib = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : -1;
+    return { container: path.join(' > '), within: within, sibIndex: sib };
+  }
+
   function rec(el, label) {
     var r = el.getBoundingClientRect();
     var s = styleOf(el);
@@ -70,8 +132,9 @@ function probeFidelity(opts) {
     var isEditor = !!(el.matches && el.matches('textarea,[contenteditable="true"],[role="textbox"],.ProseMirror,.cm-editor,.tiptap,.ql-editor'))
                  || !!el.querySelector('[contenteditable="true"],.ProseMirror,.cm-editor,.ql-editor');
     return {
-      label: label, tag: el.tagName.toLowerCase(), role: (el.getAttribute && el.getAttribute('role')) || '',
+      label: label, id: stableId(el), tag: el.tagName.toLowerCase(), role: (el.getAttribute && el.getAttribute('role')) || '',
       box: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+      anchor: anchorOf(el),
       textLen: txt.length, text: txt.slice(0, 80), childCount: el.childElementCount,
       svg: svg, editor: isEditor, style: s, fp: fingerprint(s),
       // thin/empty: exists but paints essentially nothing (content didn't reach the DOM)
@@ -82,7 +145,7 @@ function probeFidelity(opts) {
   var out = {
     meta: { url: location.href, title: document.title,
             viewport: { w: window.innerWidth, h: window.innerHeight, dpr: window.devicePixelRatio }, capturedRoot: rootSel },
-    named: {}, controls: [], editors: [], regions: []
+    named: {}, skeleton: [], controls: [], editors: [], regions: []
   };
 
   // (1) explicitly named elements / regions / variant sets — highest-signal; pass these in
@@ -94,16 +157,18 @@ function probeFidelity(opts) {
       : Array.prototype.slice.call(nodes, 0, 24).map(function (n, i) { return rec(n, label + '[' + i + ']'); });
   });
 
-  // (2) every interactive control — presence + placement in one capture (control-placement / extras / broken-icon checks)
-  var ctlSel = 'button,a[href],[role="button"],[role="tab"],[role="menuitem"],input,select,textarea,[contenteditable="true"]';
+  // (2) every interactive control — presence + STABLE IDENTITY + containment anchor in one capture
+  // (control-placement / relocated-control / extras / broken-icon checks). Pair across surfaces by `id`,
+  // diff by `anchor` (container path + within) — NOT by box.x, which differs whenever the surrounding chrome does.
   Array.prototype.slice.call(root.querySelectorAll(ctlSel), 0, maxEls).forEach(function (el) {
     var r = el.getBoundingClientRect();
     if (r.width === 0 && r.height === 0) return;
     var svg = svgInfo(el), txt = (el.textContent || '').trim();
     out.controls.push({
-      tag: el.tagName.toLowerCase(), role: (el.getAttribute('role') || ''), type: (el.getAttribute('type') || ''),
+      id: stableId(el), tag: el.tagName.toLowerCase(), role: (el.getAttribute('role') || ''), type: (el.getAttribute('type') || ''),
       text: txt.slice(0, 60), textLen: txt.length,
       box: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+      anchor: anchorOf(el),
       iconOnly: txt.length === 0 && svg.hasSvg, brokenIcon: svg.hasSvg && svg.paths === 0, childCount: el.childElementCount
     });
   });
@@ -131,16 +196,52 @@ function probeFidelity(opts) {
     return false;
   });
 
+  // (5) structural skeleton (FRAME-FIRST / placement diff — Step 3A): the ordered, nested
+  // tree of landmark regions, each carrying the stable ids of the controls DIRECTLY inside it
+  // (a control is attributed to its nearest landmark). Diff this tree across surfaces BEFORE any
+  // styling check — an extra wrapper, a dropped region, or a control under a different parent is a
+  // structural defect that a flat list and a downscaled screenshot both miss.
+  function buildSkeleton(node, depth) {
+    var kids = [], children = node.children ? Array.prototype.slice.call(node.children) : [];
+    for (var i = 0; i < children.length && kids.length < 80; i++) {
+      var ch = children[i];
+      if (isLandmark(ch)) {
+        var r = ch.getBoundingClientRect();
+        var directControls = Array.prototype.slice.call(ch.querySelectorAll(ctlSel))
+          .filter(function (c) { return nearestLandmark(c) === ch; })
+          .map(function (c) { return stableId(c); }).slice(0, 24);
+        kids.push({
+          tag: ch.tagName.toLowerCase(), label: landmarkLabel(ch),
+          box: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+          controls: directControls,
+          children: depth < 4 ? buildSkeleton(ch, depth + 1) : []
+        });
+      } else if (depth < 8) {
+        // descend through plain wrappers so landmarks nested in non-landmark divs still surface
+        var deeper = buildSkeleton(ch, depth);
+        if (deeper.length) kids = kids.concat(deeper);
+      }
+    }
+    return kids;
+  }
+  out.skeleton = buildSkeleton(root, 0);
+
   return out;
 }
 ```
 
 ## Reading the snapshot offline (each Step 3 check → a field, no re-visit)
 
-Diff the reference JSON against the target JSON — every Step 3 signal is already in hand:
+Diff the reference JSON against the target JSON — every Step 3 signal is already in hand.
+
+**Do the structural diff first (Step 3A), before any styling field:**
+
+- **Skeleton / frame** — diff `skeleton` (the nested landmark tree) tree-to-tree: a region in one side's tree but not the other (an extra header strip; a dropped section), a different *order*, or a different *nesting* is a structural `DEFECT`. This is the frame check — reconcile the skeletons before you read a single style.
+- **Control placement / relocation (the anchor table)** — pair `controls` across surfaces by **`id`** (stable identity), then diff each pair's **`anchor`** (`container` path + `within`), **never `box.x`** — absolute coordinates differ whenever the surrounding chrome does, so they can't be compared. Same `id`, different `anchor.container` ⇒ a **relocated control** (e.g. the kebab moved from `header > nav` to the right cluster). Same `id` missing on one side ⇒ missing affordance / added extra. Build the anchor table from this; "present" alone is never a pass.
+
+**Then the per-region styling fields (Step 3B):**
 
 - **Region containers / separators** — compare `regions[].style` (`bg`, `border*`, `radius`, `shadow`): a reference region with a background/border/shadow whose target counterpart reads bare is a missing wrapper/divider.
-- **Control placement & presence / extras** — diff the `controls` list by `text`+`role`: in reference but not target ⇒ missing affordance; in target but not reference ⇒ an added extra; compare `box` to catch a control in the wrong place (kebab top-right vs inline).
 - **Editors & rich affordances** — reference `editors` non-empty but target `editors` empty (or the same region's `editor:false`) ⇒ a rich editor rendered as static text.
 - **Data-driven emptiness / thin renders** — `empty:true`, `textLen:0` where the reference has text, or `box.h` near zero ⇒ content didn't reach the DOM.
 - **Broken icons** — `controls[].brokenIcon` / a `named` record with `svg.hasSvg && svg.paths===0` ⇒ an icon that renders a blank square.
