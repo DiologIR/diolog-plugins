@@ -1,0 +1,427 @@
+/* ============================================================================
+ * mock-kit.css — Diolog email-mockup primitives
+ * ----------------------------------------------------------------------------
+ * A self-contained CSS kit for building product-mockup graphics for emails.
+ * The TOKEN VALUES are lifted from the live design system
+ * (apps/web-design-system/tokens/tokens.css). The variable NAMES are prefixed
+ * `--dio-` so this file is portable and never collides with anything: this kit
+ * is meant to be INLINED into a single standalone HTML file (no build step,
+ * no next/font, no Tailwind), which is what the browser screenshot and the
+ * Figma build both read.
+ *
+ * IMPORTANT — keep values truthful: before you ship, re-check the live
+ * tokens.css. If a colour/radius/shadow has changed there, update it here in
+ * your generated copy. The names below intentionally differ from the repo's
+ * (`--dio-accent` here vs `--accent` there); the VALUES must match.
+ *
+ * The fonts (Inter / Newsreader / JetBrains Mono) must be loaded by the host
+ * HTML via a <link> to Google Fonts — see artboard-template.html. Here we only
+ * reference the family names.
+ * ========================================================================== */
+
+:root {
+  /* — Type families (hardcoded — no next/font indirection in standalone HTML) */
+  --dio-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --dio-serif: "Newsreader", ui-serif, Georgia, serif;
+  --dio-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  /* — Backgrounds / grounds ------------------------------------------------- */
+  --dio-bg-canvas: #FFFFFF;          /* pure-white card / data surface */
+  --dio-bg-window: #F5F7FB;          /* the soft stage wash behind cards */
+  --dio-bg-sidebar: #F7F9FC;         /* sidebar — a notch brighter than the stage */
+  --dio-bg-soft: #F1F4F9;            /* inset wells: chips, troughs, search, date blocks */
+  --dio-bg-brand: #0A1733;           /* deep institutional navy */
+  --dio-bg-brand-deep: #050B1F;
+
+  /* — Foreground / ink ------------------------------------------------------ */
+  --dio-fg-primary: #0F1A2E;
+  --dio-fg-secondary: #3D4A66;
+  --dio-fg-muted: #5E6A82;
+  --dio-fg-faint: #9CA0AC;           /* placeholders / disabled — decorative only */
+  --dio-fg-on-dark: #E8EEF8;
+  --dio-fg-on-dark-muted: rgba(232, 238, 248, .62);
+
+  /* — Accent (the ONE brand-interactive colour) ---------------------------- */
+  --dio-accent: #1F3FA6;
+  --dio-accent-deep: #142A78;
+  --dio-accent-soft: #E6EEF9;
+  --dio-accent-ink: #FFFFFF;         /* label on the accent fill */
+  --dio-accent-soft-ink: #142A78;    /* label inside accent-soft chips */
+
+  /* — Semantic state -------------------------------------------------------- */
+  --dio-success: #1F8A5B;  --dio-success-soft: #E2F4EC;  --dio-success-text: #0F6B47;
+  --dio-warning: #A56A11;  --dio-warning-soft: #FBF1DE;
+  --dio-danger:  #C2362A;  --dio-danger-soft:  #FBE6E3;
+
+  /* — Borders (rendered ~0.5–1px) ------------------------------------------ */
+  --dio-border-faint: #E3E5EA;       /* internal dividers */
+  --dio-border-subtle: #D6D9E0;      /* default object outline: card edges, inputs */
+  --dio-border-card: rgba(0, 0, 0, .09);
+  --dio-border-strong: #BFC4CE;
+
+  /* — Radii (Tahoe geometry) ----------------------------------------------- */
+  --dio-radius-tiny: 9px;            /* buttons, tiles, chips */
+  --dio-radius-md: 10px;             /* inputs, small cards */
+  --dio-radius-inner: 14px;          /* content cards, popovers, dialogs */
+  --dio-radius-xl: 20px;             /* large composer cards */
+  --dio-radius-window: 16px;         /* window shell + capsule pills */
+  --dio-radius-full: 9999px;
+
+  /* — Shadows --------------------------------------------------------------- */
+  --dio-shadow-sm: 0 1px 2px rgba(15, 26, 46, .04);
+  --dio-shadow-md: inset 0 0.5px 0 rgba(255, 255, 255, .8), 0 1px 2px rgba(0, 0, 0, .05), 0 6px 14px -6px rgba(15, 26, 46, .10);
+  --dio-shadow-lg: 0 1px 2px rgba(15, 26, 46, .05), 0 16px 32px -10px rgba(15, 26, 46, .18);
+  --dio-shadow-window: 0 0 0 .5px rgba(0, 0, 0, .45), inset 0 .5px 0 rgba(255, 255, 255, .14), 0 30px 70px -10px rgba(0, 0, 0, .5), 0 8px 18px -6px rgba(0, 0, 0, .28);
+  --dio-shadow-on-dark: 0 16px 40px -8px rgba(0, 0, 0, .55);
+  /* a primary CTA in a marketing graphic should sit forward — an accent-tinted lift */
+  --dio-shadow-accent: 0 1px 2px rgba(15, 26, 46, .06), 0 12px 22px -10px rgba(31, 63, 166, .55);
+}
+
+/* ============================================================================
+ * Canvas + artboards — the page scaffold the Figma build walks
+ * ========================================================================== */
+
+.dio-canvas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 56px;
+  align-items: flex-start;
+  padding: 56px;
+  background: #EEF1F6;            /* neutral working ground — never appears in an export */
+  font-family: var(--dio-sans);
+  color: var(--dio-fg-primary);
+}
+
+/* One mockup = one titled artboard. The title is the Figma frame name. */
+.dio-artboard { display: flex; flex-direction: column; gap: 14px; }
+.dio-artboard__title {
+  font-family: var(--dio-mono);
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--dio-fg-muted);
+}
+
+/* The board = the full-bleed ground baked into the export, so the PNG already
+ * carries the backdrop it lands on. Pick the ground to match the treatment. */
+.dio-board {
+  border-radius: var(--dio-radius-window);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dio-board--white { background: var(--dio-bg-canvas); }
+.dio-board--soft  { background: var(--dio-bg-window); }
+.dio-board--navy  { background: var(--dio-bg-brand); }
+
+/* ============================================================================
+ * Atoms
+ * ========================================================================== */
+
+/* The white "NEW · FEATURE" chip that sits above a soft panel. */
+.dio-newtag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--dio-bg-canvas);
+  color: var(--dio-accent-soft-ink);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: 9px 16px;
+  border-radius: var(--dio-radius-full);
+  box-shadow: var(--dio-shadow-sm);
+}
+
+/* Soft status / category chip. */
+.dio-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--dio-accent-soft);
+  color: var(--dio-accent-soft-ink);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 11px;
+  border-radius: var(--dio-radius-full);
+}
+.dio-chip--success { background: var(--dio-success-soft); color: var(--dio-success-text); }
+.dio-chip--warning { background: var(--dio-warning-soft); color: var(--dio-warning); }
+.dio-chip--danger  { background: var(--dio-danger-soft);  color: var(--dio-danger); }
+
+/* State dot — the "on the record" / "clean" affordance. */
+.dio-dot { width: 8px; height: 8px; border-radius: var(--dio-radius-full); display: inline-block; background: var(--dio-success); }
+.dio-dot--warning { background: var(--dio-warning); }
+.dio-dot--danger  { background: var(--dio-danger); }
+.dio-dot--accent  { background: var(--dio-accent); }
+
+/* Primary button. */
+.dio-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--dio-accent);
+  color: var(--dio-accent-ink);
+  font-family: var(--dio-sans);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 13px 22px;
+  border: 0;
+  border-radius: var(--dio-radius-tiny);
+  box-shadow: var(--dio-shadow-accent);   /* the CTA sits forward — it's the one action */
+}
+.dio-btn--block { width: 100%; }
+/* Quiet secondary action — the supporting choice next to the primary CTA. */
+.dio-btn--ghost {
+  background: var(--dio-bg-canvas);
+  color: var(--dio-accent-soft-ink);
+  border: 1px solid var(--dio-border-subtle);
+  box-shadow: none;
+}
+
+/* Identity initial — Nathan B., an investor, an assignee. */
+.dio-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--dio-radius-full);
+  background: var(--dio-bg-brand);
+  color: var(--dio-fg-on-dark);
+  font-family: var(--dio-sans);
+  font-size: 13px;
+  font-weight: 600;
+  flex: none;
+}
+
+/* Hairline divider. */
+.dio-divider { height: 1px; background: var(--dio-border-faint); border: 0; }
+
+/* Content card. */
+.dio-card {
+  background: var(--dio-bg-canvas);
+  border: 1px solid var(--dio-border-card);
+  border-radius: var(--dio-radius-inner);
+  box-shadow: var(--dio-shadow-md);
+}
+
+/* ============================================================================
+ * Type helpers
+ * ========================================================================== */
+
+/* Serif display — headlines and big numerals. NEVER heavier than 600. */
+.dio-display { font-family: var(--dio-serif); font-weight: 500; line-height: 1.12; letter-spacing: -.01em; color: var(--dio-fg-primary); }
+.dio-num     { font-family: var(--dio-serif); font-weight: 500; line-height: 1; letter-spacing: -.02em; font-size: 44px; color: var(--dio-fg-primary); }
+.dio-label   { font-family: var(--dio-sans); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--dio-fg-muted); }
+.dio-mono    { font-family: var(--dio-mono); font-size: 12px; letter-spacing: .02em; color: var(--dio-fg-muted); }
+.dio-body    { font-family: var(--dio-sans); font-size: 15px; line-height: 1.5; color: var(--dio-fg-secondary); }
+.dio-muted   { color: var(--dio-fg-muted); }
+.dio-on-dark { color: var(--dio-fg-on-dark); }
+.dio-on-dark-muted { color: var(--dio-fg-on-dark-muted); }
+
+/* ============================================================================
+ * Ghosts — "shadow demos". Render non-focal UI as soft placeholder shapes so
+ * the eye goes straight to the one lit element. This is the heart of the
+ * impression-not-replica look.
+ * ========================================================================== */
+
+.dio-ghost-bar    { height: 10px; border-radius: var(--dio-radius-full); background: var(--dio-bg-soft); }
+.dio-ghost-block  { border-radius: var(--dio-radius-md); background: var(--dio-bg-soft); }
+.dio-ghost-circle { border-radius: var(--dio-radius-full); background: var(--dio-bg-soft); aspect-ratio: 1; }
+/* On navy grounds, ghosts need to read against the dark. */
+.dio-ghost-bar--dark, .dio-ghost-block--dark { background: rgba(255, 255, 255, .08); }
+
+/* ============================================================================
+ * Soft panel + peeking device — THE house style (start here)
+ * A soft rounded panel with a device card peeking out the bottom. The panel
+ * clips (overflow:hidden) so the device looks like it's emerging; the card has
+ * only its TOP corners rounded and no bottom border.
+ * ========================================================================== */
+
+.dio-soft-panel {
+  position: relative;
+  /* a soft top-down light gives the panel quiet depth — two stops, same hue family
+     (white → the soft stage), low contrast: depth without a "gradient" look. */
+  background: radial-gradient(125% 90% at 50% -10%, #FFFFFF 0%, var(--dio-bg-window) 58%);
+  border-radius: var(--dio-radius-xl);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .6);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 34px 34px 0;            /* no bottom padding — the device meets the clip */
+}
+/* A device card meant to peek: square off the bottom and drop the bottom edge. */
+.dio-peek {
+  border-top-left-radius: var(--dio-radius-inner);
+  border-top-right-radius: var(--dio-radius-inner);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+/* ============================================================================
+ * Browser frame — full window chrome for "this is the web app".
+ * Pair with a ghosted app shell (sidebar + top pill) and ONE lit feature.
+ * ========================================================================== */
+
+.dio-browser {
+  background: var(--dio-bg-canvas);
+  border: 1px solid var(--dio-border-subtle);
+  border-radius: var(--dio-radius-window);
+  box-shadow: var(--dio-shadow-md);
+  overflow: hidden;
+  width: 100%;
+}
+.dio-browser__bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 44px;
+  padding: 0 16px;
+  background: var(--dio-bg-soft);
+  border-bottom: 1px solid var(--dio-border-faint);
+}
+.dio-browser__lights { display: flex; gap: 8px; }
+.dio-browser__lights i { width: 11px; height: 11px; border-radius: var(--dio-radius-full); background: var(--dio-border-strong); display: block; }
+.dio-browser__url {
+  flex: 1;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: var(--dio-bg-canvas);
+  border-radius: var(--dio-radius-full);
+  font-family: var(--dio-mono);
+  font-size: 11px;
+  color: var(--dio-fg-faint);
+}
+.dio-browser__body { display: flex; }              /* sidebar + main */
+.dio-ghost-sidebar {
+  width: 150px;
+  flex: none;
+  background: var(--dio-bg-sidebar);
+  border-right: 1px solid var(--dio-border-faint);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dio-browser__main { flex: 1; padding: 26px; min-width: 0; }
+
+/* ============================================================================
+ * Phone bezel — the investor / mobile app. Dark bezel, notch, status bar,
+ * floating tab bar. Sits best on a navy board.
+ * ========================================================================== */
+
+.dio-phone {
+  position: relative;
+  background: #0B0F1A;
+  border-radius: 44px;
+  padding: 10px;
+  box-shadow: var(--dio-shadow-on-dark);
+}
+.dio-phone__screen {
+  position: relative;
+  background: var(--dio-bg-canvas);
+  border-radius: 36px;
+  overflow: hidden;
+  width: 320px;
+}
+.dio-phone__notch {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 26px;
+  background: #0B0F1A;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  z-index: 2;
+}
+.dio-phone__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px 8px;
+  font-family: var(--dio-mono);
+  font-size: 13px;
+  color: var(--dio-fg-primary);
+}
+.dio-phone__status .dots { display: flex; gap: 5px; }
+.dio-phone__status .dots i { width: 5px; height: 5px; border-radius: var(--dio-radius-full); background: var(--dio-fg-muted); display: block; }
+.dio-phone__body { padding: 8px 22px 26px; }
+.dio-phone__tabbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 10px 22px 18px;
+  height: 56px;
+  background: rgba(255, 255, 255, .72);
+  border: 1px solid var(--dio-border-faint);
+  border-radius: var(--dio-radius-full);
+  backdrop-filter: blur(20px);
+}
+.dio-phone__tabbar i { width: 22px; height: 22px; border-radius: 7px; background: var(--dio-bg-soft); display: block; }
+.dio-phone__tabbar i.active { background: var(--dio-accent-soft); }
+
+/* ============================================================================
+ * Frameless fragment — a single product card on a soft ground, no chrome.
+ * Best dropped inline beside copy.
+ * ========================================================================== */
+
+.dio-fragment {
+  background: var(--dio-bg-window);
+  border-radius: var(--dio-radius-xl);
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================================
+ * Detection card — the real "the system noticed something for you" idiom
+ * (mirrors patterns/detection-banner.tsx: a flat white card with a 3px LEFT
+ * border in the semantic register). Use it for a consistency flag, an alert,
+ * an escalate verdict — anywhere the app is surfacing a finding. The left
+ * border is earned semantic emphasis here, not decoration.
+ * ========================================================================== */
+
+.dio-detect {
+  position: relative;
+  background: var(--dio-bg-canvas);
+  border: 1px solid var(--dio-border-card);
+  border-left: 3px solid var(--dio-accent);
+  border-radius: var(--dio-radius-inner);
+  box-shadow: var(--dio-shadow-md);
+}
+.dio-detect--warning { border-left-color: var(--dio-warning); }
+.dio-detect--danger  { border-left-color: var(--dio-danger); }
+.dio-detect--success { border-left-color: var(--dio-success); }
+
+/* A ghosted incoming item — gives a lit element something to be a reply TO,
+ * without competing for attention. Avatar + two faded text bars. */
+.dio-ghost-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--dio-radius-md);
+  background: var(--dio-bg-soft);
+}
+.dio-ghost-row .dio-avatar { background: var(--dio-border-strong); color: var(--dio-bg-canvas); }
+
+/* Present-here / missing-there comparison — the literal idea of the
+ * consistency checker. Two (or more) rows, each a source + its status. */
+.dio-compare { display: flex; flex-direction: column; gap: 10px; }
+.dio-compare__row { display: flex; align-items: center; gap: 12px; }
+.dio-compare__doc { font-family: var(--dio-sans); font-size: 14px; font-weight: 600; color: var(--dio-fg-primary); }
+.dio-compare__row .dio-chip { margin-left: auto; }
+
+/* A labelled metric (big serif numeral + mono caption). */
+.dio-stat { display: flex; flex-direction: column; gap: 4px; }
+

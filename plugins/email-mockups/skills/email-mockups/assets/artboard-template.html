@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Diolog — email mockups</title>
+
+  <!-- Fonts. Newsreader (serif display), Inter (sans), JetBrains Mono (tickers/dates/counts). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ▼▼▼ INLINE THE FULL CONTENTS OF assets/mock-kit.css HERE ▼▼▼
+       (the skill builds a SINGLE self-contained file — the browser screenshot
+        and the Figma build both read this file with no build step). ▲▲▲ */
+
+    /* — Page scaffold (not part of the kit) — */
+    body { margin: 0; background: #EEF1F6; }
+    .dio-page-title {
+      font-family: var(--dio-serif);
+      font-weight: 500;
+      font-size: 26px;
+      color: var(--dio-fg-primary);
+      padding: 40px 56px 0;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="dio-page-title">Diolog · product-update email mockups</h1>
+
+  <div class="dio-canvas">
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         1 · SOFT PANEL + PEEKING PHONE  (the house style; investor mobile)
+         Feature: "Ask the IR team — on the record" (Question Composer)
+         ══════════════════════════════════════════════════════════════════ -->
+    <figure class="dio-artboard">
+      <figcaption class="dio-artboard__title">Mobile · Ask on the record</figcaption>
+      <div class="dio-board dio-board--white" style="width:640px;height:500px;">
+        <div class="dio-soft-panel" style="width:560px;height:430px;">
+          <div class="dio-newtag">New · Question composer</div>
+          <!-- peeking phone card: top of a phone screen, clipped by the panel -->
+          <div class="dio-card dio-peek" style="width:300px;padding:22px;box-shadow:var(--dio-shadow-lg);">
+            <div class="dio-phone__status" style="padding:0;">
+              <span class="dio-mono">9:41</span>
+              <span class="dots"><i></i><i></i><i></i></span>
+            </div>
+            <div class="dio-label" style="margin-top:18px;">Ask Flight Centre</div>
+            <div class="dio-display" style="font-size:22px;margin-top:4px;">FLT · Travel</div>
+            <div style="margin-top:16px;padding:16px;background:var(--dio-bg-soft);border-radius:var(--dio-radius-md);">
+              <p class="dio-body" style="margin:0;color:var(--dio-fg-primary);text-wrap:pretty;">How are you thinking about margins given recent shifts in airline pricing dynamics?</p>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+              <span class="dio-mono">248 / 500</span>
+              <span style="display:inline-flex;align-items:center;gap:7px;font-size:13px;" class="dio-body"><span class="dio-dot"></span>On the record</span>
+            </div>
+            <button class="dio-btn dio-btn--block" style="margin-top:16px;">Send to IR</button>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         2 · BROWSER FRAME  (the web app; companies / IR team)
+         Feature: Smart Inbox — drafted, tone-tagged, on-record reply
+         Ghost the sidebar + top context; light ONE element (the draft).
+         ══════════════════════════════════════════════════════════════════ -->
+    <figure class="dio-artboard">
+      <figcaption class="dio-artboard__title">Web · Drafted reply</figcaption>
+      <div class="dio-board dio-board--soft" style="width:968px;height:648px;padding:54px;">
+        <div class="dio-browser" style="max-width:880px;">
+          <div class="dio-browser__bar">
+            <div class="dio-browser__lights"><i></i><i></i><i></i></div>
+            <div class="dio-browser__url">app.diolog.ai/inbox</div>
+          </div>
+          <div class="dio-browser__body" style="height:472px;">
+            <!-- ghosted app shell: logo + grouped nav, Inbox lit -->
+            <div class="dio-ghost-sidebar" style="gap:16px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="dio-ghost-block" style="width:22px;height:22px;border-radius:7px;background:var(--dio-bg-brand);"></span>
+                <span class="dio-ghost-bar" style="width:54px;"></span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:11px;margin-top:6px;">
+                <div class="dio-ghost-bar" style="width:78%;"></div>
+                <div style="display:flex;align-items:center;gap:8px;background:var(--dio-accent-soft);border-radius:var(--dio-radius-tiny);padding:8px 9px;margin:0 -4px;">
+                  <span class="dio-ghost-block" style="width:14px;height:14px;background:var(--dio-accent);opacity:.5;"></span>
+                  <span class="dio-ghost-bar" style="width:48px;background:var(--dio-accent);opacity:.45;"></span>
+                </div>
+                <div class="dio-ghost-bar" style="width:66%;"></div>
+                <div class="dio-ghost-bar" style="width:72%;"></div>
+                <div class="dio-ghost-bar" style="width:54%;"></div>
+              </div>
+            </div>
+            <!-- main: the incoming question (ghosted), then the lit AI draft -->
+            <div class="dio-browser__main" style="display:flex;flex-direction:column;gap:18px;">
+              <div class="dio-ghost-row">
+                <span class="dio-avatar">MC</span>
+                <div style="min-width:0;flex:1;">
+                  <div class="dio-body" style="margin:0;font-size:13px;color:var(--dio-fg-secondary);">Margaret Chen · Email</div>
+                  <div class="dio-body" style="margin:2px 0 0;font-size:13px;color:var(--dio-fg-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">How are you thinking about margins given airline pricing?</div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="dio-label">Drafted reply</span>
+                  <span class="dio-chip">Professional</span>
+                  <span class="dio-chip dio-chip--success"><span class="dio-dot"></span>Consistent with record</span>
+                </div>
+                <div class="dio-detect" style="padding:20px;margin-top:12px;">
+                  <p class="dio-body" style="margin:0 0 12px;color:var(--dio-fg-primary);text-wrap:pretty;">Thanks for your question on margins. As noted in our H1 results, we expect cost discipline to hold through the half, with airline pricing a watch-item rather than a guidance change.</p>
+                  <p class="dio-mono" style="margin:0;">Sourced from your disclosure record · 2 sources</p>
+                </div>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:12px;margin-top:2px;">
+                <button class="dio-btn">Approve &amp; send</button>
+                <span style="display:inline-flex;align-items:center;gap:8px;" class="dio-body"><span class="dio-avatar" style="width:26px;height:26px;font-size:11px;">NB</span>Routed to Nathan B.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         3 · FRAMELESS FRAGMENT  (no chrome; drop inline beside copy)
+         Feature: Disclosure consistency — "present here, missing there"
+         ══════════════════════════════════════════════════════════════════ -->
+    <figure class="dio-artboard">
+      <figcaption class="dio-artboard__title">Web · Consistency flag</figcaption>
+      <div class="dio-board dio-board--soft" style="width:600px;height:472px;">
+        <div class="dio-fragment" style="width:520px;">
+          <div class="dio-detect dio-detect--warning" style="width:100%;padding:26px;box-shadow:var(--dio-shadow-lg);">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="dio-dot dio-dot--warning"></span>
+              <span class="dio-label" style="color:var(--dio-warning);">Deserves a look</span>
+            </div>
+            <p class="dio-display" style="font-size:21px;margin:14px 0 18px;text-wrap:pretty;">FY net debt guidance appears in one disclosure but not the other.</p>
+
+            <div class="dio-compare">
+              <div class="dio-compare__row">
+                <span class="dio-dot"></span>
+                <span class="dio-compare__doc">Investor letter</span>
+                <span class="dio-chip dio-chip--success">Present</span>
+              </div>
+              <div class="dio-compare__row">
+                <span class="dio-dot dio-dot--warning"></span>
+                <span class="dio-compare__doc">ASX release</span>
+                <span class="dio-chip dio-chip--warning">Missing</span>
+              </div>
+            </div>
+
+            <hr class="dio-divider" style="margin:20px 0 18px;" />
+            <div style="display:flex;gap:32px;">
+              <div class="dio-stat"><div class="dio-num" style="font-size:34px;">11</div><div class="dio-mono">claims checked</div></div>
+              <div class="dio-stat"><div class="dio-num" style="font-size:34px;color:var(--dio-warning);">1</div><div class="dio-mono">to review</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+  </div>
+</body>
+</html>

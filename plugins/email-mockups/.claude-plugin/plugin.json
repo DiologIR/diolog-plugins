@@ -1,0 +1,9 @@
+{
+  "name": "email-mockups",
+  "version": "1.1.0",
+  "description": "Turn a named Diolog feature (or several) into email-ready product-mockup graphics on a Figma canvas. Reads the feature's real context — docs/marketing/product-feature-guide.md + features-build/plain/NN-*.md + the React mock UI in apps/web-design-system (web) / apps/customer-mobile + apps/investor-mobile design-system(-web) (mobile) — then builds impression-not-replica mockups (soft panel + peeking device, browser frame, phone bezel, frameless fragment) as titled, spaced artboards in one self-contained HTML file using the live design tokens, and recreates that layout in Figma via whatever write-capable Figma MCP is connected. If no Figma MCP is present, the HTML file is the final deliverable.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
