@@ -37,7 +37,15 @@
        product chrome text (no taglines / explainers / "powered by"), make it rich
        and tailored (Flight Centre data), use the real .dio-logo. Example 0 is the
        PREMIUM register: a full product window (clean browser chrome + the COMPLETE
-       app shell) — the default for any HERO web feature. -->
+       app shell) — the default for any HERO web feature. Example 5 is the OPTIONAL
+       email-hero (split) register. Two things every set must honour and these model:
+       (1) every clean-shot artboard carries a brief, non-technical marketing summary
+       UNDER the mock as a .dio-artboard__note (for IR teams + their agencies; sentence
+       case; NO em/en-dashes) — see examples 0 and 4; the email-hero carries its benefit
+       in-column instead, so it has none. (2) Semantic emphasis is a soft WASH + an icon
+       tile + a chip, NEVER a coloured left-only border (the AI-slop tell) — see the
+       reworked verdict tile in example 5. Icons are inline SVG (so screenshots
+       rasterise them), never icon-font ligatures. -->
   <div class="dio-canvas">
 
     <!-- ══════════════════════════════════════════════════════════════════
@@ -108,6 +116,8 @@
           </div>
         </div>
       </div>
+      <!-- the brief, non-technical benefit for IR teams + agencies, UNDER the mock (no em-dashes) -->
+      <p class="dio-artboard__note">Ask a question in plain English and get an answer grounded in your own filings, with the sources it drew on.</p>
     </figure>
 
     <!-- ══════════════════════════════════════════════════════════════════
@@ -273,6 +283,50 @@
                 </span>
                 <span class="dio-logo__word" style="font-size:16px;">diolog</span>
               </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="dio-artboard__note">Stand up a branded investor portal on your own web address, and publish announcements to it yourself.</p>
+    </figure>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         5 · EMAIL HERO (split)  (the OPTIONAL "finished hero image" register)
+         A copy column (Newsreader headline + one-line benefit + meta pills)
+         BESIDE the clean product surface, on the sanctioned liquid-navy ground.
+         The marketing copy lives in the COPY COLUMN — never on the product
+         surface. This format carries its benefit in-column, so it needs NO
+         under-board .dio-artboard__note (the clean-shot formats above each carry
+         one). Note the reworked verdict tile: a soft danger WASH + an icon, NOT
+         a coloured left border. Feature: Disclosure guardian.
+         ══════════════════════════════════════════════════════════════════ -->
+    <figure class="dio-artboard">
+      <figcaption class="dio-artboard__title">Email hero · Disclosure guardian</figcaption>
+      <div class="dio-board" style="width:1120px;height:600px;">
+        <div class="dio-emailhero">
+          <div class="dio-emailhero__copy">
+            <div class="dio-emailhero__eyebrow">New · Disclosure guardian</div>
+            <h2 class="dio-emailhero__title">Caught <em>before</em> it's lodged.</h2>
+            <p class="dio-emailhero__benefit">Diolog reads every draft against your continuous-disclosure obligations and your own prior statements, so a forward-looking line never slips out unchecked.</p>
+            <div class="dio-emailhero__meta">
+              <span class="dio-emailhero__pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg>ASX 3.1 aware</span>
+              <span class="dio-emailhero__pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2v5h5"/><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/></svg>Every claim <b>sourced</b></span>
+            </div>
+          </div>
+          <div class="dio-emailhero__stage">
+            <div class="dio-detect dio-detect--danger" style="width:430px;padding:22px 24px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--dio-radius-md);background:var(--dio-bg-canvas);color:var(--dio-danger);flex:none;">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.4 18a1.8 1.8 0 0 0 1.6 2.7h16a1.8 1.8 0 0 0 1.6-2.7L13.7 3.9a1.8 1.8 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>
+                </span>
+                <span class="dio-display" style="font-size:19px;color:var(--dio-danger);flex:1;">Escalate</span>
+                <span class="dio-chip dio-chip--warning">Verify</span>
+              </div>
+              <p class="dio-body" style="margin:14px 0 0;font-size:14px;color:var(--dio-fg-primary);text-wrap:pretty;">This line commits to a forward-looking EBITDA figure that isn't in your last lodged guidance. Rephrase with safe-harbour wording before it goes out.</p>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:16px;">
+                <span class="dio-mono" style="background:var(--dio-bg-canvas);border:1px solid var(--dio-border-subtle);border-radius:6px;padding:3px 8px;color:var(--dio-fg-primary);">ASX Listing Rule 3.1A</span>
+                <button class="dio-btn" style="margin-left:auto;padding:9px 16px;font-size:13px;">Apply safe-harbour fix</button>
+              </div>
             </div>
           </div>
         </div>

@@ -85,6 +85,29 @@ recurring review note, so be deliberate about the line:
 > "use the on-brand phrases": those phrases earn their place *as product microcopy* —
 > a chip, a verdict, a button — not as explainer sentences floating on the graphic.)
 
+### The marketing summary — a caption UNDER the mock (not on the product surface)
+
+Separately from the in-graphic chrome, **each feature also gets a brief, non-technical
+marketing summary.** Evaluate what the feature actually does for the people who buy and run
+Diolog — **in-house IR teams and the third-party IR agencies who run IR for listed clients**
+— and distill it to a one- or two-line benefit. This is the only place plain "what it does
+for you" copy belongs, and it sits as a **caption *under* the artboard** (`.dio-artboard__note`,
+a Figma sub-label below the frame), **never on the product surface** inside the window. The
+window stays clean; the summary explains the value beneath it.
+
+Write it from the feature's **plain story** (`features-build/plain/NN-*.md`,
+`product-feature-guide.md`) in the plain marketing voice: sentence case, no jargon, name the
+*benefit* not the mechanism ("publish announcements to your own investor site yourself", not
+"a drag-and-drop portal editor with version history"). Keep it to roughly 12–22 words.
+**No em-dashes or en-dashes** (`—` / `–`) in this caption: they read as AI-generated and
+clash with the plain marketing voice — use commas, full stops, or parentheses instead. (Real
+product *chrome* inside the mock may keep whatever punctuation the live UI renders; the ban is
+on the marketing voice.)
+
+> Every *clean-shot* artboard (product window, vignette, collage, phone) carries exactly one
+> note. The **email-hero (split)** register (§4) already carries this benefit in its copy
+> column, so an email-hero artboard does **not** repeat it as an under-mock note.
+
 ### Make the kept copy *smart* — show the real insight, not lorem chrome
 
 Cutting the marketing copy is only half the job. The other half — and the **single
@@ -143,8 +166,21 @@ wins (update the kit values to match). Don't reinvent colours or shapes.
 - **Type:** **Newsreader** (serif) for display/headlines & big numerals; **Inter**
   (sans) for everything; **JetBrains Mono** for tickers, dates, char counts. **Never
   bold the serif** (≤600). **Sentence case** everywhere.
-- **Icons:** thin (1.5px), outlined, Phosphor/Feather-style, `currentColor`. Compose
-  them deliberately — a wrong/garbled path is worse than no icon. **No emoji, ever.**
+- **Icons:** thin (1.5px), outlined, Phosphor/Feather-style, `currentColor`, **inline SVG —
+  never an icon-font ligature** (Material Symbols and the like). DOM-to-image / screenshot
+  tools can't rasterise icon-font ligatures — they capture the literal text name ("search")
+  instead — so inline SVG is what survives the PNG export the email actually uses. Compose
+  paths deliberately; a wrong/garbled path is worse than no icon. **No emoji, ever.**
+- **No coloured left-only borders.** A naked `border-left: 3–4px solid <colour>` as a card or
+  row treatment — and especially the same stripe repeated down a list of rows — is the single
+  most recognisable "AI-generated UI" tell, and a reviewer will read it that way. Carry
+  semantic emphasis the way the real Diolog verdict surface does: a soft semantic **wash** over
+  the whole card (`--dio-*-soft`) + a **leading icon tile** in the semantic colour + a **chip**,
+  on a full hairline border. The reworked `.dio-detect--danger/-warning/-success` variants do
+  exactly this — use them. For a *list* of findings, give each row a leading semantic icon
+  tile / dot + a chip on a plain hairline row; never stripe or wash every row. (This holds even
+  though the live `detection-banner.tsx` historically used a left accent — the marketing
+  mockups deliberately don't.)
 - **The Diolog logo is real — never fake it.** Use the `.dio-logo` lockup: the navy
   droplet mark (`assets/diolog-icon.svg`) in a **white rounded tile**, beside the
   lowercase **"diolog"** wordmark in Newsreader (medium, never bold). A letter in a
@@ -236,6 +272,21 @@ Investor Portal Builder, where the tailored URL proves a real, customisable publ
 The distinction from 4A is purely *what the window contains*: the diolog app (a product
 window) vs. the customer's public site (a website frame).
 
+**Email hero (split)** *(an OPTIONAL second deliverable format — the "finished hero image").*
+A two-column composite: a **copy column** (a Newsreader headline with one italic `<em>` accent
+phrase + a one-line benefit + a couple of meta pills) BESIDE the clean product surface, on the
+sanctioned **"liquid navy"** marketing ground (DESIGN.md §3.4 — the one atmospheric brand
+asset). Use `.dio-emailhero` (drop it straight into a plain `.dio-board`; put the product
+window/card in `.dio-emailhero__stage`). This is the only treatment where a marketing headline
+and benefit appear *in the graphic* — and they live in the **copy column**, never on the
+product surface inside the window (the §2 rule is unchanged: the window stays clean). Offer
+this when the ask is a *ready-to-drop hero image* for the top of the email; offer the clean
+product-shot registers (window / vignette / collage / phone, each captioned by a
+`.dio-artboard__note`) when the ask is a *product graphic the email body will caption*. When
+in doubt, a feature can be delivered both ways — the clean shot and the email hero share the
+same product surface. (The handoff set that seeded this playbook shipped exactly this pair per
+feature.)
+
 ---
 
 ## 5. Framing & consistency hygiene
@@ -284,6 +335,9 @@ compact impression.
   ~430×760 (avoid making it taller/narrower than this).
 - **Website frame:** frame ~880 wide (keep it smallish so type survives downscaling);
   board sized tight around it.
+- **Email hero (split):** landscape board **~1100–1280 × ~560–640**; copy column 43% /
+  product stage 57%; headline ~40–48px serif (≤600); the product surface in the stage sized
+  per its own register (a window ~640–720, a card ~420–460).
 - Focal headline ≥16px; big numerals 34–50px (serif). Put important content **above**
   any panel's bottom clip — let the clip eat padding/spacers, never the key line.
 
@@ -309,8 +363,16 @@ compact impression.
 - **Scale test:** big type, generous whitespace, "do less" with conviction — a confident
   product shot, not a cramped panel.
 - **Brand test:** the Diolog mark is the real `.dio-logo`, never a letter-box.
-- **Token test:** every colour is a `--dio-` token; no stray blues; serif ≤600;
+- **Token test:** every colour is a `--dio-` token (the liquid-navy + persona-mark gradient
+  stops are the only sanctioned literal-hex exceptions); no stray blues; serif ≤600;
   sentence case; no emoji; icons clean.
+- **No-slop-border test:** **no coloured left-only borders** anywhere — semantic emphasis is a
+  soft wash + a leading icon tile + a chip on a full hairline, never a `border-left` stripe (and
+  never one repeated down a list). Icons are inline SVG, not icon-font ligatures.
+- **Caption test:** every *clean-shot* artboard carries exactly one `.dio-artboard__note` — a
+  brief, non-technical benefit for IR teams and their agencies, sentence case, **no em/en-dashes**,
+  ~12–22 words, drawn from the feature's plain story. (An email-hero carries its benefit in the
+  copy column instead, so it has no note.)
 - **Hygiene test:** consistent radii/padding/alignment; nothing pokes out of frame;
   board trimmed tight.
 - **Truth test:** the graphic doesn't imply a capability the feature doesn't have.

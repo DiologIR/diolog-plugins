@@ -134,6 +134,24 @@ design-craft builds from. Per feature:
 - **Pick the board** colour and **size it tight** to the content (the product window is
   large by design, ~900–1000 wide; compact impressions stay small — the playbook gives
   both registers' sizes).
+- **Write the under-mock caption.** Evaluate what the feature *does for the customer* and
+  distill a brief, non-technical benefit for **IR teams and the third-party IR agencies who
+  serve them** — it becomes the `.dio-artboard__note` *under* the mock (a Figma sub-label),
+  never copy on the product surface. Plain voice, sentence case, **no em/en-dashes** — draw it
+  from the feature's plain story (`features-build/plain`). Playbook §2 has the rule.
+- **Decide the format.** The default is a **clean product shot** (the registers above), each
+  carrying its under-mock caption. When the user wants a *ready-to-drop hero image*, also offer
+  the **email-hero (split)** — the same clean product surface beside a copy column (headline +
+  one-line benefit) on the liquid-navy ground (playbook §4); there the benefit lives in the
+  column, so no separate caption.
+
+**Account for every feature, and scale to the ask.** For a multi-feature release, keep a
+**coverage ledger** — map *each named feature* to mocked / folded-into-another /
+described-in-copy, and check none is silently dropped (the flagships especially — it's easy to
+lose one reasoning feature-by-feature). "One graphic per viable feature" lands ~15–18 for a big
+release; "a curated hero set" lands ~8 — confirm which the user wants. For any set beyond a few
+graphics, **read `references/building-and-verifying.md`**: it's the harness for the ledger, the
+parallel doc-research + build fan-out, the assembly, and the verification lint.
 
 Offer a small, deliberate mix rather than many near-duplicates, and keep one demo
 identity (Flight Centre) across the set.
@@ -151,8 +169,11 @@ ai-slop / polish passes) over it:
   full product window — clean browser chrome + the complete app shell — §4A**; make the
   **copy substantive and specific — a real insight, an italic quote, named source chips —
   §2**; no marketing copy, explainers or disclaimers — only real product chrome text;
-  collage a finding tile onto the surface it acts on; the real Diolog logo; tokens; type;
-  voice; framing hygiene; the two sizing registers) as non-negotiable.
+  collage a finding tile onto the surface it acts on; **no coloured left-only borders** (the
+  AI-slop tell — semantic emphasis is a soft wash + an icon tile + a chip); **inline-SVG icons,
+  never icon-font ligatures** (so the PNG export rasterises them); a brief **under-mock
+  marketing caption** per clean shot (`.dio-artboard__note`, no em/en-dashes); the real Diolog
+  logo; tokens; type; voice; framing hygiene; the two sizing registers) as non-negotiable.
 - **The kit** — `assets/mock-kit.css` (Diolog tokens under `--dio-` names + the
   primitive classes: the `.dio-logo` lockup that uses the bundled real mark
   `assets/diolog-icon.svg` — never fake the logo with a letter box; the **`.dio-appshell`
@@ -166,9 +187,15 @@ ai-slop / polish passes) over it:
 - **The content** — the per-feature context you gathered in step 2 (real labels,
   on-brand phrases, the hero element, the layout to evoke and what to ghost).
 - **The output shape** — one HTML file, one `<figure class="dio-artboard">` per
-  graphic, each titled (the title becomes the Figma frame name), laid out in the
-  `.dio-canvas` grid. Save it to a sensible path (e.g.
-  `email-mockups-<feature>.html` in the working directory, or a path the user gave).
+  graphic, each titled (the title becomes the Figma frame name) and captioned underneath
+  with its `.dio-artboard__note`, laid out in the `.dio-canvas` grid. Save it to a sensible
+  path (e.g. `email-mockups-<feature>.html` in the working directory, or a path the user gave).
+- **At scale** — for a dozen-plus artboards, don't build them in one pass (one agent
+  hand-writing 15+ artboards drifts and is slow). Per `references/building-and-verifying.md`:
+  write one **master brief** all builders read, fan out **parallel builders that each write
+  their own fragment file**, then **assemble** (template head + the full kit inlined + the
+  fragments concatenated). Separate fragment files per agent avoid the shared-file write
+  conflict; the one master brief keeps the fanned-out set cohesive.
 
 design-craft brings the craft (hierarchy, rhythm, polish, its own verifier passes);
 this skill supplies the system and the truth. Keep it inside the kit — this is
@@ -182,9 +209,14 @@ Open the HTML in a browser and screenshot it (use the `playwright-cli` or
 `polish-pass` territory — if design-craft built it, let it run those — and then
 check against the playbook's quality bar: the one idea is obvious at 50% size;
 every colour is a `--dio-` token with no stray blues; the serif is never bolder
-than 600; sentence case; no emoji; nothing important is clipped by a panel's bottom
-edge; the copy is the feature's real, short, on-brand words. Fix drift before going
-to Figma.
+than 600; sentence case; no emoji; **no coloured left-only borders**; nothing important is
+clipped by a panel's bottom edge; the copy is the feature's real, short, on-brand words; and
+every clean shot carries a `.dio-artboard__note` with **no em/en-dashes**. A fast **source
+lint** (grep the assembled file for emoji, banned puffery, `#007AFF`, serif-bold,
+`border-left` stripes, em-dashes inside notes, and stray non-token hex) catches the mechanical
+slop before the visual pass — `references/building-and-verifying.md` has the exact checks plus
+the playwright-cli gotchas (serve over http, `--filename`, per-figure `nth-of-type` capture).
+Fix drift before going to Figma.
 
 ## 6. Build in Figma
 
@@ -195,8 +227,9 @@ the open Figma document; the read-only Dev Mode / Framelink servers cannot creat
 frames and count as "no Figma MCP" here.
 
 - **Write-capable MCP present** → recreate each artboard as a titled, spaced frame on
-  the canvas, faithful to the HTML (exact fills, radii, shadows, fonts, text). Screenshot
-  and reconcile.
+  the canvas, faithful to the HTML (exact fills, radii, shadows, fonts, text), **plus the
+  under-mock marketing caption as a text node below each frame** (the `.dio-artboard__note`).
+  Screenshot and reconcile.
 - **No write-capable MCP** → stop the Figma step cleanly. Do not fake it.
 
 ## 7. Deliver
@@ -220,14 +253,22 @@ emails, not production email HTML.
   docs and `.tsx` source live across web + the two mobile islands, and the
   section-numbering gotcha.
 - `references/mockup-playbook.md` — the impressions-but-rich brief: lead with the wow,
-  no marketing copy inside the graphic, the framing treatments (product-surface default,
-  soft panel, collage, phone, website-only browser), the real logo, tokens, type, voice,
-  framing hygiene, and sizes. Hand this to design-craft.
+  no marketing copy on the product surface, the brief under-mock caption (no em/en-dashes),
+  no coloured left-only borders, inline-SVG icons, the framing treatments (product-surface
+  default, soft panel, collage, phone, website-only browser, and the optional email-hero
+  split), the real logo, tokens, type, voice, framing hygiene, and sizes. Hand this to design-craft.
+- `references/building-and-verifying.md` — the harness for a *large* set: the feature
+  coverage ledger, the parallel doc-research + build fan-out (one master brief → per-agent
+  fragment files → assembly), the deterministic verification lint, and the playwright-cli
+  gotchas. Read it whenever the set is more than a few graphics.
 - `references/figma-build.md` — discovering a write-capable Figma MCP and building
   the canvas tool-agnostically.
-- `assets/mock-kit.css` — Diolog tokens (`--dio-`) + mock primitives, including the
-  `.dio-logo` lockup and a `.dio-collage` overlap helper. Inline into the output HTML.
-- `assets/artboard-template.html` — self-contained starting shell with worked examples
-  of the treatments (product-surface default, soft panel, collage, website-only browser).
+- `assets/mock-kit.css` — Diolog tokens (`--dio-`) + mock primitives: the `.dio-logo`
+  lockup, the `.dio-appshell` product window, the `.dio-collage` overlap helper, the
+  wash-based `.dio-detect` verdict (no left stripe), the under-mock `.dio-artboard__note`,
+  and the `.dio-emailhero` split. Inline into the output HTML.
+- `assets/artboard-template.html` — self-contained starting shell with worked examples of
+  the treatments (product window, vignette, soft panel, collage, website-only browser, and
+  the email-hero split), each modelling the under-mock caption.
 - `assets/diolog-icon.svg` — the real Diolog brand mark; the `.dio-logo` lockup
   references it. Never substitute a letter-in-a-box.

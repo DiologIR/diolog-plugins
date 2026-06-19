@@ -104,6 +104,22 @@
   color: var(--dio-fg-muted);
 }
 
+/* The brief, non-technical marketing summary that sits UNDER the mock — a one-
+ * or two-line benefit written for IR teams and the third-party IR agencies who
+ * serve them, distilled from the feature's plain story. It is a CAPTION (a Figma
+ * sub-label below the frame), NOT copy on the product surface — the window stays
+ * clean. Sentence case; plain language (no jargon); NO em/en-dashes (they read
+ * as AI-generated and clash with the plain marketing voice) — use commas,
+ * full stops or parentheses. Every artboard carries exactly one. */
+.dio-artboard__note {
+  font-family: var(--dio-sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--dio-fg-secondary);
+  max-width: 60ch;
+  margin: 2px 2px 0;
+}
+
 /* The board = the full-bleed ground baked into the export, so the PNG already
  * carries the backdrop it lands on. Pick the ground to match the treatment. */
 .dio-board {
@@ -116,6 +132,19 @@
 .dio-board--white { background: var(--dio-bg-canvas); }
 .dio-board--soft  { background: var(--dio-bg-window); }
 .dio-board--navy  { background: var(--dio-bg-brand); }
+/* The sanctioned "liquid navy" marketing ground (DESIGN.md §3.4) — the ONE
+ * atmospheric brand asset, for the email-hero register. Its literal navy stops
+ * (#16264B / #0C1838 / #0A1430 + the royal lift) are a sanctioned exception to
+ * the tokens-only rule, like the persona-mark gradient — never a composed UI
+ * gradient on a card or button. Usually you put .dio-emailhero straight in a
+ * plain .dio-board (it carries this ground itself); this modifier is for a hero
+ * with no split copy column. */
+.dio-board--liquid {
+  background:
+    radial-gradient(70% 90% at 100% 100%, rgba(45, 86, 200, .40) 0%, rgba(31, 79, 191, 0) 55%),
+    radial-gradient(55% 70% at 92% 8%, rgba(120, 150, 230, .16) 0%, rgba(31, 79, 191, 0) 60%),
+    radial-gradient(120% 120% at 8% 0%, #16264B 0%, #0C1838 40%, #0A1430 100%);
+}
 
 /* ============================================================================
  * Atoms
@@ -417,23 +446,26 @@
 
 /* ============================================================================
  * Detection card — the real "the system noticed something for you" idiom
- * (mirrors patterns/detection-banner.tsx: a flat white card with a 3px LEFT
- * border in the semantic register). Use it for a consistency flag, an alert,
- * an escalate verdict — anywhere the app is surfacing a finding. The left
- * border is earned semantic emphasis here, not decoration.
+ * the semantic emphasis is carried by a soft WASH over the whole card + a
+ * leading icon tile + a chip — NEVER a coloured left-only border. A naked
+ * coloured left stripe, and especially the same stripe repeated down a list of
+ * rows, is the single most recognisable AI-slop tell; the real Diolog verdict
+ * surface is a tinted ground with an icon, which reads as intentional. Default
+ * is a white card with a FULL hairline; the semantic variants tint the whole
+ * card. For a LIST of findings, don't wash or stripe each row — give each row a
+ * leading semantic icon tile / dot + a chip on a plain hairline row instead.
  * ========================================================================== */
 
 .dio-detect {
   position: relative;
   background: var(--dio-bg-canvas);
   border: 1px solid var(--dio-border-card);
-  border-left: 3px solid var(--dio-accent);
   border-radius: var(--dio-radius-inner);
   box-shadow: var(--dio-shadow-md);
 }
-.dio-detect--warning { border-left-color: var(--dio-warning); }
-.dio-detect--danger  { border-left-color: var(--dio-danger); }
-.dio-detect--success { border-left-color: var(--dio-success); }
+.dio-detect--warning { background: var(--dio-warning-soft); border-color: rgba(165, 106, 17, .22); }
+.dio-detect--danger  { background: var(--dio-danger-soft);  border-color: rgba(194, 54, 42, .22); }
+.dio-detect--success { background: var(--dio-success-soft); border-color: rgba(31, 138, 91, .22); }
 
 /* A ghosted incoming item — gives a lit element something to be a reply TO,
  * without competing for attention. Avatar + two faded text bars. */
@@ -553,4 +585,52 @@
  * The FT/Bloomberg move: one real figure, large, with room around it. */
 .dio-statbig { display: flex; flex-direction: column; gap: 8px; }
 .dio-statbig__num { font-family: var(--dio-serif); font-weight: 500; font-size: 50px; line-height: 1; letter-spacing: -.02em; color: var(--dio-fg-primary); }
+
+/* ============================================================================
+ * Email hero (split) — the OPTIONAL "finished hero image" register. A copy
+ * column (Newsreader headline + one-line benefit + meta pills) BESIDE the clean
+ * product surface, on the sanctioned "liquid navy" marketing ground. The
+ * marketing copy lives HERE, in the email's copy column — NEVER on the product
+ * surface inside the window (that rule is unchanged). Use this when the ask is a
+ * ready-to-drop email hero image; use the frameless / product-window registers
+ * when the ask is a clean product graphic the email body will caption.
+ *
+ * Drop .dio-emailhero straight inside a plain .dio-board — it is the full-bleed
+ * ground. Put a product window / card in .dio-emailhero__stage. The headline is
+ * the ONLY place an <em> italic accent phrase is encouraged; keep the serif ≤600.
+ * ========================================================================== */
+
+.dio-emailhero {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  display: grid; grid-template-columns: 43% 57%; align-items: center;
+  background: radial-gradient(120% 120% at 8% 0%, #16264B 0%, #0C1838 40%, #0A1430 100%);
+}
+.dio-emailhero::before {           /* royal atmospheric lift, lower-right + a cool top highlight */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(70% 90% at 100% 100%, rgba(45, 86, 200, .40) 0%, rgba(31, 79, 191, 0) 55%),
+    radial-gradient(55% 70% at 92% 8%, rgba(120, 150, 230, .16) 0%, rgba(31, 79, 191, 0) 60%);
+}
+.dio-emailhero__copy { position: relative; z-index: 2; padding: 0 28px 0 64px; }
+.dio-emailhero__eyebrow {
+  font-family: var(--dio-mono); font-size: 12.5px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; color: #8FA6D9;
+  margin-bottom: 22px; display: flex; align-items: center; gap: 10px;
+}
+.dio-emailhero__eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: var(--dio-radius-full); background: #5C7DB5; box-shadow: 0 0 0 4px rgba(92, 125, 181, .18); }
+.dio-emailhero__title {
+  font-family: var(--dio-serif); font-weight: 500; color: #FBFCFE;
+  font-size: 44px; line-height: 1.06; letter-spacing: -.02em; margin: 0 0 20px;
+}
+.dio-emailhero__title em { font-style: italic; font-weight: 500; color: #AFC4F2; }
+.dio-emailhero__benefit { font-family: var(--dio-sans); font-size: 17px; line-height: 1.5; color: #C2CDE6; max-width: 30em; margin: 0; }
+.dio-emailhero__meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.dio-emailhero__pill {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border-radius: var(--dio-radius-full); background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .12); color: #E3EAFA; font-size: 13px; font-weight: 500;
+}
+.dio-emailhero__pill svg { width: 15px; height: 15px; color: #9DB6EE; flex: none; }
+.dio-emailhero__pill b { color: #fff; font-weight: 600; }
+.dio-emailhero__stage { position: relative; z-index: 2; height: 100%; display: flex; align-items: center; justify-content: flex-start; padding-left: 8px; }
 

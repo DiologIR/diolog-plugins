@@ -56,6 +56,10 @@ You already have the source of truth: the rendered HTML. Treat each
   `.dio-canvas` spacing.
 - **Title:** above each frame, a text node with the artboard's title (the
   `.dio-artboard__title` text), JetBrains Mono, uppercase, `--dio-fg-muted`.
+- **Caption:** *below* each frame, a text node with the under-mock marketing summary (the
+  `.dio-artboard__note` text), Inter ~13.5px, `--dio-fg-secondary`, max ~60ch. This is the
+  brief non-technical benefit for IR teams + their agencies; carry it across verbatim. (The
+  email-hero artboards have no note — their benefit is in the copy column inside the frame.)
 - **Frame size:** use the artboard's pixel size from the HTML (e.g. 640×500).
 - **Board fill:** the board colour (white / `#F5F7FB` / `#0A1733`).
 
