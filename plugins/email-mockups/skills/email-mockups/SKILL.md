@@ -115,14 +115,25 @@ design-craft builds from. Per feature:
   *result* the feature produces, not its generic UI. When the wow is an effect on
   something else, plan to show that something and the feature acting on it (the
   playbook's golden rule has the detail).
-- **Choose the treatment.** Default to a **product-surface vignette** (the feature
-  region itself, no browser chrome). Use the **soft panel + peeking device** to
-  *announce* a feature, **collage/overlap** to drop a finding tile onto the surface it
-  acts on, a **phone bezel** for mobile, and a **website frame** *only* when the thing
-  literally is a public website (e.g. a generated investor portal). Avoid the browser
-  frame as a generic "this is the web app" wrapper.
-- **Pick the board** colour and **size it tight** to the content (the playbook gives the
-  sizes that survive email downscaling).
+- **Choose the register, then the treatment** (playbook §4). For any **hero web
+  feature**, default to the **product window** — a clean browser window wrapping the
+  *complete* app shell (rail + real wordmark + one lit nav item + company switcher +
+  avatar) with a big, substantive hero. This is the premium register the best reference
+  sets use: a thin sliver reads as a fragment, a full app reads as the product. For
+  *secondary or genuinely thin* features (an install step, a toggle), drop to the
+  **compact impression** (frameless vignette). Then layer the techniques: **soft panel +
+  peeking device** to *announce*, **collage/overlap** to drop a finding tile onto the
+  surface it acts on, a **phone bezel** (full, rich screen) for mobile, and a **public
+  website frame** only when the thing literally is a public site (a generated investor
+  portal — the tailored URL is the story).
+- **Make the product look smart — the copy is the wow** (playbook §2). The hero must show
+  a real, *specific* IR insight or result, not lorem chrome: the actual finding with real
+  numbers and a real tension, an italic quote from the company's record, named source
+  chips ("FY25 results · p.12"), the real assistant persona (Guardian). If the copy could
+  be swapped onto any other SaaS unnoticed, it isn't done.
+- **Pick the board** colour and **size it tight** to the content (the product window is
+  large by design, ~900–1000 wide; compact impressions stay small — the playbook gives
+  both registers' sizes).
 
 Offer a small, deliberate mix rather than many near-duplicates, and keep one demo
 identity (Flight Centre) across the set.
@@ -136,16 +147,19 @@ without re-interviewing, and let it run its own workflow (skeleton → build →
 ai-slop / polish passes) over it:
 
 - **The constraints** — point it at `references/mockup-playbook.md` (impressions not
-  replicas, but rich not bare; lead with the wow/payoff; no marketing copy, explainers
-  or disclaimers inside the graphic — only real product chrome text; product-surface by
-  default, browser frame only for real public websites; collage a finding tile onto the
-  surface it acts on; the real Diolog logo; tokens; type; voice; framing hygiene; sizes)
-  as non-negotiable.
+  replicas, but rich not bare; lead with the wow/payoff; **for hero web features build the
+  full product window — clean browser chrome + the complete app shell — §4A**; make the
+  **copy substantive and specific — a real insight, an italic quote, named source chips —
+  §2**; no marketing copy, explainers or disclaimers — only real product chrome text;
+  collage a finding tile onto the surface it acts on; the real Diolog logo; tokens; type;
+  voice; framing hygiene; the two sizing registers) as non-negotiable.
 - **The kit** — `assets/mock-kit.css` (Diolog tokens under `--dio-` names + the
-  primitive classes, including the `.dio-logo` lockup that uses the bundled real mark
-  `assets/diolog-icon.svg` — never fake the logo with a letter box) and
-  `assets/artboard-template.html` (the self-contained shell with the fonts `<link>`,
-  worked examples of the treatments, and a placeholder to inline the kit). Tell it to
+  primitive classes: the `.dio-logo` lockup that uses the bundled real mark
+  `assets/diolog-icon.svg` — never fake the logo with a letter box; the **`.dio-appshell`
+  product-window shell** + `.dio-navitem` / `.dio-coswitch`; and the substance helpers
+  `.dio-persona` / `.dio-quote` / `.dio-source` / `.dio-statbig`) and
+  `assets/artboard-template.html` (the self-contained shell with the fonts `<link>` and
+  worked examples — **example 0 is the product window**, the premium default). Tell it to
   **start from the template, inline the full mock-kit into the `<style>` block** (single
   self-contained file — there is no build step), and compose each mock from the kit
   classes.

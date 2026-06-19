@@ -32,6 +32,8 @@
   --dio-bg-soft: #F1F4F9;            /* inset wells: chips, troughs, search, date blocks */
   --dio-bg-brand: #0A1733;           /* deep institutional navy */
   --dio-bg-brand-deep: #050B1F;
+  --dio-bg-brand-royal: #1F4FBF;     /* royal presentation/deck register (DESIGN.md §3.1) */
+  --dio-bg-brand-royal-soft: #E8EFFC;
 
   /* — Foreground / ink ------------------------------------------------------ */
   --dio-fg-primary: #0F1A2E;
@@ -454,4 +456,101 @@
 
 /* A labelled metric (big serif numeral + mono caption). */
 .dio-stat { display: flex; flex-direction: column; gap: 4px; }
+
+/* ============================================================================
+ * Product-window app shell — the PREMIUM register (playbook §4A). Drop this
+ * INSIDE a .dio-browser to turn the window into the full Diolog app: a nav rail
+ * with the real wordmark and ONE lit item, a top bar with the company switcher,
+ * and a roomy main region for the substantive hero. This is the default for any
+ * hero web feature — a complete, lived-in app reads as the real product, where a
+ * thin sliver reads as a fragment.
+ *
+ *   <div class="dio-browser"> <div class="dio-browser__bar">…</div>
+ *     <div class="dio-appshell">
+ *       <div class="dio-appshell__rail"> <span class="dio-logo">…</span>
+ *         <div class="dio-navitem is-active">…Conversations</div>
+ *         <div class="dio-navitem dio-navitem--ghost">…<span class="dio-ghost-bar"></span></div> … </div>
+ *       <div class="dio-appshell__main">
+ *         <div class="dio-appshell__topbar"> … <span class="dio-coswitch">…</span> … </div>
+ *         <div class="dio-appshell__stage"> …the hero… </div> </div>
+ *     </div> </div>
+ * ========================================================================== */
+
+.dio-appshell { display: flex; min-height: 460px; }
+.dio-appshell__rail {
+  width: 200px; flex: none;
+  background: var(--dio-bg-sidebar);
+  border-right: 1px solid var(--dio-border-faint);
+  padding: 20px 16px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.dio-appshell__rail .dio-logo { margin: 4px 6px 18px; }
+.dio-appshell__main { flex: 1; min-width: 0; background: var(--dio-bg-window); display: flex; flex-direction: column; }
+.dio-appshell__topbar {
+  display: flex; align-items: center; gap: 14px;
+  height: 64px; flex: none; padding: 0 24px;
+  background: var(--dio-bg-canvas);
+  border-bottom: 1px solid var(--dio-border-faint);
+}
+.dio-appshell__stage { flex: 1; padding: 30px 32px; min-width: 0; }   /* the roomy hero region — generous whitespace lives here */
+
+/* A nav item in the rail. Exactly ONE carries .is-active. */
+.dio-navitem {
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 12px; border-radius: var(--dio-radius-md);
+  font-family: var(--dio-sans); font-size: 14px; color: var(--dio-fg-muted);
+}
+.dio-navitem svg { width: 17px; height: 17px; flex: none; }
+.dio-navitem.is-active { background: var(--dio-accent-soft); color: var(--dio-accent-soft-ink); font-weight: 600; }
+/* a ghosted (non-lit) nav row: faint icon + a placeholder bar instead of a label */
+.dio-navitem--ghost { color: var(--dio-fg-faint); }
+.dio-navitem--ghost .dio-ghost-bar { flex: 1; max-width: 88px; }
+
+/* Company switcher pill — sits centred in the top bar: monogram + name + ticker. */
+.dio-coswitch {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 7px 14px 7px 8px;
+  background: var(--dio-bg-soft);
+  border: 1px solid var(--dio-border-faint);
+  border-radius: var(--dio-radius-full);
+}
+.dio-coswitch__mark { width: 22px; height: 22px; border-radius: 6px; background: var(--dio-bg-brand); color: var(--dio-fg-on-dark); font-family: var(--dio-sans); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.dio-coswitch__name { font-family: var(--dio-sans); font-size: 13.5px; font-weight: 600; color: var(--dio-fg-primary); }
+.dio-coswitch__ticker { font-family: var(--dio-mono); font-size: 11px; color: var(--dio-fg-muted); }
+
+/* ============================================================================
+ * Substance helpers — make the product look SMART (playbook §2 "make the kept
+ * copy smart"). The words are the wow: a named assistant persona, an italic
+ * quote lifted from the record, named source chips, and a big-numeral stat.
+ * ========================================================================== */
+
+/* Assistant persona line. Use the REAL assistant name (Guardian) + its real
+ * role — never an invented persona. */
+.dio-persona { display: inline-flex; align-items: center; gap: 9px; }
+.dio-persona__mark { width: 28px; height: 28px; border-radius: var(--dio-radius-full); background: radial-gradient(120% 120% at 30% 20%, #2A3F7A 0%, var(--dio-bg-brand) 70%); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.dio-persona__mark svg { width: 15px; height: 15px; color: var(--dio-fg-on-dark); }
+.dio-persona__name { font-family: var(--dio-sans); font-size: 14px; font-weight: 600; color: var(--dio-fg-primary); }
+.dio-persona__role { font-family: var(--dio-sans); font-size: 13px; color: var(--dio-fg-muted); }
+
+/* A quoted phrase lifted from the company's own record — italic; the editorial
+ * touch that makes the AI look like it actually read the filings. */
+.dio-quote { font-style: italic; color: var(--dio-fg-primary); }
+
+/* "SOURCED FROM" — named source chips (a doc icon + label). Specific documents
+ * and page numbers ("FY25 results · p.12"), never a bare "1 source". */
+.dio-sources { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dio-source {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 11px;
+  background: var(--dio-bg-canvas);
+  border: 1px solid var(--dio-border-subtle);
+  border-radius: var(--dio-radius-tiny);
+  font-family: var(--dio-sans); font-size: 12.5px; color: var(--dio-fg-secondary);
+}
+.dio-source svg { width: 13px; height: 13px; color: var(--dio-fg-muted); flex: none; }
+
+/* Big-numeral stat — uppercase eyebrow + oversized serif numeral + status chip.
+ * The FT/Bloomberg move: one real figure, large, with room around it. */
+.dio-statbig { display: flex; flex-direction: column; gap: 8px; }
+.dio-statbig__num { font-family: var(--dio-serif); font-weight: 500; font-size: 50px; line-height: 1; letter-spacing: -.02em; color: var(--dio-fg-primary); }
 

@@ -92,6 +92,26 @@ playwright-cli screenshot customer-storyboard.png
 real on-screen copy verbatim — the labels and microcopy your graphic should echo.
 Prefer `--raw snapshot` / `--raw eval` when piping the output elsewhere.
 
+### Capture two things the premium register needs
+
+The new default treatment is the **product window** — the feature inside the *complete*
+app shell — and its hero is a *substantive* interaction, not a generic placeholder (see
+the playbook §4A and §2). So when you read the rendered mock, deliberately capture:
+
+1. **The app-shell structure** — the real left-rail nav order (so you know which item is
+   lit and which to ghost), the top-bar layout (company switcher, search/bell, avatar),
+   and the route/URL (`app.diolog.com/<area>`). This is what makes the window read as the
+   real product. You can pull exact structure and even computed spacing for a region with
+   `playwright-cli eval` on the element's `outerHTML` / `getComputedStyle` if you want the
+   rebuild structurally true — but you are still *rebuilding on the kit*, not scraping the
+   DOM into the output.
+2. **A real, specific example of the feature producing value** — an actual question and a
+   smart answer, a real verdict with its reasoning, a real number with its source. Lift
+   the *substance* (the kind of insight, the real document names, the real figures), then
+   write the hero copy at that level of specificity. A graphic whose hero copy is generic
+   ("Draft an announcement") wastes the best lever you have; one that shows the product
+   being genuinely smart is what separates a good set from a best-in-class one.
+
 ### If a host isn't reachable
 
 The mock hosts are the shared Docker design-system containers behind the local
