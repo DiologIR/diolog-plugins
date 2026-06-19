@@ -11,14 +11,15 @@ description: >-
   email", or any "visual / graphic / representation of <feature> for an email"
   request — even if they don't say "mockup" or "Figma" explicitly. The skill reads
   the feature's real context (docs/marketing/product-feature-guide.md,
-  features-build/plain, and the React mock UI in apps/web-design-system and the
-  customer-mobile / investor-mobile design systems), builds impression-not-replica
-  graphics (a rich product-surface vignette by default, plus soft panel + peeking
-  device, collage/overlap, phone bezel, and a website frame only when the feature is a
-  public site) as titled, spaced artboards in one self-contained HTML file — built via
-  the design-craft skill on the live Diolog tokens — verifies the render, then
-  recreates the layout in Figma via whatever write-capable Figma MCP is connected.
-  If no Figma MCP is available, the HTML file is retained as the final deliverable.
+  features-build/plain, and the rendered mock UI read in a browser via playwright-cli
+  — the served web / customer / investor design-system hosts), builds
+  impression-not-replica graphics (a rich product-surface vignette by default, plus
+  soft panel + peeking device, collage/overlap, phone bezel, and a website frame only
+  when the feature is a public site) as titled, spaced artboards in one self-contained
+  HTML file — designed and built via the design-craft skill (engaged from planning
+  through build) on the live Diolog tokens — verifies the render, then recreates the
+  layout in Figma via whatever write-capable Figma MCP is connected. If no Figma MCP
+  is available, the HTML file is retained as the final deliverable.
 ---
 
 # Email mockups
@@ -36,9 +37,14 @@ them into Figma.
 ## The pipeline
 
 ```
-scope → gather context → plan the set → build the HTML (via design-craft)
+scope → gather context → design the set (plan + build the HTML, via design-craft)
       → verify the render → build in Figma → deliver
 ```
+
+design-craft is engaged from the *planning* stage, not just handed a finished
+plan to render — deciding what earns a graphic and which payoff to hero is design
+judgment. This skill supplies the domain truth (the rendered mock UI, the feature's
+real words) and the playbook constraints; design-craft supplies the craft.
 
 Use a todo list to track these — the Figma step in particular is easy to drop.
 
@@ -68,11 +74,16 @@ feature collect three things:
 1. **The plain story** — `docs/marketing/product-feature-guide.md` (find the
    section) and `docs/marketing/features-build/plain/NN-*.md`. This gives you the
    real on-screen labels and the on-brand phrasing to put in the graphic.
-2. **The real layout** — the React mock UI: `apps/web-design-system/pages|patterns`
-   for web; the `design-system/screens` + `design-system-web` registries for the two
-   mobile islands. ⚠️ The mobile apps use their **own** section numbering — map a
-   feature to screens via each app's `doc/sections.ts` and screen `meta`, never by
-   assuming the guide's numbers carry over.
+2. **The real layout** — the **rendered** mock UI, read in a browser via
+   `playwright-cli`: `http://web.diolog.mock/preview/preview.html` (web — click the
+   sidebar item), `http://customer.diolog.mock/` and `http://investor.diolog.mock/`
+   (mobile — switch to Storyboard). Lift the real structure, labels and hierarchy
+   from the actual DOM, and grab a screenshot to hand design-craft. The `.tsx` source
+   under `apps/web-design-system` and the two `apps/*-mobile` islands is the index for
+   *which* screen a feature is — and the fallback if a host is down. ⚠️ The mobile
+   apps use their **own** section numbering — match by meaning, never by assuming the
+   guide's numbers carry over. `references/finding-feature-context.md` has the hosts,
+   the playwright-cli commands and the numbering gotcha.
 3. **The design spec + tokens** — `DESIGN.md` at the repo root is the canonical
    design authority (palette, type, the one-accent / two-blue rules, radii,
    shadows, component inventory, voice). Read the relevant parts so the mock obeys
@@ -82,9 +93,16 @@ feature collect three things:
 Do these reads concurrently. The goal is that your graphic reads like the real
 feature — real labels, the real hero element — without copying it pixel-for-pixel.
 
-## 3. Plan the set
+## 3. Plan the set — bring in design-craft
 
-Read **`references/mockup-playbook.md`** — it's the brief. Then, per feature:
+Read **`references/mockup-playbook.md`** — it's the brief. Deciding *what* each
+graphic should be is design judgment, not just domain knowledge, so engage
+**design-craft** (`design-craft:design-craft`) here, at the *thinking* stage —
+not only to render a finished plan in step 4. Its content and quality principles
+(every element earns its place; one clear idea; lead with the payoff, not the
+plumbing; quality over quantity; anti-AI-slop) are exactly the lens for choosing
+the set. Work the decisions below through that lens — they become the brief
+design-craft builds from. Per feature:
 
 - **Decide whether the feature even earns a graphic.** Not every feature has a visual
   "wow". Some — a what's-new panel, an install step, a settings toggle people already
@@ -109,11 +127,13 @@ Read **`references/mockup-playbook.md`** — it's the brief. Then, per feature:
 Offer a small, deliberate mix rather than many near-duplicates, and keep one demo
 identity (Flight Centre) across the set.
 
-## 4. Build the HTML — via the design-craft skill
+## 4. Build the HTML — continue with design-craft
 
 The actual HTML artifact is built with the **design-craft** skill (the opinionated,
-slop-resistant designer). Invoke it (`design-craft:design-craft`) for the build,
-and hand it a complete brief so it builds autonomously without re-interviewing:
+slop-resistant designer) you already engaged for the planning in step 3. Carry that
+through to the build — hand design-craft a complete brief so it builds autonomously
+without re-interviewing, and let it run its own workflow (skeleton → build → its
+ai-slop / polish passes) over it:
 
 - **The constraints** — point it at `references/mockup-playbook.md` (impressions not
   replicas, but rich not bare; lead with the wow/payoff; no marketing copy, explainers
@@ -144,11 +164,13 @@ not invent new tokens, shadows, or a second blue.
 ## 5. Verify the render
 
 Open the HTML in a browser and screenshot it (use the `playwright-cli` or
-`agent-browser` skill, or the Chrome MCP). Check against the playbook's quality bar:
-the one idea is obvious at 50% size; every colour is a `--dio-` token with no stray
-blues; the serif is never bolder than 600; sentence case; no emoji; nothing
-important is clipped by a panel's bottom edge; the copy is the feature's real,
-short, on-brand words. Fix drift before going to Figma.
+`agent-browser` skill, or the Chrome MCP). This is design-craft's `ai-slop-check` /
+`polish-pass` territory — if design-craft built it, let it run those — and then
+check against the playbook's quality bar: the one idea is obvious at 50% size;
+every colour is a `--dio-` token with no stray blues; the serif is never bolder
+than 600; sentence case; no emoji; nothing important is clipped by a panel's bottom
+edge; the copy is the feature's real, short, on-brand words. Fix drift before going
+to Figma.
 
 ## 6. Build in Figma
 
@@ -179,8 +201,10 @@ emails, not production email HTML.
 
 ## Bundled resources
 
-- `references/finding-feature-context.md` — where the feature docs and React mock UI
-  live across web + the two mobile islands, and the section-numbering gotcha.
+- `references/finding-feature-context.md` — the served mock hosts (web / customer /
+  investor) and how to read their rendered HTML via playwright-cli, where the feature
+  docs and `.tsx` source live across web + the two mobile islands, and the
+  section-numbering gotcha.
 - `references/mockup-playbook.md` — the impressions-but-rich brief: lead with the wow,
   no marketing copy inside the graphic, the framing treatments (product-surface default,
   soft panel, collage, phone, website-only browser), the real logo, tokens, type, voice,

@@ -40,33 +40,90 @@ Lift your mockup copy from here.
 
 ---
 
-## Source 2 — the React mock UI (what it looks like + where it sits)
+## Source 2 — the rendered mock UI (what it looks like + where it sits)
 
-This is how the feature is actually laid out and styled. Read the relevant
-mock(s) to see the real composition — what's the hero element, what surrounds it,
-what the spacing and hierarchy are. You're not copying it pixel-for-pixel; you're
-learning what to ghost and what to make the hero.
+This is how the feature is actually laid out and styled. **Read the *rendered*
+mock, not the raw `.tsx`.** Open the live design-system host in a browser with
+`playwright-cli` (or `agent-browser` / the Chrome MCP) and lift the real
+structure, copy and hierarchy from the actual DOM. The rendered HTML is the
+truthful source — it shows the composed screen with real demo data, the actual
+spacing, and the real hero element — whereas raw JSX makes you reconstruct the
+layout in your head and miss what the screen really emphasises. You're learning
+**what to ghost and what to make the hero**, not copying pixel-for-pixel.
 
-### Web app (companies / IR team) — `apps/web-design-system/`
+The three surfaces are each served as a self-contained mock app behind the local
+Caddy:
 
-Feature-named, no numbering puzzle:
+| Surface | Host | Reaching a feature |
+|---|---|---|
+| **Web** (companies / IR team) | `http://web.diolog.mock/preview/preview.html` | SPA with a left sidebar — Home, Conversations, Knowledge Base, Inbox, Tasks, Agents, Calendar, Workflows, Presentations, FAQs, Widgets, Surveys, Chatter, Investor Portal, Investor access, Settings, Admin. **Click the sidebar item** for your feature and wait for the re-render — routing is internal React state, so the URL never changes and there is no hash deep-link — then read the main content region. |
+| **Customer mobile** (IR-pro app, `com.diolog.ir`) | `http://customer.diolog.mock/` | Two modes via a toggle at the top: **Interactive app** (a tap-through with a bottom tab bar — Home, Ask, Inbox, More, Search) and **Storyboard · N screens** (every screen rendered at once, grouped by section with a one-line lede each). |
+| **Investor mobile** (investor app, `com.diolog.app`) | `http://investor.diolog.mock/` | Same two modes; the investor tabs are Discover, Following, Inbox, Profile. |
+
+**For mobile, switch to Storyboard** — it renders every screen on one page, each
+section labelled with its human lede ("Sentiment, perception and
+disclosure-consistency analyses", "Disclosures, announcements and delivery
+metrics", …), so you can find your feature's screen by meaning and read its real
+composition in one shot. Use the Interactive app mode when you need a screen's
+live state or to see how you arrive at it.
+
+### Driving it with playwright-cli
+
+`open` the host, drive the SPA to the feature, then pull what you need — the
+rendered DOM (`snapshot` / `eval`) for structure and copy, and a `screenshot` for
+a visual reference design-craft can build against:
+
+```bash
+# Web — open, find the nav item's ref, click it, then read the rendered page
+playwright-cli open http://web.diolog.mock/preview/preview.html
+playwright-cli snapshot                       # find the sidebar item's ref (e.g. e34 "Inbox")
+playwright-cli click <ref-of-Inbox>           # switches the React view — wait a beat for re-render
+playwright-cli snapshot                       # the rendered Inbox page: labels, structure, hierarchy
+playwright-cli screenshot inbox.png           # a visual reference of the real surface
+
+# Mobile — open, switch to Storyboard, screenshot the section you need
+playwright-cli open http://customer.diolog.mock/
+playwright-cli snapshot                        # find the "Storyboard · N screens" toggle ref
+playwright-cli click <ref-of-Storyboard>
+playwright-cli screenshot customer-storyboard.png
+```
+
+`playwright-cli eval "() => document.querySelector('main')?.innerText"` pulls the
+real on-screen copy verbatim — the labels and microcopy your graphic should echo.
+Prefer `--raw snapshot` / `--raw eval` when piping the output elsewhere.
+
+### If a host isn't reachable
+
+The mock hosts are the shared Docker design-system containers behind the local
+Caddy (`*.diolog.mock`). If one 502s or won't load, check the containers are up
+(`./scripts/dev-docker.sh status`); if you still can't reach it, fall back to
+reading the `.tsx` source (paths below) and tell the user the live mock wasn't
+reachable — but prefer the rendered HTML whenever it's up.
+
+### Mapping a feature to its screen — and the source behind the render
+
+Use the source tree to find *which* screen a feature is (especially on mobile,
+where the storyboard sections need a name to match against) and as the fallback
+when a host is down. The render is the truth for *layout*; these files are the
+index and the back-up.
+
+**Web app — `apps/web-design-system/`** (feature-named, no numbering puzzle):
 
 - `pages/*.stories.tsx` — full page compositions: `dashboard`, `inbox`,
   `conversations`, `documents`, `social-monitoring`, `workflows`,
-  `ai-configuration`. Start here for a web feature.
-- `patterns/*.tsx` — reusable composed structures you'll reuse in the mock:
-  `page-header`, `card-with-tabs`, `chat-message`, `detection-banner`,
-  `stat-card`, `empty-state`, `status-badge`, `search-field`, `chart-card`,
-  `split-button`, `modal-shell`, `drawer-shell`.
+  `ai-configuration`. These are what the preview's sidebar renders.
+- `patterns/*.tsx` — reusable composed structures: `page-header`,
+  `card-with-tabs`, `chat-message`, `detection-banner`, `stat-card`,
+  `empty-state`, `status-badge`, `search-field`, `chart-card`, `split-button`,
+  `modal-shell`, `drawer-shell`.
 - `primitives/` — buttons, badges, inputs.
 
-### Mobile — two separate apps, each its own island
+**Mobile — two separate islands, each its own taxonomy:**
 
-- **Customer mobile** (the IR-professional / issuer-staff app, `com.diolog.ir`):
-  `apps/customer-mobile/design-system/` and `apps/customer-mobile/design-system-web/`
-- **Investor mobile** (the consumer investor app, `com.diolog.app`):
-  `apps/investor-mobile/mobile/design-system/` and
-  `apps/investor-mobile/mobile/design-system-web/`
+- **Customer mobile** (`com.diolog.ir`): `apps/customer-mobile/design-system/`
+  and `apps/customer-mobile/design-system-web/`
+- **Investor mobile** (`com.diolog.app`): `apps/investor-mobile/mobile/design-system/`
+  and `apps/investor-mobile/mobile/design-system-web/`
 
 Both share the same layout:
 
@@ -84,25 +141,23 @@ design-system-web/src/
   nav/graph.ts      — how screens connect
 ```
 
-### ⚠️ The numbering gotcha — do NOT assume section numbers line up
+#### ⚠️ The numbering gotcha — do NOT assume section numbers line up
 
 The mobile screen IDs (`S4_1`, `S6_2`, …) are numbered by **that app's own
 taxonomy**, which is *different* from the product-feature-guide's numbering and
 *different between the two mobile apps*. For example, in customer-mobile,
 section 4 is **"Alerts & monitoring"** and section 6 is **"Intelligence"** —
-nothing to do with the guide's "4 Smart Inbox / 6 Calendar".
-
-So to find a feature's screen(s) in a mobile app:
+nothing to do with the guide's "4 Smart Inbox / 6 Calendar". The storyboard's
+section ledes are the human-readable map; match your feature to a section by
+**meaning**, then confirm the screens:
 
 1. Read that app's `design-system-web/src/doc/sections.ts` — it maps each section
-   number to a human name, headline and lede. Match your feature to a section by
-   meaning, not by number.
+   number to a human name, headline and lede.
 2. Read `registry.ts` (or list `design-system/screens/` and skim each file's
    `meta = { id, section, title, subtitle, register }`) to find the screens in
    that section.
-3. Open the matching `screens/S*.tsx` and the `composites/`/`elements/` it imports
-   to see the real layout. `meta.register` (`light`/`dark`/`royal`) tells you the
-   screen's ground — useful for choosing the board colour.
+3. The matching `screens/S*.tsx`'s `meta.register` (`light`/`dark`/`royal`) tells
+   you the screen's ground — useful for choosing the board colour.
 
 ---
 
