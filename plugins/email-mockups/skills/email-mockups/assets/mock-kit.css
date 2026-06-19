@@ -198,6 +198,22 @@
   flex: none;
 }
 
+/* The real Diolog brand lockup. A white tile holding the navy droplet mark
+ * (inline the contents of assets/diolog-icon.svg inside .dio-logo__tile, sized
+ * ~60% of the tile) beside the lowercase "diolog" wordmark in serif. NEVER fake
+ * the logo with a letter in a coloured box — that reads as a random/incorrect
+ * mark. Default is the in-app "bar" size; add .dio-logo--hero for a login-size
+ * mark, and .dio-logo--on-dark when it sits on a navy board. */
+.dio-logo { display: inline-flex; align-items: center; gap: 11px; }
+.dio-logo__tile { width: 30px; height: 30px; border-radius: var(--dio-radius-tiny); background: var(--dio-bg-canvas); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.dio-logo__tile svg { display: block; width: 18px; height: auto; }
+.dio-logo__word { font-family: var(--dio-serif); font-weight: 500; font-size: 22px; line-height: 1; letter-spacing: -.02em; color: var(--dio-fg-primary); }
+.dio-logo--hero { gap: 15px; }
+.dio-logo--hero .dio-logo__tile { width: 60px; height: 60px; border-radius: 17px; }
+.dio-logo--hero .dio-logo__tile svg { width: 38px; }
+.dio-logo--hero .dio-logo__word { font-size: 44px; }
+.dio-logo--on-dark .dio-logo__word { color: var(--dio-fg-on-dark); }
+
 /* Hairline divider. */
 .dio-divider { height: 1px; background: var(--dio-border-faint); border: 0; }
 
@@ -266,8 +282,12 @@
 }
 
 /* ============================================================================
- * Browser frame — full window chrome for "this is the web app".
- * Pair with a ghosted app shell (sidebar + top pill) and ONE lit feature.
+ * Browser / website frame — full window chrome. Use this ONLY when the mockup
+ * literally is a public/external website (e.g. a generated investor portal with
+ * a tailored URL). It is NOT the default "this is the web app" wrapper — people
+ * already know it's a web app, and the frame just makes a graphic read like a
+ * screenshot. For an in-product feature, show the product surface directly (see
+ * .dio-fragment / .dio-card) plus at most a THIN ghosted chrome sliver.
  * ========================================================================== */
 
 .dio-browser {
@@ -303,7 +323,7 @@
 }
 .dio-browser__body { display: flex; }              /* sidebar + main */
 .dio-ghost-sidebar {
-  width: 150px;
+  width: 120px;   /* keep app chrome narrow — wide nav rails read as heavy/screenshotty */
   flex: none;
   background: var(--dio-bg-sidebar);
   border-right: 1px solid var(--dio-border-faint);
@@ -382,6 +402,16 @@
   align-items: center;
   justify-content: center;
 }
+
+/* ============================================================================
+ * Collage / overlap — a core technique. Drop a smaller "finding" tile (a
+ * verdict, a notification, a memory note) onto the larger surface it acts on
+ * (the draft it flags, the doc it informed) so the tile has context and depth
+ * instead of floating alone on an empty board. The base sits in normal flow;
+ * position .dio-collage__over (top/right/bottom/left inline) over one corner.
+ * ========================================================================== */
+.dio-collage { position: relative; }
+.dio-collage__over { position: absolute; box-shadow: var(--dio-shadow-lg); }
 
 /* ============================================================================
  * Detection card — the real "the system noticed something for you" idiom

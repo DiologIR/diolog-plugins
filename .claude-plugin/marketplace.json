@@ -185,8 +185,8 @@
     },
     {
       "name": "email-mockups",
-      "description": "Turn a named Diolog feature (or several) into email-ready product-mockup graphics on a Figma canvas, for product-update / marketing emails. Reads the feature's real context — docs/marketing/product-feature-guide.md + features-build/plain/NN-*.md + the React mock UI in apps/web-design-system (web) and the apps/customer-mobile / apps/investor-mobile design-system(-web) islands (mobile) — then builds impression-not-replica mockups (soft panel + peeking device, browser frame, phone bezel, frameless fragment) as titled, spaced artboards in one self-contained HTML file using the live Diolog design tokens, verifies the render in a browser, and recreates the layout in Figma via whatever write-capable Figma MCP is connected (deleting the HTML only after a successful build). If no Figma MCP is available, the HTML file is retained as the final deliverable.",
-      "version": "1.1.0",
+      "description": "Turn a named Diolog feature (or several) into email-ready product-mockup graphics on a Figma canvas, for product-update / marketing emails. Reads the feature's real context — docs/marketing/product-feature-guide.md + features-build/plain/NN-*.md + the React mock UI in apps/web-design-system (web) and the apps/customer-mobile / apps/investor-mobile design-system(-web) islands (mobile) — then builds impression-not-replica mockups that lead with the feature's payoff (a rich product-surface vignette by default, plus soft panel + peeking device, collage/overlap, phone bezel, and a website frame for actual public sites) as titled, spaced artboards in one self-contained HTML file using the live Diolog design tokens, verifies the render in a browser, and recreates the layout in Figma via whatever write-capable Figma MCP is connected (deleting the HTML only after a successful build). If no Figma MCP is available, the HTML file is retained as the final deliverable.",
+      "version": "1.2.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"

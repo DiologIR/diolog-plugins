@@ -13,8 +13,9 @@ description: >-
   the feature's real context (docs/marketing/product-feature-guide.md,
   features-build/plain, and the React mock UI in apps/web-design-system and the
   customer-mobile / investor-mobile design systems), builds impression-not-replica
-  graphics (soft panel + peeking device, browser frame, phone bezel, frameless
-  fragment) as titled, spaced artboards in one self-contained HTML file — built via
+  graphics (a rich product-surface vignette by default, plus soft panel + peeking
+  device, collage/overlap, phone bezel, and a website frame only when the feature is a
+  public site) as titled, spaced artboards in one self-contained HTML file — built via
   the design-craft skill on the live Diolog tokens — verifies the render, then
   recreates the layout in Figma via whatever write-capable Figma MCP is connected.
   If no Figma MCP is available, the HTML file is retained as the final deliverable.
@@ -83,17 +84,30 @@ feature — real labels, the real hero element — without copying it pixel-for-
 
 ## 3. Plan the set
 
-Read **`references/mockup-playbook.md`** — it's the brief. Then decide, per feature:
+Read **`references/mockup-playbook.md`** — it's the brief. Then, per feature:
 
-- the **one idea** each graphic will hero (one idea per graphic);
-- the **treatment(s)**: soft panel + peeking device (the house style — start here),
-  browser frame, phone bezel, or frameless fragment;
-- the **board** colour and **size** (the playbook gives the sizes that survive email
-  downscaling).
+- **Decide whether the feature even earns a graphic.** Not every feature has a visual
+  "wow". Some — a what's-new panel, an install step, a settings toggle people already
+  understand — are better described in the email copy than mocked. If a feature has no
+  legible, impressive visual, skip it, merge it into a related graphic, or flag it to
+  the user; don't pad the set with weak mockups. And don't over-scale a feature people
+  already get (an admin console reads better as one small surface with a toggle than a
+  full dashboard).
+- **Pick the wow** — the single most impactful element each graphic heroes: the
+  *result* the feature produces, not its generic UI. When the wow is an effect on
+  something else, plan to show that something and the feature acting on it (the
+  playbook's golden rule has the detail).
+- **Choose the treatment.** Default to a **product-surface vignette** (the feature
+  region itself, no browser chrome). Use the **soft panel + peeking device** to
+  *announce* a feature, **collage/overlap** to drop a finding tile onto the surface it
+  acts on, a **phone bezel** for mobile, and a **website frame** *only* when the thing
+  literally is a public website (e.g. a generated investor portal). Avoid the browser
+  frame as a generic "this is the web app" wrapper.
+- **Pick the board** colour and **size it tight** to the content (the playbook gives the
+  sizes that survive email downscaling).
 
-Lead with the soft-panel house style. Offer a small, deliberate mix rather than many
-near-duplicates. Match the surface to the treatment: phone bezel / soft-panel-with-
-phone for mobile features; browser frame / frameless for web features.
+Offer a small, deliberate mix rather than many near-duplicates, and keep one demo
+identity (Flight Centre) across the set.
 
 ## 4. Build the HTML — via the design-craft skill
 
@@ -102,13 +116,19 @@ slop-resistant designer). Invoke it (`design-craft:design-craft`) for the build,
 and hand it a complete brief so it builds autonomously without re-interviewing:
 
 - **The constraints** — point it at `references/mockup-playbook.md` (impressions not
-  replicas; the four treatments; tokens; type; voice; sizes) as non-negotiable.
+  replicas, but rich not bare; lead with the wow/payoff; no marketing copy, explainers
+  or disclaimers inside the graphic — only real product chrome text; product-surface by
+  default, browser frame only for real public websites; collage a finding tile onto the
+  surface it acts on; the real Diolog logo; tokens; type; voice; framing hygiene; sizes)
+  as non-negotiable.
 - **The kit** — `assets/mock-kit.css` (Diolog tokens under `--dio-` names + the
-  primitive classes) and `assets/artboard-template.html` (the self-contained shell
-  with the fonts `<link>`, worked examples of each treatment, and a placeholder to
-  inline the kit). Tell it to **start from the template, inline the full mock-kit
-  into the `<style>` block** (single self-contained file — there is no build step),
-  and compose each mock from the kit classes.
+  primitive classes, including the `.dio-logo` lockup that uses the bundled real mark
+  `assets/diolog-icon.svg` — never fake the logo with a letter box) and
+  `assets/artboard-template.html` (the self-contained shell with the fonts `<link>`,
+  worked examples of the treatments, and a placeholder to inline the kit). Tell it to
+  **start from the template, inline the full mock-kit into the `<style>` block** (single
+  self-contained file — there is no build step), and compose each mock from the kit
+  classes.
 - **The content** — the per-feature context you gathered in step 2 (real labels,
   on-brand phrases, the hero element, the layout to evoke and what to ghost).
 - **The output shape** — one HTML file, one `<figure class="dio-artboard">` per
@@ -161,11 +181,15 @@ emails, not production email HTML.
 
 - `references/finding-feature-context.md` — where the feature docs and React mock UI
   live across web + the two mobile islands, and the section-numbering gotcha.
-- `references/mockup-playbook.md` — the impressions-not-replicas brief: the four
-  treatments, tokens, type, voice, and sizes. Hand this to design-craft.
+- `references/mockup-playbook.md` — the impressions-but-rich brief: lead with the wow,
+  no marketing copy inside the graphic, the framing treatments (product-surface default,
+  soft panel, collage, phone, website-only browser), the real logo, tokens, type, voice,
+  framing hygiene, and sizes. Hand this to design-craft.
 - `references/figma-build.md` — discovering a write-capable Figma MCP and building
   the canvas tool-agnostically.
-- `assets/mock-kit.css` — Diolog tokens (`--dio-`) + mock primitives. Inline into
-  the output HTML.
-- `assets/artboard-template.html` — self-contained starting shell with worked
-  examples of each treatment.
+- `assets/mock-kit.css` — Diolog tokens (`--dio-`) + mock primitives, including the
+  `.dio-logo` lockup and a `.dio-collage` overlap helper. Inline into the output HTML.
+- `assets/artboard-template.html` — self-contained starting shell with worked examples
+  of the treatments (product-surface default, soft panel, collage, website-only browser).
+- `assets/diolog-icon.svg` — the real Diolog brand mark; the `.dio-logo` lockup
+  references it. Never substitute a letter-in-a-box.
