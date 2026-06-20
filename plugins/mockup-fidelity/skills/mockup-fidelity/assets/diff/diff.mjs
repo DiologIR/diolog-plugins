@@ -77,6 +77,20 @@ function weightFromFamily(fam) {
   return null;
 }
 const close = (a, b, t = TOL_PX) => a != null && b != null && Math.abs(a - b) <= t;
+// Typeface KIND — the weight check can't tell serif 500 from sans 500, so a
+// serif-vs-sans swap slips by. Note: the generic `sans-serif` fallback contains
+// the substring "serif", so exclude it explicitly.
+function familyKind(fam) {
+  if (!fam) return null;
+  if (/Mono|JetBrains/i.test(fam)) return 'mono';
+  if (/Newsreader|Georgia|GT Super|Times/i.test(fam)) return 'serif';
+  if (/\bserif\b/i.test(fam) && !/sans-?serif/i.test(fam)) return 'serif';
+  return 'sans';
+}
+const alignNorm = a => {
+  const v = String(a ?? 'left');
+  return v === 'start' ? 'left' : v === 'end' ? 'right' : v;
+};
 
 // ---------- target (app) accessors — RN harness OR extract-mock(DOM) shape ----------
 const A = {
@@ -84,6 +98,8 @@ const A = {
   placeholder: n => norm(n.placeholder ?? (n.isPh ? n.text : '')),
   fontSize: n => n.effStyle?.fontSize ?? px(n.comp?.fontSize),
   weight: n => weightFromFamily(n.effStyle?.fontFamily) ?? (n.comp?.fontWeight ? parseInt(n.comp.fontWeight, 10) : null),
+  family: n => familyKind(n.effStyle?.fontFamily ?? n.comp?.fontFamily),
+  align: n => alignNorm(n.effStyle?.textAlign ?? n.comp?.textAlign),
   color: n => toHex(n.effStyle?.color ?? n.comp?.color),
   phColor: n => toHex(n.placeholderTextColor ?? n.comp?.color),
   lineHeight: n => n.effStyle?.lineHeight ?? px(n.comp?.lineHeight) ?? null,
@@ -147,6 +163,24 @@ const rows = [], oks = [], unmatched = [];
 const rec = (el, prop, a, m, ok) => rows.push({ el, prop, app: a, mock: m, ok });
 const CHROME_TXT = /^\d{1,2}:\d{2}$|signal_cellular|wifi|battery_full/;
 
+// ---- SCREEN BACKGROUND (top-level, NOT tied to a text probe) ----
+// The per-element box check only reaches the nearest styled ancestor of a matched
+// text node — text sits in a card, so the walk stops there and the screen root is
+// never compared. Diff it explicitly: the mock frame root vs the shallowest
+// APP-rendered backgrounded container (skip native RNS* wrappers, which carry a
+// default opaque bg ABOVE the app's own root and would mask it).
+{
+  const mockBg = toHex(mock[0]?.comp?.backgroundColor);
+  const appRoot = app
+    .filter(n => {
+      const bg = n.style?.backgroundColor ?? (n.comp && n.comp.backgroundColor);
+      return bg && toHex(bg) !== 'transparent' && !/^RNS/.test(n.type || '');
+    })
+    .sort((a, b) => (a.depth ?? 99) - (b.depth ?? 99))[0];
+  const appBg = appRoot ? toHex(appRoot.style?.backgroundColor ?? appRoot.comp?.backgroundColor) : null;
+  if (mockBg && mockBg !== 'transparent') rec('[screen background]', 'background', appBg, mockBg, appBg === mockBg);
+}
+
 for (const mn of mock) {
   const isPh = mn.isPh, text = norm(mn.text);
   if (!text && !isPh) continue;
@@ -167,6 +201,11 @@ for (const mn of mock) {
     // shrinks every multi-line block. A `null` target value is a real miss.
     const aLh = A.lineHeight(an), mLh = px(mn.comp.lineHeight);
     if (mLh != null) rec(elName, 'line-height', aLh, mLh, close(aLh, mLh, 1.5));
+    // typeface kind (serif/sans/mono) — catches a serif-vs-sans swap the weight
+    // check is blind to. text-align catches centred-vs-left (quiet when both left).
+    const mFam = familyKind(mn.comp.fontFamily);
+    if (mFam) rec(elName, 'font-family', A.family(an), mFam, A.family(an) === mFam);
+    rec(elName, 'text-align', A.align(an), alignNorm(mn.comp.textAlign), A.align(an) === alignNorm(mn.comp.textAlign));
   } else {
     const mC = toHex(mn.comp.color); rec(elName, 'placeholder-color', A.phColor(an), mC, A.phColor(an) === mC);
     const mFs = px(mn.comp.fontSize); if (mFs != null) rec(elName, 'font-size', A.fontSize(an), mFs, close(A.fontSize(an), mFs, 0.6));

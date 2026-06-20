@@ -67,9 +67,15 @@ that itself. Override the chrome set with `window.MF_CHROME_SELECTOR`.
 node diff.mjs --mock mock.discover.json --app _latest.json --anchor "Discover" --out report.discover.md
 ```
 
-Per matched element it diffs: font size / weight / colour / **line-height**, and
-on the nearest styled-ancestor box the background / radius / shadow-presence /
-**padding (left, top, bottom)**. Line-height and vertical padding matter because
+Per matched element it diffs: font size / weight / colour / **line-height** /
+**typeface kind (serif·sans·mono)** / **text-align**, and on the nearest
+styled-ancestor box the background / radius / shadow-presence / **padding (left,
+top, bottom)**. It also diffs the **screen background** as a top-level check (the
+mock frame root vs the shallowest app-rendered backgrounded container) — that one
+is NOT tied to a text probe, because screen text sits inside a card whose
+background stops the ancestor-walk, so the screen root would otherwise never be
+compared. Typeface-kind catches a serif-vs-sans swap the weight check is blind to;
+text-align catches centred-vs-left. Line-height and vertical padding matter because
 RN text left unset renders at the font default (≈1.2×) while a mock's CSS
 line-height is commonly 1.5× — silently shrinking every card; a box with the right
 pad-left but wrong pad-top reads as wrong vertical padding. (RN's single-layer
@@ -86,6 +92,34 @@ The report has three sections:
 Geometry is compared **only on the gutter an element is anchored to** (left-inset
 for left-anchored, right-inset for right-anchored) because the mock's frame width
 ≠ the device's; flex-spanning elements (anchored to both edges) skip geometry.
+
+## Known remaining blind spots (verify these by eye / structurally)
+
+The differ is **text-probe driven** — it diffs the styles of mock text nodes and
+their ancestor boxes, plus the screen background. These classes are NOT caught and
+still need a structural pass + a screenshot:
+
+- **Non-text visual elements** with no associated text — a divider line, a
+  standalone icon, an image, a decorative bar, a chart, an avatar. If it carries
+  no text and isn't a text's ancestor box, it's never probed. (A *missing* divider
+  or a wrong icon colour won't flag.)
+- **App-EXTRA elements** — the differ iterates MOCK probes, so something the app
+  renders that the mock doesn't is invisible to it (only the reverse is listed,
+  under ⚠︎ unmatched).
+- **Between-element spacing** — the gap/margin BETWEEN two siblings or sections
+  (the differ checks an element's own padding + its gutter, not inter-element gaps).
+- **Icon glyph correctness** — mock Material ligature vs app SVG are different
+  representations; the differ can't confirm the app's icon is the right glyph
+  (only that *something* is there). Wrong-but-present icons pass.
+- **Element width/height** directly (line-height is a proxy for text-block height).
+- **Nested inline `<Text>`** — the RN harness resolves a deeply-nested inline span's
+  effStyle as null, so its size/weight/colour can't be compared (a harness limit).
+- **letter-spacing / opacity / per-side border colour** — captured but not diffed
+  (add if a screen needs them).
+
+So: differ report → 0 unexplained is necessary, not sufficient. Always finish with
+a structural present/absent pass (Phase 3A/3B) + a screenshot for the visual
+classes above (shadow depth, icon glyphs, spacing rhythm, overlaps).
 
 ## Prior art — when to reach for an off-the-shelf tool instead
 
