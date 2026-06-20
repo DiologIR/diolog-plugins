@@ -1,0 +1,9 @@
+{
+  "name": "mockup-fidelity",
+  "version": "1.0.0",
+  "description": "Validate that an implemented React or React Native UI faithfully reproduces a reference mockup (HTML+CSS, served prototype, Figma export, or another rendered component set), then update the code to close every gap — by measuring, never by eyeballing. Treats the mock as the source of truth, builds a COMPLETE screen/frame inventory (never silently drops a frame), renders both sides, inverts the burden of proof (a visible difference is a defect until a citation proves it intentional), diffs structure-first then per-property computed styles, and produces a per-screen present/divergent/absent ledger plus a FUNCTIONAL-GAPS document for any newly-added UI that is only visual (missing backend, data wiring, endpoints). For React Native it can drive the app with Maestro (navigate + screenshot a simulator) and/or run it under react-native-web to read getComputedStyle (stubbing native-only modules when the web boot is blocked), and knows that RN has no CSS cascade so a component's StyleSheet literals resolved against its tokens ARE its computed style when RNW can't boot. Asks the user when unsure, on both a full-comparison and a per-screen basis. Generic and framework-agnostic — nothing app-specific.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}

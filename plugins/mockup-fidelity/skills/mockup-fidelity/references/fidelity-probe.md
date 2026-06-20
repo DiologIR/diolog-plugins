@@ -1,12 +1,12 @@
 # Fidelity probe — one-pass capture
 
-The audit's biggest time sink is **re-navigating to the same surface to check one more thing**. Each visit costs a login + load + state-setup, and Step 3 has ~8 render-time checks; doing them as separate visits multiplies that cost. This probe collapses all of them into **one `eval` per surface/state**: it runs inside the already-rendered page and returns a JSON snapshot carrying every render-time signal the audit needs. Capture once, then classify offline from the JSON (and the screenshot) — never re-open the page to re-check a single property.
+The validation pass's biggest time sink is **re-navigating to the same surface to check one more thing**. Each visit costs a login + load + state-setup, and Phase 3 has ~8 render-time checks; doing them as separate visits multiplies that cost. This probe collapses all of them into **one `eval` per surface/state**: it runs inside the already-rendered page and returns a JSON snapshot carrying every render-time signal the validation needs. Capture once, then classify offline from the JSON (and the screenshot) — never re-open the page to re-check a single property.
 
-It carries **two axes**, and Step 3 reads them in order: a **structural axis** for the frame-first diff (Step 3A) — `skeleton` (the nested landmark-region tree) and each control's `id` (stable identity) + `anchor` (containment path + position within its container), which is how you catch a *relocated* control without comparing meaningless absolute coordinates — and a **styling axis** for the per-region pass (Step 3B) — region `style`, fingerprints, thin/empty flags, broken icons, editors.
+It carries **two axes**, read in order: a **structural axis** for the structure-before-styling diff (SKILL.md Phase 3B) — `skeleton` (the nested landmark-region tree) and each control's `id` (stable identity) + `anchor` (containment path + position within its container), which is how you catch a *relocated* control without comparing meaningless absolute coordinates — and a **styling axis** for the per-property pass (Phase 3C) — region `style`, fingerprints, thin/empty flags, broken icons, editors. (Use the present/divergent/absent ledger of Phase 3A for breadth first; this probe powers 3B and 3C.)
 
 What it is and isn't:
 - It **augments** the screenshots — it does not replace rendering. The probe only runs because the page is rendered, so its output is *rendered evidence* (the live DOM), exactly what this skill demands — never source-read inference. Screenshots remain mandatory ledger evidence.
-- It is a **detection** snapshot (enough signal to find, prove, and classify drift), **not** mockup-align's per-property alignment. Hand confirmed stylistic gaps to mockup-align; don't try to pixel-diff here.
+- It is a **detection** snapshot (enough signal to find, prove, and classify drift). Hand the confirmed stylistic gaps to the per-property styling pass (Phase 3C) and fix them in Phase 6; don't try to pixel-align here. For a React Native target with no DOM, resolve styles from the component's StyleSheet + tokens instead (see `react-native.md`).
 
 ## Usage
 
@@ -197,7 +197,7 @@ function probeFidelity(opts) {
     return false;
   });
 
-  // (5) structural skeleton (FRAME-FIRST / placement diff — Step 3A): the ordered, nested
+  // (5) structural skeleton (FRAME-FIRST / placement diff — Phase 3B): the ordered, nested
   // tree of landmark regions, each carrying the stable ids of the controls DIRECTLY inside it
   // (a control is attributed to its nearest landmark). Diff this tree across surfaces BEFORE any
   // styling check — an extra wrapper, a dropped region, or a control under a different parent is a
@@ -231,19 +231,19 @@ function probeFidelity(opts) {
 }
 ```
 
-## Reading the snapshot offline (each Step 3 check → a field, no re-visit)
+## Reading the snapshot offline (each Phase 3 check → a field, no re-visit)
 
-Diff the reference JSON against the target JSON — every Step 3 signal is already in hand.
+Diff the reference JSON against the target JSON — every Phase 3 signal is already in hand.
 
-**Do the structural diff first (Step 3A), before any styling field:**
+**Do the structural diff first (Phase 3B), before any styling field:**
 
 - **Skeleton / frame** — diff `skeleton` (the nested landmark tree) tree-to-tree: a region in one side's tree but not the other (an extra header strip; a dropped section), a different *order*, or a different *nesting* is a structural `DEFECT`. This is the frame check — reconcile the skeletons before you read a single style.
 - **Control placement / relocation (the anchor table)** — pair `controls` across surfaces by **`id`** (stable identity), then diff each pair's **`anchor`** (`container` path + `within`), **never `box.x`** — absolute coordinates differ whenever the surrounding chrome does, so they can't be compared. Same `id`, different `anchor.container` ⇒ a **relocated control** (e.g. the kebab moved from `header > nav` to the right cluster). Same `id` missing on one side ⇒ missing affordance / added extra. Build the anchor table from this; "present" alone is never a pass.
 
-**Then the per-region styling fields (Step 3B):**
+**Then the per-property styling fields (Phase 3C):**
 
 - **Region containers / separators** — compare `regions[].style` (`bg`, `border*`, `radius`, `shadow`): a reference region with a background/border/shadow whose target counterpart reads bare is a missing wrapper/divider.
-- **Container spacing** — diff `regions[].style.pad` / `margin` / `gap` (and the same on `named` records) between sides: the *same* wrapper with a different padding / label margin / gap is a spacing drift (the rail that's looser or tighter than the reference, even when the outer container's padding matches). Flag it with the measured numbers; hand the exact alignment to mockup-align — don't let it fall through "the wrapper is there ✓".
+- **Container spacing** — diff `regions[].style.pad` / `margin` / `gap` (and the same on `named` records) between sides: the *same* wrapper with a different padding / label margin / gap is a spacing drift (the rail that's looser or tighter than the reference, even when the outer container's padding matches). Flag it with the measured numbers; hand the exact alignment to the per-property styling pass (Phase 3C / fix in Phase 6) — don't let it fall through "the wrapper is there ✓".
 - **Editors & rich affordances** — reference `editors` non-empty but target `editors` empty (or the same region's `editor:false`) ⇒ a rich editor rendered as static text.
 - **Data-driven emptiness / thin renders** — `empty:true`, `textLen:0` where the reference has text, or `box.h` near zero ⇒ content didn't reach the DOM.
 - **Broken icons** — `controls[].brokenIcon` / a `named` record with `svg.hasSvg && svg.paths===0` ⇒ an icon that renders a blank square.
