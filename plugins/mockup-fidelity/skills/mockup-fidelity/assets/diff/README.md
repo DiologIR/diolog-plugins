@@ -68,9 +68,10 @@ node diff.mjs --mock mock.discover.json --app _latest.json --anchor "Discover" -
 ```
 
 Per matched element it diffs: font size / weight / colour / **line-height** /
-**typeface kind (serif·sans·mono)** / **text-align**, and on the nearest
-styled-ancestor box the background / radius / shadow-presence / **padding (left,
-top, bottom)**. It also diffs the **screen background** as a top-level check (the
+**typeface kind (serif·sans·mono)** / **text-align**, and on its box — the text's
+**own** styled element if it sits directly on one (a button/badge label), else its
+nearest styled ancestor — the background / radius / shadow-presence / **padding
+(left, top, bottom)**. It also diffs the **screen background** as a top-level check (the
 mock frame root vs the shallowest app-rendered backgrounded container) — that one
 is NOT tied to a text probe, because screen text sits inside a card whose
 background stops the ancestor-walk, so the screen root would otherwise never be
@@ -110,16 +111,63 @@ still need a structural pass + a screenshot:
   (the differ checks an element's own padding + its gutter, not inter-element gaps).
 - **Icon glyph correctness** — mock Material ligature vs app SVG are different
   representations; the differ can't confirm the app's icon is the right glyph
-  (only that *something* is there). Wrong-but-present icons pass.
+  (only that *something* is there). Wrong-but-present icons pass. **Actionable:**
+  treat every ⚠︎-unmatched Material ligature (`arrow_upward`, `tune`, `add_circle`,
+  `auto_awesome`) as a glyph to eye-check — it's a faithful SVG equivalent OR the
+  wrong glyph. (Real misses caught this way: a paper-plane `send` where the mock is
+  an up-arrow `↑`; a settings-gear where the mock is `tune`/sliders.)
+- **Component-PRIMITIVE choice for an always-dynamic-text element** — when an
+  element's text is *always* real data (a category badge, a status pill, a row
+  title, a price), its text never equals a mock probe, so the differ **never
+  style-compares it at all** — a wrong primitive is invisible. This is how a
+  category rendered as a large title-case `Chip` survived where the mock uses a
+  small uppercase `.badge`: the text never matched, so the 13/500-vs-10/600 gap was
+  never seen. For every element whose text is dynamic, eye-check the *primitive*
+  (chip vs badge vs row vs card) against the mock — the differ can't.
 - **Element width/height** directly (line-height is a proxy for text-block height).
 - **Nested inline `<Text>`** — the RN harness resolves a deeply-nested inline span's
   effStyle as null, so its size/weight/colour can't be compared (a harness limit).
+  Symptom: a section lead-in you can SEE is bold (`**Business.**`) reports
+  `font-weight: null` — confirm by eye, don't chase.
 - **letter-spacing / opacity / per-side border colour** — captured but not diffed
   (add if a screen needs them).
 
 So: differ report → 0 unexplained is necessary, not sufficient. Always finish with
 a structural present/absent pass (Phase 3A/3B) + a screenshot for the visual
 classes above (shadow depth, icon glyphs, spacing rhythm, overlaps).
+
+## Known false-positive patterns (over-reporting — recognise, don't chase)
+
+The blind spots above are *under*-reporting (real defects the differ misses).
+These are the opposite — rows the differ flags that are **not** defects. Recognise
+them so you neither chase a phantom nor blanket-dismiss a real one:
+
+- **Element-vs-container box (largely fixed; watch the residual).** When a mock
+  label sits *directly* on a styled element (a `.btn`/`.badge` span whose
+  directText IS the label), the box to compare is that element. The differ now
+  checks the text node's own box first (self-before-parent) so a button compares
+  against a button — but if you still see a box row reading *"target = the
+  element's own bg/radius/pad, mock = a parent card (radius 12, pad 0)"*, that's a
+  residual of this asymmetry: trust the matched **text** props and eye-check the
+  element's box rather than "fixing" it to the card's values.
+- **Repeated short text collides across roles.** The differ matches the first app
+  node with the same text, so a short label that appears in several roles — e.g.
+  `10-Q` as a *filter chip*, a *card badge*, AND a *glossary bold-span* — gets
+  paired with the wrong sibling (mock badge ↔ app chip). **Tell:** ONE short
+  repeated string producing a *burst* of font + box mismatches with wildly
+  different values is a role collision, not N separate defects. Find the app
+  element for the role the mock probe actually came from and verify that one by eye.
+- **Text-inset behind a leading icon/affordance.** A label that sits *after* a
+  leading icon (a badge, an icon-led row) is measured at the inner text's x (after
+  the icon) on the app side, while the mock may carry the text on the container
+  span and measure at the container edge. A `left-inset` off by ≈ icon-width + gap
+  is this, not a gutter defect — the container starts at the same gutter on both.
+- **Guardrail-honest divergence.** When the mock fabricates specifics the target's
+  product guardrails forbid (a made-up "200 pages", "every figure traced to
+  filings", a fabricated AI summary), the target *should* diverge to honest copy —
+  this shows up as ⚠︎-unmatched mock text and is an **intentional** divergence, not
+  a defect. (Classify it like real-data/native-chrome: a recorded product decision,
+  not "probably fine".)
 
 ## Prior art — when to reach for an off-the-shelf tool instead
 

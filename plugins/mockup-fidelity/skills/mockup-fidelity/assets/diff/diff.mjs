@@ -141,17 +141,31 @@ if (ANCHOR) {
 const appFrameW = Math.max(...app.map(n => (A.rect(n)?.x || 0) + (A.rect(n)?.w || 0)), 0) || (mockDoc.frame?.w || 393);
 const mockFrameW = mockDoc.frame?.w || 393;
 
+// The element whose own box we compare. Crucially, check the text node ITSELF
+// first: when a mock label sits directly on a styled element (a `.btn`/`.badge`
+// span whose directText IS the label), the box to compare is THAT element, not
+// its parent card — otherwise the walk skips to the card and you diff the app's
+// button against the mock's CARD (an element-vs-container false mismatch on
+// bg/radius/pad). The app side is naturally symmetric — its label is a child
+// <Text> of the styled View, so self isn't a box and the walk finds the View —
+// and self-first on both keeps them aligned for the rare app text node that is
+// itself styled.
 function appStyledAncestor(node) {
+  if (A.isBox(node)) return node;
   let cur = appById.get(node.parent); let hops = 0;
   while (cur && hops++ < 12) { if (A.isBox(cur)) return cur; cur = appById.get(cur.parent); }
   return null;
 }
+function mockOwnBox(node) {
+  const c = node.comp || {};
+  const box = (toHex(c.backgroundColor) !== 'transparent' && c.backgroundColor) || (c.boxShadow && c.boxShadow !== 'none') || px(c.borderTopWidth) > 0;
+  return box && node.tag !== 'body' && !/\b(body|scr|frame|screen)\b/.test(node.cls);
+}
 function mockStyledAncestor(node) {
+  if (mockOwnBox(node)) return node;
   let cur = node.parent >= 0 ? mock[node.parent] : null; let hops = 0;
   while (cur && hops++ < 12) {
-    const c = cur.comp || {};
-    const box = (toHex(c.backgroundColor) !== 'transparent' && c.backgroundColor) || (c.boxShadow && c.boxShadow !== 'none') || px(c.borderTopWidth) > 0;
-    if (box && cur.tag !== 'body' && !/\b(body|scr|frame|screen)\b/.test(cur.cls)) return cur;
+    if (mockOwnBox(cur)) return cur;
     cur = cur.parent >= 0 ? mock[cur.parent] : null;
   }
   return null;
