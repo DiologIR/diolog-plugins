@@ -195,6 +195,17 @@
       "category": "development"
     },
     {
+      "name": "create-storyboard",
+      "description": "Build an interactive UI storyboard as a StyleX + Storybook project from a product specification and a user-supplied DESIGN.md. The DESIGN.md (the product's own brand/design system) drives the look — NOT locked to a macOS aesthetic, so the storyboard renders in whatever visual identity the brand specifies. It reads a bundled HIG library purely as the interaction, behaviour, structure, and accessibility backbone (layout, master–detail/list/table grammar, modality, feedback, focus/keyboard, motion, empty/loading/error/status, writing), uses the design-craft and frontend-design skills for distinctive, accessible, AI-slop-resistant direction, derives the user flows + screens, builds a reusable StyleX design system (tokens → elements → composites) from the DESIGN.md, and implements every screen as Storybook stories across the happy / empty / loading / error / AI states at production fidelity, plus an MDX flow-overview that sequences the screens into journeys. A brand-driven sibling of macosify's macos-storyboard skill (which is locked to a macOS-native look).",
+      "version": "0.1.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/create-storyboard",
+      "category": "development"
+    },
+    {
       "name": "mockup-fidelity",
       "description": "Validate that an implemented React or React Native UI faithfully reproduces a reference mockup (HTML+CSS, served prototype, Figma export, or another rendered component set), then update the code to close every gap \u2014 by measuring, never eyeballing. Treats the mock as the source of truth and asks (full-comparison and per-screen) before removing working functionality; builds a complete screen/frame inventory and never silently drops a frame; renders both sides; inverts the burden of proof (a visible difference is a defect until a citation proves it intentional); diffs structure first then per-property computed styles; produces a per-screen present/divergent/absent ledger AND a functional-gaps document for newly-added UI that is only visual. For React Native it measures the RENDERED tree — structural/accessibility extraction (axe describe-ui / Maestro hierarchy) plus resolved style props over the Metro CDP connection (rozenite / agent-cdp) — and forces every screen's measurement to disk as artifacts, so a 'match' verdict can never come from a screenshot, a source read, or reasoning (frontier vision models catch under half of fine-grained UI differences). Generic and framework-agnostic. Merges and replaces ui-fidelity-audit + mockup-align.",
       "version": "1.1.0",
