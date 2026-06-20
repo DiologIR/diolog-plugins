@@ -30,6 +30,20 @@ RN 0.85 added support for multiple simultaneous Chrome DevTools Protocol connect
 
 Setup is moderate (the app must be running on the simulator with Metro up; you add the inspector middleware/connection). It currently can contend with the standard RN DevTools browser connection — expect to use one at a time.
 
+**Reality check — the CDP path is often gated.** On RN's New-Architecture "Fusebox" inspector, a plain external CDP client frequently can't drive the runtime: the device-level `/json/list` URL 401s, and the real `/json` target (`…&page=1`) accepts the socket but **never answers `Runtime.evaluate`** because Fusebox expects a client-identification handshake that rozenite implements only for its *own* browser frontend, not for your script. rozenite is also a DevTools-*panel* framework with **no headless/file egress** — its data lands in a browser panel a human reads, so it cannot feed a file-based audit even when connected. When you hit this, don't fight the handshake or install rozenite; use the in-app harness below, which needs none of it.
+
+## 2.5 In-app instrumentation harness — the reliable extractor (and it MUST carry structure + geometry)
+
+The dependable way to extract the rendered app — no CDP, no Fusebox, no panel — is a **dev-only module that runs inside the app**, walks the fiber tree via `global.__REACT_DEVTOOLS_GLOBAL_HOOK__.getFiberRoots(...)`, and **POSTs to a tiny local collector** (`fetch('http://localhost:<port>/dump', …)`; the iOS sim shares the host network). Add it dev-only (`if (__DEV__) require('./.audit/measure')` in the root, gitignored, removed at the end). Tag each node with its native screen container (`RNSScreen`/`RNSTabsScreenIOS`, increment a seq) so you can isolate the **foreground** screen — RN keeps tabs and pushed screens mounted, so a raw walk returns every mounted screen merged.
+
+**The lesson that makes this section exist:** a harness that emits a flat list of `{type, text, style}` per node is a *style* extractor, and it is **layout-blind** — it cannot tell a `row` card from a `column` card, a present divider from an absent one, or a 2-up grid from a stack. Per node, the harness MUST also emit:
+
+- **containment** — the parent chain or a `path`/`depth` so you can rebuild the *ordered nested tree*, not just a bag of nodes;
+- **layout** — `flexDirection` (and `alignItems`/`justifyContent`) from the flattened style, so "icon above vs beside the label" is a diffable fact;
+- **geometry** — `measureInWindow` (or the Fabric `getBoundingClientRect`) → `x/y/w/h` per node, so relative position, ordering, and "is there a 12px gap (divider) between rows" are measurable.
+
+Then the structural diff (skill Phase 3B) runs on the containment + flex + geometry, and the style diff (3C) on the flattened styles — from the *same* artifact. Skipping containment/geometry is exactly how a passing-looking audit ships a screen whose every colour matches and whose entire layout is wrong.
+
 ## 3. Maestro — drive the simulator + capture supplementary screenshots
 
 Maestro navigates the real app and screenshots it. Here it plays two roles: it's the **driver** that gets each screen on-screen so the structure/style extractors can run, and it captures the `*.png` you keep *alongside* the artifacts (supplementary, for the spatial/overlap fallback — not the evidence).

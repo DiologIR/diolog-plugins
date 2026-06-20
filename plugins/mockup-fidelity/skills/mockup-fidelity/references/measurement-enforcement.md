@@ -13,10 +13,11 @@ Per screen / gated state, the workspace must contain four extracted files before
 
 ```
 .mockup-fidelity/<screen>/
-  ref.structure.json      # mock: parsed DOM tree — {role, text, frame, children[]}
+  ref.structure.json      # mock: parsed DOM tree — {role, text, flexDirection, frame{x,y,w,h}, children[]}
   ref.styles.json         # mock: getComputedStyle per element, full untruncated values
-  target.structure.json   # app: axe describe-ui / Maestro hierarchy (or DOM if web/RNW)
-  target.styles.json      # app: getComputedStyle (web) OR Metro-CDP resolved style props (native)
+  target.structure.json   # app: ordered NESTED tree with containment + flexDirection + frame{x,y,w,h}
+                          #      (axe describe-ui / Maestro hierarchy / in-app harness — NOT a flat node list)
+  target.styles.json      # app: resolved styles per node (getComputedStyle web / in-app StyleSheet.flatten native)
   ref.png / target.png    # supplementary screenshots — for spatial fallback only, NOT evidence
 ```
 
