@@ -1,11 +1,28 @@
 # macOS 26 UI — Accumulated Learnings
 
-> **What this file is.** The single, growing knowledge base of durable, generalisable patterns extracted from analysing real macOS UI screenshots. The **`macos-ui-analyst`** skill writes here (merging, never blindly appending); the **`macosify`** skill reads here as a third knowledge source alongside the bundled HIG (`../reference/hig/`) and `../reference/DESIGN.md`. It starts empty of real learnings — every entry below the divider is added from observed evidence.
+> **What this file is.** The single, growing knowledge base of durable, generalisable patterns extracted from analysing real macOS UI screenshots. The **`macos-ui-analyst`** skill writes here (merging, never blindly appending); the **`macosify`** (refit) and **`macos-storyboard`** (build) skills read here as a knowledge source alongside the bundled HIG (`../reference/hig/`) and `../reference/DESIGN.md`. Every entry below the divider is from observed evidence across 62 real macOS screenshots.
 
 ## How to use this file
 
 - **`macos-ui-analyst` (writer):** after each screenshot analysis, distil only the *durable, reusable* findings (a pattern that will hold for the next screenshot — not a one-off fact about this image) and **merge** them into the matching category below. Merging means: find an existing entry with the same semantic key → if corroborated, raise its confidence and add the new evidence; if it conflicts, keep both and mark `⚠ conflict`; if genuinely new, add a new entry. Never duplicate an existing rule; never let the file grow unbounded with near-duplicates. Keep entries terse.
-- **`macosify` (reader):** load this file and prefer a high-confidence learning here over a guessed value, but **never** over an explicit HIG rule or a `DESIGN.md` token — precedence is **observed evidence in the target → HIG → DESIGN.md → this file**.
+- **`macosify` (reader — refit):** detect the tells below in the target UI, then correct toward the native form; the **"Framework-origin tells & their native corrections"** + **"Native tells & anti-patterns"** sections are your conversion table. Prefer a high-confidence learning here over a guess, but **never** over an explicit HIG rule or a `DESIGN.md` token.
+- **`macos-storyboard` (reader — build):** use these as the native-feel checklist + anti-pattern list when building the StyleX design system (elements → composites → screens). The AppKit/SwiftUI API names (`NSPopUpButton`, `.glassEffect()`, `NavigationSplitView`…) are *context* — implement the underlying visual/behavioural rule in StyleX + `DESIGN.md` tokens.
+- **Precedence (both):** observed evidence in the target → HIG → DESIGN.md → this file.
+
+## Loudest tells — start here
+
+The highest-leverage rules — what most determines native-feel. Act on these first; the category sections below carry the detail + evidence.
+
+1. **Selection = a flat inset rounded `--chrome-sel` fill with accent text/glyph** — never a full-bleed bar or a glossy saturated-accent capsule; the same grammar spans sidebar AND content lists/tables. *(Controls)*
+2. **Sidebar section headers: system font, semibold, secondary colour, sentence/title case — NEVER tracked uppercase.** *(Controls)*
+3. **Liquid Glass ONLY on floating chrome** (toolbar / sidebar / popover / sheet / menu); content stays opaque; no glass-on-glass; tint only the one primary action. *(Liquid Glass)*
+4. **macOS body = 13pt; controls ~20–28pt padded to a 44pt target — NOT iOS 17pt / 44pt.** Density is the strongest native-vs-iOS discriminator — check it first. *(Layout / Typography)*
+5. **Bind selection / focus / primary to `controlAccentColor` — never hardcode blue;** status colour is always paired with a label or glyph, never colour alone. *(Colour)*
+6. **Real window chrome + traffic lights; the menu bar is the command surface** — never fake chrome; default arrow cursor, not the web hand. *(Window chrome)*
+7. **Convert iOS-derived tells:** `UISwitch`→`NSSwitch` (accent, ~22pt), inset-grouped cards→flat `Form`, per-row chevron→split-view selection, circular back puck→borderless toolbar back, centred hero CTA→bottom-trailing capsule. *(Framework-origin tells)*
+8. **Concentric corners: child radius = parent radius − padding;** record the OBSERVED radius (macOS 26 radii are fragmented), never assume 16pt. *(Layout)*
+9. **Dialogs/alerts: exactly one prominent accent default (trailing), Cancel leading, ≤3 buttons; destructive is never the default.** *(Controls)*
+10. **Segmented control = in-view/toolbar option switch, not main navigation** (use a sidebar or tab view); pop-up (double-chevron, picks a value) ≠ pull-down (single-chevron, runs an action). *(Controls / Navigation)*
 
 ## Entry format
 
