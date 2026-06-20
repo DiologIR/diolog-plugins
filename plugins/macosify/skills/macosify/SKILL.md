@@ -10,9 +10,9 @@ You refit an existing UI so it reads as an authentic **macOS 26 "Tahoe" / Liquid
 
 ## Knowledge sources — load these first
 
-All bundled paths in this skill are under `${CLAUDE_PLUGIN_ROOT}` — including the HIG component files named later in the procedure, which all live in `reference/hig/`:
+**Read all three sources below in full, into context, before you touch the target surface** — don't cherry-pick. All bundled paths are under `${CLAUDE_PLUGIN_ROOT}`:
 
-1. **The HIG library — `reference/hig/`** (37 files). Open `reference/hig/index.md` first; it maps every component to its file. Then read the files for the components actually present in the target surface (a master–detail screen → `split-views.md` + `sidebars.md` + `lists-and-tables.md` + `toolbars.md` + `the-menu-bar.md` + `materials-and-liquid-glass.md`). Each file carries the rules **and** a "Common non-native mistakes" section — your refit checklist.
+1. **The entire HIG library — read ALL of `reference/hig/` (every one of the 37 `.md` files) into context before you begin.** Start with `reference/hig/index.md` (it maps every component to its file), then read every other file in the directory. Each carries the rules **and** a "Common non-native mistakes" section; together they are your complete native-feel checklist for whatever the target surface turns out to contain.
 2. **`reference/DESIGN.md`** — the token-level system: semantic colours + label tiers, SF Pro named text styles (Body = **13pt**), the 8pt grid, Liquid Glass material ramp, elevation, motion, radii, and per-component contracts. Use its tokens; do not invent values. It ends with a **"Native-feel checklist"** and **"The hard HIG numbers"** table — apply both.
 3. **`learnings/macos-ui-learnings.md`** — durable patterns distilled from real macOS screenshots by the `macos-ui-analyst` skill, including framework-origin tells and their native corrections. Prefer a high-confidence learning here over a guess.
 
