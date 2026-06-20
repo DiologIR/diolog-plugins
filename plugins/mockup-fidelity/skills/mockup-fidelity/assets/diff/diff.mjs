@@ -171,10 +171,18 @@ const CHROME_TXT = /^\d{1,2}:\d{2}$|signal_cellular|wifi|battery_full/;
 // default opaque bg ABOVE the app's own root and would mask it).
 {
   const mockBg = toHex(mock[0]?.comp?.backgroundColor);
+  const isRNS = t => /^RNS/.test(t || '');
+  // Device width from the native wrapper (appFrameW can be inflated by off-screen
+  // horizontally-scrollable content like a tab strip). The screen root sits at the
+  // left edge and spans ~the device width; a tinted banner/header (x≠0) or a card
+  // (margins) does not, and would otherwise win on depth.
+  const deviceW = Math.max(...app.filter(n => isRNS(n.type)).map(n => n.rect?.w || 0), 0) || appFrameW;
   const appRoot = app
     .filter(n => {
       const bg = n.style?.backgroundColor ?? (n.comp && n.comp.backgroundColor);
-      return bg && toHex(bg) !== 'transparent' && !/^RNS/.test(n.type || '');
+      const r = n.rect || {};
+      const isRoot = (r.x ?? 99) <= 2 && (r.w || 0) >= 0.9 * deviceW;
+      return bg && toHex(bg) !== 'transparent' && !isRNS(n.type) && isRoot;
     })
     .sort((a, b) => (a.depth ?? 99) - (b.depth ?? 99))[0];
   const appBg = appRoot ? toHex(appRoot.style?.backgroundColor ?? appRoot.comp?.backgroundColor) : null;
