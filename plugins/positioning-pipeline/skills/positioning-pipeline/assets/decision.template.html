@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<!--
+  Positioning Pipeline — Phase 2 decision page TEMPLATE.
+  Adapt for the company's THREE territories by editing only the data blocks below:
+    • COMPANY          (title)
+    • TERRITORIES[]    one object per territory: id, name, color, word, enemy, category, beachhead,
+                       sub (one-line), scores{} (1–5 on each criterion key), hero{eyebrow,h,sub,cta,fine}, oneliners[]
+    • CRITERIA[]       keep as-is unless the company needs different decision axes
+    • RECOMMENDATION   the honest "lead with X" paragraph (HTML)
+  Scores must be justified by the research. Keep the guardrails block. Leave CSS/JS intact.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{COMPANY}} — choose a position</title>
+<style>
+  :root{
+    --bg:#0e0f13;--surface:#16181f;--bg-2:#1b1d25;--line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.16);
+    --ink:#f3f4f8;--ink-2:rgba(243,244,248,.62);--ink-3:rgba(243,244,248,.34);
+    --accent:#7c93ff;--green:#46d97f;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace;
+    --r:16px;--r-lg:22px;--ease:cubic-bezier(.4,0,.2,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5;
+    background-image:radial-gradient(1100px 560px at 50% -200px,rgba(124,147,255,.12),transparent 70%)}
+  ::selection{background:rgba(124,147,255,.18)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px}
+  header{padding:56px 0 8px;text-align:center}
+  .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-size:clamp(28px,4.6vw,46px);line-height:1.05;letter-spacing:-.025em;margin:14px 0 14px;font-weight:680}
+  .lede{font-size:17px;color:var(--ink-2);max-width:680px;margin:0 auto}
+  section{padding:34px 0}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px}
+  .sec-head .num{font-family:var(--mono);font-size:12px;color:var(--ink-3);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  .sec-head h2{font-size:22px;letter-spacing:-.02em;font-weight:660}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 18px;overflow:hidden;transition:transform .25s var(--ease),border-color .25s var(--ease)}
+  .card:hover{transform:translateY(-4px);border-color:var(--line-2)}
+  .card::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--c)}
+  .card .rank{font-family:var(--mono);font-size:11px;color:var(--c);font-weight:600}
+  .card h3{font-size:18px;letter-spacing:-.02em;margin:6px 0 2px;font-weight:660}
+  .card .sub{font-size:12.5px;color:var(--ink-2);min-height:34px}
+  .kv{display:flex;flex-direction:column;gap:8px;margin-top:14px;border-top:1px solid var(--line);padding-top:13px}
+  .kv .row{display:flex;gap:10px;font-size:12px;align-items:baseline}
+  .kv .k{color:var(--ink-3);width:66px;flex:none;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
+  .kv .v b{color:var(--c)}
+  .tool{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));border:1px solid var(--line);border-radius:var(--r-lg);padding:24px}
+  .tool-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:28px;align-items:start}
+  .crit{display:flex;flex-direction:column;gap:9px}
+  .c-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .c-label{font-size:13px}
+  .weights{display:flex;gap:5px}
+  .wbtn{font:inherit;font-size:11px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink-3);padding:4px 9px;border-radius:8px;transition:all .15s var(--ease)}
+  .wbtn[aria-pressed="true"]{color:#0c0f1a;background:var(--accent);border-color:var(--accent);font-weight:600}
+  .reset{margin-top:13px;font:inherit;font-size:12px;color:var(--ink-2);background:transparent;border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+  .result{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+  .result h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin-bottom:14px}
+  .scorebar{margin-bottom:14px}
+  .scorebar .top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:6px}
+  .track{height:8px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden}
+  .fill{height:100%;background:var(--c);border-radius:6px;transform-origin:left;transform:scaleX(0);transition:transform .5s var(--ease)}
+  .scorebar.win .top .nm::after{content:" ★";color:var(--c)}
+  .winner-note{margin-top:4px;font-size:12.5px;color:var(--ink-2)}.winner-note b{color:var(--ink)}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:12.5px}
+  th,td{text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);font-weight:600}
+  tbody tr:last-child td{border-bottom:none}
+  td:first-child,th:first-child{color:var(--ink-2);font-size:11.5px;width:130px}
+  .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .tab{font:inherit;font-size:12.5px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink-2);padding:8px 14px;border-radius:10px}
+  .tab[aria-selected="true"]{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ct);background:rgba(255,255,255,.04)}
+  .preview{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:#101117;background-image:radial-gradient(700px 320px at 50% -100px,color-mix(in srgb,var(--ct) 22%,transparent),transparent 70%)}
+  .pv-body{padding:40px 28px 44px;text-align:center}
+  .pv-eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ct);font-weight:600}
+  .pv-h{font-size:clamp(22px,3vw,30px);letter-spacing:-.02em;line-height:1.1;margin:11px auto 12px;max-width:560px;font-weight:680}
+  .pv-sub{font-size:14.5px;color:var(--ink-2);max-width:480px;margin:0 auto 18px}
+  .btn{font:inherit;font-size:13px;font-weight:560;border:none;border-radius:11px;padding:10px 18px;cursor:pointer;background:var(--ct);color:#0c0f1a}
+  .pv-fine{font-size:11.5px;color:var(--ink-3);margin-top:12px}
+  .pv-meta{display:flex;gap:18px;justify-content:center;border-top:1px solid var(--line);padding:13px;font-size:11.5px;color:var(--ink-3);flex-wrap:wrap}.pv-meta b{color:var(--ink-2)}
+  .rec{background:linear-gradient(180deg,rgba(124,147,255,.14),transparent),var(--surface);border:1px solid rgba(124,147,255,.3);border-radius:var(--r-lg);padding:26px}
+  .rec .lab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .rec .big{font-size:clamp(19px,2.4vw,25px);letter-spacing:-.02em;margin:10px 0 6px;line-height:1.25;font-weight:640}
+  .rec .big em{font-style:normal;color:var(--accent)}
+  .guard{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .guard div{font-size:12.5px;color:var(--ink-2)}.guard b{color:#ffb454}
+  footer{padding:34px 0 56px;color:var(--ink-3);font-size:12px;text-align:center;border-top:1px solid var(--line);margin-top:26px}
+  @media(max-width:860px){.cards,.tool-grid,.guard{grid-template-columns:1fr}.sec-head{flex-direction:column;gap:5px}}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Positioning · decide</div>
+    <h1 id="title">Choose a position</h1>
+    <p class="lede">Three distinct territories. Weigh what matters to you and the ranking updates live.</p>
+  </header>
+  <section><div class="sec-head"><span class="num">01</span><h2>The three options</h2></div><div class="cards" id="cards"></div></section>
+  <section><div class="sec-head"><span class="num">02</span><h2>Weigh what matters</h2></div>
+    <div class="tool"><div class="tool-grid">
+      <div><div class="crit" id="crit"></div><button class="reset" id="reset">Reset weights</button></div>
+      <div class="result"><h4>Live ranking</h4><div id="bars"></div><div class="winner-note" id="note"></div></div>
+    </div></div></section>
+  <section><div class="sec-head"><span class="num">03</span><h2>Side by side</h2></div><div class="tablewrap"><table id="cmp"></table></div></section>
+  <section><div class="sec-head"><span class="num">04</span><h2>Feel the copy</h2></div><div class="tabs" id="tabs"></div><div class="preview" id="preview"></div></section>
+  <section><div class="sec-head"><span class="num">05</span><h2>Recommendation</h2></div>
+    <div class="rec"><div class="lab">If you want a recommendation</div><div class="big" id="recbig"></div>
+      <div class="guard">
+        <div><b>Never say "all-in-one."</b> Reframe breadth as one coherent thing.</div>
+        <div><b>Don't market the unbuilt as shipped.</b> Lead with what's real; sell the rest as vision.</div>
+        <div><b>The strongest claim is load-bearing.</b> It must be provable day one or it backfires.</div>
+      </div>
+    </div></section>
+</div>
+<footer>Positioning decision aid · generated by the positioning-pipeline skill.</footer>
+<script>
+/* ===== EDIT THIS DATA BLOCK FOR THE COMPANY ===== */
+var COMPANY = "{{COMPANY}}";
+var RECOMMENDATION = '<em>Lead with Option A.</em> Replace this with the honest recommendation derived from the research (which to lead with, what to carry as vision).';
+var CRITERIA = [
+  {key:"evidence",label:"Backed by the research"},
+  {key:"today",label:"Claimable honestly today"},
+  {key:"vision",label:"Vision / breadth ceiling"},
+  {key:"clear",label:"Instantly understandable"},
+  {key:"uncontested",label:"Uncontested space"},
+  {key:"emotion",label:"Customer emotional pull"},
+  {key:"lowrisk",label:"Lower launch risk"}
+];
+var TERRITORIES = [
+  {id:"A",name:"Territory A",color:"#7c93ff",word:"<word>",enemy:"<enemy>",category:"<category>",beachhead:"<beachhead>",
+   sub:"<one-line position>",rec:"",
+   scores:{evidence:4,today:4,vision:3,clear:5,uncontested:3,emotion:4,lowrisk:4},
+   hero:{eyebrow:"<eyebrow>",h:"<headline>",sub:"<subhead>",cta:"<CTA>",fine:"<fine print>"}},
+  {id:"B",name:"Territory B",color:"#46d97f",word:"<word>",enemy:"<enemy>",category:"<category>",beachhead:"<beachhead>",
+   sub:"<one-line position>",rec:"",
+   scores:{evidence:3,today:2,vision:5,clear:4,uncontested:4,emotion:3,lowrisk:3},
+   hero:{eyebrow:"<eyebrow>",h:"<headline>",sub:"<subhead>",cta:"<CTA>",fine:"<fine print>"}},
+  {id:"C",name:"Territory C",color:"#ffb454",word:"<word>",enemy:"<enemy>",category:"<category>",beachhead:"<beachhead>",
+   sub:"<one-line position>",rec:"",
+   scores:{evidence:4,today:3,vision:4,clear:4,uncontested:5,emotion:5,lowrisk:3},
+   hero:{eyebrow:"<eyebrow>",h:"<headline>",sub:"<subhead>",cta:"<CTA>",fine:"<fine print>"}}
+];
+/* ===== END DATA BLOCK ===== */
+
+(function(){
+  "use strict";
+  document.getElementById('title').textContent = COMPANY + " — choose a position";
+  document.getElementById('recbig').innerHTML = RECOMMENDATION;
+  var WEIGHTS=["Ignore","Nice","Important","Critical"], DEFAULT=2, w={};
+  CRITERIA.forEach(function(c){w[c.key]=DEFAULT;});
+  var critEl=document.getElementById('crit');
+  CRITERIA.forEach(function(c){
+    var row=document.createElement('div');row.className='c-row';
+    var lab=document.createElement('div');lab.className='c-label';lab.textContent=c.label;
+    var ws=document.createElement('div');ws.className='weights';
+    WEIGHTS.forEach(function(l,i){var b=document.createElement('button');b.className='wbtn';b.type='button';b.textContent=l;b.setAttribute('aria-pressed',i===w[c.key]?'true':'false');
+      b.addEventListener('click',function(){w[c.key]=i;Array.prototype.forEach.call(ws.children,function(ch,j){ch.setAttribute('aria-pressed',j===i?'true':'false');});rank();});ws.appendChild(b);});
+    row.appendChild(lab);row.appendChild(ws);critEl.appendChild(row);
+  });
+  document.getElementById('reset').addEventListener('click',function(){CRITERIA.forEach(function(c){w[c.key]=DEFAULT;});Array.prototype.forEach.call(critEl.querySelectorAll('.weights'),function(ws){Array.prototype.forEach.call(ws.children,function(ch,j){ch.setAttribute('aria-pressed',j===DEFAULT?'true':'false');});});rank();});
+  function score(t){var n=0,d=0;CRITERIA.forEach(function(c){n+=t.scores[c.key]*w[c.key];d+=5*w[c.key];});return d?Math.round(n/d*100):0;}
+  var bars=document.getElementById('bars'),note=document.getElementById('note');
+  function rank(){var rows=TERRITORIES.map(function(t){return{t:t,p:score(t)};});var max=Math.max.apply(null,rows.map(function(r){return r.p;}));var wins=rows.filter(function(r){return r.p===max&&max>0;});bars.innerHTML='';
+    rows.forEach(function(r){var win=r.p===max&&max>0&&wins.length===1;var d=document.createElement('div');d.className='scorebar'+(win?' win':'');d.style.setProperty('--c',r.t.color);
+      d.innerHTML='<div class="top"><span class="nm">'+r.t.name+'</span><span class="pct" style="font-family:var(--mono);font-size:12px;color:var(--ink-2)">'+r.p+'%</span></div><div class="track"><div class="fill"></div></div>';
+      bars.appendChild(d);requestAnimationFrame(function(){d.querySelector('.fill').style.transform='scaleX('+(r.p/100)+')';});});
+    note.innerHTML=max===0?'Give a criterion some weight.':(wins.length===1?'On your priorities, <b>'+wins[0].t.name+'</b> leads.':'Tie — adjust to break it.');}
+  var cardsEl=document.getElementById('cards');
+  TERRITORIES.forEach(function(t){var c=document.createElement('article');c.className='card';c.style.setProperty('--c',t.color);
+    c.innerHTML=(t.rec?'<span style="position:absolute;top:13px;right:13px;font-size:9.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:'+t.color+';background:color-mix(in srgb,'+t.color+' 18%,transparent);padding:3px 8px;border-radius:20px">'+t.rec+'</span>':'')+
+      '<div class="rank">OPTION '+t.id+'</div><h3>'+t.name+'</h3><div class="sub">'+t.sub+'</div>'+
+      '<div class="kv"><div class="row"><span class="k">Owns</span><span class="v">the word <b>"'+t.word+'"</b></span></div>'+
+      '<div class="row"><span class="k">Enemy</span><span class="v">'+t.enemy+'</span></div>'+
+      '<div class="row"><span class="k">Category</span><span class="v">'+t.category+'</span></div>'+
+      '<div class="row"><span class="k">Beachhead</span><span class="v">'+t.beachhead+'</span></div></div>';
+    cardsEl.appendChild(c);});
+  var cmp=document.getElementById('cmp');
+  function r(label,fn){return '<tr><td>'+label+'</td>'+TERRITORIES.map(function(t){return '<td>'+fn(t)+'</td>';}).join('')+'</tr>';}
+  cmp.innerHTML='<thead><tr><th></th>'+TERRITORIES.map(function(t){return '<th style="color:'+t.color+'">'+t.id+' · '+t.name+'</th>';}).join('')+'</tr></thead><tbody>'+
+    r('Owns',function(t){return '<b style="color:'+t.color+'">'+t.word+'</b>';})+r('Enemy',function(t){return t.enemy;})+r('Category',function(t){return t.category;})+r('Beachhead',function(t){return t.beachhead;})+'</tbody>';
+  var tabs=document.getElementById('tabs'),prev=document.getElementById('preview');
+  function draw(t){prev.style.setProperty('--ct',t.color);var d=t.hero;
+    prev.innerHTML='<div class="pv-body"><div class="pv-eyebrow">'+d.eyebrow+'</div><div class="pv-h">'+d.h+'</div><div class="pv-sub">'+d.sub+'</div><button class="btn">'+d.cta+'</button><div class="pv-fine">'+d.fine+'</div></div>'+
+      '<div class="pv-meta"><span><b>Owns:</b> "'+t.word+'"</span><span><b>Against:</b> '+t.enemy+'</span><span><b>For:</b> '+t.beachhead+'</span></div>';}
+  TERRITORIES.forEach(function(t,i){var b=document.createElement('button');b.className='tab';b.type='button';b.textContent=t.id+' · '+t.name;b.style.setProperty('--ct',t.color);b.setAttribute('aria-selected',i===0?'true':'false');
+    b.addEventListener('click',function(){Array.prototype.forEach.call(tabs.children,function(x){x.setAttribute('aria-selected','false');});b.setAttribute('aria-selected','true');draw(t);});tabs.appendChild(b);});
+  rank();draw(TERRITORIES[0]);
+})();
+</script>
+</body>
+</html>
