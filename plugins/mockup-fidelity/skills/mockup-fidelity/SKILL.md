@@ -32,6 +32,8 @@ But "source of truth" is a stance, not a licence to act blindly. **Ask the user 
 
 Asking is not weakness — it is how you avoid the two opposite mistakes: blindly stripping good functionality to match a sample frame, and blindly rationalizing missing features as "intentional." When in doubt, ask; otherwise, the mock wins.
 
+**Build the visible element; document only the behaviour it can't yet perform.** The most seductive rationalization is *"this affordance needs a backend the app lacks, so I'll log it as a gap"* — after which the *visible element itself* never gets built. Split the two. A card, icon, section, or control the mock shows is **always built** to match, and wired to whatever real behaviour already exists (a "search" card opens the existing search; a "By index" card opens an index screen; a mic is added even if voice isn't wired). Only the *specific behaviour that genuinely needs data or a service the app doesn't have* — natural-language interpretation, index constituents, a live movers feed — goes in the functional-gaps doc. **"Needs a backend" is never a reason to omit a visible element; it's a reason to document one behaviour of it.** Dropping the card because the deepest version of its feature isn't built is the identical documenting-away failure as calling a difference "intentional" — and it is the #1 way a "fixed" screen still fails the simplest visual test ("where is the X button?").
+
 ---
 
 ## What goes wrong — the self-deceptions this skill defeats
@@ -86,6 +88,8 @@ If the real measurement tools genuinely can't run here (no simulator, no Metro/C
 3. **Frameworks** — note both sides. The reference is almost always DOM (HTML/CSS, readable with `getComputedStyle`). The target is React (DOM, same) **or** React Native (no DOM by default — see `references/react-native.md`).
 
 Run the full-comparison-scope ask (above) before starting.
+
+**Persist the run's project facts so a fresh context resumes without a handover.** On first run, write a short `.mockup-fidelity/PROJECT.md` capturing what the audit can't rediscover: the reference path/URL; the target app + a mock-frame→route map; how to render/drive it (dev URL, or sim udid + Metro port + that the harness is wired); the scope (frames in/out, with reasons); and the standing decisions from the up-front ask (push policy, the native-chrome boundary, auto-fix vs reviewed-plan). Read it back on resume, and update it when a decision changes. This is the home for *project* state — it keeps those facts out of any handover prose, in the workspace the run already owns.
 
 ---
 
@@ -144,7 +148,7 @@ After rendering, grep the target for the tells that a feature was stubbed or def
 
 ### Phase 5 — The two deliverables
 
-**(a) The fidelity ledger** — one row per confirmed gap, rendered evidence on both sides, classification `DEFECT` (default) / `INTENTIONAL — <citation>` / `APP-WINS — <recorded decision>`. Lead with the one-sentence root cause, then the ledger. No row is "probably fine".
+**(a) The fidelity ledger — the canonical, resumable work-state** (`.mockup-fidelity/LEDGER.md`). One section per in-scope screen, one row per affordance, with measured evidence on both sides and a status: `✓ fixed+reverified` / `DEFECT — TODO: <the unbuilt-or-unaligned element, named so a fresh context can act on it>` / `INTENTIONAL — <citation>` / `APP-WINS — <recorded decision>`. Lead with the one-sentence root cause. No row is "probably fine". Because every status and every TODO lives here, **resuming the audit is "read the ledger," not a handover narrative** — keep it current as you go so it always reflects exactly what's measured, what's fixed, and what's still outstanding per screen. A handover should never need to re-list per-screen work that belongs in these rows.
 
 **(b) The functional-gaps document (always produce this).** Any UI you align or add to the implementation that the app didn't previously have is, by default, **visual only** — the wiring behind it likely doesn't exist. When you bring a screen up to the mock, write a document (e.g. `docs/<surface>-functional-gaps.md`) listing, per added/aligned affordance, the functional work it implies: missing backend endpoints, GraphQL fields / queries / mutations, data sources, navigation targets, permission checks, empty/loading/error states, and anything that currently renders but isn't wired to real data. The template and rationale are in `references/functional-gaps.md`. This exists because a pixel-perfect screen wired to nothing reads as "done" and is the most expensive kind of false-done.
 
