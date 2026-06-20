@@ -19,17 +19,32 @@ target (RN device)  --rn-harness (assets/rn-harness)----->  _latest.json (app du
                        report.md  (❌ mismatches · ⚠︎ unmatched · ✓ ok)
 ```
 
+## Works for HTML, React, and StyleX mocks (authoring-agnostic)
+
+The extractor reads `getComputedStyle` from the **rendered DOM**, so the mock's
+authoring tech doesn't matter — only that it renders in a browser:
+
+- **HTML+CSS mockup** — served file, multi-frame gallery or single page.
+- **React / Next prototype** — render the route and point at the screen root.
+- **StyleX** — StyleX compiles to atomic CSS classes at build time, so computed
+  styles resolve exactly like normal CSS; dev-vs-prod readable class names are
+  irrelevant because we read the *computed value*, not the class. (Dynamic
+  `stylex.create((v)=>…)` styles and `defineVars` CSS variables also resolve
+  through `getComputedStyle`.)
+
 ## 1. Extract the mock's COMPUTED styles — never hand-read the CSS
 
 `extract-mock.js` runs in the browser against the **served** mock and emits, per
 element, the resolved `getComputedStyle` subset + a frame-relative rect. This is
 non-negotiable: a class like `.ai-card` may declare no `box-shadow`, yet an
-element `class="card ai-card"` still HAS one (inherited from `.card`). Reading the
-class rules by hand misses it; `getComputedStyle` is the only truth.
+element `class="card ai-card"` still HAS one (inherited from `.card`); a StyleX
+atomic class set resolves the same way. Reading the class rules by hand misses it;
+`getComputedStyle` is the only truth.
 
 ```bash
-playwright-cli open "http://localhost:8770/<mock>.html"
-# pick the frame — a CSS selector, or a figcaption substring for multi-frame HTML mocks:
+playwright-cli open "http://localhost:8770/<mock>.html"   # or the React/StyleX route
+# pick the frame root: any CSS selector (the screen root in a React/StyleX app),
+# or a figcaption substring for multi-frame HTML mockup galleries:
 playwright-cli eval "() => { window.MF_FRAME_SELECTOR = '#screen .scr'; }"   # or window.MF_FRAME_TITLE = 'Discover · home'
 playwright-cli eval "$(cat extract-mock.js)" --filename mock.discover.json
 ```
@@ -51,6 +66,15 @@ that itself. Override the chrome set with `window.MF_CHROME_SELECTOR`.
 ```bash
 node diff.mjs --mock mock.discover.json --app _latest.json --anchor "Discover" --out report.discover.md
 ```
+
+Per matched element it diffs: font size / weight / colour / **line-height**, and
+on the nearest styled-ancestor box the background / radius / shadow-presence /
+**padding (left, top, bottom)**. Line-height and vertical padding matter because
+RN text left unset renders at the font default (≈1.2×) while a mock's CSS
+line-height is commonly 1.5× — silently shrinking every card; a box with the right
+pad-left but wrong pad-top reads as wrong vertical padding. (RN's single-layer
+shadow can't equal a multi-layer CSS `box-shadow`, so shadow is a presence check —
+match its *depth* by eye against a screenshot.)
 
 The report has three sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.

@@ -1,9 +1,21 @@
 // Browser-context mock COMPUTED-style extractor for the mockup-fidelity diff.
 //
-// WHY: never hand-resolve the CSS cascade from source rules. A class like
-// `.ai-card` may declare no box-shadow, yet the element `class="card ai-card"`
-// still HAS one (inherited from `.card`). Only getComputedStyle gives the final
-// resolved value — read THAT, never the individual class rules.
+// AUTHORING-AGNOSTIC: it reads `getComputedStyle` from the RENDERED DOM, so it
+// works the same on any mock that renders to a browser —
+//   • a hand-written HTML+CSS mockup (served, multi-frame gallery or single page)
+//   • a React / Next prototype route
+//   • a StyleX app (StyleX compiles to atomic CSS classes at build time, so the
+//     computed styles resolve exactly like normal CSS — dev-vs-prod class names
+//     don't matter because we read the computed value, not the class)
+// Point it at the frame root with MF_FRAME_SELECTOR (any CSS selector — the screen
+// root in a React/StyleX app) or MF_FRAME_TITLE (figcaption match, for HTML
+// mockup galleries).
+//
+// WHY computed, never source: never hand-resolve the CSS cascade from source
+// rules. A class like `.ai-card` may declare no box-shadow, yet the element
+// `class="card ai-card"` still HAS one (inherited from `.card`); a StyleX atomic
+// class set resolves the same way. Only getComputedStyle gives the final value —
+// read THAT, never the individual class rules.
 //
 // Run against the SERVED mock (a real browser; file:// often blocks fonts/CSS):
 //   playwright-cli open http://localhost:<port>/<mock>.html

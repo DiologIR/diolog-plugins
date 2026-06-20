@@ -86,15 +86,26 @@ const A = {
   weight: n => weightFromFamily(n.effStyle?.fontFamily) ?? (n.comp?.fontWeight ? parseInt(n.comp.fontWeight, 10) : null),
   color: n => toHex(n.effStyle?.color ?? n.comp?.color),
   phColor: n => toHex(n.placeholderTextColor ?? n.comp?.color),
+  lineHeight: n => n.effStyle?.lineHeight ?? px(n.comp?.lineHeight) ?? null,
   rect: n => n.rect,
   box: n => {
     const s = n.style || {};
     if (n.comp) { // DOM target
       const c = n.comp;
-      return { bg: toHex(c.backgroundColor), radius: px(c.borderTopLeftRadius), padLeft: px(c.paddingLeft), shadow: !!c.boxShadow && c.boxShadow !== 'none' };
+      return {
+        bg: toHex(c.backgroundColor), radius: px(c.borderTopLeftRadius),
+        padLeft: px(c.paddingLeft), padTop: px(c.paddingTop), padBottom: px(c.paddingBottom),
+        shadow: !!c.boxShadow && c.boxShadow !== 'none',
+      };
     }
     const hasShadow = (s.shadowRadius > 0 && s.shadowOpacity > 0) || s.elevation > 0;
-    return { bg: toHex(s.backgroundColor), radius: s.borderRadius ?? s.borderTopLeftRadius, padLeft: s.paddingLeft ?? s.paddingHorizontal ?? s.padding, shadow: hasShadow };
+    return {
+      bg: toHex(s.backgroundColor), radius: s.borderRadius ?? s.borderTopLeftRadius,
+      padLeft: s.paddingLeft ?? s.paddingHorizontal ?? s.padding,
+      padTop: s.paddingTop ?? s.paddingVertical ?? s.padding,
+      padBottom: s.paddingBottom ?? s.paddingVertical ?? s.padding,
+      shadow: hasShadow,
+    };
   },
   isBox: n => {
     const b = A.box(n);
@@ -151,6 +162,11 @@ for (const mn of mock) {
     const mFs = px(mn.comp.fontSize); if (mFs != null) rec(elName, 'font-size', A.fontSize(an), mFs, close(A.fontSize(an), mFs, 0.6));
     const mW = parseInt(mn.comp.fontWeight, 10); if (mW) rec(elName, 'font-weight', A.weight(an), mW, A.weight(an) === mW);
     const mC = toHex(mn.comp.color); if (mC && mC !== 'transparent') rec(elName, 'color', A.color(an), mC, A.color(an) === mC);
+    // line-height: easy to leave unset in RN (font default ≈ 1.2×), which renders
+    // tighter than the mock's CSS line-height (commonly 1.5× font-size) and
+    // shrinks every multi-line block. A `null` target value is a real miss.
+    const aLh = A.lineHeight(an), mLh = px(mn.comp.lineHeight);
+    if (mLh != null) rec(elName, 'line-height', aLh, mLh, close(aLh, mLh, 1.5));
   } else {
     const mC = toHex(mn.comp.color); rec(elName, 'placeholder-color', A.phColor(an), mC, A.phColor(an) === mC);
     const mFs = px(mn.comp.fontSize); if (mFs != null) rec(elName, 'font-size', A.fontSize(an), mFs, close(A.fontSize(an), mFs, 0.6));
@@ -177,6 +193,10 @@ for (const mn of mock) {
     const mR = px(mb.comp.borderTopLeftRadius); if (mR != null) rec(`${elName} ▸ box`, 'border-radius', abox.radius, mR, close(abox.radius, mR, 2.5));
     rec(`${elName} ▸ box`, 'shadow', abox.shadow ? 'yes' : 'no', mockHasShadow(mb.comp) ? 'yes' : 'no', !!abox.shadow === mockHasShadow(mb.comp));
     const mPL = px(mb.comp.paddingLeft); if (mPL != null) rec(`${elName} ▸ box`, 'pad-left', abox.padLeft, mPL, close(abox.padLeft, mPL));
+    // vertical padding — diffed too, so a card with the right pad-left but wrong
+    // pad-top/bottom no longer passes silently.
+    const mPT = px(mb.comp.paddingTop); if (mPT != null) rec(`${elName} ▸ box`, 'pad-top', abox.padTop, mPT, close(abox.padTop, mPT));
+    const mPB = px(mb.comp.paddingBottom); if (mPB != null) rec(`${elName} ▸ box`, 'pad-bottom', abox.padBottom, mPB, close(abox.padBottom, mPB));
   }
 
   if (rows.slice(before).every(r => r.ok)) oks.push(elName);
