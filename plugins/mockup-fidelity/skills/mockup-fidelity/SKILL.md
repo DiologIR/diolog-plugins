@@ -1,6 +1,6 @@
 ---
 name: mockup-fidelity
-description: "Validate that an implemented React or React Native UI faithfully reproduces a reference mockup, then update the code to close every gap — by measuring, never eyeballing. Use whenever someone wants to compare, align, pixel-match, audit, or verify a built page/screen/component against a design: 'does this match the mock?', 'align the app to the figma/html mockup', 'pixel-match this screen', 'why doesn't it look like the design?', 'verify the migration didn't drift', 'audit the UI fidelity', 'what's missing vs the mock?', 'make the react-native app match the prototype'. Treats the mock as the source of truth; builds a COMPLETE screen/frame inventory and never silently drops a frame; renders both sides; inverts the burden of proof (a visible difference is a defect until a citation proves it intentional); diffs structure first, then per-property computed styles; produces a per-screen present/divergent/absent ledger AND a functional-gaps document for newly-added UI that is only visual. For React Native it can drive the app with Maestro (navigate + screenshot a simulator) and/or run it under react-native-web to read getComputedStyle (stubbing native-only modules when the web boot is blocked), and knows RN has no CSS cascade so a component's StyleSheet resolved against its tokens IS its computed style when RNW can't boot. Asks the user when unsure, on a full-comparison and a per-screen basis. Generic and framework-agnostic. Trigger even when told 'it should already match' or 'it uses the same design system'."
+description: "Validate that an implemented React or React Native UI faithfully reproduces a reference mockup, then update the code to close every gap — by measuring, never eyeballing. Use whenever someone wants to compare, align, pixel-match, audit, or verify a built page/screen/component against a design: 'does this match the mock?', 'align the app to the figma/html mockup', 'pixel-match this screen', 'why doesn't it look like the design?', 'verify the migration didn't drift', 'audit the UI fidelity', 'what's missing vs the mock?', 'make the react-native app match the prototype'. Treats the mock as the source of truth; builds a COMPLETE screen/frame inventory and never silently drops a frame; renders both sides; inverts the burden of proof (a visible difference is a defect until a citation proves it intentional); diffs structure first, then per-property computed styles; produces a per-screen present/divergent/absent ledger AND a functional-gaps document for newly-added UI that is only visual. For React Native it measures the RENDERED tree — structural/accessibility extraction (axe describe-ui / Maestro hierarchy) for what exists, where, and with what text, plus resolved style props over the Metro CDP connection (rozenite / agent-cdp) for the actual applied values — because eyeballing screenshots and reading a StyleSheet both miss the missing-element and un-applied-prop class of defect (frontier vision models catch under half of fine-grained UI differences). Forces every screen's measurement to disk as artifacts and generates the ledger from them, so a 'match' verdict can never come from reasoning, a screenshot, or a code-read. Asks the user when unsure, on a full-comparison and a per-screen basis. Generic and framework-agnostic. Trigger even when told 'it should already match' or 'it uses the same design system'."
 allowed-tools:
   - "Read"
   - "Write"
@@ -49,6 +49,35 @@ Every one of these produces a verdict that *feels* rigorous and is wrong. Recogn
 
 ---
 
+## Measure programmatically — and force the measurement
+
+This skill exists because *looking* at two screens and *reading* the code both feel like verification and aren't. Two findings make programmatic extraction non-negotiable, not a nicety:
+
+- **Vision can't carry the audit.** On 2026 benchmarks, frontier multimodal models top out around **40% recall on fine-grained UI differences, and under ~23% on hard cases** — they miss most missing elements, wrong labels, and style drift. "I compared the screenshots and they match" is therefore not evidence. A screenshot/MLLM diff is a *spatial-overlap fallback* (does this element sit roughly here, does anything obviously overlap), never the primary detector — and when you do use it, ground it with Set-of-Marks (numbered boxes overlaid on both images) rather than raw screenshots.
+- **Reading the source isn't measuring either.** A `StyleSheet` literal or a JSX tree tells you what a component *declares*, not what *rendered*: it cannot reveal a component that never mounted, a prop that didn't reach the node, a relocated control, or an element the data left empty (this is anti-pattern #6, and it is the exact trap this skill was rebuilt to kill). Source-resolution verifies *intent*; the audit needs *result*.
+
+So the only admissible evidence is **extraction of the rendered tree**, captured to disk as artifacts:
+
+| | Web target | React Native target (no DOM) |
+|---|---|---|
+| **Structure** — what exists, where, with what text | DOM snapshot (`getComputedStyle` host) | accessibility/native tree: `axe describe-ui` or the Maestro view hierarchy |
+| **Resolved style** — the actual applied values | `getComputedStyle` | the live component tree's style props over the Metro CDP connection (rozenite / agent-cdp) |
+
+The reference side is always the browser (`getComputedStyle` + DOM). The diff is **artifact vs artifact**, run by a script, not by eye. (Full RN toolchain, the Fabric/New-Architecture reason `getComputedStyle` and Appium `getCssValue` don't exist there, and what to do when a tool is unavailable: `references/react-native.md`.)
+
+### The forcing rule (this is the part that actually works)
+
+Telling an agent "don't skip the measurement" does **not** work — agents under effort pressure rationalize the shortcut, and models trained against it learn to *hide* it rather than stop ("obfuscated reward hacking"). What works is making the artifact a precondition:
+
+1. **Every screen's measurement is written to files before any verdict** — `.mockup-fidelity/<screen>/{ref,target}.structure.json` and `.../{ref,target}.styles.json`. Screenshots are saved alongside as supplementary, never as the evidence.
+2. **The ledger is generated *from* those files.** Every `present`/`divergent`/`absent` cell and every ✓ names the two artifact values it compared. A row that can't point at its artifacts is not a finding — it's an unaudited screen.
+3. **No artifact, no verdict.** If a screen has no `target.structure.json` on disk, it has not been audited — regardless of how confident the screenshots made you. Treat a missing artifact exactly like a missing screen in the inventory.
+4. **Self-audit before done.** Run a final critic pass (you, or a sub-agent handed *only* the artifacts + the ledger) that checks: does every in-scope screen have all four artifact files? Does every ledger row cite them? Does any "match" rest on a screenshot or a code-read instead of an extracted value? Any "no" fails the audit and that screen goes back for real measurement. The critic prompt — and a seeded-defect eval you can run to prove the skill still catches planted gaps — is in `references/measurement-enforcement.md`.
+
+If the real measurement tools genuinely can't run here (no simulator, no Metro/CDP, RNW won't boot, no AXe), that is a **blocker to report, not a licence to eyeball** — say exactly which tool is missing and stop, the way the production-code guardrails require. Falling back to a screenshot-and-reasoning ledger is the failure this section exists to prevent.
+
+---
+
 ## Inputs
 
 1. **Reference (source of truth)** — an HTML+CSS mockup file or gallery, a served prototype URL, a Storybook story, a Figma export, or another rendered component set. If missing, ask.
@@ -78,13 +107,13 @@ The inventory is the coverage contract. If a screen isn't in it, you will not au
 - **Token parity first.** Compare the foundation tokens literally — read the reference's `:root` CSS variables (or token file) and the target's token file side by side: colours, fonts, radii, spacing, shadows. If they're identical, divergence is composition-level (focus there). If they differ, note it — and watch for *systematic* offsets a single element hides (e.g. a radius scale uniformly 2px tighter), which are token-source decisions, not per-screen fixes: flag them for the user rather than editing a shared, generated token unilaterally.
 - **Mark the chrome boundary.** Identify what is native chrome on the target (native tab bar, nav header, sheets, OS status bar) vs. content the app draws. Native chrome that diverges from the mock's hand-drawn chrome is intentional — record it once and don't refight it per screen. Everything inside the content area is in scope.
 
-### Phase 2 — Render BOTH and capture each once
+### Phase 2 — Measure BOTH and capture artifacts
 
-Open the reference and the target and put them next to each other — rendered, not reasoned-about. Capture each screen and each gated state (open every modal/drawer/expanded widget) into a workspace dir (`.mockup-fidelity/<screen>/ref.png|ref.json`, `target.png|target.json`). The reference is immutable for the whole pass — capture it once and reuse it everywhere; re-capture only the target after a fix.
+Extract each side's rendered tree into the workspace — **two artifacts per surface, not just a picture**: `.mockup-fidelity/<screen>/{ref,target}.structure.json` (the hierarchy + text + geometry) and `.../{ref,target}.styles.json` (resolved per-element styles), plus a `*.png` screenshot saved *alongside* as supplementary. Do this for each screen and each gated state (open every modal/drawer/expanded widget). The reference is immutable for the whole pass — measure it once and reuse it everywhere; re-measure only the target after a fix.
 
 - **Reference (DOM):** serve the HTML (`python3 -m http.server` if `file://` blocks scripts/fonts) and read it with a browser tool — `agent-browser`, `playwright-cli`, or the Chrome MCP. Extract `getComputedStyle` per element plus the structured snapshot. See `references/browser-measurement.md` for the tools, gotchas, and the **fidelity probe** (one `eval` that returns the structural skeleton + each control's containment anchor + region styles + thin/variant flags).
 - **Target — React (DOM):** render its dev server, log in if protected, navigate to the real route, and measure the same way.
-- **Target — React Native (no DOM):** you have three complementary options; read `references/react-native.md` for the full how-to. In short: **Maestro** drives a real simulator to navigate and screenshot each screen (the most accurate render); **react-native-web** runs the actual RN components in a browser so you *can* read `getComputedStyle` (apply the native-module stubs in the reference when the web boot is blocked — and know some apps using native-only UI primitives can't boot on web at all); and because **RN has no CSS cascade**, a component's applied style is just its `StyleSheet` literals resolved against its token constants — so when RNW can't boot, the source-resolved values *are* the computed style, and `mock getComputedStyle vs app source-resolved values` is an exact, authoritative diff.
+- **Target — React Native (no DOM):** measure the *rendered* tree, not the source. Extract **structure** (hierarchy, geometry, text, what's missing) with `axe describe-ui` or the Maestro view hierarchy → `target.structure.json`, and **resolved style props** (colours, spacing, radii, borders) from the live component tree over the Metro CDP connection (rozenite / agent-cdp) → `target.styles.json`. Maestro / `xcrun simctl` screenshots are captured alongside as supplementary. **react-native-web and source-resolved StyleSheet values are fallbacks, not the method** — RNW only approximates native rendering and many native-only apps can't boot it; source-resolution shows what's *declared*, never what *rendered*, so it can never back a ✓ on its own. Full toolchain, the Fabric/New-Architecture context, and the unavailable-tool blocker rule: `references/react-native.md`.
 
 ### Phase 3 — Validate with the burden of proof inverted
 
@@ -94,6 +123,8 @@ For each in-scope screen, work from the captured snapshot (don't re-open the pag
 
 For **every** affordance the reference screen shows (every section, card, row, control, label, badge, chart, input, CTA), mark its state in the target: **present** (and matching), **divergent** (present but wrong place/style/content), or **absent** (the reference has it, the app doesn't). This forced enumeration is what catches missing *features* — the class that "measure the present elements" structurally cannot find. Fill it in for every screen before measuring any pixels.
 
+Build each cell from the **structure artifacts** (`ref.structure.json` vs `target.structure.json`) — the absent/present call is a node-and-text comparison of the two extracted trees, so it's deterministic and near-zero false-positive. A cell decided from a screenshot or by reading the source is not filled in; it's a TODO. (Mock `div`/`span` vs RN `View`/`Text` won't match by tag — pair nodes by text content, accessibility label, and order, not element name.)
+
 #### 3B — Structure before styling
 
 Diff the **skeleton** (the ordered, nested tree of regions and the controls in each) before any colour/spacing. Match each control across sides by stable identity (`aria-label`/text/`testID`), then compare its **container path and position within that container** — never absolute coordinates (the surrounding chrome differs, so absolute `x` is meaningless). A control that is present and pixel-correct but in the *wrong container* (a menu in a top-right strip vs inline with the title) is caught only here. For a parallel reimplementation, diffing the two render functions in code is the cheapest catch — a relocated control is a one-node source difference and a near-invisible pixel difference. Reconcile the skeletons before 3C.
@@ -102,7 +133,9 @@ Diff the **skeleton** (the ordered, nested tree of regions and the controls in e
 
 For each element that *is* present and structurally correct, diff the resolved styles property-by-property with full, untruncated values: font-size/weight/line-height/color/letter-spacing, padding/margin/gap, border (per side), border-radius, background (incl. gradients), and **box-shadow** and **`::placeholder` colour** (the two most often silently wrong). A ✓ requires both values printed and matching — `#9CA0AC` vs `#5E6A82` is a miss even when it "looks close". Include spacing-accumulation (total gap between a heading and its first content, via bounding-rect deltas, not just one margin) and sibling-adjacency gap checks.
 
-For React/HTML, both sides are `getComputedStyle`. For React Native, the reference is `getComputedStyle` and the target is RNW `getComputedStyle` *or* source-resolved StyleSheet+token values (both exact — see `references/react-native.md`). RN allows one shadow per view, so a two-layer CSS box-shadow can't be fully reproduced — note the approximation rather than chasing it.
+Diff the **styles artifacts** (`ref.styles.json` vs `target.styles.json`), property by property. For React/HTML both sides are `getComputedStyle`. For React Native the reference is `getComputedStyle` and the target is the **resolved style props read from the live component tree over the Metro CDP connection** (the actual applied values, before Yoga flattens them) — see `references/react-native.md`. RN allows one shadow per view, so a two-layer CSS box-shadow can't be fully reproduced — note the approximation rather than chasing it.
+
+Use a screenshot/MLLM pass **only** for the spatial questions a tree diff can't answer (overlap, z-order, an element drawn off-screen) — never to confirm content or style, where frontier-model recall is too low to trust. When you do, overlay Set-of-Marks (numbered boxes) on both images first.
 
 ### Phase 4 — Hunt scaffold / deferral tells
 
@@ -124,8 +157,9 @@ For a large surface, fan out one sub-agent per screen/region via `Agent` (keep w
 
 ## Framework specifics — read the matching reference
 
-- **React Native target** (Maestro, react-native-web + native-module stubbing, the no-cascade source-resolved diff, native chrome): `references/react-native.md`.
+- **React Native target** (the `axe describe-ui` structural dump + Metro-CDP resolved-style extraction, Maestro for nav/screenshots, the Fabric/New-Architecture context, RNW + source-resolution as fallbacks, native chrome): `references/react-native.md`.
 - **Browser measurement** (agent-browser / playwright-cli / Chrome MCP, the gotchas, and the fidelity probe `eval`): `references/browser-measurement.md`.
+- **Measurement enforcement** (the artifact-forcing gate, the completeness-critic prompt, and a seeded-defect eval to prove the skill still catches planted gaps): `references/measurement-enforcement.md`.
 - **Functional-gaps document** (why, when, and the template): `references/functional-gaps.md`.
 
 ---
@@ -134,15 +168,17 @@ For a large surface, fan out one sub-agent per screen/region via `Agent` (keep w
 
 You are done only when:
 - the **full screen inventory** exists and every reference frame is either audited or explicitly excluded with a reason — nothing dropped silently;
+- every in-scope screen has its four **measurement artifacts** on disk (`{ref,target}.structure.json`, `{ref,target}.styles.json`); the ledger is generated from them and every row names the artifact values it compared — no row rests on a screenshot or a source read;
 - the **present / divergent / absent ledger** is filled for every in-scope screen (breadth), before any per-property measurement (depth);
 - the shared-layer truth and token-parity are stated; the chrome boundary is recorded;
-- every in-scope screen (including gated and spawned surfaces) was **rendered** on both sides; every ledger row carries rendered evidence on both sides and a classification that is `DEFECT` or carries an explicit citation — no "probably fine", no "app-ahead" without a recorded decision;
+- every in-scope screen (including gated and spawned surfaces) was **measured** (extracted, not just rendered) on both sides; every ledger row carries artifact evidence on both sides and a classification that is `DEFECT` or carries an explicit citation — no "probably fine", no "app-ahead" without a recorded decision;
 - structure was diffed before styling; per-property computed-style diffs are printed with both full values for every fixed element;
-- every confirmed gap is fixed (or queued with an owner) and re-verified at render — not closed on a code change;
+- every confirmed gap is fixed (or queued with an owner) and re-verified by re-extracting the artifact — not closed on a code change;
+- a final **self-audit/critic pass** confirmed every in-scope screen has its artifacts and every verdict traces to them (`references/measurement-enforcement.md`);
 - the **functional-gaps document** is written for every aligned/added surface;
 - where honoring the mock would remove working functionality or the intent was ambiguous, you **asked** rather than guessed.
 
-A verdict of "it matches" is permitted only when the rendered side-by-side shows it.
+A verdict of "it matches" is permitted only when the extracted-artifact diff — not a side-by-side glance — shows it.
 
 ---
 
