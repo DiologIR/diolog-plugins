@@ -1,0 +1,9 @@
+{
+  "name": "macosify",
+  "version": "0.1.0",
+  "description": "Two macOS-native UI skills sharing one bundled knowledge corpus (the full macOS 26 'Tahoe'/Liquid Glass HIG library + a token-level DESIGN.md + the macOS 26 UI Extraction & Native Translation framework). `macosify` refits an existing UI to feel authentically AppKit-native on macOS 26 — real window chrome, SF Pro 13pt, dynamic semantic colour, Liquid Glass only on floating chrome, concentric corners, native lists/tables over card grids — and explicitly corrects iOS-derived looks (Mac Catalyst / 'Designed for iPad' on Apple Silicon) toward true native macOS. `macos-ui-analyst` (the GlassReader persona) analyses a static macOS 26 screenshot into a structured Native Translation Report (AX-tree inventory + SwiftUI/AppKit mapping + epistemic-tagged build guide), classifies the source's framework lineage (AppKit-native vs Catalyst vs iOS-on-Mac vs SwiftUI), and merges durable, generalisable learnings into one accumulating knowledge file that `macosify` then consumes.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
