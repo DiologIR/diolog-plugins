@@ -43,11 +43,22 @@ atomic class set resolves the same way. Reading the class rules by hand misses i
 
 ```bash
 playwright-cli open "http://localhost:8770/<mock>.html"   # or the React/StyleX route
-# pick the frame root: any CSS selector (the screen root in a React/StyleX app),
-# or a figcaption substring for multi-frame HTML mockup galleries:
-playwright-cli eval "() => { window.MF_FRAME_SELECTOR = '#screen .scr'; }"   # or window.MF_FRAME_TITLE = 'Discover · home'
+# pick the frame ONE of three ways:
+playwright-cli eval "() => { window.MF_FRAME_SELECTOR = '#screen .scr'; }"  # any CSS selector (a React/StyleX screen root)
+playwright-cli eval "() => { window.MF_FRAME_TITLE = 'Discover · home'; }"  # caption substring (gallery)
+playwright-cli eval "() => { window.MF_FRAME_INDEX = 13; }"                 # 1-based ordinal (gallery, when captions aren't unique)
 playwright-cli eval "$(cat extract-mock.js)" --filename mock.discover.json
 ```
+
+**Multi-frame galleries come in two markups and the extractor handles BOTH** out of
+the box: `<figure><figcaption>` (one mock) and `<div class="frame">…<div class="cap">`
+(another — e.g. each `.frame` holds a `.device > .screen` plus a `.cap` title).
+`MF_FRAME_TITLE` searches the union `figure, .frame` for a container whose
+`figcaption, .cap` text includes the title, then takes the inner `.scr/.screen` as
+the frame root. Override either set with `window.MF_FRAME_CONTAINER` /
+`window.MF_CAPTION_SELECTOR` for a third markup, or use `MF_FRAME_INDEX` (Nth
+container) when captions repeat. The **differ** (`diff.mjs`) is format-agnostic — it
+consumes the extracted JSON, so nothing downstream changes per markup.
 
 Native chrome (`.sb .island .tabbar .homebar .nav`) is skipped — the app renders
 that itself. Override the chrome set with `window.MF_CHROME_SELECTOR`.

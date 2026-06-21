@@ -32,32 +32,40 @@
 () => {
   const SEL = window.MF_FRAME_SELECTOR;
   const TITLE = window.MF_FRAME_TITLE;
+  const INDEX = window.MF_FRAME_INDEX; // 1-based ordinal, robust when captions aren't unique
+  // Frame galleries differ in markup — a `<figure><figcaption>` gallery (e.g. the
+  // investor mock) OR a `<div class="frame"><div class="cap">` gallery (e.g. the
+  // customer mock, where each `.frame` holds a `.device > .screen` plus a `.cap`).
+  // Treat both: frame containers + caption selector are configurable, with the
+  // union as the default so the same command works on either format.
+  const FRAME_SEL = window.MF_FRAME_CONTAINER || 'figure, .frame';
+  const CAP_SEL = window.MF_CAPTION_SELECTOR || 'figcaption, .cap';
+  const ROOT_PROBES = ['.scr', '.screen', '.frame', '.phone'];
   // Chrome the target renders natively — not screen content. Override via
   // window.MF_CHROME_SELECTOR for a different mock's chrome class names.
   const CHROME = window.MF_CHROME_SELECTOR || '.sb, .island, .tabbar, .homebar, .nav, .statusbar, .notch';
 
+  // Pick the screen-content node inside a frame container (prefer it over the bezel).
+  const screenOf = (fig) => {
+    if (!fig) return null;
+    for (const s of ROOT_PROBES) { const hit = fig.querySelector(s); if (hit) return hit; }
+    return fig;
+  };
+
   let root;
   if (SEL) {
     root = document.querySelector(SEL);
+  } else if (INDEX != null) {
+    root = screenOf([...document.querySelectorAll(FRAME_SEL)][INDEX - 1]);
   } else if (TITLE) {
-    const fig = [...document.querySelectorAll('figure')].find(
-      f => (f.querySelector('figcaption')?.textContent || '').replace(/\s+/g, ' ').includes(TITLE),
+    const fig = [...document.querySelectorAll(FRAME_SEL)].find(
+      f => (f.querySelector(CAP_SEL)?.textContent || '').replace(/\s+/g, ' ').includes(TITLE),
     );
-    // Prefer the SCREEN content node over the device bezel. querySelector on a
-    // comma-list returns first-in-DOM (the outer .phone), so probe in priority
-    // order instead and take the first that matches.
-    root = null;
-    if (fig) {
-      for (const s of ['.scr', '.screen', '.frame', '.phone']) {
-        const hit = fig.querySelector(s);
-        if (hit) { root = hit; break; }
-      }
-      root = root || fig;
-    }
+    root = screenOf(fig);
   } else {
     root = document.body;
   }
-  if (!root) return JSON.stringify({ error: 'frame-not-found', selector: SEL, title: TITLE });
+  if (!root) return JSON.stringify({ error: 'frame-not-found', selector: SEL, title: TITLE, index: INDEX });
   const f = root.getBoundingClientRect();
 
   const PROPS = [
