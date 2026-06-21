@@ -233,16 +233,48 @@ for (const mn of mock) {
     const mFs = px(mn.comp.fontSize); if (mFs != null) rec(elName, 'font-size', A.fontSize(an), mFs, close(A.fontSize(an), mFs, 0.6));
   }
 
-  // gutter inset — compare only the edge the element is anchored to (frame
-  // widths differ); skip flex-spanning elements whose edges are content-driven.
+  // gutter inset. Compare the edge an element is anchored to (frame widths differ).
+  // CRITICAL: the LEFT edge of a LEFT-anchored element is a real gutter inset even
+  // when the element is also WIDE — a list-row TITLE flexes to fill the row, so its
+  // text node spans wide (left- AND right-anchored), and the old `wide` skip dropped
+  // its left-inset entirely. That is exactly how the Invest "CommSec" title (app x=84
+  // vs mock 66, w≈280) passed silently. So: check left-inset whenever left-anchored;
+  // check right-inset only when right-anchored AND NOT left-anchored (a genuinely
+  // right-pinned element, whose right edge isn't content-driven).
   const ar = A.rect(an), aX = ar?.x, aW = ar?.w, mX = mn.rect?.x, mW = mn.rect?.w;
   if (aX != null && mX != null) {
     const leftAnch = mX < 0.33 * mockFrameW, rightAnch = mX + (mW || 0) > 0.67 * mockFrameW;
-    const wide = leftAnch && rightAnch;
-    if (!wide && leftAnch) rec(elName, 'left-inset', aX, mX, close(aX, mX));
-    if (!wide && rightAnch && aW != null && mW != null) {
-      rec(elName, 'right-inset', +(appFrameW - (aX + aW)).toFixed(1), +(mockFrameW - (mX + mW)).toFixed(1),
-        close(appFrameW - (aX + aW), mockFrameW - (mX + mW)));
+
+    // ROW EDGES — the leftmost / rightmost content node sharing this probe's vertical
+    // band, on both sides. Catches a row whose content is pushed in by a leading
+    // TILE/ICON/AVATAR (never probed, it's non-text) or whose trailing ICON/BADGE is
+    // displaced — the brokers' tile at x=36 vs mock 20, open_in_new vs ASX badge.
+    const rowEdges = (nodes, getRect, cy, frameW) => {
+      let min = Infinity, max = -Infinity;
+      for (const n of nodes) {
+        const r = getRect(n); if (!r || r.w <= 0 || r.x == null) continue;
+        if (r.w >= 0.9 * frameW && (r.x || 0) <= 2) continue; // page/section full-bleed bg
+        if (r.y <= cy && r.y + r.h >= cy) { min = Math.min(min, r.x); max = Math.max(max, r.x + r.w); }
+      }
+      return { min, max };
+    };
+    const me = rowEdges(mock, n => n.rect, mn.rect.y + mn.rect.h / 2, mockFrameW);
+    const ae = rowEdges(app, A.rect, ar.y + ar.h / 2, appFrameW);
+    // A horizontally-scrolled row (a tab strip) has content off-screen left/right —
+    // its x is scroll-position-dependent, not a gutter, so skip ALL geometry for it
+    // (kills the false positives the company tab strip would otherwise emit).
+    const scrolled = ae.min < -2 || ae.max > appFrameW + 2;
+
+    if (!scrolled) {
+      if (leftAnch) rec(elName, 'left-inset', aX, mX, close(aX, mX));
+      if (rightAnch && !leftAnch && aW != null && mW != null) {
+        rec(elName, 'right-inset', +(appFrameW - (aX + aW)).toFixed(1), +(mockFrameW - (mX + mW)).toFixed(1),
+          close(appFrameW - (aX + aW), mockFrameW - (mX + mW)));
+      }
+      if (isFinite(me.min) && isFinite(ae.min) && me.min < 0.5 * mockFrameW)
+        rec(elName, 'row-left-inset', +ae.min.toFixed(1), +me.min.toFixed(1), close(ae.min, me.min));
+      if (isFinite(me.max) && isFinite(ae.max) && (mockFrameW - me.max) < 0.5 * mockFrameW)
+        rec(elName, 'row-right-inset', +(appFrameW - ae.max).toFixed(1), +(mockFrameW - me.max).toFixed(1), close(appFrameW - ae.max, mockFrameW - me.max));
     }
   }
 
@@ -263,20 +295,52 @@ for (const mn of mock) {
   if (rows.slice(before).every(r => r.ok)) oks.push(elName);
 }
 
+// ---------- coverage: unmatched-but-present-elsewhere ----------
+// An unmatched mock probe usually means "missing OR intentional swap" — but if the
+// SAME text exists in the full app dump (any screen), the element is NOT missing:
+// you measured the WRONG STATE (the surface was never opened, or --anchor scoped to
+// the wrong screen), so its geometry/style was never checked. That is exactly how
+// the Invest "Example brokers" rows' inset slipped through. Surface these loudly and
+// separately — they are coverage failures to re-measure, not absences to rationalise.
+const appAllText = new Set(appAll.filter(n => A.text(n)).map(n => A.text(n)));
+const coverage = unmatched.filter(u => u.text && appAllText.has(norm(u.text)));
+const trulyUnmatched = unmatched.filter(u => !(u.text && appAllText.has(norm(u.text))));
+
+// ---------- app-EXTRA: text the app renders that the mock does NOT ----------
+// The differ only walks mock→app, so an element the APP adds (an extra badge, an
+// extra line, a wrapper label) is invisible — yet "mock wins" means REMOVING those
+// too (LAW rule 6; the Invest brokers had an extra `· not endorsements` line + an
+// ASX badge). List app text with no mock match. CAVEAT: this also surfaces
+// legitimate extra DATA (more list rows than the mock's sample, live prices/names) —
+// it is a SCAN AID, not a hard fail: confirm each is real data, else remove/cite it.
+const mockTextSet = new Set(mock.filter(n => norm(n.text)).map(n => norm(n.text)));
+const appExtra = [...new Map(
+  app.filter(n => { const t = A.text(n); return t && !CHROME_TXT.test(t) && !mockTextSet.has(t); })
+     .map(n => [A.text(n), { text: A.text(n), x: A.rect(n)?.x }])
+).values()];
+
 // ---------- report ----------
 const fails = rows.filter(r => !r.ok);
 const L = [];
 L.push(`# Mock-fidelity diff — ${mockDoc.title}`, '');
 L.push(`- mock: \`${MOCK}\` (${mock.length} nodes, frame ${mockDoc.frame?.w}×${mockDoc.frame?.h})`);
 L.push(`- target: \`${APP}\`${scr != null ? ` (anchor "${ANCHOR}", scr=${scr}, ${app.length} nodes)` : ''}`);
-L.push(`- matched probes: ${oks.length + new Set(fails.map(f => f.el)).size}, **mismatches: ${fails.length}**, unmatched mock texts: ${unmatched.length}`, '');
+L.push(`- matched probes: ${oks.length + new Set(fails.map(f => f.el)).size}, **mismatches: ${fails.length}**, unmatched mock texts: ${unmatched.length}${coverage.length ? ` (⚠︎⚠︎ ${coverage.length} present-in-app = WRONG STATE)` : ''}`, '');
 L.push('## ❌ Mismatches (fix these)', '');
 if (!fails.length) L.push('_None — every matched property is within tolerance._');
 else { L.push('| element | property | target | mock |', '|---|---|---|---|'); for (const r of fails) L.push(`| ${r.el} | ${r.prop} | \`${r.app}\` | \`${r.mock}\` |`); }
+if (coverage.length) {
+  L.push('', '## ⚠︎⚠︎ WRONG STATE — present in the app dump but NOT on the measured screen (re-measure!)', '');
+  L.push('These mock texts exist elsewhere in the app — the surface was not opened, or `--anchor` scoped to the wrong screen. Their geometry/style was NEVER checked. Drive to the populated state and re-run before trusting this report.', '');
+  L.push(coverage.map(u => `- \`${u.tag}.${u.cls}\` — "${u.text}"`).join('\n'));
+}
 L.push('', '## ⚠︎ In mock, not matched in target (missing element OR intentional content / icon-ligature swap)', '');
-L.push(unmatched.length ? unmatched.map(u => `- \`${u.tag}.${u.cls}\` — "${u.text}"`).join('\n') : '_None._');
+L.push(trulyUnmatched.length ? trulyUnmatched.map(u => `- \`${u.tag}.${u.cls}\` — "${u.text}"`).join('\n') : '_None._');
+L.push('', '## ◆ App-EXTRA — text in the app, not in the mock (scan: real data, or remove/cite per "mock wins")', '');
+L.push(appExtra.length ? appExtra.map(u => `- "${u.text}"${u.x != null ? ` (x=${Math.round(u.x)})` : ''}`).join('\n') : '_None._');
 L.push('', '## ✓ Matched & within tolerance', '', oks.length ? oks.map(o => `- ${o}`).join('\n') : '_None._', '');
 writeFileSync(OUT, L.join('\n'));
-writeFileSync(OUT.replace(/\.md$/, '.json'), JSON.stringify({ title: mockDoc.title, scr, fails, unmatched, oks }, null, 2));
-console.log(`${fails.length} mismatch(es), ${unmatched.length} unmatched mock text(s) → ${OUT}`);
+writeFileSync(OUT.replace(/\.md$/, '.json'), JSON.stringify({ title: mockDoc.title, scr, fails, coverage, unmatched: trulyUnmatched, appExtra, oks }, null, 2));
+console.log(`${fails.length} mismatch(es), ${trulyUnmatched.length} unmatched, ${coverage.length} WRONG-STATE, ${appExtra.length} app-extra → ${OUT}`);
 for (const r of fails) console.log(`  ✗ ${r.el} · ${r.prop}: target=${r.app} mock=${r.mock}`);
+for (const u of coverage) console.log(`  ⚠︎⚠︎ WRONG STATE (present in app, not on measured screen): "${u.text}"`);

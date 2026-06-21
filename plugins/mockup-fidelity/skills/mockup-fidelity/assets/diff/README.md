@@ -83,16 +83,33 @@ pad-left but wrong pad-top reads as wrong vertical padding. (RN's single-layer
 shadow can't equal a multi-layer CSS `box-shadow`, so shadow is a presence check —
 match its *depth* by eye against a screenshot.)
 
-The report has three sections:
+The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
-- **⚠︎ In mock, not matched in target** — a missing element OR an intentional swap
-  (real data replacing a placeholder; a Material-icon ligature name like
-  `auto_awesome` that the app renders as an SVG). The human classifies each.
+- **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present
+  ELSEWHERE in the full app dump. It is NOT missing — you measured the wrong state
+  (surface unopened, or `--anchor` scoped to the wrong screen) so its geometry/style
+  was never checked. Re-measure the populated state before trusting the report. (This
+  is how the Invest "Example brokers" inset first hid — diffed against the wrong tab.)
+- **⚠︎ In mock, not matched in target** — a genuinely missing element OR an
+  intentional swap (real data replacing a placeholder; a Material-icon ligature name
+  like `auto_awesome` the app renders as an SVG). The human classifies each.
+- **◆ App-EXTRA** — text the APP renders that the mock does NOT. "Mock wins" removes
+  these (an extra badge/line/wrapper) — but the bucket also lists legitimate extra
+  DATA (more rows than the mock's sample, live prices/names), so it's a SCAN AID:
+  confirm each is real data, else remove or cite it.
 - **✓ Matched & within tolerance.**
 
-Geometry is compared **only on the gutter an element is anchored to** (left-inset
-for left-anchored, right-inset for right-anchored) because the mock's frame width
-≠ the device's; flex-spanning elements (anchored to both edges) skip geometry.
+Geometry per matched probe: **left-inset** whenever the element is left-anchored —
+INCLUDING when it also spans wide (a list-row title flexes to fill its row, so its
+text node is left- AND right-anchored; the old build skipped it as "flex-spanning"
+and so missed an 84-vs-66 title inset). **right-inset** only for genuinely
+right-pinned elements (right-anchored and not left-anchored). Plus **row-left-inset
+/ row-right-inset** — the leftmost / rightmost content node sharing the probe's
+vertical band — which catch a row pushed in by a leading TILE/ICON/AVATAR or a
+displaced trailing icon/badge (non-text elements that are never probed directly).
+A horizontally-scrolled row (a tab strip, content off-screen) is detected and its
+geometry skipped, so scroll position never reads as a gutter mismatch. The mock's
+frame width ≠ the device's, so only insets (not absolute x) are compared.
 
 ## Known remaining blind spots (verify these by eye / structurally)
 
@@ -101,12 +118,16 @@ their ancestor boxes, plus the screen background. These classes are NOT caught a
 still need a structural pass + a screenshot:
 
 - **Non-text visual elements** with no associated text — a divider line, a
-  standalone icon, an image, a decorative bar, a chart, an avatar. If it carries
-  no text and isn't a text's ancestor box, it's never probed. (A *missing* divider
-  or a wrong icon colour won't flag.)
-- **App-EXTRA elements** — the differ iterates MOCK probes, so something the app
-  renders that the mock doesn't is invisible to it (only the reverse is listed,
-  under ⚠︎ unmatched).
+  standalone icon, an image, a decorative bar, a chart, an avatar. If it carries no
+  text and isn't a text's ancestor box, its presence/colour/glyph is never probed. (A
+  *missing* divider or a wrong icon colour won't flag.) PARTIAL COVER: a leading
+  tile/icon/avatar or trailing icon/badge that is mis-INSET is now caught via
+  `row-left-inset`/`row-right-inset` (the row's leftmost/rightmost edge), so its
+  horizontal position is checked even though its identity/colour still isn't.
+- **App-EXTRA elements** — NOW LISTED in the `◆ App-EXTRA` bucket (app text with no
+  mock match). Still text-only (an extra non-text badge/divider with no text isn't
+  caught) and inherently noisy (legitimate extra data rows appear too) — a scan aid,
+  not a hard fail.
 - **Between-element spacing** — the gap/margin BETWEEN two siblings or sections
   (the differ checks an element's own padding + its gutter, not inter-element gaps).
 - **Icon glyph correctness** — mock Material ligature vs app SVG are different
