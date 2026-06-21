@@ -47,7 +47,7 @@ YOUR LANE'S TOOLCHAIN (already running — do NOT restart servers, do NOT touch 
 - Worktree (edit/tsc/commit HERE): ${lane.worktree}  (app dir: ${lane.appDir})
 - Sim: ${lane.simUdid}, bundle <com.example.app>, connected to Metro :${lane.metroPort}. Screenshot: \`xcrun simctl io ${lane.simUdid} screenshot /tmp/frame-${f.n}.png\` then READ that PNG by eye.
 - App rendered tree: this lane's harness POSTs to collector :${lane.collectorPort}, which writes \`${lane.appDump}\` every ~1.5s (holds ALL mounted screens — scope to the foreground via the differ's --anchor).
-- Mock computed styles (shared, read-only): \`playwright-cli open ${MOCKURL}\`, set \`window.MF_FRAME_TITLE='${f.title}'\`, then eval \`extract-mock.js\` -> \`${MAIN}/.mockup-fidelity/reaudit/mock-${f.n}.json\`.
+- Mock computed styles: ALREADY PRE-EXTRACTED at \`${MAIN}/.mockup-fidelity/reaudit/mock-${f.n}.json\` — use it directly as the differ's --mock input. Do NOT run playwright-cli to re-extract: all ${LANES.length} lanes share one browser, so concurrent playwright collides. (If you need a VISUAL mock screenshot for eyeball confirmation, the served mock is \`${MOCKURL}\`, frame title '${f.title}' — use sparingly.)
 - Differ (shared tools, lane-specific inputs): \`node ${MAIN}/.mockup-fidelity/diff/diff.mjs --mock ${MAIN}/.mockup-fidelity/reaudit/mock-${f.n}.json --app ${lane.appDump} --anchor "<screen text>" --out ${MAIN}/.mockup-fidelity/reaudit/report-${f.n}.md\`, then READ the report.
 - Maestro/sim nav targets sim ${lane.simUdid} ONLY (use \`--device ${lane.simUdid}\` / \`xcrun simctl ... ${lane.simUdid}\`; never drive another lane's sim). Wait 8-12s for AI streams.
 - Typecheck: \`cd ${lane.worktree}/${lane.appDir} && npx tsc --noEmit\` — clean BEFORE committing.
