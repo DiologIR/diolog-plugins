@@ -1,6 +1,6 @@
 {
   "name": "create-storyboard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Build an interactive UI storyboard as a StyleX + Storybook project from a product specification and a user-supplied DESIGN.md. The DESIGN.md (the product's own brand/design system) drives the look — this skill is NOT locked to a macOS aesthetic and renders in whatever visual identity the brand specifies. It reads a bundled HIG library purely as the interaction, behaviour, structure, and accessibility backbone (layout, master–detail/list/table grammar, modality, feedback, focus/keyboard, motion, empty/loading/error/status, writing), applies the design-craft and frontend-design skills for distinctive, accessible, AI-slop-resistant direction, derives the user flows + screens, builds a reusable StyleX design system (tokens → elements → composites) from the DESIGN.md, and implements every screen as Storybook stories across the happy / empty / loading / error / AI states at production fidelity, plus an MDX flow-overview that sequences the screens into journeys. A brand-driven sibling of macosify's macos-storyboard skill (which is locked to a macOS-native look).",
   "author": {
     "name": "DiologIR",
