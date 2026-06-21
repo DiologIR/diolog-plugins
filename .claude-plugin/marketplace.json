@@ -215,6 +215,17 @@
       },
       "source": "./plugins/mockup-fidelity",
       "category": "development"
+    },
+    {
+      "name": "create-luke-article",
+      "description": "Write a LinkedIn post or a long-form blog article in Luke Rhodes' authentic voice (Diolog CTO and co-founder), from a topic, a topic-context document, and Luke's personal point of view. Produces a ready-to-publish, engagement-optimised, compliance-aware article that sounds like Luke (calm, direct, technically fluent, quietly witty, no em dashes, no AI clichés) plus an on-brand Diolog graphic concept and image prompt. Bundles a self-contained voice spec (synthesised from Luke's profiles and raw writing samples), a distilled 2024-2025 LinkedIn engagement reference, Diolog's lead-designer graphic-concepting approach, and a deterministic voice-lint script that hard-fails on em dashes and AI-tell phrases.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/create-luke-article",
+      "category": "productivity"
     }
   ]
 }
