@@ -25,6 +25,17 @@ A populated screenshot is half the job. The other half is that the screen *works
    the drafts mailbox). Mine the spec/mock for every affordance and build them.
 6. **Honest grammar throughout** — provenance flags, "propose, a human approves," gated/attributed egress,
    honest empty/degraded states, real status. Don't fake certainty the product wouldn't have.
+7. **The feature's PRIMARY surface is present and in the right region** — this is a *positive* check, not a
+   defect check, and it's the one automated gates miss. Ask: *what is this feature fundamentally for, and is
+   that the star of the screen?* A mail surface's star is a **scannable message list** (in the content,
+   master of a master/detail) — not a bare reading pane with the list buried in the 232px rail. A files
+   surface's star is the file grid; a board's is the board. A surface that jumps straight to a *detail* with
+   no way to browse the collection is **incomplete**, even if everything on it works and nothing is
+   duplicated. Check it against the mock's content layout, not just against "does it behave."
+8. **Every secondary mode/tab/state is fully built, not just the primary one.** A mode switcher
+   (Overview/Conversations/Knowledge/Front) whose *content* branches exist can still have an **empty nav
+   region** for its secondary modes (e.g. a rail that only builds rows for two of four tabs). Drive into
+   *each* mode and each of the 5 states — the secondary ones are where the stubs hide.
 
 **When *updating* an existing storyboard, this is the whole job:** go surface by surface and deepen each
 to the full depth of its mock + spec — every sub-tab, toggle, and named sub-feature — not just the happy
@@ -111,9 +122,17 @@ class" column) so no surface is left half-converted and none is force-converted:
   content `<Segmented>` of the same scopes) is **not** class B — it's the dead-duplicate bug below. If the
   rows don't drive anything, or the same set appears twice, it's an A (own the sidebar) or a C, never a B.
 - **C — not a list surface.** A dashboard, canvas, editor, multi-section view, wizard, or approval-queue
-  whose spine is *not* picking from a list. Keep the generic source list + content. *Tell-tale:* the spine
-  is a canvas you manipulate, a metrics dashboard, a node graph, a diff viewer, or a feed of self-contained
-  action cards; a secondary list inside it (an editor's layers, a deck's gate) is *chrome*, not nav.
+  whose spine is *not* picking from a list. *Tell-tale:* the spine is a canvas you manipulate, a metrics
+  dashboard, a node graph, a diff viewer, or a feed of self-contained action cards; a secondary list inside
+  it (an editor's layers, a deck's gate) is *chrome*, not nav. **A class-C surface gets ONE of two shells:
+  a MEANINGFUL scoped source list (real entities / filters that drive the content) OR — the usual answer —
+  FULL-BLEED, with no source-list column at all.** It must NEVER fall through to the generic
+  `All / Recent / Starred` (or any auto-derived) filler. **Full-bleed is a first-class shell shape, not a
+  failure** — a dashboard, canvas, or editor filling the whole content row is correct; a dead filler column
+  beside it is the bug. (Watch the shell's *fallback*, not just its mirror: an `if (subtabs) …; else
+  [All/Recent/Starred]` source-list builder emits dead nav for every surface that has no real list — exactly
+  the surfaces that should be full-bleed. Make the shell render a source list ONLY where one is real, and
+  render none otherwise.)
 
 Be judicious: the goal is to fix the *filler-sidebar + crammed-nav* surfaces and **confirm every other
 surface is genuinely fine**, not to push every list into a rail. When a surface *does* own the sidebar and
@@ -197,6 +216,13 @@ await page.getByText(rowText, { exact: false }).first().click()                 
 - Keep a committed **`interact.mjs`** that clicks across all surface stories (zero console errors) plus a
   targeted assertion per surface (`tab X → shows Y`, `click row R → detail shows D`). Re-run it after every
   change; extend it whenever you deepen a surface.
+- **Drive every secondary mode/tab, not just the primary flow.** For a surface with a mode switcher, click
+  *each* mode and assert (a) its content rendered AND (b) its nav region (rail/sidebar) isn't empty under it
+  — empty-rail-under-a-tab and detail-with-no-list are invisible to a harness that only exercises the happy
+  path. Add the assertion that would have caught the absent-primary-surface bug, not just the present-defect one.
+- **Screenshot the CONFIRMED surfaces, not only the changed ones.** The screens you waved through as
+  "already correct / exemplar" are exactly where a missing primary surface or empty secondary mode hides —
+  a row that is "confirmed but not screenshot-eyeballed" is *yellow*, not green. Shoot it and look.
 - **Verify the wall builds** (`npm run wall:build`) and screenshot a few happy screens by eye every pass.
 
 ---

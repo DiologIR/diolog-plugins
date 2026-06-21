@@ -37,6 +37,14 @@ The whole point is that every agent builds with the *same* full context the lead
 
 An agent that skips 1–3 produces exactly the thin, off-brand, context-blind screen this whole approach exists to prevent. Make the contract a hard gate in the prompt, not a suggestion.
 
+### "Confirm" is not "review" — the failure mode that survives a green gate
+
+The surfaces that slip through are not the ones you *build*; they're the ones you *confirm*. An inherited label — "this one's already correct," "exemplar, just polish it" — is a **liability, not a shortcut**: it tells the agent (and you) to stop looking exactly where a real defect may sit. Three rules keep "confirm" honest:
+
+- **Never let a label downgrade scrutiny.** Don't pass agents "this surface is an exemplar — confirm it"; pass them "re-derive whether this surface is correct from its spec/mock." If you wouldn't trust the label without checking, don't propagate it. (A storyboard's most-praised surface shipped with no list view because three reviews in a row were told it was the exemplar.)
+- **Gate for capabilities ABSENT, not just defects PRESENT.** It's easy to check "is anything duplicated / dead / broken" — and miss "is the feature's primary surface even here, in the right region?" A surface can pass every present-defect gate (nothing duplicated, every control wired, zero console errors) and still be wrong because its core capability is *missing* (a detail with no list, a mode with an empty rail). Add the positive gate to the contract: *does each surface present its feature's primary browsing/working surface, in the right region, matching the mock's content layout — and is every secondary mode/state built, not just the primary flow?*
+- **Verify the confirmed rows, don't just mark them.** In the ledger, a row whose strongest verification is `build`/`interact` but not `shot` is **not** done — it's unexamined. The reconcile pass must screenshot-eyeball the *confirmed* surfaces too, not only the changed ones; "confirmed-correct" without a screenshot is a claim, not evidence.
+
 ## Workflow shapes
 
 Use the `Workflow` tool (deterministic fan-out with a shared concurrency cap) once you have the surface list. Scout inline first to discover the list (read the registry / catalogue / spec index), then pipeline over it.
