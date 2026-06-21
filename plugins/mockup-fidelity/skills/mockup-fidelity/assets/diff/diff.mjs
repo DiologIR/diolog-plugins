@@ -48,6 +48,12 @@ const load = p => {
 };
 const appDoc = load(APP);
 const appAll = Array.isArray(appDoc) ? appDoc : appDoc.nodes || [];
+// A DOM target dump (extract-mock run against a live React/Next route — the
+// web↔web case) carries `comp` per node and a top-level `frame`; an RN harness
+// dump carries `effStyle`/`style` and `id`. Detecting it lets the few RN-specific
+// heuristics below (the id-keyed ancestor map, the RNS* screen-bg wrappers, the
+// device width) take a DOM-correct branch instead of silently degrading.
+const APP_IS_DOM = appAll.some(n => n && n.comp);
 const mockDoc = load(MOCK);
 if (mockDoc.error) { console.error('mock extract error:', JSON.stringify(mockDoc)); process.exit(2); }
 const mock = mockDoc.nodes;
@@ -130,7 +136,11 @@ const A = {
 };
 
 // scope a multi-screen RN dump to the screen under test
-const appById = new Map(appAll.map(n => [n.id, n]));
+// Key by id (RN harness) OR by i (extract-mock DOM dump, which has NO `id` — its
+// node index is `i` and `parent` references that index). Without the `?? n.i`
+// fallback every DOM node keys to `undefined`, so appStyledAncestor's parent-walk
+// dies and every ▸box property reports `target=undefined` (the DOM-target bug).
+const appById = new Map(appAll.map(n => [n.id ?? n.i, n]));
 let app = appAll;
 let scr = null;
 if (ANCHOR) {
@@ -138,7 +148,13 @@ if (ANCHOR) {
   const anchor = cands.sort((a, b) => (A.fontSize(b) || 0) - (A.fontSize(a) || 0))[0];
   if (anchor && anchor.scr != null) { scr = anchor.scr; app = appAll.filter(n => n.scr === scr); }
 }
-const appFrameW = Math.max(...app.map(n => (A.rect(n)?.x || 0) + (A.rect(n)?.w || 0)), 0) || (mockDoc.frame?.w || 393);
+// For a DOM target prefer the extracted frame width (symmetric with the mock's
+// frame width) so web↔web geometry compares like-for-like AND the `scrolled` guard
+// below can correctly skip horizontally-overflowing content (a kanban board, a tab
+// strip). For RN the device width isn't in the dump, so fall back to the content
+// extent (max x+w).
+const appContentW = Math.max(...app.map(n => (A.rect(n)?.x || 0) + (A.rect(n)?.w || 0)), 0);
+const appFrameW = (APP_IS_DOM && appDoc.frame?.w) || appContentW || (mockDoc.frame?.w || 393);
 const mockFrameW = mockDoc.frame?.w || 393;
 
 // The element whose own box we compare. Crucially, check the text node ITSELF
@@ -190,7 +206,11 @@ const CHROME_TXT = /^\d{1,2}:\d{2}$|signal_cellular|wifi|battery_full/;
   // horizontally-scrollable content like a tab strip). The screen root sits at the
   // left edge and spans ~the device width; a tinted banner/header (x≠0) or a card
   // (margins) does not, and would otherwise win on depth.
-  const deviceW = Math.max(...app.filter(n => isRNS(n.type)).map(n => n.rect?.w || 0), 0) || appFrameW;
+  // DOM target: the device/frame width is the extracted frame width (no RNS*
+  // wrappers exist). RN: take it from the native screen wrappers.
+  const deviceW = APP_IS_DOM
+    ? (appDoc.frame?.w || appFrameW)
+    : (Math.max(...app.filter(n => isRNS(n.type)).map(n => n.rect?.w || 0), 0) || appFrameW);
   const appRoot = app
     .filter(n => {
       const bg = n.style?.backgroundColor ?? (n.comp && n.comp.backgroundColor);

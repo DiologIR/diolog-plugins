@@ -52,4 +52,6 @@ For everything beyond a handful of named elements — the structural skeleton, e
 
 ## Rendering a protected target
 
-A real app target usually needs its dev login first. Establish a session (the project's dev-login affordance, or ask the user to log in), select any required context, then navigate to the actual route with real-ish data before measuring — a login screen is not the surface you were asked to audit.
+A real app target usually needs its dev login first. Establish a session (the project's dev-login affordance, or ask the user to log in), select any required context, then navigate to the actual route with real-ish data before measuring — a login screen is not the surface you were asked to audit. Pick a context whose data **populates** the screen (the Done-criteria require the populated state, not the fallback) — e.g. choose a tenant/company that actually has rows.
+
+**When the target is also DOM (web↔web — a React/Next app vs a React/Next or HTML reference):** measure it with the *same* `extract-mock.js` you ran on the reference and pass its dump to `diff.mjs` as `--app`. Render both at the **same viewport** so geometry compares directly, select the screen content root with `window.MF_FRAME_SELECTOR` (tag it with a `data-*` attribute for a stable selector), and set `window.MF_CHROME_SELECTOR='__none__'` so the web app-chrome (sidebar/header/nav) is measured rather than skipped — the native-chrome exemption does not apply on the web. Full playbook: `references/react-web.md`.

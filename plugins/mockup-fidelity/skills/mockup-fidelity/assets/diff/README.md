@@ -11,12 +11,13 @@ raw dumps; screenshots are a later, visual-only confirmation.
 ## Pipeline
 
 ```
-mock (served HTML)  --extract-mock.js (getComputedStyle)-->  mock.<screen>.json
-target (RN device)  --rn-harness (assets/rn-harness)----->  _latest.json (app dump)
+mock (served HTML / React / StyleX)  --extract-mock.js (getComputedStyle)-->  mock.<screen>.json
+target — React/DOM (web↔web)          --extract-mock.js (getComputedStyle)-->  app.<screen>.json
+target — React Native (no DOM)        --rn-harness (assets/rn-harness)------>  _latest.json (app dump)
                                        │
-                       diff.mjs --mock … --app … --anchor "Title"
+                       diff.mjs --mock … --app … [--anchor "Title" — RN only]
                                        ▼
-                       report.md  (❌ mismatches · ⚠︎ unmatched · ✓ ok)
+                       report.md  (❌ mismatches · ⚠︎ unmatched · ◆ app-extra · ✓ ok)
 ```
 
 ## Works for HTML, React, and StyleX mocks (authoring-agnostic)
@@ -69,8 +70,21 @@ that itself. Override the chrome set with `window.MF_CHROME_SELECTOR`.
   tree — structure + geometry + resolved style + `placeholderTextColor` — to a
   local collector). The RN harness keeps tabs + pushed screens mounted, so pass
   `--anchor "<a title text on the screen>"` to scope the dump to one screen.
-- **React / DOM target:** run `extract-mock.js` against the live route too, and
-  pass that file as `--app`. The differ reads the `comp` shape as a fallback.
+- **React / DOM target (web↔web — first-class):** run the **same** `extract-mock.js`
+  against the live route and pass that file as `--app`. Both sides then flow through
+  one extractor and one differ. Notes:
+  - **No `--anchor`.** It scopes a multi-screen RN dump; a DOM extract is already
+    scoped to the one `MF_FRAME_SELECTOR` root, so omit it.
+  - **Same viewport on both sides.** Render reference and target at the identical
+    size; the differ prefers a DOM dump's extracted `frame.w` (symmetric with the
+    mock), so insets compare like-for-like and the `scrolled` guard correctly skips a
+    horizontally-overflowing region (kanban/tab strip).
+  - **Override the chrome skip-list** with `MF_CHROME_SELECTOR='__none__'` — on the web
+    the app sidebar/header/nav is content on both sides, not native chrome.
+  - The box-level diff (background/radius/shadow/padding) reads the app's nearest
+    styled-ancestor via `n.id ?? n.i` — extract-mock dumps key nodes by `i` (no `id`),
+    so this fallback is what makes the ▸box rows resolve to real values instead of
+    `undefined`. Full playbook: `../../references/react-web.md`.
 
 ## 3. Diff → report
 
