@@ -105,7 +105,11 @@ class" column) so no surface is left half-converted and none is force-converted:
   in the content, or a content row drives a sibling pane.
 - **B — keep generic, already correct.** The sidebar already shows the area's **real scopes** (its
   catalogue subtabs / mailboxes / filters), so it's a correct tabbed/3-column layout, not filler. Leave it
-  — moving an already-correct sidebar just relocates the problem.
+  — moving an already-correct sidebar just relocates the problem. **But VERIFY "B" before you grant it
+  (this is where reviews lie to themselves):** the sidebar rows must be genuinely *wired* AND *not also
+  rendered as a content tab strip*. A sidebar that merely **mirrors** the area's declared scopes (and a
+  content `<Segmented>` of the same scopes) is **not** class B — it's the dead-duplicate bug below. If the
+  rows don't drive anything, or the same set appears twice, it's an A (own the sidebar) or a C, never a B.
 - **C — not a list surface.** A dashboard, canvas, editor, multi-section view, wizard, or approval-queue
   whose spine is *not* picking from a list. Keep the generic source list + content. *Tell-tale:* the spine
   is a canvas you manipulate, a metrics dashboard, a node graph, a diff viewer, or a feed of self-contained
@@ -115,6 +119,42 @@ Be judicious: the goal is to fix the *filler-sidebar + crammed-nav* surfaces and
 surface is genuinely fine**, not to push every list into a rail. When a surface *does* own the sidebar and
 has its own bottom-pinned composer (a chat), give that composer bottom clearance too, so any floating
 assistant pill sits in the gap below it — never over its input.
+
+### The dead-mirror trap — review the sidebar logic WITH the content, never apart
+
+The single most common shell bug, and the hardest to see, is **duplicated/dead navigation**: the same scope
+set rendered in BOTH the middle sidebar AND a content/toolbar tab strip — with the sidebar copy usually
+**dead** (rows with no handler). It happens when the shell **auto-derives** the source list from a per-area
+config (e.g. `if (area.subtabs) sidebar = area.subtabs.map(...)`) while each surface *also* renders those
+same scopes as its own `<Segmented>`. It sails through every automated gate — it builds, it renders, the
+interaction harness clicks the *content* tabs and passes — and a **content-only review never catches it**,
+because you have to look at the sidebar and the content *of the same surface at the same time*.
+
+Two hard gates (add them to the depth bar, and enforce them when sweeping an existing shell):
+- **G — no duplicated nav.** A scope set lives in exactly ONE region. Never both sidebar and content tabs.
+- **G — no dead sidebar rows.** Every source-list row must drive something (selection / view / navigation).
+  A decorative mirror with no onClick is forbidden — it reads as nav and does nothing.
+
+So the review is **holistic by construction**: for each surface, read *three things together* — (1) the
+shell's source-list derivation code (how it builds rows for this area), (2) the surface's own content, and
+(3) the feature spec — then decide. **A pass that deepens content while treating the shell as off-limits
+will systematically miss this** (it's exactly how a whole catalogue of surfaces ends up double-naved).
+
+**Resolution rubric — pick ONE home for the scopes by what they ARE:**
+- **Section-spine** (the scopes *are* the feature's primary sections — Finance Overview/Ledger/…, a spec's
+  Product/Technical/Changelog, a compliance Readiness/Controls/Evidence) → the surface **OWNS the sidebar**:
+  the scopes become wired rail nav, the content shows the selected section, and you **delete the content tab
+  strip**.
+- **View-toggle** (≤3 peer views of ONE dataset — Canvas/List, Board/Timeline/List, Grid/Map) → keep it as
+  a **single** toolbar/content-header toggle; the sidebar must show the feature's **real sub-entities**
+  (families, projects, saved views, accounts), **never a mirror of the toggle**.
+- **Item-list** (mailboxes, files, conversations, vault items) → the sidebar **is** the list; content is the
+  detail (the canonical master-detail A case).
+
+When you fan this out across agents, the shell file (the source-list derivation, the `OWNS_SIDEBAR` set) is
+**shared** — so agents fix the *surface* side in their own file and **report** the shell change; the lead
+applies the one central edit (see `orchestration-and-ledger.md` → "agents report, lead applies"). Kill the
+auto-mirror at its source once, so the bug class can't recur.
 
 ### Self-handling controls vs. the action bus
 
