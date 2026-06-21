@@ -208,7 +208,7 @@
     {
       "name": "mockup-fidelity",
       "description": "Validate that an implemented React or React Native UI faithfully reproduces a reference mockup (HTML+CSS, served prototype, Figma export, or another rendered component set), then update the code to close every gap — by measuring, never eyeballing. Treats the mock as the source of truth and asks (full-comparison and per-screen) before removing working functionality; builds a complete screen/frame inventory and never silently drops a frame; renders both sides; inverts the burden of proof (a visible difference is a defect until a citation proves it intentional); diffs structure first then per-property computed styles; produces a per-screen present/divergent/absent ledger AND a functional-gaps document for newly-added UI that is only visual. For React Native it measures the RENDERED tree — structural/accessibility extraction (axe describe-ui / Maestro hierarchy) plus resolved style props over the Metro CDP connection (rozenite / agent-cdp) — and forces every screen's measurement to disk as artifacts, so a 'match' verdict can never come from a screenshot, a source read, or reasoning (frontier vision models catch under half of fine-grained UI differences). Generic and framework-agnostic. Merges and replaces ui-fidelity-audit + mockup-align.",
-      "version": "1.10.0",
+      "version": "1.10.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
