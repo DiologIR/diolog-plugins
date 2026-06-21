@@ -173,6 +173,8 @@ For each DEFECT: structural fixes (add the missing region/control/editor, move t
 
 For a large surface, fan out one sub-agent per screen/region via `Agent` (keep waves ≈5). Hand each the already-captured reference artifacts so no agent re-renders the reference; each renders only its target region. **A sub-agent that returns a code-read verdict has failed the audit it was asked to run** — require rendered evidence. Caution: for React Native, the simulator is a *serial* resource (one screen at a time) — sub-agents can read screenshots and edit disjoint files in parallel, but the navigation/screenshotting itself is serialized by the orchestrator. Serialize edits to shared primitives/tokens.
 
+For a **large inventory on a serial-resource target** (dozens of RN frames, one sim), the right shape is not parallel `Agent` waves but a **strictly sequential `Workflow` loop** — one fresh agent per frame (no context bleed; each re-reads the skill and owns its frame audit → fix → verify → commit), `await`ed one at a time so two agents never touch the sim at once, run in the background and **resumable** across your own context compaction. The traps that make this run (the stringified-`args` silent no-op, protecting the dev harness from every agent's commit via `skip-worktree` + `.git/info/exclude`, the per-frame git discipline, and health-check checkpoints between batches) and a fill-in-the-CONFIG driver script are in `references/batch-orchestration.md` (script: `assets/orchestration/reaudit-batch.workflow.js`).
+
 ---
 
 ## Framework specifics — read the matching reference
@@ -182,6 +184,7 @@ For a large surface, fan out one sub-agent per screen/region via `Agent` (keep w
 - **Measurement enforcement** (the artifact-forcing gate, the completeness-critic prompt, and a seeded-defect eval to prove the skill still catches planted gaps): `references/measurement-enforcement.md`.
 - **Computed-style differ** (the mechanical analytic: `extract-mock.js` + `diff.mjs`, the report format, the gutter-anchored geometry rule, and the **prior art** — OverlayQA / Pixelay / Playwright `toHaveCSS` for web targets; nothing equivalent for React Native): `assets/diff/README.md`.
 - **RN render harness** (the drop-in in-app probe that dumps the rendered tree + resolved styles without CDP): `assets/rn-harness/README.md`.
+- **Batch orchestration** (sequential `Workflow` fan-out for a large inventory on a serial-resource/RN target — the `args` gotcha, harness commit-protection, per-frame git discipline, between-batch health checks, and a reusable driver script): `references/batch-orchestration.md`.
 - **Functional-gaps document** (why, when, and the template): `references/functional-gaps.md`.
 
 ---
