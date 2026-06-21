@@ -175,6 +175,8 @@ For a large surface, fan out one sub-agent per screen/region via `Agent` (keep w
 
 For a **large inventory on a serial-resource target** (dozens of RN frames, one sim), the right shape is not parallel `Agent` waves but a **strictly sequential `Workflow` loop** — one fresh agent per frame (no context bleed; each re-reads the skill and owns its frame audit → fix → verify → commit), `await`ed one at a time so two agents never touch the sim at once, run in the background and **resumable** across your own context compaction. The traps that make this run (the stringified-`args` silent no-op, protecting the dev harness from every agent's commit via `skip-worktree` + `.git/info/exclude`, the per-frame git discipline, and health-check checkpoints between batches) and a fill-in-the-CONFIG driver script are in `references/batch-orchestration.md` (script: `assets/orchestration/reaudit-batch.workflow.js`).
 
+You can break even the serial-sim cap by running **N independent lanes** — each its own `{worktree + APFS-cloned node_modules + Metro port + collector port + sim}` (a symlinked `node_modules` breaks Metro; clone it with `cp -cR`). A worker-pool over a shared in-memory queue assigns frames race-free, each lane commits to its own branch (merged back at the end), and each new sim needs a one-time human login. Same reference doc ("Parallelism on a serial target"); scripts: `assets/orchestration/lanes-up.sh` + `assets/orchestration/reaudit-parallel.workflow.js`.
+
 ---
 
 ## Framework specifics — read the matching reference

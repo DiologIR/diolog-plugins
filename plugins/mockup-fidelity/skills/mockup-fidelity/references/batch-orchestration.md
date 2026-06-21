@@ -93,6 +93,25 @@ Run the inventory in **batches** (≈6 frames per `Workflow` invocation), not on
 
 ---
 
-## The reusable script
+## The reusable serial script
 
 `assets/orchestration/reaudit-batch.workflow.js` is the generalised version of the script that ran a 54-frame RN re-audit: a `CONFIG` block (sim UDID, ports, app dir, mock path, skill path, branch) you fill in, the defensive `args` parse from invariant #1, THE LAW embedded verbatim, the per-frame git/harness discipline, and the sequential `await` loop. Pass `args` as the batch's frame list: `[{ "n": 15, "title": "Search · AI-interpreted" }, …]`. Edit the `CONFIG` for your project; the LAW and discipline are reusable as-is.
+
+---
+
+## Parallelism on a serial target — N independent lanes (the 4× speedup)
+
+A single sim caps you at one agent. You break that cap **only** by running N fully **independent lanes** — never N agents sharing one stack. A **lane = `{ git worktree + APFS-cloned node_modules + RN harness (own collector port) + its own Metro (own port) + its own iOS sim }`**. Nothing mutable is shared: edits, commits, Metro hot-reload, and harness dumps are all per-lane, so the lanes physically cannot corrupt each other. With a 16-core/128 GB box, four lanes (4 sims + 4 Metros + 4 agents) run comfortably. Why each piece must be per-lane:
+
+- **Worktree per lane.** If lanes shared one tree: (a) any agent's file save would hot-reload **all** sims (Metro rebuilds the whole bundle, not per-file), corrupting the other lanes mid-measurement; (b) concurrent `git commit` would race on `index.lock`. Worktrees give each lane its own working files **and** its own git index, so commits on each lane's own branch don't contend. This is the `Workflow` `isolation:'worktree'` rationale, done explicitly so each worktree also gets its own Metro.
+- **node_modules by APFS CLONEFILE, never a symlink.** A symlinked `node_modules` **breaks Metro's resolver** — it won't crawl through the symlink and dies with `Unable to resolve module ./node_modules/<entry>` (red screen, no bundle). `cp -cR src dst` makes an APFS copy-on-write clone: a *real* directory Metro can crawl, created in seconds with near-zero extra disk. (This matches the known "symlinks satisfy tsc but break bundlers" gotcha — Metro is in the bundler camp.) Fall back to a real `npm/pnpm install` only off-APFS.
+- **Harness collector port per lane.** Each worktree's `_layout.tsx` require sets its own `global.__MF_COLLECTOR='http://localhost:<8799+K>/dump'` before `require('../.audit/measure')`; one collector per port writes that lane's `_latest.json`. (The collector asset takes `OUT` + `PORT` args.) Lane 0 keeps the base collector.
+- **Metro/sim port per lane.** Metro on `8082+K`; the sim's `RCT_jsLocation` pinned to that port (a plain RN debug build otherwise reconnects to `:8081`). Start Metro with `--clear` so it crawls the freshly-cloned `node_modules`.
+
+**Assignment: a worker-pool over a shared in-memory queue — not a file ledger.** The workflow script holds `const queue = [...FRAMES]`; it spawns one `worker(lane)` per lane inside a single `parallel([...])`; each worker loops `queue.shift()` → `await agent(brief(frame, lane))` until the queue drains. `shift()` is **race-free** because the workflow script is single-threaded JS that only yields at `await` — so two workers never claim the same frame, and the work **self-balances** (a lane with light frames just pulls more). This is strictly better than a mutable file "which sim is busy" ledger (no lock-file races). A **persisted `_lanes.json`** still earns its place as the static lane→{sim,metro,collector,worktree,branch} map — written by the setup script, read by the workflow via `args`, and used for health checks/recovery.
+
+**Each new sim needs a human login.** A freshly-created sim's app starts logged out and Auth0/OTP can't be automated — bring the lane up to its first harness dump (proves the stack works) and hand the sim to the user to authenticate before assigning it frames. Lane 0 is typically already authenticated.
+
+**Merge-back is the one real tax.** Each lane commits to its own `reaudit-lane-K` branch; the orchestrator merges all lane branches into the base at the end. Disjoint files merge clean; **two lanes editing the same shared primitive/token will conflict** (the known parallel-worktree-shared-file hazard). Mitigate by partitioning frames so co-dependent screens land on the same lane, and resolve the rest at merge. Teardown per lane: `git update-index --no-skip-worktree …/_layout.tsx`, `git worktree remove --force`, delete the branch, kill that lane's Metro/collector, shut down (or delete) the sim.
+
+**Scripts:** `assets/orchestration/lanes-up.sh` brings up lanes (worktree + clonefile + harness + sim + Metro + collector, waits for the first dump, writes `_lanes.json`); `assets/orchestration/reaudit-parallel.workflow.js` is the worker-pool driver — pass `args = { lanes: <rows from _lanes.json>, frames: [{n,title}], mainRepo, mockFile, mockUrl, skill }`. Validate one extra lane end-to-end (bundle builds, dump lands, isolated from lane 0) before scaling to four.
