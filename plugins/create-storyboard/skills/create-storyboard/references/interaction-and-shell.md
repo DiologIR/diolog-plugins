@@ -175,6 +175,36 @@ When you fan this out across agents, the shell file (the source-list derivation,
 applies the one central edit (see `orchestration-and-ledger.md` → "agents report, lead applies"). Kill the
 auto-mirror at its source once, so the bug class can't recur.
 
+### Author a navigation tier system (let the TIER pick the shape)
+
+The dead-mirror trap is one instance of a deeper rule: across a multi-surface app the *same* logical nav job
+(filter a list, switch a section, toggle a view, drill into a folder…) gets built with a *different shape* on
+every surface, and the app stops feeling like one product. Cure: **author a navigation tier model in the
+DESIGN.md and let a control's TIER — what it changes — fix its shape and its home.** Same job → same shape →
+same place, everywhere. A reusable starting taxonomy (adapt the shapes to the brand; keep the
+*one-shape-per-tier* discipline):
+
+| Tier | Changes | Canonical shape | Home |
+|---|---|---|---|
+| Area | the feature | source-list rows | app rail |
+| Object picker | which object you work on | source-list rows (or thumbnail strip / object tree) | the middle sidebar |
+| Sections | the major sections of the object | segmented tabs | toolbar-centre (or sidebar rows if sections ARE the spine) |
+| Scopes / filters | a subset of a list | **filter chips — a shape DISTINCT from segmented** | list/container header, left |
+| View toggle / time range | the *rendering* of the same data | small segmented | toolbar / header, right |
+| Container nav | one container's content | underline tabs | across that container |
+| Location | hierarchical position | breadcrumb | content-header, left |
+
+Two failure modes it kills: **shape overload** — one idiom (the segmented/tab) reused for sections AND
+view-toggles AND filters AND time-ranges, so nothing is distinguishable (give *filters* a visibly different
+shape from *switches*); and **placement drift** — the same tier living in the toolbar on one surface and
+inside a container on another. Also classify the action buttons by what they target: object-create → sidebar
+head, surface-primary → toolbar-right, container action → container header, **one primary per region**.
+
+Apply it the right way round: **codify the rule in the DESIGN.md first, add any shared primitives the rule
+names (e.g. an underline-tabs `ContainerTabs`, a `Breadcrumb`) centrally as a barrier, THEN fan out the
+conformance** (orchestration-and-ledger.md). Fixing nav surface-by-surface ad hoc is how the inconsistency
+arose in the first place — drive it from the system doc, not per screen.
+
 ### Self-handling controls vs. the action bus
 
 A cheap way to make *every* button do something: a window-level click delegate that opens a working
@@ -210,8 +240,16 @@ await page.getByText(rowText, { exact: false }).first().click()                 
 // then assert the expected detail/branch text is now present, and no console errors fired
 ```
 
-- **Use EXACT-text matching for nav.** `getByText('Board')` substring-matches "Dashboards" and silently
-  navigates away — your assertion then fails for the wrong reason. Anchor with `^…$` or `{ exact: true }`.
+- **Use EXACT-text matching for nav, and beware content collisions.** `getByText('Board')` substring-matches
+  "Dashboards" and silently navigates away. Worse, a nav label often collides with *content* text on the same
+  screen (`getByText('Findings')` also matches "Filter findings" / "Review findings"; clicking `.first()` hits
+  the wrong one and the step times out). Anchor nav clicks with `{ exact: true }`; for source-list rows where
+  the exact label may not be a single text node, try exact first and fall back to substring
+  (`const ex = getByText(label,{exact:true}); (await ex.count()? ex: getByText(label)).first().click()`).
+- **Don't GUESS the target/expected text — verify it exists.** Write each assertion against text you've
+  confirmed renders (probe the DOM, or read the surface's data/spec), not a value you assume. A guessed commit
+  hash / row title makes the harness fail for a fake reason. (When unsure what a surface *should* show, the
+  feature spec is the source of truth for content; the DESIGN.md is the source of truth for look.)
 - **Wait on a content selector, not `networkidle`** — a live-reload/SSE socket never goes idle.
 - Keep a committed **`interact.mjs`** that clicks across all surface stories (zero console errors) plus a
   targeted assertion per surface (`tab X → shows Y`, `click row R → detail shows D`). Re-run it after every
