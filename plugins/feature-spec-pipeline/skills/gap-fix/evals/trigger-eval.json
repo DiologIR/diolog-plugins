@@ -1,0 +1,23 @@
+[
+  {"query": "gap-fix DIO-0007", "should_trigger": true},
+  {"query": "the worker built DIO-0042 but missed the empty state the spec asked for — close it on the branch", "should_trigger": true},
+  {"query": "address what /work didn't cover for DIO-0013 — the build doesn't fully match the spec yet", "should_trigger": true},
+  {"query": "QA found three things missing from the DIO-0021 implementation, here's the list — finish them in the code", "should_trigger": true},
+  {"query": "I reviewed the ai/dio-0030 branch and the per-company filter the spec requires isn't wired up — fix it", "should_trigger": true},
+  {"query": "finish the gaps left after implementing DIO-0005", "should_trigger": true},
+  {"query": "the build for DIO-0009 is partial — re-audit it against the spec and implement whatever's still missing", "should_trigger": true},
+  {"query": "the sectors feature got built but the per-sector loading + empty states from the spec aren't there — add them on the work branch", "should_trigger": true},
+  {"query": "after the worker ran DIO-0011, the spec's mobile requirement still isn't met — close that gap in code", "should_trigger": true},
+  {"query": "I added a ## Gaps section to spec-DIO-0007 listing what the implementation missed — go fix them in the code", "should_trigger": true},
+
+  {"query": "triage this feature idea: add a CSV export button to the inbox bulk-actions bar", "should_trigger": false},
+  {"query": "write the implementation plan for DIO-0044", "should_trigger": false},
+  {"query": "there's no plan for DIO-0050 yet — create one from the spec", "should_trigger": false},
+  {"query": "implement DIO-0007 from scratch in a worktree and run the typecheck gates", "should_trigger": false},
+  {"query": "the plan for DIO-0013 doesn't cover the mobile empty state — fix the plan doc before we build it", "should_trigger": false},
+  {"query": "audit whether DIO-0021 is genuinely implemented end to end or just showing seeded mock data — don't change anything, just report", "should_trigger": false},
+  {"query": "review my PR for the Browse-by-sector feature before I merge to staging", "should_trigger": false},
+  {"query": "the React Native sectors screen doesn't match the Figma mock — align the components to the design", "should_trigger": false},
+  {"query": "there's a gap in our test coverage for companies.service.ts — add the missing unit tests", "should_trigger": false},
+  {"query": "update the marketing docs to reflect the Browse-by-sector feature we just shipped", "should_trigger": false}
+]

@@ -1,0 +1,76 @@
+---
+name: gap-fix
+description: After /work has implemented a feature spec, close whatever the implementation still missed versus the original spec — by auditing the delivered code and fixing the gaps in code. Re-enters the worktree/branch /work produced (.worktrees/DIO-0001, ai/dio-0001), reads docs/specs/spec-DIO-0001.md (the original feature description + triage assumptions/answers) and docs/plans/plan-DIO-0001.md as the requirement reference, then ALWAYS re-audits the implemented code against the spec (requirement completeness, correctness, guardrails, UI fidelity, security) — merging in any gaps you hand it (inline, a file path, a `## Gaps` section, or a human/QA review list) — and implements the fixes as production code (file-disjoint fan-out via the Workflow tool, typecheck/codegen/validate gates), looping audit→fix until only optional Low items remain. Commits locally and appends a gap-fix progress note to the spec; does NOT push or open a PR — the branch stays local for human review. Use this skill whenever a built feature still falls short of its spec and you want it finished — e.g. "gap-fix DIO-0001", "the worker missed X, close it", "address what /work didn't cover for DIO-0001", "finish the gaps left after implementing DIO-0001", "the build doesn't fully match the spec — fix the code", or after a review/QA pass lists what's missing. Unlike spec-validation (which only audits and reports), gap-fix fixes; unlike /plan and /work (which build the whole plan from scratch), gap-fix is the targeted finisher for what's left. Runs in the current session (Read/Write/Edit/Glob/Grep/Bash plus the Workflow tool) — no Linear, no Agent SDK. Runs after /work in the feature-spec pipeline (triage → plan → work → gap-fix).
+---
+
+# Feature Spec Gap-Fixer (post-work remediation)
+
+Finish the job `/work` started: close whatever the delivered implementation still misses versus the **original spec**, by **fixing it in code** on the same local branch `/work` produced. This is the pipeline's remediation step — it runs *after* `/work`, reuses `/work`'s acceptance-review + resolve + finalize muscle, and leaves the branch **local** for human review (no remote PR).
+
+You run **in your current session** as the orchestrator, using `Read`/`Write`/`Edit`/`Glob`/`Grep`/`Bash` and the `Workflow` tool. No Linear MCP, no Agent SDK. The spec markdown file is the requirement source of truth and the place you record your progress.
+
+## Inputs
+
+- A spec id (`DIO-0001`). `/work` should already have implemented it: branch `ai/<id>` in worktree `.worktrees/<ID>`, with `docs/specs/spec-<ID>.md` at `In Review` and a plan at `docs/plans/plan-<ID>.md`.
+- **Optional provided gaps** — what a human/QA review (or any external check) found missing: inline in the prompt, a file path, or a `## Gaps` section in the spec. These are **merged into** the self-audit (see Phase A); they never replace it.
+- Optional `--dry-run` intent: audit and report the gaps + the fixes you'd make, but change no code.
+
+Throughout: `<ID>` is the uppercase id (e.g. `DIO-0001`, used in file names and the commit `Resolves` line); `<id>` is its lowercase form (e.g. `dio-0001`, used in the branch name).
+
+## Setup (before any phase)
+
+1. **Find the work branch and worktree.** From the target repo root:
+   - If `.worktrees/<ID>` exists, reuse it. Let `WT` = its absolute path.
+   - Else if the branch `ai/<id>` exists, recreate the worktree on it: `git worktree add .worktrees/<ID> ai/<id>`.
+   - Else `/work` hasn't run (or its branch is gone): there's no implementation to fix. Say so and recommend running `/work <ID>` first — end with `NEEDS WORK`. (Do not start a build from scratch; that's `/work`'s job.)
+2. **Read the spec and plan from the main working tree** at `docs/specs/spec-<ID>.md` and `docs/plans/plan-<ID>.md` (the worktree is branched from staging and won't contain the untracked docs). The spec's `## Feature description` + the latest `## Triage` (Assumptions and any human answers/edits) are the **requirement source of truth** — human answers are authoritative. The plan is the secondary reference for *what was supposed to be built*. If the spec status isn't `In Progress`/`In Review`, flag that `/work` may not have completed and proceed cautiously.
+3. Do all code edits and git commands **inside the worktree** (`WT`) — absolute paths or `git -C "$WT"`. When you fan out subagents, give each the absolute worktree path and a **disjoint** file scope. The spec/plan docs are NOT code — leave them in the main working tree; don't commit them onto the branch.
+
+## How you must run this — ultracode dynamic workflows
+
+You are the **orchestrator**, not a single-pass fixer. Drive the work as dynamic workflows, staying in control between phases (read each phase's result, then launch the next). Decompose a large gap set across workflows and deliver it in full — **don't bail because there are many gaps; that's what this approach is for.** Stop only on genuine missing information that makes a safe fix impossible — then append a blocker note to the spec and stop. Production code only — no mocks, stubs, placeholders, or fallbacks (CLAUDE.md guardrails).
+
+### Workflow fan-out limits (avoid throttling) — apply to EVERY phase
+
+- **Cap each wave at ≤4 concurrent agents.** Batch larger fan-outs into sequential waves of ≤4 and `await` each small `parallel(...)` before the next — firing ~10+ at once trips a server-side rate limit ("temporarily limiting requests — not your usage limit") that fails most of the wave. Don't pass all items to one `parallel()`.
+- **Retry transient failures.** If an agent result is an "API Error / Rate limited / temporarily limiting requests" string (or `null`), re-run it in a later batch; never treat it as a real finding or result.
+- **Prefer plain-text returns for long, file-reading subagents.** Schema-forced readers often finish without emitting structured output; have each return a fixed-shape markdown fragment and reserve any `schema` for the single synthesis step.
+
+Run the phases **in order; none may be skipped.** After each phase, verify its output against **both** the plan and the spec (original feature description + every triage answer); fix any drift before advancing.
+
+### Phase A — Audit the build vs the spec (always)
+Fan out parallel reviewer subagents auditing the **implemented worktree code** against the spec's original feature description + every triage answer (especially human corrections and UI amendments), the plan, and any UI mocks. One reviewer per dimension: (1) **requirement completeness** — every functional + UI requirement is fully implemented, not partial or stubbed; (2) **correctness** — bugs, data flow, edge cases; (3) **guardrails** — no mocks/stubs/fallbacks, prompts in the `prompts` collection, AI via the gateway (no direct provider SDK), auth/BFF patterns, visibility/MNPI enforced at READ and WRITE; (4) **UI fidelity** — copy, badge labels, states vs the mocks; (5) **security** — visibility leakage, multi-company isolation, secrets, citation-tag stripping. **Merge in every provided gap** (from the prompt / file / spec `## Gaps`) as additional findings to confirm. Tag each finding **Critical / High / Medium / Low** with `file:line` and the exact spec/plan/mock clause it violates. Then **adversarially verify** each finding with independent subagents (confirm it's real against the actual worktree code) to suppress false positives. A provided gap that the code already satisfies is recorded as already-met, not re-fixed.
+
+### Phase B — Fix the gaps in code (implement)
+Resolve **every confirmed gap at all severity levels** (Critical → Low) as production code in `WT`. Parallelize ONLY file-disjoint fixes — **never two subagents editing the same file at once**; serialize overlapping ones. Respect dependency order (backend schema/service/resolver → `pnpm graphql:codegen` after schema changes → BFF → frontend). After each wave, a gate subagent runs the scoped `pnpm typecheck` / `pnpm graphql:codegen` / `pnpm validate:graphql` and reports failures; the next wave waits for green. Commit in `WT` (stage only files you created/modified — never `git add .`). **Loop Phase A → Phase B** until a fresh audit surfaces no confirmed Critical/High/Medium and only optional Low items remain; document any Low you intentionally defer.
+
+### Phase C — Finalize
+Run the full gates (`pnpm validate:all`, `pnpm validate:graphql`, `pnpm typecheck`, `pnpm lint`, scoped sensibly) and commit any outstanding fixes in `WT`. **Do NOT push and do NOT open a PR** — the branch stays local for human review. Append a gap-fix progress section to the **spec in the main working tree** (`docs/specs/spec-<ID>.md`):
+
+```markdown
+## Gap-fix — <YYYY-MM-DD>
+
+**Post-work remediation (local branch — no PR)**
+
+**Audit:** <N gaps found — Critical/High/Medium/Low counts> (self-audit + <M provided>); <K already met, not re-fixed>.
+**Closed in code:**
+- `[Critical|High|Medium|Low]` <gap, one line> → <files changed / what now satisfies the spec clause>.
+**Deferred:** <any Low intentionally left, with reason — omit if none>.
+**Branch:** `ai/<id>` (local, rebased on `origin/staging` by /work, not pushed; worktree: .worktrees/<ID>).
+**Gates:** validate:all / validate:graphql / typecheck / lint — <pass/fail>.
+```
+
+Keep the spec `Status: In Review` (refresh `Last updated`); never downgrade. **Do not edit `plan-<ID>.md`** — gap-fix closes gaps in the build, not in the plan document. (If a residual gap can't be fixed without a human decision, append a blocker note, leave status as-is, and stop — `NEEDS TRIAGE`.)
+
+## Commit convention
+
+`<type>(<scope>): <summary under 72 chars>` (types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `perf`), a short body, a `Resolves <ID>` line, and `Co-Authored-By: Claude (AI Assistant) <noreply@anthropic.com>`. Stage only files you created or modified — never `git add .`.
+
+## Guidelines
+
+- **The spec is the authority.** A gap means the delivered code falls short of the spec (or a human triage answer); fix the code to meet the spec. Human answers override assumptions, which override your own inference. A provided "gap" that contradicts the spec (asks for something the spec scopes out) is **not** a gap — record it as out-of-scope and don't implement it.
+- **Targeted finisher, not a rebuild.** Fix what's missing; don't re-implement what `/work` already delivered correctly, and don't extend into adjacent features or cleanup. If almost nothing was built (the branch is essentially empty), that's a `/work` job, not gap-fix — say so (`NEEDS WORK`).
+- **Always audit, even when gaps are provided.** Provided gaps are a floor, not a ceiling — a QA list is rarely complete. Merge them into the dimension audit so you also catch what the reviewer missed.
+- **Production code only.** Follow the target project's `CLAUDE.md`. No mocks/stubs/placeholders/fallbacks to "close" a gap. Block only on genuine missing information; never ship partial or stubbed work to dodge a block.
+- **Do NOT push and do NOT open a PR.** The work stays local in the worktree, committed, for human review. The only writes outside the worktree are the spec progress note + `Last updated`.
+- **Cost note:** heavy fan-out on the strongest model burns your interactive allowance fast. Route the audit/review subagents to a cheaper model where the `Workflow` tool allows a per-agent override; reserve the strongest model for the actual fixes.

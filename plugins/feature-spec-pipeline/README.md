@@ -1,12 +1,13 @@
 # feature-spec-pipeline
 
-Three native Claude Code skills that run a **markdown-doc** feature pipeline — **triage → plan → work** — entirely inside your interactive session, with **no Linear** anywhere. A doc-driven sibling of [`linear-issue-pipeline`](../linear-issue-pipeline): instead of a Linear issue + comment thread, the single source of truth for each feature is a versioned spec markdown file in the repo.
+Four native Claude Code skills that run a **markdown-doc** feature pipeline — **triage → plan → work → gap-fix** — entirely inside your interactive session, with **no Linear** anywhere. A doc-driven sibling of [`linear-issue-pipeline`](../linear-issue-pipeline): instead of a Linear issue + comment thread, the single source of truth for each feature is a versioned spec markdown file in the repo.
 
 | Skill | What it does |
 |-------|--------------|
 | **/triage** | Turns a feature idea (inline text or a notes file) into a versioned spec. Allocates an id like `DIO-0001` from `docs/feature-specs/LEDGER.md`, writes `docs/specs/spec-DIO-0001.md` capturing the original details, runs a codebase grounding pass + a Specification Sentinel product/UX/compliance review, then appends a short, non-technical "Ready for Implementation Plan" section (UI & logic preview + Assumptions) or — only for genuinely essential gaps — an Essential Questions section, and sets the spec status. Never writes an implementation spec. |
 | **/plan** | Classifies a plan-size tier (Trivial/Small/Standard/Large), investigates the codebase (fanning out via the Workflow tool for big specs), writes the plan to `docs/plans/plan-DIO-0001.md`, links it from the spec, and moves the spec to `Ready for Work`. |
 | **/work** | Implements the plan in an isolated git worktree via **dynamic ultracode workflows** (understand → implement → rebase onto `origin/staging` → acceptance-review vs the spec → resolve every finding → finalize). Commits locally and appends a progress section to the spec; **no remote PR** — the branch stays local for human review. |
+| **/gap-fix** | The post-`/work` **remediation** step. Re-enters the branch/worktree `/work` produced, **always re-audits the delivered code against the original spec** (requirement completeness, correctness, guardrails, UI fidelity, security) — merging in any gaps you hand it (inline, a file, a `## Gaps` section, or a human/QA review) — and **implements the fixes in code** (file-disjoint fan-out + typecheck gates), looping audit→fix until only optional Low items remain. Commits locally and appends a gap-fix progress note to the spec; **no remote PR**. Reuses `/work`'s acceptance-review muscle as a standalone finisher — distinct from `spec-validation` (audit-only, no fixes). |
 
 ## How it differs from linear-issue-pipeline
 
@@ -47,5 +48,6 @@ Invoke by name or describe the task:
 - `/triage "add an empty state to the inbox"` · `/triage ./notes/feature.md` · `/triage DIO-0001` (re-triage)
 - `/plan DIO-0001` · "write the implementation plan for DIO-0001"
 - `/work DIO-0001` · "implement DIO-0001"
+- `/gap-fix DIO-0001` (self-audit the build vs the spec + fix) · `/gap-fix DIO-0001 gaps: 1) the worker missed the mobile empty state` · `/gap-fix DIO-0001 ./qa-findings.md`
 
-The pipeline order is triage → plan → work, but each skill stands alone.
+The pipeline order is triage → plan → work → gap-fix, but each skill stands alone. `/gap-fix` is optional — reach for it after `/work` when the built feature still falls short of its spec, or a QA/review pass lists what's missing, to finish the job in code before human review.
