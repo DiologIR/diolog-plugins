@@ -66,9 +66,15 @@ guess them. Log in with the dev button, set the correct company/tenant context, 
 to the feature route, and probe the actual interactive flows and the API payloads.
 Use `playwright-cli` (preferred) or the Chrome MCP (`mcp__claude-in-chrome__*`). For
 each AC, find the concrete affordance (role+name, a `data-ui`/`data-*` hook, the
-real menu items, the persisted shape). Capture the traps the harness reference
-documents (substring name collisions, overlap on canvas, async render). If a
-required surface 404s, the feature flag/context is probably wrong — fix that first.
+real menu items, the persisted shape) — and the **API shape you'll assert against**
+(the GraphQL field, its enum NAMES, the mutation that proves persistence). Capture the
+traps the harness reference documents (substring + repeated-affordance collisions,
+context-menu hover-flyouts, overlap on canvas, async render, optimistic temp ids). If a
+required surface 404s, the feature flag/context is probably wrong — fix that first; and
+find the **company that actually holds the seeded data** (often not the default). Live
+grounding is session-fragile: refs go stale and the session drops on idle — prefer
+`--raw eval` DOM queries, re-login after gaps, and confirm capabilities at the API
+level (a clean create/read via the API is your source of truth).
 
 ### 4. Author the specs in the repo's harness — matching its conventions exactly
 
@@ -103,7 +109,11 @@ assertions that are *environment*-fragile (not bug-fragile) to the robust signal
 (e.g. assert the immediate UI/canvas effect rather than a state that a known
 local-only sync quirk corrupts); scope-allow genuinely pre-existing app-shell
 console noise to the suite (never weaken the global zero-console-errors guard). A
-green run must mean the ACs hold, not that the asserts were watered down.
+green run must mean the ACs hold, not that the asserts were watered down. **Run the
+full suite TWICE** — flakes (optimistic-id timing, parallel-load 5xx, leftover state)
+only surface on the second run, and green-twice also proves isolation. For local-first
+features, seed a mutation's dependencies via the API (real ids) BEFORE opening the page
+rather than acting on optimistic temp ids or reloading to force a real id (§5).
 
 ### 6. Catch bugs — and fix the tractable ones
 
@@ -117,6 +127,16 @@ job. Decide:
 - **Deep/risky bug** → encode it as a regression guard: `test.fail()` (documents +
   asserts the bug, stays green, auto-flags when fixed) or `test.fixme()` if the
   environment blocks reliable detection, each with a precise comment. Report it.
+
+The harness reference §10 catalogues the **recurring real-bug classes** these suites
+keep finding (enum NAME-vs-value, secure-context APIs, a form default captured before
+its data loads, an action wired to store state but not mounted on the sub-route, a
+shortcut that mutates state without navigating, header/contract mismatches) — read it,
+because each is invisible to an "element exists" test. Crucial discipline: before
+calling something a product bug, **confirm at the API level** (e.g. the same op via the
+API succeeds ⇒ the defect is the UI path, not the backend). Don't mislabel a test
+artifact (optimistic-id timing, a stale ref, a wrong locator) as a bug — or claim a fix
+you couldn't actually land.
 
 Always end by reporting: the final pass/skip/fail counts, the AC coverage (what's
 covered / partial / gap), every bug found (fixed vs open), and the file inventory.

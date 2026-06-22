@@ -91,6 +91,30 @@ Traps that bite every suite:
   aware it can lose a render race against a re-sync (see §9).
 - Scope to a region (`page.locator('[aria-label="Properties"]')`) when a control name
   collides with app chrome.
+- **Repeated affordances** — the SAME accessible name appears many times (a `New issue`
+  in the toolbar AND in every column; three editor surfaces — description vs main
+  composer vs an inline reply composer; a `Reply` affordance vs the `Reply` submit). `.first()`/`.last()`
+  silently pick the wrong one. GROUND the DOM order, then scope: the visible-text
+  toolbar button vs the icon-only column button (`.filter({ hasText: 'New issue' })`);
+  the reply composer is the FIRST `.editor` *inside the thread* `data-ui`, the main
+  composer is LAST. When unsure which element your text matched, you typed into the
+  wrong one (the submit stays disabled — a tell).
+- **Case-sensitive regex disambiguates substrings** the default case-insensitive match
+  can't: `getByRole('button',{name:/Actions/})` (capital A) matches the bulk `⌘ Actions`
+  but NOT `Column actions` (lowercase a).
+- **Inline-rename headings render as `<h1 role="button">`** (not a heading role), so
+  `getByRole('heading',{level:1})` misses them — locate the `<h1>` by text. And a
+  detail body whose first markdown line is `# <same title>` renders a SECOND `<h1>`
+  with identical text → `page.locator('h1',{hasText}).first()`.
+- **Cascading Radix context menus** (right-click a card / a detail `⋯` "More actions"):
+  the menu items expose role+name `menuitem` (the accessible name carries the shortcut
+  suffix, e.g. `Status S`, `Favorite ⌥F` — match by prefix `/^Status/`). A submenu opens
+  on **`.hover()`** of its trigger, and its options are the shared cmdk `role=option`
+  list. A persistent off-screen menu (e.g. a company switcher) can pollute a global
+  `[role=menuitem]` query — assert by unique name, not by index.
+- **Floating flyout pickers** (bulk Actions sub-pickers) reposition every frame and
+  never report "stable" → `.click({ force:true })`, or prefer a DIRECT command (one
+  with no flyout) when the AC only needs "a bulk action applied to all selected".
 
 ## 4. The zero-console-errors guard + scoped allowlists
 
@@ -124,8 +148,27 @@ touch seeded/shared records and must leave nothing behind.
 - Stamp created records with a greppable label (`[E2E <runId>]`) so leftovers are
   findable. Assert run-scoped uniqueness, not global counts (parallel tests change
   totals).
-- API helpers run on `page.request` (shares the browser's auth cookies):
-  `const res = await page.request.get('/api/…')`.
+- API helpers run on `page.request` / the test `request` fixture (both carry the
+  project's storageState cookies): `const res = await request.post('/api/graphql-proxy', { data: { query } })`.
+- **Optimistic + durable-queue surfaces (local-first features).** When the UI applies a
+  mutation optimistically with a `temp-…` id and flushes the real write asynchronously:
+  - Verify persistence by **polling the API** (`expect.poll`) or by asserting the
+    **immediate UI effect**, never a same-tick API read.
+  - **Acting on a just-created entity by its optimistic temp id fails** — replying to a
+    comment you just posted / reacting to it sends an unresolvable `parentId`/`commentId`
+    ("… not found"). FIX: **seed the dependency via the API (real id) BEFORE opening the
+    page**, so it renders with a server id — then drive the child action in the UI.
+  - **`page.reload()` to force a real id can abort an in-flight background mutation** →
+    a `Failed to fetch` console error that trips the zero-console guard. Prefer
+    seed-before-open over reload.
+- **Concurrent create id-allocation race.** Per-tenant auto-increment ids (e.g. issue
+  `number`) aren't always atomic — parallel mutating specs collide on the unique index
+  (`E11000 duplicate key`). Retry the create in the helper on `/E11000|duplicate key/`
+  (an infra race, not an assertion failure).
+- **No delete endpoint?** Some entities (e.g. a project) have create but no delete
+  mutation — committing one pollutes the shared board permanently. Assert the create
+  *affordance* (input appears → typed → confirm enabled) and Escape-cancel, or intercept
+  the create mutation and assert the payload, rather than committing.
 
 ## 6. Content-render correctness — assertion patterns
 
@@ -145,6 +188,17 @@ Assert the *outcome the AC promises*, not surface presence. Patterns that worked
 - When the persisted state is corrupted by a known local-only sync quirk (see §9),
   assert the **immediate UI effect** (canvas element count +1, footer "N selected",
   a button flipping to "Unlock") instead of the post-settle API.
+- **Capturing a just-created entity's id.** A create modal may NOT navigate to the new
+  record, and you can't trust `page.on('response').json()`: Apollo BATCHES ops (array
+  request/response) and the GraphQL proxy STREAMS the body, so the response reader is
+  unreliable. Robust options: (a) **find by a unique stamped title via a paginated API
+  query** (the new record can land on any page of a board-sorted list); (b) an in-page
+  fetch spy injected with **`page.evaluate` AFTER load** (not `addInitScript` — the app
+  may capture its own `fetch` ref) that records the id from a response clone; (c) just
+  assert via the API.
+- **A GraphQL helper that retries transient 5xx, not GraphQL errors.** The shared proxy
+  502/503/504s under parallel load — retry those with backoff; let GraphQL-level errors
+  (a real validation/auth failure) throw immediately so they surface.
 
 ## 7. AC-traceability matrix template
 
@@ -181,6 +235,17 @@ with a `getRandomValues` fallback; **(fixed)** a Chart element drew nothing beca
 **(open, documented)** editing a freshly-*duplicated* deck settles an empty Yjs
 collab doc over its elements (the duplicate doesn't copy the collab doc).
 
+A second reference build — the **Tasks (Quorum)** suite (`apps/web/e2e/tests/quorum/**`,
+`fixtures/quorum.ts`, a `quorum` project on a `setup-diolog` storageState) — covers a
+broad tracker (board / detail / context menu / property mutations / bulk / settings /
+agents) entirely via API-verified outcomes, and surfaced **six** real product bugs:
+a duplicate `content-type` header that 400'd every API call; a copy-gated button that
+never enabled because clipboard is unavailable on plain-HTTP; agent back-links to a
+non-existent route; a create modal that submitted an empty required `projectId` before
+its data loaded (silent 400); a sub-issue modal never mounted on the detail route (a
+no-op action); and a GraphQL-enum NAME-vs-value mismatch that broke an MNPI guardrail
+both writing and reading. All are instances of §10.
+
 ## 9. Environment gotchas worth knowing
 
 - **App must be up** at `diolog.ai`; a 404 on a feature route usually means a feature
@@ -196,3 +261,56 @@ collab doc over its elements (the duplicate doesn't copy the collab doc).
   `retries: 1`).
 - **Console noise** that also appears on `/dashboard` is app-shell, not your feature —
   allowlist it suite-scoped (§4).
+- **Dev-login JWT claims can be empty** (LocalAuth0): `currentUserId`/email may be
+  blank, so "assign to me"-type features silently no-op locally (likely fine in prod).
+  Prefer flows that don't depend on the current-user identity, and note the dev caveat.
+- **Find the company that actually holds the seeded feature data** — it's often NOT the
+  default (NH3). Discover it live (the seed migration names it; e.g. presentations →
+  Telstra, Tasks → the internal "Diolog" company), then add a dedicated setup
+  storageState project for it.
+- **Live grounding (playwright-cli) is session-fragile:** element `ref`s go stale across
+  navigations and the session drops after idle. Prefer `--raw eval` DOM queries
+  (`getByRole` can't run there) over ref-clicks, and re-login after a gap. Drive
+  controlled React inputs with real keystrokes (`pressSequentially`/`type`), not a
+  direct `.value` set (which won't fire onChange).
+- **Run the full suite TWICE.** Flakes only appear on the second run — optimistic-id
+  timing, parallel-load 5xx, leftover state. A green-once suite isn't proven; green
+  twice in a row is the bar (it also proves isolation).
+
+## 10. Recurring real-bug classes — assert OUTCOMES to catch them
+
+These are defects an "element exists" test sails past but an outcome-asserting test
+(persisted via the API, content actually rendered) reliably catches. Each one below is
+a real bug a suite found and a tractable product fix landed:
+
+- **GraphQL enum NAME vs storage value.** A GraphQL enum serialises as its NAMES over
+  the wire (`CORE_TEAM`), not the lowercase Mongo value (`core_team`). Web code that
+  sends/compares the lowercase value breaks BOTH the write (mutation rejected) AND every
+  read (a `=== 'core_team'` display check is always false). When asserting an enum field
+  via the API, expect the NAME.
+- **Secure-context-only APIs on plain-HTTP.** `crypto.randomUUID`, `navigator.clipboard`
+  are undefined / reject on `http://diolog.ai`; without a feature-detect + fallback they
+  silently break (a copy-gated button never enables; an id-mint aborts a create). You
+  also can't *read* the clipboard in the test on http — assert the affordance, not the
+  clipboard content.
+- **Form default captured at mount, before its data loads.** A `useState(projects[0]?.id)`
+  default seeds empty if the form opens before the query resolves, and never recovers →
+  submitting sends an empty required field → silent server 400, nothing created, no
+  error shown. Backfill on data arrival + gate submit on a resolved value.
+- **An overlay/action wired to global store state but not mounted on the sub-route.** A
+  button calls `openCreate()` (sets store overlay), but only the parent shell mounts the
+  modal — on a child route that renders a leaf view directly, the action is a silent
+  no-op. Mount the modal where the action lives.
+- **A keyboard/store action that changes state without navigating.** A view-switch
+  shortcut sets `store.view` but each view is its own route → nothing switches. Assert
+  the *rendered* effect (selected tab) — and if it should navigate, that's the bug.
+- **Header/middleware/contract mismatches** (e.g. a duplicate `content-type` comma-joined
+  to an invalid value → upstream 400) that 500/400 a whole BFF route. Exercise the route
+  end-to-end (real payload, real auth); a render-only test never calls it.
+
+When such an assertion goes red on a real defect: fix the tractable one (a one-liner,
+a missing fallback/default, a wrong header/enum) and re-run; `test.fixme`/`test.fail`
+the deep one with a precise comment. Do NOT claim a "bug" for what is really a test
+artifact (optimistic-id timing, a stale ref, a wrong locator) — confirm at the API
+level first (e.g. the same op via the API succeeds ⇒ the defect is in the UI path, not
+the backend).
