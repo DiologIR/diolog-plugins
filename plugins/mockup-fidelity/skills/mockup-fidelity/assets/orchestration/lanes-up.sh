@@ -30,13 +30,15 @@ LANES_JSON=$MAIN/.mockup-fidelity/lanes/_lanes.json
 mkdir -p "$MAIN/.mockup-fidelity/lanes"
 APP0=$(xcrun simctl get_app_container "$SRC_SIM" "$BUNDLE_ID" 2>/dev/null)
 [ -z "$APP0" ] && { echo "FATAL: source sim app container not found"; exit 1; }
-rm -rf /tmp/Diolog-lane.app && cp -R "$APP0" /tmp/Diolog-lane.app
+rm -rf /tmp/mf-lane.app && cp -R "$APP0" /tmp/mf-lane.app
 
 up_lane() {
   local K=$1
   local WT=$MAIN-lane-$K APPDIR=$MAIN-lane-$K/$APP_REL BRANCH=reaudit-lane-$K
   local METRO=$((8082 + K)) COLL=$((8799 + K))
-  local LANEDIR=$MAIN/.mockup-fidelity/lanes/lane$K DUMP=$MAIN/.mockup-fidelity/lanes/lane$K/_latest.json
+  # Dump dir MUST be OUTSIDE every Metro watch root (a dump inside the tree → infinite
+  # reload loop; see rn-harness/README.md GOTCHA #1). /tmp is safe for ALL lanes incl. lane 0.
+  local LANEDIR=/tmp/mf-lane$K-dump DUMP=/tmp/mf-lane$K-dump/_latest.json
   mkdir -p "$LANEDIR"
   echo "════ LANE $K  (metro :$METRO  collector :$COLL  branch $BRANCH) ════"
 
@@ -44,7 +46,7 @@ up_lane() {
   local SIM; SIM=$(xcrun simctl list devices | grep "mf-lane-$K (" | grep -oE "[0-9A-F-]{36}" | head -1)
   [ -z "$SIM" ] && SIM=$(xcrun simctl create "mf-lane-$K" "$DEVICE_TYPE") && echo "created sim $SIM"
   xcrun simctl boot "$SIM" 2>/dev/null
-  xcrun simctl install "$SIM" /tmp/Diolog-lane.app
+  xcrun simctl install "$SIM" /tmp/mf-lane.app
   xcrun simctl spawn "$SIM" defaults write "$BUNDLE_ID" RCT_jsLocation "localhost:$METRO"
 
   # 2. worktree on its own branch
@@ -57,6 +59,12 @@ up_lane() {
   if [ ! -e "$APPDIR/node_modules/.bin" ]; then
     rm -f "$APPDIR/node_modules"; cp -cR "$MAIN/$APP_REL/node_modules" "$APPDIR/node_modules"; echo "node_modules cloned (APFS)"
   fi
+
+  # 3b. .env (and other gitignored runtime config) — a fresh worktree checkout does NOT
+  #     carry gitignored files, so the app boots without dev-login secrets / BFF origin /
+  #     feature gates (dev-login button never renders; requests hit the wrong backend).
+  #     Copy it BEFORE Metro starts (env inlines at bundle time).
+  [ -f "$MAIN/$APP_REL/.env" ] && cp "$MAIN/$APP_REL/.env" "$APPDIR/.env"
 
   # 4. harness (own collector port) + skip-worktree in this worktree's index
   mkdir -p "$APPDIR/.audit"; cp "$MAIN/$APP_REL/.audit/measure.js" "$APPDIR/.audit/measure.js"

@@ -182,11 +182,11 @@ You can break even the serial-sim cap by running **N independent lanes** — eac
 ## Framework specifics — read the matching reference
 
 - **React web target / web↔web** (both sides DOM — one `extract-mock.js` path for reference *and* target, same viewport, the chrome-in-scope inversion, the mock→route map, parallel `Agent` fan-out): `references/react-web.md`.
-- **React Native target** (the `axe describe-ui` structural dump + Metro-CDP resolved-style extraction, Maestro for nav/screenshots, the Fabric/New-Architecture context, RNW + source-resolution as fallbacks, native chrome): `references/react-native.md`.
+- **React Native target** (the `axe describe-ui` structural dump + Metro-CDP resolved-style extraction, **deep-link-first navigation** — `xcrun simctl openurl` is ~30× faster than a Maestro tap, which carries a ~15-20s XCUITest startup tax per call — Maestro as last-resort UI driver + screenshots, the Fabric/New-Architecture context, RNW + source-resolution as fallbacks, native chrome): `references/react-native.md`.
 - **Browser measurement** (agent-browser / playwright-cli / Chrome MCP, the gotchas, and the fidelity probe `eval`): `references/browser-measurement.md`.
 - **Measurement enforcement** (the artifact-forcing gate, the completeness-critic prompt, and a seeded-defect eval to prove the skill still catches planted gaps): `references/measurement-enforcement.md`.
 - **Computed-style differ** (the mechanical analytic: `extract-mock.js` + `diff.mjs`, the report format, the gutter-anchored geometry rule, and the **prior art** — OverlayQA / Pixelay / Playwright `toHaveCSS` for web targets; nothing equivalent for React Native): `assets/diff/README.md`.
-- **RN render harness** (the drop-in in-app probe that dumps the rendered tree + resolved styles without CDP): `assets/rn-harness/README.md`.
+- **RN render harness** (the drop-in in-app probe that dumps the rendered tree + resolved styles without CDP — plus the **collector-OUT-dir-outside-the-Metro-watch-root** rule that prevents an infinite reload loop, and a `nav.sh` deep-link helper): `assets/rn-harness/README.md`.
 - **Batch orchestration** (sequential `Workflow` fan-out for a large inventory on a serial-resource/RN target — the `args` gotcha, harness commit-protection, per-frame git discipline, between-batch health checks, and a reusable driver script): `references/batch-orchestration.md`.
 - **Functional-gaps document** (why, when, and the template): `references/functional-gaps.md`.
 

@@ -48,9 +48,60 @@ Then the structural diff (skill Phase 3B) runs on the containment + flex + geome
 
 **Its honest blind spots** (README has the full list) — cover these with a targeted screenshot or an extra dump, never by pretending: the final native **pixel** render (system blur/glass, native title/tab font metrics); non-SVG canvas/Skia/GL internals; animation timing; interaction states / dark mode / data variants / below-fold (re-dump after triggering); release builds (no DevTools hook). A harness captures *resolved style + geometry* (intent + layout), not pixels — where declared ≠ rendered, the screenshot is the evidence.
 
-## 3. Maestro — drive the simulator + capture supplementary screenshots
+## 3. Navigate the sim — DEEP-LINK FIRST (the single biggest speedup)
 
-Maestro navigates the real app and screenshots it. Here it plays two roles: it's the **driver** that gets each screen on-screen so the structure/style extractors can run, and it captures the `*.png` you keep *alongside* the artifacts (supplementary, for the spatial/overlap fallback — not the evidence).
+Before reaching for Maestro to *navigate*, use deep links. **Why it matters:** every
+`maestro test` spins up a fresh XCUITest driver (`xcodebuild test-without-building` →
+connect to the sim) costing **~15-20s before the flow even runs**. Agents call Maestro
+once per action (tab tap, scroll-to-element, assert), so a single screen pays that tax
+8-9×. In a measured audit, **Maestro navigation was ~70% of all wall-clock**; the actual
+fidelity work (differ, edit, git) was <3%. Per-call: **Maestro ~18s vs deep link ~0.5s vs
+idb tap ~0.3s.**
+
+expo-router (and most file-based RN routers) **map route files to `<scheme>://` URLs out
+of the box** — route GROUPS in parens (`(tabs)`, `(screens)`) are stripped from the URL.
+So deep-linking replaces almost all navigation:
+
+- **Tabs / screens:** `xcrun simctl openurl <SIM> "<scheme>:///<route>"` (e.g. `myapp:///home`,
+  `myapp:///documents`, `myapp:///analysis-new?kind=disclosure`). Read the `scheme` from
+  `app.json`; routes are the file paths minus the group parens.
+- **Detail screens (`[id]` routes):** you rarely need a real id — deep-link the LIST then
+  **idb-tap the first row** (~5× faster than a Maestro row-tap, no id discovery).
+- **Routeless affordances** (a custom header control a router can't address, a sheet/popover):
+  idb coordinate tap, or — only if nothing else works — ONE batched Maestro flow with
+  several `tapOn`s so the ~15-20s startup is paid once, not per tap.
+- **Never** Maestro-tap a tab or a list row that a deep link / idb can reach.
+
+`assets/rn-harness/nav.sh` is a drop-in helper (`nav.sh tab|open|detail|tap|prime`), each
+call polling the harness dump to settle (no blind `sleep`s). Set `MF_SIM/MF_DUMP/MF_SCHEME/MF_BUNDLE`.
+
+Three caveats this navigation hits:
+
+- **First deep link per device raises a native "Open in <app>?" confirmation** — a UIKit
+  alert the RN harness dump can NEVER see, so a deep link can silently STALL behind it. Run
+  `nav.sh prime` ONCE per device at session start (openurls + Maestro-taps Open/Allow);
+  `settle` also auto-taps it on a stall.
+- **RN keeps ALL tabs/screens mounted**, so the dump is a MERGE of every mounted screen — an
+  anchor that lives on tab X reads `true` even when tab Y is foreground. The deep link DOES
+  switch the foreground (confirm with a screenshot), but you can't *prove* the switch from
+  the dump alone; rely on the differ's `--anchor` to scope the merged dump, and screenshot.
+- **A wedged/stale Maestro driver causes silent false-negative taps** — a `tapOn` reports
+  FAILED (or no-ops) though the element is plainly visible, sometimes even after the tap
+  actually landed. Recover with `pkill -9 -f maestro`. (Multi-sim Maestro *does* work; driver
+  contention just makes stale drivers more likely — kill-and-retry, don't conclude "no multi-sim".)
+- **If dev-login / data silently hangs, check the BACKEND first** — a paused Docker / down BFF
+  makes every login + fetch time out, which looks like a nav or sim bug but isn't. Confirm the
+  backend answers (`curl`) before debugging the app.
+
+## 3a. Maestro — last-resort UI driver + supplementary screenshots
+
+When a surface genuinely needs UI driving (a routeless sheet, text input, an assertion),
+Maestro is still the tool — and it captures the `*.png` you keep *alongside* the artifacts
+(supplementary, for the spatial/overlap fallback — not the evidence). Batch its taps into one
+flow to amortize the driver startup. **Pick an iOS runtime Maestro can drive:** on iOS-26 the
+Liquid-Glass native tab-bar labels are not reliably text-tappable; a consistent **iOS 18.x**
+sim taps them fine — keep every sim in a parallel run on ONE runtime (and deep-link/idb where
+native chrome won't tap).
 
 - Flows are YAML (`appId`, then `tapOn`/`inputText`/`assertVisible`/`takeScreenshot: /abs/path`). The simulator is a **serial resource** — one screen at a time; the orchestrator drives navigation, sub-agents read the resulting artifacts and edit disjoint files in parallel.
 - **Dev-client reconnect fatigue:** each `launchApp` reloads the JS bundle on a dev build; many flows back-to-back can hang a later launch. Run flows individually or restart Metro between batches; a release build with an embedded bundle is stable for batches. macOS has no `timeout` — guard a flow with a backgrounded kill-after-N-seconds if you need a ceiling.
