@@ -115,6 +115,21 @@ pad-left but wrong pad-top reads as wrong vertical padding. (RN's single-layer
 shadow can't equal a multi-layer CSS `box-shadow`, so shadow is a presence check —
 match its *depth* by eye against a screenshot.)
 
+**Rendered geometry (📐, web↔web / same-viewport).** The gutter-inset checks are deliberately
+frame-width-agnostic (left-inset for left-anchored, right-inset for right-pinned), so they are
+BLIND to an element that is the *right type in the wrong place/size*: a CENTRED element translated
+sideways (a nav link grouped hard-left vs centred — its 350px shift fired no inset), or a box
+rendered taller/shorter (a heading wrapping to 3 lines vs 2). When both sides are DOM at the SAME
+viewport, absolute `x/w/h` ARE comparable, so the differ adds **center-x + width for CENTRED
+elements** (the precise gap the inset model can't cover; left/right-anchored stay on insets, and a
+left-block's width is container-vs-content noise) and **height for all** (wrap-count / box growth).
+Auto-ON when frames match within 5%; force `--geom`, disable `--no-geom`, tune `--geom-tol-center`
+(6px) / `--geom-tol-size` (10px). CAVEAT: geometry inherits the differ's text-matching confounds —
+a **repeated-text mispair** (nav "diolog" paired with the 112px footer wordmark) or a
+**wrapper-vs-bare-text pairing** (a button+icon vs the mock's text span) inflates a delta; confirm
+the pairing before treating a 📐 row as a defect. (A reliable kill for both: put a matching
+`data-fid` on the two real nodes — `extract-mock.js` reads it as the primary match key.)
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present

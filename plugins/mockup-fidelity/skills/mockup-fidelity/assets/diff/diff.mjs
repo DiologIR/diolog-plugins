@@ -16,6 +16,11 @@
 //                                               harness keeps tabs+pushed screens
 //                                               mounted); pick the screen's title.
 //   --out   <report.md>                         default .mockup-fidelity/diff/report.md
+//   --geom / --no-geom                          force/disable the absolute rendered-
+//                                               geometry checks (center-x/width/height).
+//                                               Auto-ON when both sides are DOM at the
+//                                               SAME viewport; --geom-tol-center /
+//                                               --geom-tol-size override the tolerances.
 //
 // Match: every non-empty mock text (+ each placeholder) is a probe, matched to the
 // target node with the same text (or same placeholder). Per match it diffs the
@@ -157,6 +162,26 @@ const appContentW = Math.max(...app.map(n => (A.rect(n)?.x || 0) + (A.rect(n)?.w
 const appFrameW = (APP_IS_DOM && appDoc.frame?.w) || appContentW || (mockDoc.frame?.w || 393);
 const mockFrameW = mockDoc.frame?.w || 393;
 
+// ---------- RENDERED-GEOMETRY assertions (web↔web / same-viewport) ----------
+// The gutter-inset checks above are deliberately frame-width-AGNOSTIC (left-inset for
+// left-anchored, right-inset for right-pinned) so an RN device width ≠ the mock frame
+// width doesn't fire false positives. That very design makes them BLIND to a whole
+// class of real defects that only show as ABSOLUTE rendered geometry:
+//   • a centred element translated sideways (a nav link grouped left vs centred — its
+//     gutter inset is "fine" on neither edge, so nothing flagged the 350px shift)
+//   • an element rendered WIDER/NARROWER than the mock (a heading constrained to the
+//     wrong max-width so it wraps at the wrong word; a panel sized 528 vs 468)
+//   • an element TALLER/SHORTER (a heading that wraps to 3 lines vs 2; a control whose
+//     box grew) — and width is also a faithful proxy for a single-line label's tracking.
+// When BOTH sides are DOM at the SAME viewport, absolute x/w/h ARE comparable, so add
+// center-x / width / height checks. Auto-enabled only then (frames within 5%); force
+// with --geom, disable with --no-geom. Tolerances: center 6px, size 10px (loose enough
+// to ignore sub-pixel font-rendering jitter, tight enough to catch every layout delta).
+const sameViewport = APP_IS_DOM && mockDoc.frame?.w && Math.abs(appFrameW - mockFrameW) < 0.05 * mockFrameW;
+const GEOM = args['no-geom'] ? false : (args.geom ? true : sameViewport);
+const GEOM_TOL_CENTER = px(args['geom-tol-center']) ?? 6;
+const GEOM_TOL_SIZE = px(args['geom-tol-size']) ?? 10;
+
 // The element whose own box we compare. Crucially, check the text node ITSELF
 // first: when a mock label sits directly on a styled element (a `.btn`/`.badge`
 // span whose directText IS the label), the box to compare is THAT element, not
@@ -295,6 +320,27 @@ for (const mn of mock) {
         rec(elName, 'row-left-inset', +ae.min.toFixed(1), +me.min.toFixed(1), close(ae.min, me.min));
       if (isFinite(me.max) && isFinite(ae.max) && (mockFrameW - me.max) < 0.5 * mockFrameW)
         rec(elName, 'row-right-inset', +(appFrameW - ae.max).toFixed(1), +(mockFrameW - me.max).toFixed(1), close(appFrameW - ae.max, mockFrameW - me.max));
+
+      // ABSOLUTE rendered geometry (same-viewport only) — the class the inset checks miss.
+      // SCOPE it to the inset model's actual blind spot to stay low-noise: a CENTERED
+      // element (neither left- nor right-anchored) is exactly what left-inset/right-inset
+      // can't verify — and a sideways translation of one (a nav link grouped left vs
+      // centred) is invisible to them. So check center-x + width ONLY when centred; on a
+      // left-aligned block the left edge is already inset-checked and its WIDTH is
+      // container-vs-content-driven (block reports its box, a Framer node reports text-fit)
+      // → pure noise. HEIGHT (wrap-count / box growth) is anchor-independent, so check it
+      // for all. Findings still need the usual classification (a repeated-text mispair, or
+      // a wrapper-vs-bare-text pairing, inflates a delta — confirm before fixing).
+      if (GEOM && aW != null && mW != null) {
+        const centered = !leftAnch && !rightAnch;
+        if (centered) {
+          const aCx = aX + aW / 2, mCx = mX + mW / 2;
+          rec(elName, '📐 center-x', Math.round(aCx), Math.round(mCx), close(aCx, mCx, GEOM_TOL_CENTER));
+          rec(elName, '📐 width', Math.round(aW), Math.round(mW), close(aW, mW, GEOM_TOL_SIZE));
+        }
+        const aH = ar?.h, mH = mn.rect?.h;
+        if (aH != null && mH != null) rec(elName, '📐 height', Math.round(aH), Math.round(mH), close(aH, mH, GEOM_TOL_SIZE));
+      }
     }
   }
 
@@ -345,7 +391,8 @@ const L = [];
 L.push(`# Mock-fidelity diff — ${mockDoc.title}`, '');
 L.push(`- mock: \`${MOCK}\` (${mock.length} nodes, frame ${mockDoc.frame?.w}×${mockDoc.frame?.h})`);
 L.push(`- target: \`${APP}\`${scr != null ? ` (anchor "${ANCHOR}", scr=${scr}, ${app.length} nodes)` : ''}`);
-L.push(`- matched probes: ${oks.length + new Set(fails.map(f => f.el)).size}, **mismatches: ${fails.length}**, unmatched mock texts: ${unmatched.length}${coverage.length ? ` (⚠︎⚠︎ ${coverage.length} present-in-app = WRONG STATE)` : ''}`, '');
+const geomFails = fails.filter(f => /📐/.test(f.prop));
+L.push(`- matched probes: ${oks.length + new Set(fails.map(f => f.el)).size}, **mismatches: ${fails.length}**${GEOM ? ` (incl. ${geomFails.length} 📐 geometry)` : ' (geometry OFF — different viewport)'}, unmatched mock texts: ${unmatched.length}${coverage.length ? ` (⚠︎⚠︎ ${coverage.length} present-in-app = WRONG STATE)` : ''}`, '');
 L.push('## ❌ Mismatches (fix these)', '');
 if (!fails.length) L.push('_None — every matched property is within tolerance._');
 else { L.push('| element | property | target | mock |', '|---|---|---|---|'); for (const r of fails) L.push(`| ${r.el} | ${r.prop} | \`${r.app}\` | \`${r.mock}\` |`); }
@@ -361,6 +408,6 @@ L.push(appExtra.length ? appExtra.map(u => `- "${u.text}"${u.x != null ? ` (x=${
 L.push('', '## ✓ Matched & within tolerance', '', oks.length ? oks.map(o => `- ${o}`).join('\n') : '_None._', '');
 writeFileSync(OUT, L.join('\n'));
 writeFileSync(OUT.replace(/\.md$/, '.json'), JSON.stringify({ title: mockDoc.title, scr, fails, coverage, unmatched: trulyUnmatched, appExtra, oks }, null, 2));
-console.log(`${fails.length} mismatch(es), ${trulyUnmatched.length} unmatched, ${coverage.length} WRONG-STATE, ${appExtra.length} app-extra → ${OUT}`);
+console.log(`${fails.length} mismatch(es)${GEOM ? ` (${geomFails.length} 📐 geometry)` : ' [geometry OFF: different viewport]'}, ${trulyUnmatched.length} unmatched, ${coverage.length} WRONG-STATE, ${appExtra.length} app-extra → ${OUT}`);
 for (const r of fails) console.log(`  ✗ ${r.el} · ${r.prop}: target=${r.app} mock=${r.mock}`);
 for (const u of coverage) console.log(`  ⚠︎⚠︎ WRONG STATE (present in app, not on measured screen): "${u.text}"`);
