@@ -93,6 +93,26 @@
     directText = directText.replace(/\s+/g, ' ').trim();
     const comp = {};
     for (const p of PROPS) comp[p] = cs[p];
+    // ICON GLYPH extent — for an <svg> the element box is often padded around the drawn
+    // glyph (a 12px box can hold a 6×3 OR an 8×4 chevron), so the box size alone misses a
+    // wrong-sized icon. Capture the union path bbox in RENDERED px (viewBox units scaled to
+    // the element's pixel size) — that's the visible glyph, what the eye compares.
+    let glyph = null;
+    if (el.tagName.toLowerCase() === 'svg') {
+      try {
+        const vb = el.viewBox && el.viewBox.baseVal;
+        const sx = vb && vb.width ? r.width / vb.width : 1;
+        const sy = vb && vb.height ? r.height / vb.height : 1;
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        for (const g of el.querySelectorAll('path, line, polyline, polygon, rect, circle, ellipse')) {
+          const b = g.getBBox && g.getBBox();
+          if (!b) continue;
+          minX = Math.min(minX, b.x); minY = Math.min(minY, b.y);
+          maxX = Math.max(maxX, b.x + b.width); maxY = Math.max(maxY, b.y + b.height);
+        }
+        if (isFinite(minX)) glyph = { w: +((maxX - minX) * sx).toFixed(1), h: +((maxY - minY) * sy).toFixed(1) };
+      } catch (e) { /* getBBox can throw on a detached/hidden svg — skip */ }
+    }
     const myIndex = out.length;
     // Stable ANCHOR id (improvement #2): match elements by an explicit, layout-stable
     // identity instead of by text — kills the text-collision mispairs (nav "diolog"
@@ -119,6 +139,7 @@
         w: +r.width.toFixed(1),
         h: +r.height.toFixed(1),
       },
+      glyph,
       comp,
     });
     for (const c of el.children) walk(c, depth + 1, myIndex);

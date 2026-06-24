@@ -130,6 +130,21 @@ a **repeated-text mispair** (nav "diolog" paired with the 112px footer wordmark)
 the pairing before treating a 📐 row as a defect. (A reliable kill for both: put a matching
 `data-fid` on the two real nodes — `extract-mock.js` reads it as the primary match key.)
 
+Three checks that close the **non-text box-model class** (icon size, content-box height, tight
+line-height) — the defects a text-property diff structurally can't see:
+- **Icon glyph size (📐 icon-glyph-w/h).** A bare `<svg>` has no text, so the probe loop never
+  measures it, and even its element box can match while the *drawn* glyph differs (a 12px box holds a
+  6×3 OR an 8×4 chevron). `extract-mock.js` captures each svg's **visible glyph extent** (union path
+  bbox in rendered px, not the element box); the differ pairs icons by POSITION (same viewport) and
+  diffs glyph w/h. A genuinely-absent icon stays unpaired (a real signal), not matched to a distant one.
+- **`line-height: normal` is resolved, not skipped.** The mock's value is frequently the keyword
+  `normal`, which `px()` can't parse → the line-height check used to be skipped entirely, so a target
+  forcing a tight `line-height: 1` (a 14px content box where the mock renders ~17px → a 3px-short button)
+  passed silently. `normal` now resolves to ~1.2×font-size for the comparison.
+- **Height has its own tight tolerance (2px), separate from width (10px).** Height is a discrete layout
+  dimension (line-count, box height) where a 3px delta is a real defect; width is content-driven and
+  noisy. Override with `--geom-tol-height`.
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present

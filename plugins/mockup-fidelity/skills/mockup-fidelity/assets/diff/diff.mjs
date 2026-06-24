@@ -181,6 +181,13 @@ const sameViewport = APP_IS_DOM && mockDoc.frame?.w && Math.abs(appFrameW - mock
 const GEOM = args['no-geom'] ? false : (args.geom ? true : sameViewport);
 const GEOM_TOL_CENTER = px(args['geom-tol-center']) ?? 6;
 const GEOM_TOL_SIZE = px(args['geom-tol-size']) ?? 10;
+// HEIGHT is a discrete layout dimension (line-count, box height) — a tight tolerance
+// catches a button rendered 3px short (a `line-height:1` vs `normal`), where the 10px
+// width tolerance (content-driven, noisy) is too loose. Override with --geom-tol-height.
+const GEOM_TOL_HEIGHT = px(args['geom-tol-height']) ?? 2;
+// CSS `line-height: normal` ≈ this × font-size (Inter/most sans ~1.2). Lets us compare a
+// mock's `normal` (unparseable as px) against a target that forces a tight `line-height:1`.
+const NORMAL_LH = 1.2;
 
 // The element whose own box we compare. Crucially, check the text node ITSELF
 // first: when a mock label sits directly on a styled element (a `.btn`/`.badge`
@@ -266,8 +273,17 @@ for (const mn of mock) {
     // line-height: easy to leave unset in RN (font default ≈ 1.2×), which renders
     // tighter than the mock's CSS line-height (commonly 1.5× font-size) and
     // shrinks every multi-line block. A `null` target value is a real miss.
-    const aLh = A.lineHeight(an), mLh = px(mn.comp.lineHeight);
-    if (mLh != null) rec(elName, 'line-height', aLh, mLh, close(aLh, mLh, 1.5));
+    // line-height: easy to leave unset (RN font default ≈ 1.2×) OR force too tight
+    // (`line-height: 1`), both of which render shorter than the mock and shrink every
+    // block + box. The mock's value is often the keyword `normal`, which `px()` can't
+    // parse — resolve it to NORMAL_LH×font-size so a target that forces a tight numeric
+    // line-height still gets compared (this is the button-height-via-line-height miss).
+    const aLh = A.lineHeight(an);
+    let mLh = px(mn.comp.lineHeight);
+    if (mLh == null && /normal/i.test(mn.comp.lineHeight || '') && px(mn.comp.fontSize) != null) {
+      mLh = px(mn.comp.fontSize) * NORMAL_LH;
+    }
+    if (mLh != null) rec(elName, 'line-height', aLh, mLh, close(aLh, mLh, Math.max(2, 0.12 * (px(mn.comp.fontSize) || 16))));
     // typeface kind (serif/sans/mono) — catches a serif-vs-sans swap the weight
     // check is blind to. text-align catches centred-vs-left (quiet when both left).
     const mFam = familyKind(mn.comp.fontFamily);
@@ -339,7 +355,7 @@ for (const mn of mock) {
           rec(elName, '📐 width', Math.round(aW), Math.round(mW), close(aW, mW, GEOM_TOL_SIZE));
         }
         const aH = ar?.h, mH = mn.rect?.h;
-        if (aH != null && mH != null) rec(elName, '📐 height', Math.round(aH), Math.round(mH), close(aH, mH, GEOM_TOL_SIZE));
+        if (aH != null && mH != null) rec(elName, '📐 height', Math.round(aH), Math.round(mH), close(aH, mH, GEOM_TOL_HEIGHT));
       }
     }
   }
@@ -359,6 +375,34 @@ for (const mn of mock) {
   }
 
   if (rows.slice(before).every(r => r.ok)) oks.push(elName);
+}
+
+// ---------- ICON GLYPH sizes (no text → the text-probe loop never reaches them) ----------
+// An icon's element box can match while its drawn glyph differs — a 12px <svg> box holds a
+// 6×3 OR an 8×4 chevron, and the text-driven loop never measures a bare <svg> at all (the
+// documented "standalone icons" blind spot). Pair mock↔app icons by POSITION (same viewport
+// only — geometry must be comparable), then diff the visible glyph extent captured in the
+// dump (`glyph`). Co-located within GEOM_TOL_CENTER×4 so a genuinely-absent icon stays
+// unmatched (a real signal) instead of pairing to a distant one.
+if (GEOM) {
+  const mockIcons = mock.filter(n => n.glyph && n.glyph.w > 0);
+  const appIcons = app.filter(n => n.glyph && n.glyph.w > 0);
+  const usedApp = new Set();
+  for (const mi of mockIcons) {
+    const mcx = mi.rect.x + mi.rect.w / 2, mcy = mi.rect.y + mi.rect.h / 2;
+    let best = null, bestD = Infinity;
+    for (const ai of appIcons) {
+      if (usedApp.has(ai.i)) continue;
+      const d = Math.hypot((ai.rect.x + ai.rect.w / 2) - mcx, (ai.rect.y + ai.rect.h / 2) - mcy);
+      if (d < bestD) { bestD = d; best = ai; }
+    }
+    if (best && bestD <= GEOM_TOL_CENTER * 4) {
+      usedApp.add(best.i);
+      const label = `[icon @${Math.round(mcx)},${Math.round(mcy)}]`;
+      rec(label, '📐 icon-glyph-w', best.glyph.w, mi.glyph.w, close(best.glyph.w, mi.glyph.w, 1.5));
+      rec(label, '📐 icon-glyph-h', best.glyph.h, mi.glyph.h, close(best.glyph.h, mi.glyph.h, 1.5));
+    }
+  }
 }
 
 // ---------- coverage: unmatched-but-present-elsewhere ----------
