@@ -65,8 +65,9 @@
       const v = cs[p];
       if (v == null || v === '') continue;
       if (DEFAULTS[p] != null && v === DEFAULTS[p]) continue;
-      // drop the border longhands entirely when there's no real border
-      if (noBorder && /^border/.test(p)) continue;
+      // drop the border longhands when there's no real border — but NEVER borderRadius
+      // (a card commonly has rounded corners with NO border; dropping it flattens it).
+      if (noBorder && p !== 'borderRadius' && /^border/.test(p)) continue;
       // drop the verbose `background` shorthand when it's just the transparent default
       if (p === 'background' && /^rgba\(0, 0, 0, 0\)/.test(v)) continue;
       style[p] = v;
