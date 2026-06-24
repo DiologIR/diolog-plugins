@@ -76,6 +76,11 @@
     'borderBottomWidth', 'borderBottomColor',
     'boxShadow', 'display', 'flexDirection', 'alignItems', 'justifyContent',
     'textAlign', 'letterSpacing', 'lineHeight', 'opacity', 'textTransform',
+    // LAYOUT props — consumed by structure-diff.mjs to catch grid/flex divergences
+    // a per-property STYLE diff is structurally blind to (a 2×2 grid rendered 1×4,
+    // a row that should be a column, a reflowed gap, an icon column that's missing).
+    'gridTemplateColumns', 'gridAutoFlow', 'gap', 'columnGap', 'rowGap',
+    'position', 'flexWrap', 'gridTemplateRows',
   ];
 
   const out = [];
@@ -89,12 +94,22 @@
     const comp = {};
     for (const p of PROPS) comp[p] = cs[p];
     const myIndex = out.length;
+    // Stable ANCHOR id (improvement #2): match elements by an explicit, layout-stable
+    // identity instead of by text — kills the text-collision mispairs (nav "diolog"
+    // paired with a 112px footer wordmark, a card heading paired with a nav link).
+    // Put `data-fid="<same id on both sides>"` on the matching ref + target nodes.
+    const fid =
+      el.getAttribute('data-fid') ||
+      el.getAttribute('data-fidelity-id') ||
+      el.getAttribute('data-testid') ||
+      null;
     out.push({
       i: myIndex,
       parent,
       depth,
       tag: el.tagName.toLowerCase(),
       cls: el.getAttribute('class') || '',
+      fid,
       text: directText,
       // `.ph` = the mock's resting placeholder span; carry its colour explicitly.
       isPh: el.classList.contains('ph') || el.classList.contains('placeholder'),

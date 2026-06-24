@@ -64,6 +64,13 @@ consumes the extracted JSON, so nothing downstream changes per markup.
 Native chrome (`.sb .island .tabbar .homebar .nav`) is skipped — the app renders
 that itself. Override the chrome set with `window.MF_CHROME_SELECTOR`.
 
+**Now also captured (backward compatible):** each node carries the **layout props**
+`structure-diff.mjs` consumes — `gridTemplateColumns`/`gridTemplateRows`/`gridAutoFlow`,
+`gap`/`columnGap`/`rowGap`, `flexDirection`, `flexWrap`, `position` — and a **`fid`** read
+from `data-fid` / `data-fidelity-id` / `data-testid`. `diff.mjs` ignores both; the
+companion differs (below) use them. Put the same `data-fid="x"` on the matching ref +
+target nodes to make a region's matching exact (kills text-collision mispairs).
+
 ## 2. Capture the target's RENDERED tree
 
 - **React Native:** use the in-app probe in `../rn-harness` (it POSTs the rendered
@@ -181,6 +188,42 @@ still need a structural pass + a screenshot:
 So: differ report → 0 unexplained is necessary, not sufficient. Always finish with
 a structural present/absent pass (Phase 3A/3B) + a screenshot for the visual
 classes above (shadow depth, icon glyphs, spacing rhythm, overlaps).
+
+## Companion differs & conversion — closing the structural blind spots
+
+`diff.mjs` is text-probe + computed-style: it is blind to layout, missing/extra nodes,
+content/data gaps, and standalone visuals (above). Four companion scripts close those —
+**run the first three BEFORE `diff.mjs`** (structure before styling); a green `diff.mjs`
+is not a section verdict until structure + content are also clean. Full playbook:
+`../../references/structure-and-content-diff.md` and `../../references/mechanical-conversion.md`.
+
+- **`structure-diff.mjs`** — the LAYOUT/STRUCTURE differ. Consumes two `extract-mock` dumps
+  (same viewport); matches by `fid` → text+tag → structural path; writes `structure-report.md`
+  + a `.json` sidecar with: **❌ layout mismatches** (grid-column **count**, flex-direction,
+  gap, wrap, justify/align on matched containers), **◑ child-count diffs**, **⊖ MISSING**
+  (in mock, absent in target — a missing icon/divider/badge/tile), **⊕ EXTRA** (target-only).
+  `--anchor "<text>"` scopes to one section. This is the fix for a 2×2-rendered-1×4 grid, a
+  row-vs-column flip, a missing icon — none of which `diff.mjs` can see.
+  `node structure-diff.mjs --mock ref.json --app target.json [--anchor "…"] [--out structure-report.md]`
+- **`content-diff.mjs`** — text/CONTENT diff (LCS over ordered visible text). Writes
+  `content-report.md`: **◑ label-length mismatches** (same element, longer/shorter text — a
+  DATA/derivation bug like SEO-titles-vs-short-labels), **⊖ mock-only** (missing copy), **⊕
+  app-only** (extra copy). Separates content/data gaps (fix in the content pipeline/DB seed,
+  not CSS) from presentation. `node content-diff.mjs --mock ref.json --app target.json [--out content-report.md]`
+- **`overlay.mjs`** — zero-dep visual pixel-overlay. Reads two PNGs, writes a self-contained
+  `overlay.html` with a `mix-blend-mode:difference` view (identical → black, divergence →
+  bright edges), an opacity-fade slider, and side-by-side. Open it in a browser and screenshot
+  it — the TRIGGER to go measure a region, never proof of a match.
+  `node overlay.mjs --ref ref.png --app target.png [--out overlay.html]`
+- **`capture-subtree.js` + `to-stylex.mjs`** — the "lift the HTML and render it in React" path
+  for DECORATIVE/non-editable sections (a hero illustration, a stat panel) — pixel-exact + fast
+  vs hand-rebuilding from a screenshot. `capture-subtree.js` (browser eval, `MF_CAPTURE_SELECTOR`)
+  lifts a rendered subtree with computed styles inlined → `{html, tree}`. `to-stylex.mjs` emits
+  EITHER `--mode embed` (renders the lifted HTML via `dangerouslySetInnerHTML` — pixel-exact,
+  static/decorative only; the generated file carries a build-time-static security note) OR
+  `--mode stylex` (a StyleX skeleton DRAFT, mapping values to tokens with `--tokens tokens.json`,
+  flagging un-mapped values `/* TODO: no token */`). Choose by editability. Playbook:
+  `../../references/mechanical-conversion.md`.
 
 ## Known false-positive patterns (over-reporting — recognise, don't chase)
 
