@@ -777,6 +777,377 @@ if (GEOM) {
   }
 }
 
+// ========================================================================
+// v1.16 — SIX new detectors for defect classes the differ was still blind to.
+// Each emits CLEAR rows and dedups a single repeating root cause to ONE summary
+// row (low-noise). They share a container-pairing helper that mirrors the
+// non-text-container pass's structural→geometry matching.
+// ========================================================================
+
+// Shared: pair mock CONTAINERS to app containers (path → tag-agnostic x/w bucket, nearest
+// normalised-Y). Returns [{ m, a }] for every mock container that found a partner. This is the
+// same pairing the v1.15 non-text-container pass uses; factored so the layout (1) + value-precision
+// (3) + transform (4) + animation (6) detectors all pair on the SAME basis as the box pass.
+function pairContainers(predicate, opts = {}) {
+  // `predicate` selects which MOCK containers to compare. The APP side is indexed by `appPredicate`
+  // (defaults to `predicate`). CRITICAL for the "mock HAS x, app does NOT" detectors (motion,
+  // transform, pseudo): if the app index used the same interesting predicate, a static/plain app
+  // node would be excluded and the mock node would find NO pair — so the very divergence we want
+  // could never be reported. Those detectors pass a BROAD appPredicate (any sized container).
+  const { geomFallback = true, appPredicate = predicate } = opts;
+  const kidsByParent = arr => { const m = new Map(); for (const n of arr) { if (!m.has(n.parent)) m.set(n.parent, []); m.get(n.parent).push(n); } return m; };
+  const mKidsP = kidsByParent(mock), aKidsP = kidsByParent(appAll);
+  const pathOf = (nodes, kids, n) => {
+    const parts = []; let cur = n, hops = 0;
+    while (cur && cur.parent >= 0 && hops++ < 40) { const sibs = kids.get(cur.parent) || []; parts.unshift(`${cur.tag}[${sibs.indexOf(cur)}]`); cur = nodes[cur.parent]; }
+    return parts.join('/');
+  };
+  const geomKey = a => `${Math.round((a.rect?.x || 0) / 8) * 8}|${Math.round((a.rect?.w || 0) / 8) * 8}`;
+  const appByPath = new Map(), appByGeom = new Map();
+  for (const a of appAll) if (appPredicate(a)) {
+    const p = pathOf(appAll, aKidsP, a); if (!appByPath.has(p)) appByPath.set(p, a);
+    const k = geomKey(a); if (!appByGeom.has(k)) appByGeom.set(k, []); appByGeom.get(k).push(a);
+  }
+  const out = [], used = new Set();
+  for (const m of mock.filter(predicate)) {
+    let a = appByPath.get(pathOf(mock, mKidsP, m));
+    if (a && used.has(a.i)) a = null;
+    if (!a && geomFallback) {
+      const bucket = (appByGeom.get(geomKey(m)) || []).filter(n => !used.has(n.i));
+      if (bucket.length) {
+        const mYn = (m.rect?.y || 0) / (mockDoc.frame?.h || 1), mH = m.rect?.h || 0;
+        const scored = bucket.map(n => {
+          const dY = Math.abs((n.rect?.y || 0) / (appDoc.frame?.h || 1) - mYn);
+          const dH = Math.abs((n.rect?.h || 0) - mH);
+          const hOk = dH <= Math.max(60, 0.4 * mH);
+          return { n, dY, hOk, cost: dY + (dH / (mockDoc.frame?.h || 1)) * 0.5 + (n.tag === m.tag ? 0 : 0.005) };
+        }).filter(s => s.hOk).sort((x, y) => x.cost - y.cost)[0];
+        if (scored && scored.dY <= 0.04) a = scored.n;
+      }
+    }
+    if (a) { used.add(a.i); out.push({ m, a }); }
+  }
+  return out;
+}
+const clabel = m => `[container ${m.tag}.${(m.cls || '').split(/\s+/)[0]} @y${Math.round(m.rect?.y || 0)} w${Math.round(m.rect?.w || 0)}]`;
+
+// ---------- (1) LAYOUT STRUCTURE ----------
+// The HIGHEST-FREQUENCY real defect: a row rendered as a column (icon BESIDE vs ABOVE), a 2-up
+// grid as 1-up, a different flex gap / justify / align. The text-probe + box passes are blind to
+// it (words + colours match, layout is wrong). Per matched CONTAINER compare the flow model:
+// display, flex-direction/wrap, justify/align, row/column gap, grid track COUNT (+ rough fr ratio).
+// Grid templates are normalised to track-COUNT + a coarse fr-ratio signature so 1fr-1fr vs 1fr
+// FLIPS but 547.5px vs 548px does NOT. Only fires on a real flex/grid container (display flex|grid
+// on at least one side) so a plain block's irrelevant defaults never noise.
+{
+  // grid-template → track count + a coarse signature ("2:1fr|1fr" vs "1:1fr"): split top-level
+  // tokens (ignoring parens), bucket each track to fr / a rounded px decile / auto|min|max|minmax.
+  const trackSig = gt => {
+    if (!gt || gt === 'none') return { n: 0, sig: 'none' };
+    let depth = 0, tok = '', toks = [];
+    for (const ch of gt) {
+      if (ch === '(') { depth++; tok += ch; }
+      else if (ch === ')') { depth--; tok += ch; }
+      else if (ch === ' ' && depth === 0) { if (tok) toks.push(tok); tok = ''; }
+      else tok += ch;
+    }
+    if (tok) toks.push(tok);
+    const bucket = t => {
+      if (/fr$/.test(t)) return 'fr';
+      if (/auto|min-content|max-content|minmax/.test(t)) return 'flex';
+      const px = parseFloat(t); return isNaN(px) ? t : 'p' + Math.round(px / 40); // 40px deciles → ignore sub-px
+    };
+    return { n: toks.length, sig: toks.map(bucket).join('|') };
+  };
+  const isFlexGrid = n => /flex|grid/.test(n.comp?.display || '');
+  // Pair containers that are flex/grid on the MOCK side (the layout authority). SCOPE to MEANINGFUL
+  // layout regions — w ≥ 240 (a real column/row/grid section), not the swarm of tiny nested Framer
+  // wrappers (a `w122` icon-row wrapper) whose x/w buckets COLLIDE across siblings and produce a
+  // flood of contradictory row↔column flips (pure pairing noise). A row-vs-column defect that
+  // matters is a content section, not a 12px-tall affordance wrapper.
+  // PATH-ONLY pairing (no geometry fallback): a flow-model defect is only trustworthy on a container
+  // matched by STRUCTURE — the tag-agnostic x/w bucket collides Framer's many same-width nested
+  // wrappers and mispairs them into contradictory row↔column flips. A genuinely missing/added wrapper
+  // shows up in structure-diff.mjs, not here.
+  const bigBox = n => { if (!n || n.tag === 'body' || /\b(body|scr|frame|screen)\b/.test(n.cls || '')) return false; const r = n.rect || {}; return (r.w || 0) >= 240 && (r.h || 0) >= 24; };
+  const pairs = pairContainers(n => bigBox(n) && isFlexGrid(n), { geomFallback: false, appPredicate: bigBox });
+  let n = 0;
+  for (const { m, a } of pairs) {
+    const mc = m.comp || {}, ac = a.comp || {}; const lbl = clabel(m);
+    const mDisp = mc.display, aDisp = ac.display;
+    if (mDisp !== aDisp) { rec(lbl, 'display', aDisp, mDisp, false); n++; }
+    // flex axis + wrap + justify/align only meaningful when BOTH are flex (or grid)
+    if (/flex/.test(mDisp || '')) {
+      if ((mc.flexDirection || 'row') !== (ac.flexDirection || 'row')) { rec(lbl, 'flex-direction', ac.flexDirection, mc.flexDirection, false); n++; }
+      if ((mc.flexWrap || 'nowrap') !== (ac.flexWrap || 'nowrap')) { rec(lbl, 'flex-wrap', ac.flexWrap, mc.flexWrap, false); n++; }
+    }
+    if (/flex|grid/.test(mDisp || '') && /flex|grid/.test(aDisp || '')) {
+      if ((mc.justifyContent || 'normal') !== (ac.justifyContent || 'normal')) { rec(lbl, 'justify-content', ac.justifyContent, mc.justifyContent, false); n++; }
+      if ((mc.alignItems || 'normal') !== (ac.alignItems || 'normal')) { rec(lbl, 'align-items', ac.alignItems, mc.alignItems, false); n++; }
+      const mRg = px(mc.rowGap), aRg = px(ac.rowGap); if (mRg != null && aRg != null && !close(mRg, aRg, 3)) { rec(lbl, 'row-gap', aRg, mRg, false); n++; }
+      const mCg = px(mc.columnGap), aCg = px(ac.columnGap); if (mCg != null && aCg != null && !close(mCg, aCg, 3)) { rec(lbl, 'column-gap', aCg, mCg, false); n++; }
+    }
+    if (/grid/.test(mDisp || '')) {
+      const mt = trackSig(mc.gridTemplateColumns), at = trackSig(ac.gridTemplateColumns);
+      if (mt.n !== at.n) { rec(lbl, 'grid-columns', at.n, mt.n, false); n++; }
+      else if (mt.sig !== at.sig) { rec(lbl, 'grid-col-ratio', at.sig, mt.sig, false); n++; }
+      const mtr = trackSig(mc.gridTemplateRows), atr = trackSig(ac.gridTemplateRows);
+      if (mtr.n !== atr.n && (mtr.n > 1 || atr.n > 1)) { rec(lbl, 'grid-rows', atr.n, mtr.n, false); n++; }
+      if ((mc.gridAutoFlow || 'row') !== (ac.gridAutoFlow || 'row')) { rec(lbl, 'grid-auto-flow', ac.gridAutoFlow, mc.gridAutoFlow, false); n++; }
+    }
+  }
+}
+
+// ---------- (2) VERTICAL RHYTHM / CUMULATIVE DRIFT ----------
+// At the FRAME level: total document height. Then the ACCUMULATING vertical drift DOWN the page —
+// reported against TEXT ANCHORS (a reliable cross-framework pairing; Framer and StyleX nest the DOM
+// completely differently, so a "Nth wide block at depth D" section pairing mispairs — but a section
+// HEADING text pairs exactly). Pick the unique heading-ish texts present on both sides, order them
+// top-to-bottom, and report (a) each anchor's top-offset (target.y − mock.y) and (b) the GAP each
+// section adds vs the one above (its own height contribution). This surfaces the home −387px drift
+// WITH the inter-anchor gaps that contribute it — one concise block, not per-descendant.
+if (GEOM) {
+  const mH = mockDoc.frame?.contentH || mockDoc.frame?.h, aH = appDoc.frame?.contentH || appDoc.frame?.h;
+  if (mH && aH && Math.abs(aH - mH) > 6) rec('[frame]', '📏 doc-height', Math.round(aH), Math.round(mH), false);
+  // heading-ish anchors: a sizeable text node (font ≥ 18 OR an all-caps eyebrow), unique on each
+  // side, present on both. Build the ordered intersection.
+  const headingish = n => {
+    const t = norm(n.text); if (!t || t.length < 3 || t.length > 60) return false;
+    if (CHROME_TXT.test(t)) return false;
+    const sz = px(n.comp?.fontSize) || 0;
+    const eyebrow = /^[A-Z0-9 ·&,'’\-]+$/.test(t) && t.length <= 40;
+    return sz >= 18 || eyebrow;
+  };
+  const uniqByText = nodes => { const seen = new Map(), dup = new Set(); for (const n of nodes) { if (!headingish(n)) continue; const t = norm(n.text); if (seen.has(t)) dup.add(t); else seen.set(t, n); } for (const t of dup) seen.delete(t); return seen; };
+  const mAnchors = uniqByText(mock), aAnchors = uniqByText(app);
+  const common = [...mAnchors.keys()].filter(t => aAnchors.has(t))
+    .map(t => ({ t, m: mAnchors.get(t), a: aAnchors.get(t) }))
+    .sort((x, y) => (x.m.rect?.y || 0) - (y.m.rect?.y || 0));
+  if (common.length >= 2) {
+    let prevMy = null, prevAy = null, drifted = [];
+    for (const c of common) {
+      const my = c.m.rect?.y || 0, ay = c.a.rect?.y || 0;
+      if (prevMy != null) {
+        const mGap = my - prevMy, aGap = ay - prevAy;     // inter-anchor vertical gap (rhythm)
+        const dGap = aGap - mGap;
+        if (Math.abs(dGap) > 12) drifted.push({ t: c.t, dGap });
+      }
+      prevMy = my; prevAy = ay;
+    }
+    // the cumulative drift at the page bottom = last anchor's top-offset
+    const last = common[common.length - 1];
+    const cumTop = (last.a.rect?.y || 0) - (last.m.rect?.y || 0);
+    if (Math.abs(cumTop) > 12) {
+      rec('[page]', '📏 cumulative-top-drift', Math.round(cumTop), 0, false);
+      // the sections (between which anchors) that contribute the drift — one summary row, the
+      // top contributors by absolute gap delta, so the −387px is visible WITH its causes.
+      const contrib = drifted.sort((a, b) => Math.abs(b.dGap) - Math.abs(a.dGap)).slice(0, 6)
+        .map(d => `"${d.t.slice(0, 16)}":${d.dGap > 0 ? '+' : ''}${Math.round(d.dGap)}`).join('  ');
+      if (contrib) rec('[page]', '📏 drift-contributors (gap Δ above anchor)', contrib, '(rhythm matches → 0)', false);
+    }
+  }
+}
+
+// ---------- (3) VALUE-PRECISION (present-but-WRONG) ----------
+// Today the box pass catches PRESENCE/absence (shadow yes/no, border 0-vs-1). It is blind to a
+// property PRESENT ON BOTH but with a different VALUE: a box-shadow with a different offset/blur/
+// spread/colour, a different GRADIENT (function/angle/stops), an off colour (deltaE), a wrong
+// per-corner radius. Compare on every paired container (incl. text-styled boxes) and emit ONLY a
+// genuine beyond-tolerance value difference. Pairs reuse pairContainers (any visually-styled box).
+{
+  // parse the FIRST box-shadow layer → {dx,dy,blur,spread,color} (skip `inset`, take outer layer)
+  const parseShadow = s => {
+    if (!s || s === 'none') return null;
+    const layer = s.split(/,(?![^(]*\))/)[0].trim(); // first layer only
+    const colorM = layer.match(/rgba?\([^)]+\)|#[0-9a-f]+/i);
+    const color = colorM ? toHex(colorM[0]) : null;
+    const nums = (colorM ? layer.replace(colorM[0], '') : layer).match(/-?[\d.]+px/g) || [];
+    const [dx, dy, blur, spread] = nums.map(parseFloat);
+    return { dx: dx || 0, dy: dy || 0, blur: blur || 0, spread: spread || 0, color };
+  };
+  // deltaE-ish: max per-channel rgb distance (cheap, good enough to ignore sub-1 jitter)
+  const rgbOf = h => { if (!h || h === 'transparent') return null; const m = h.match(/^#([0-9a-f]{6})$/i); if (!m) return null; const x = m[1]; return [0, 2, 4].map(i => parseInt(x.slice(i, i + 2), 16)); };
+  const colorDelta = (a, b) => { const ra = rgbOf(a), rb = rgbOf(b); if (!ra || !rb) return a === b ? 0 : 999; return Math.max(...ra.map((v, i) => Math.abs(v - rb[i]))); };
+  // normalise a gradient string → function + angle + stop-count + stop colours (ignore exact %s,
+  // which are layout-driven; the COLOURS + the function + count are the identity)
+  const gradSig = g => {
+    if (!g || g === 'none' || !/gradient/i.test(g)) return null;
+    const fn = (g.match(/(repeating-)?(linear|radial|conic)-gradient/i) || [''])[0].toLowerCase();
+    const angle = (g.match(/(\d+)deg/) || [, null])[1];
+    const stops = (g.match(/rgba?\([^)]+\)|#[0-9a-f]{3,8}/gi) || []).map(toHex);
+    return { fn, angle, n: stops.length, stops: stops.join('>') };
+  };
+  const styled = n => {
+    if (!n || n.tag === 'body' || /\b(body|scr|frame|screen)\b/.test(n.cls || '')) return false;
+    const c = n.comp || {}, r = n.rect || {};
+    if ((r.w || 0) < 24 || (r.h || 0) < 8) return false;
+    const hasShadow = c.boxShadow && c.boxShadow !== 'none';
+    const hasGrad = c.backgroundImage && /gradient/i.test(c.backgroundImage);
+    const hasRadius = (px(c.borderTopLeftRadius) || 0) >= 2;
+    const hasBg = toHex(c.backgroundColor) !== 'transparent' && c.backgroundColor;
+    return !!(hasShadow || hasGrad || hasRadius || hasBg);
+  };
+  // app index is BROAD (any sized box) so a "mock has a gradient/shadow, app has none" case still
+  // pairs (a styled-only app predicate would drop the plain app node and hide the divergence).
+  const anyBox = n => { if (!n || n.tag === 'body' || /\b(body|scr|frame|screen)\b/.test(n.cls || '')) return false; const r = n.rect || {}; return (r.w || 0) >= 24 && (r.h || 0) >= 8; };
+  for (const { m, a } of pairContainers(styled, { appPredicate: anyBox })) {
+    const mc = m.comp || {}, ac = a.comp || {}; const lbl = clabel(m);
+    // box-shadow VALUE (only when BOTH present) — offset/blur/spread ~1px, colour small delta
+    const ms = parseShadow(mc.boxShadow), as = parseShadow(ac.boxShadow);
+    if (ms && as) {
+      const geomOff = Math.abs(ms.dx - as.dx) > 1.5 || Math.abs(ms.dy - as.dy) > 1.5 || Math.abs(ms.blur - as.blur) > 2 || Math.abs(ms.spread - as.spread) > 1.5;
+      const colOff = ms.color && as.color && colorDelta(ms.color, as.color) > 24;
+      if (geomOff || colOff) rec(`${lbl} ▸ shadow`, 'shadow-value', `${as.dx},${as.dy},${as.blur},${as.spread} ${as.color || ''}`, `${ms.dx},${ms.dy},${ms.blur},${ms.spread} ${ms.color || ''}`, false);
+    }
+    // GRADIENT background (function/angle/stops)
+    const mg = gradSig(mc.backgroundImage), ag = gradSig(ac.backgroundImage);
+    if (mg && ag) {
+      if (mg.fn !== ag.fn) rec(`${lbl} ▸ gradient`, 'gradient-type', ag.fn, mg.fn, false);
+      else if (mg.n !== ag.n) rec(`${lbl} ▸ gradient`, 'gradient-stops', ag.n, mg.n, false);
+      else if (mg.stops !== ag.stops) rec(`${lbl} ▸ gradient`, 'gradient-colors', ag.stops, mg.stops, false);
+      else if (mg.angle != null && ag.angle != null && Math.abs(+mg.angle - +ag.angle) > 3) rec(`${lbl} ▸ gradient`, 'gradient-angle', ag.angle + 'deg', mg.angle + 'deg', false);
+    } else if (mg && !ag) rec(`${lbl} ▸ gradient`, 'gradient-present', 'none', mg.fn, false);
+    // exact BACKGROUND colour (both opaque, beyond rgb-24 — a real off-tint, not jitter)
+    const mBg = toHex(mc.backgroundColor), aBg = toHex(ac.backgroundColor);
+    if (mBg !== 'transparent' && aBg !== 'transparent' && mBg !== aBg && colorDelta(mBg, aBg) > 12)
+      rec(`${lbl} ▸ box`, 'bg-color-precise', aBg, mBg, false);
+    // border colour precise (both have a border)
+    if ((px(mc.borderTopWidth) || 0) > 0 && (px(ac.borderTopWidth) || 0) > 0) {
+      const mBc = toHex(mc.borderTopColor), aBc = toHex(ac.borderTopColor);
+      if (mBc !== aBc && colorDelta(mBc, aBc) > 12) rec(`${lbl} ▸ box`, 'border-color-precise', aBc, mBc, false);
+    }
+    // per-corner radius (TL is already box-checked elsewhere; catch a DIFFERENT corner: a
+    // top-rounded-only card vs all-rounded). Compare the 4 corners as a signature.
+    const corners = c => ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'].map(k => Math.round(px(c[k]) || 0));
+    const mCr = corners(mc), aCr = corners(ac);
+    if (mCr.some((v, i) => Math.abs(v - aCr[i]) > 2.5) && (mCr.some(v => v > 0) || aCr.some(v => v > 0)))
+      rec(`${lbl} ▸ box`, 'radius-corners', `[${aCr}]`, `[${mCr}]`, false);
+  }
+}
+
+// ---------- (4) TRANSFORM / OPACITY / FILTER ----------
+// A rotated / scaled / translated / faded / blurred element the box + geometry checks are blind to.
+// Per paired element compare transform (normalise matrix→{scale,rotate,translate}), opacity, filter.
+// Ignore the identity/none case (only fire on a real divergence). Pairs reuse pairContainers over
+// any sized element so a transformed decorative panel or a faded section is reached.
+{
+  // matrix(a,b,c,d,e,f) → { scale, rotateDeg, tx, ty }; matrix3d → just flag non-identity.
+  const decompose = t => {
+    if (!t || t === 'none') return { scale: 1, rot: 0, tx: 0, ty: 0, id: true };
+    const m2 = t.match(/^matrix\(([^)]+)\)/);
+    if (m2) {
+      const [a, b, c, d, e, f] = m2[1].split(',').map(parseFloat);
+      const scale = +Math.hypot(a, b).toFixed(3);
+      const rot = +(Math.atan2(b, a) * 180 / Math.PI).toFixed(1);
+      const id = Math.abs(scale - 1) < 0.01 && Math.abs(rot) < 0.5 && Math.abs(e) < 0.5 && Math.abs(f) < 0.5;
+      return { scale, rot, tx: +e.toFixed(1), ty: +f.toFixed(1), id };
+    }
+    return { scale: 1, rot: 0, tx: 0, ty: 0, id: false, raw: t.slice(0, 30) }; // matrix3d/other → opaque, non-identity
+  };
+  const sized = n => { const r = n.rect || {}; return n.comp && (r.w || 0) >= 16 && (r.h || 0) >= 8 && n.tag !== 'body' && !/\b(body|scr|frame|screen)\b/.test(n.cls || ''); };
+  // only ENTER the loop for mock nodes that actually carry a transform/opacity/filter divergence
+  // candidate (non-identity transform, a fade, or a filter) — keeps the pass focused and low-noise;
+  // app index is broad so a static app counterpart still pairs.
+  const motionMock = n => sized(n) && ((n.comp.transform && n.comp.transform !== 'none') || (n.comp.filter && n.comp.filter !== 'none') || (parseFloat(n.comp.opacity ?? '1') < 0.99));
+  for (const { m, a } of pairContainers(motionMock, { appPredicate: sized })) {
+    const mc = m.comp || {}, ac = a.comp || {}; const lbl = clabel(m);
+    const mt = decompose(mc.transform), at = decompose(ac.transform);
+    // only emit when at least ONE side is non-identity AND they meaningfully differ
+    if (!(mt.id && at.id)) {
+      if (Math.abs(mt.scale - at.scale) > 0.02) rec(lbl, 'transform-scale', at.scale, mt.scale, false);
+      else if (Math.abs(mt.rot - at.rot) > 1) rec(lbl, 'transform-rotate', at.rot + '°', mt.rot + '°', false);
+      else if (Math.abs(mt.tx - at.tx) > 2 || Math.abs(mt.ty - at.ty) > 2) rec(lbl, 'transform-translate', `${at.tx},${at.ty}`, `${mt.tx},${mt.ty}`, false);
+      else if (mt.raw || at.raw) rec(lbl, 'transform', at.raw || mc.transform || 'none', mt.raw || ac.transform || 'none', (mc.transform || 'none') === (ac.transform || 'none'));
+    }
+    // opacity — both present; only a real fade (≥0.05) and not both ~1
+    const mo = parseFloat(mc.opacity ?? '1'), ao = parseFloat(ac.opacity ?? '1');
+    if (!isNaN(mo) && !isNaN(ao) && Math.abs(mo - ao) > 0.05 && (mo < 0.99 || ao < 0.99)) rec(lbl, 'opacity', +ao.toFixed(2), +mo.toFixed(2), false);
+    // filter — a blur/brightness/etc on one side, none on the other (or a different filter)
+    const mf = (mc.filter && mc.filter !== 'none') ? mc.filter.slice(0, 40) : 'none';
+    const af = (ac.filter && ac.filter !== 'none') ? ac.filter.slice(0, 40) : 'none';
+    if (mf !== af) rec(lbl, 'filter', af, mf, false);
+  }
+}
+
+// ---------- (5) PSEUDO-ELEMENT CONTENT ----------
+// A custom bullet, a quote mark, a → arrow, a counter, or a url() icon drawn via `::before/::after
+// content` — invisible to getComputedStyle(element) AND to the text-probe loop. Captured per node
+// as pseudoContent. Pair by the OWNING node (reuse the text-probe pairing where possible: pair by
+// normalised text+tag; fall back to position). Diff presence + the content value + size/colour.
+{
+  // index app nodes carrying a pseudoContent by normalised text (their primary identity)
+  const appWithPseudo = appAll.filter(n => n.pseudoContent);
+  const byText = new Map();
+  for (const n of appWithPseudo) { const t = A.text(n); if (!t) continue; if (!byText.has(t)) byText.set(t, []); byText.get(t).push(n); }
+  const used = new Set();
+  const pRows = []; // collect then DEDUP — a whole list of `<li>` bullets all missing the same `•`
+  for (const m of mock) {
+    if (!m.pseudoContent) continue;
+    const mt = norm(m.text);
+    // find the app partner: same text+tag (nearest-Y among them), else nearest position+tag
+    let a = null;
+    if (mt) { const cands = (byText.get(mt) || []).filter(n => !used.has(n.i) && n.tag === m.tag); a = cands.sort((x, y) => Math.abs((x.rect?.y || 0) - (m.rect?.y || 0)) - Math.abs((y.rect?.y || 0) - (m.rect?.y || 0)))[0]; }
+    if (!a) {
+      const cands = appWithPseudo.filter(n => !used.has(n.i) && n.tag === m.tag && Math.abs((n.rect?.x || 0) - (m.rect?.x || 0)) < 24);
+      a = cands.sort((x, y) => Math.abs((x.rect?.y || 0) - (m.rect?.y || 0)) - Math.abs((y.rect?.y || 0) - (m.rect?.y || 0)))[0];
+    }
+    const lbl = `["${mt.slice(0, 24) || m.tag}" pseudo]`;
+    for (const ps of ['::before', '::after']) {
+      const mp = m.pseudoContent[ps]; if (!mp) continue;
+      const ap = a && a.pseudoContent && a.pseudoContent[ps];
+      if (!ap) pRows.push({ lbl, prop: `${ps}-content`, app: 'none', mock: mp.content, dk: `${ps}|none|${mp.content}|${m.tag}` });
+      else {
+        if (a) used.add(a.i);
+        if (mp.content !== ap.content) pRows.push({ lbl, prop: `${ps}-content`, app: ap.content, mock: mp.content, dk: `${ps}|${ap.content}|${mp.content}|${m.tag}` });
+        else {
+          // same marker — check it isn't restyled (size/colour) beyond tolerance
+          const mFs = px(mp.fontSize), aFs = px(ap.fontSize);
+          if (mFs != null && aFs != null && !close(mFs, aFs, 1)) pRows.push({ lbl, prop: `${ps}-content-size`, app: aFs, mock: mFs, dk: `${ps}|sz|${aFs}|${mFs}` });
+          else if (toHex(mp.color) !== toHex(ap.color)) pRows.push({ lbl, prop: `${ps}-content-color`, app: toHex(ap.color), mock: toHex(mp.color), dk: `${ps}|col|${toHex(ap.color)}|${toHex(mp.color)}` });
+        }
+      }
+    }
+  }
+  // DEDUP: collapse a repeating identical marker defect (every `<li>` missing the SAME `•`, every
+  // numbered item missing the SAME `counter(list-item)`) — emit the first 3 distinct instances, then
+  // ONE summary count row per (marker, verdict). One root cause → a handful of rows, not hundreds.
+  const groups = new Map();
+  for (const r of pRows) { if (!groups.has(r.dk)) groups.set(r.dk, []); groups.get(r.dk).push(r); }
+  for (const [, g] of groups) {
+    g.slice(0, 3).forEach(r => rec(r.lbl, r.prop, r.app, r.mock, false));
+    if (g.length > 3) rec(`[×${g.length} elements]`, g[0].prop, g[0].app, g[0].mock, false);
+  }
+}
+
+// ---------- (6) ANIMATION / TRANSITION PRESENCE ----------
+// One side animates/transitions, the other is static — the generalisation of "does the CTA headline
+// animate?". Per paired element compare running-animation count (anims) and the declared transition
+// (transitionProperty/Duration non-none). Only emit when one side has motion and the other does not
+// (or a markedly different running-animation count). Dedup a repeating root cause (a whole section's
+// children all transitioning) to a few rows — cap per-class emission and add a summary if it floods.
+{
+  const hasTransition = c => { const p = c?.transitionProperty, d = px(c?.transitionDuration); return !!(p && p !== 'none' && p !== 'all 0s' && d && d > 0); };
+  const sized = n => { const r = n.rect || {}; return n.comp && (r.w || 0) >= 24 && (r.h || 0) >= 8 && n.tag !== 'body' && !/\b(body|scr|frame|screen)\b/.test(n.cls || ''); };
+  const animRows = [], transRows = [];
+  // mock side: only containers WITH motion; app side: broad (a static app counterpart must still
+  // pair so "mock animates, app static" can be reported — the whole point of this detector).
+  for (const { m, a } of pairContainers(n => sized(n) && ((n.anims || 0) > 0 || hasTransition(n.comp)), { appPredicate: sized })) {
+    const mc = m.comp || {}, ac = a.comp || {}; const lbl = clabel(m);
+    const mAnim = m.anims || 0, aAnim = a.anims || 0;
+    if ((mAnim > 0) !== (aAnim > 0)) animRows.push({ lbl, a: aAnim, m: mAnim });
+    const mT = hasTransition(mc), aT = hasTransition(ac);
+    if (mT !== aT) transRows.push({ lbl, a: aT ? (ac.transitionProperty || '').slice(0, 24) : 'none', m: mT ? (mc.transitionProperty || '').slice(0, 24) : 'none' });
+  }
+  // DEDUP / cap: a whole section of cards each transitioning is ONE root cause. Emit up to 6 rows
+  // per class, then a single summary count row, so the report doesn't balloon.
+  const emitCapped = (rows, prop) => {
+    rows.slice(0, 6).forEach(r => rec(r.lbl, prop, r.a, r.m, false));
+    if (rows.length > 6) rec('[summary]', prop, `${rows.length} elements differ`, '(motion present on one side only)', false);
+  };
+  emitCapped(animRows, 'animation-presence');
+  emitCapped(transRows, 'transition-presence');
+}
+
 // ---------- coverage: unmatched-but-present-elsewhere ----------
 // An unmatched mock probe usually means "missing OR intentional swap" — but if the
 // SAME text exists in the full app dump (any screen), the element is NOT missing:
@@ -808,7 +1179,8 @@ L.push(`# Mock-fidelity diff — ${mockDoc.title}`, '');
 L.push(`- mock: \`${MOCK}\` (${mock.length} nodes, frame ${mockDoc.frame?.w}×${mockDoc.frame?.h})`);
 L.push(`- target: \`${APP}\`${scr != null ? ` (anchor "${ANCHOR}", scr=${scr}, ${app.length} nodes)` : ''}`);
 const geomFails = fails.filter(f => /📐/.test(f.prop));
-L.push(`- matched probes: ${oks.length + new Set(fails.map(f => f.el)).size}, **mismatches: ${fails.length}**${GEOM ? ` (incl. ${geomFails.length} 📐 geometry)` : ' (geometry OFF — different viewport)'}, unmatched mock texts: ${unmatched.length}${coverage.length ? ` (⚠︎⚠︎ ${coverage.length} present-in-app = WRONG STATE)` : ''}`, '');
+const rhythmFails = fails.filter(f => /📏/.test(f.prop));
+L.push(`- matched probes: ${oks.length + new Set(fails.map(f => f.el)).size}, **mismatches: ${fails.length}**${GEOM ? ` (incl. ${geomFails.length} 📐 geometry, ${rhythmFails.length} 📏 rhythm)` : ' (geometry OFF — different viewport)'}, unmatched mock texts: ${unmatched.length}${coverage.length ? ` (⚠︎⚠︎ ${coverage.length} present-in-app = WRONG STATE)` : ''}`, '');
 L.push('## ❌ Mismatches (fix these)', '');
 if (!fails.length) L.push('_None — every matched property is within tolerance._');
 else { L.push('| element | property | target | mock |', '|---|---|---|---|'); for (const r of fails) L.push(`| ${r.el} | ${r.prop} | \`${r.app}\` | \`${r.mock}\` |`); }

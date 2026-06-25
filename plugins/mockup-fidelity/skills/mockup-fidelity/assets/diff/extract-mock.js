@@ -87,6 +87,19 @@
     // a row that should be a column, a reflowed gap, an icon column that's missing).
     'gridTemplateColumns', 'gridAutoFlow', 'gap', 'columnGap', 'rowGap',
     'position', 'flexWrap', 'gridTemplateRows',
+    // v1.16 detectors:
+    // (1) LAYOUT STRUCTURE — justifyContent/alignItems already above; flexDirection/flexWrap/
+    //     gridTemplate* already above. (Container pass diffs these per matched container.)
+    // (3) VALUE-PRECISION — the per-corner radii + the gradient/image background. box-shadow,
+    //     backgroundColor, borderTopColor already above; add the rest so a present-but-WRONG
+    //     value (radius 8 vs 16, a different gradient, the other 3 corners) is comparable.
+    'backgroundImage',
+    'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius',
+    // (4) TRANSFORM / OPACITY / FILTER — opacity already above; transform+filter catch a
+    //     rotated/scaled/translated/faded/blurred element the box checks are blind to.
+    'transform', 'filter',
+    // (6) ANIMATION / TRANSITION — a transitioned/animated element vs a static one.
+    'transitionProperty', 'transitionDuration',
   ];
 
   // RENDERED-FONT fingerprint (improvement D) — the declared computed `font-family`
@@ -167,6 +180,30 @@
         comp.boxShadow = pc.boxShadow; comp._shadowFromPseudo = ps;
       }
     }
+    // (5) PSEUDO-ELEMENT CONTENT (v1.16) — a custom bullet (`•`), a quote mark, a `→` arrow, a
+    // counter, or a url() icon is frequently drawn with `::before { content: "→" }` and is INVISIBLE
+    // to getComputedStyle(element) AND to the text-probe loop (it isn't a DOM text node). Capture a
+    // RENDERED pseudo's real content string (not none/normal/"") plus its font-size + colour, so the
+    // differ catches a side that lacks (or restyles) the marker. `content` comes back quoted ("→")
+    // for a string, `counter(...)`/`url(...)`/`attr(...)` for the generated forms — keep them all.
+    let pseudoContent = null;
+    for (const ps of ['::before', '::after']) {
+      const pc = getComputedStyle(el, ps);
+      if (!pc) continue;
+      const raw = pc.content;
+      if (!raw || raw === 'none' || raw === 'normal') continue;
+      // an empty string content (`content: ""`) is an overlay/border trick, not a real marker — skip.
+      if (raw === '""' || raw === "''") continue;
+      const val = raw.replace(/^["']|["']$/g, '');
+      if (!val) continue;
+      (pseudoContent ||= {})[ps] = { content: val.slice(0, 40), fontSize: pc.fontSize, color: pc.color };
+    }
+    // (6) ANIMATION / TRANSITION PRESENCE (v1.16) — a CTA headline that animates, a card that lifts on
+    // a transition, a shimmer/marquee — the generalisation of "does the CTA headline animate?". Capture
+    // the count of RUNNING animations (getAnimations) so a side that animates while the other is static
+    // is caught. transitionProperty/Duration are in PROPS (the declared transition); this is the running one.
+    let anims = 0;
+    try { anims = (el.getAnimations ? el.getAnimations() : []).filter(a => a.playState === 'running' || a.playState === 'paused').length; } catch (e) {}
     // ICON GLYPH extent — for an <svg> the element box is often padded around the drawn
     // glyph (a 12px box can hold a 6×3 OR an 8×4 chevron), so the box size alone misses a
     // wrong-sized icon. Capture the union path bbox in RENDERED px (viewBox units scaled to
@@ -331,6 +368,8 @@
       divider,         // improvement A — thin page-wide hairline / wide border
       hasSvgChild,     // improvement B — trailing-arrow svg child on a button
       fontRn,          // improvement D — rendered-font fingerprint
+      pseudoContent,   // v1.16 (5) — ::before/::after real content + size/colour
+      anims,           // v1.16 (6) — count of running animations on the element
       comp,
     });
     for (const c of el.children) walk(c, depth + 1, myIndex);
@@ -352,5 +391,15 @@
       return out2;
     } catch (e) { return []; }
   })();
-  return JSON.stringify({ title: TITLE || SEL || 'body', frame: { w: f.width, h: f.height }, fonts, nodes: out });
+  // FRAME height — `f.height` is the frame root's bounding box, which clamps to the viewport when
+  // the root is `body` at a tall fixed viewport (so it can't measure cumulative vertical drift).
+  // Also record the true scroll/content height so the (2) VERTICAL RHYTHM detector compares the
+  // real document height. `contentH` = the max content extent under the root (drift-aware).
+  let contentH = f.height;
+  try {
+    let maxB = 0; for (const n of out) maxB = Math.max(maxB, (n.rect.y || 0) + (n.rect.h || 0));
+    const scrollH = root === document.body ? Math.max(document.documentElement.scrollHeight || 0, document.body.scrollHeight || 0) : 0;
+    contentH = Math.max(f.height, maxB, scrollH);
+  } catch (e) {}
+  return JSON.stringify({ title: TITLE || SEL || 'body', frame: { w: f.width, h: f.height, contentH }, fonts, nodes: out });
 }

@@ -158,6 +158,44 @@ The differ was **text-probe driven**, so five real classes of defect slipped thr
 - **RENDERED-FONT (D).** The declared `font-family` can MATCH (both "Inter, …") and `document.fonts.check('Inter')` can return true on BOTH, yet the target renders Inter in a FALLBACK (the face is registered but never actually applied — a hydration/CSP quirk). `fonts.check` is unreliable here; the ground truth is a **glyph metric**. `extract-mock.js` measures a probe string via canvas in (a) the element's declared stack, (b) a generic-only baseline, (c) the first named family alone, and records `rendering` = "(a) ≠ (b)". `diff.mjs` flags `rendered-font` when the reference renders its named face but the target falls back. This is the governance-bullet / role-views-body "wrong font" class, invisible to font-size / family-kind / family-not-loaded (all match). NOTE: when the named face is genuinely absent SITE-WIDE on the target, this fires on every text node — that is honest signal for one root cause, not per-element noise.
 - **MEDIA/ILLUSTRATION GEOMETRY (E).** Illustrations are excluded from the text + geometry passes as noise, so a mockup/image at the wrong VERTICAL position is never caught — and absolute y is useless because the whole page drifts. `diff.mjs` pairs media elements + large mockup-card containers (**excluding full-bleed background layers**, which the container pass owns) and compares their y **relative to the nearest section eyebrow/heading anchor** (`📐 media-rel-y(vs section)`), so page-wide drift cancels and only a genuine in-section shift fires. Position only — never internal content (the noise this historically re-introduced).
 
+### v1.16.0 — six detectors for the flow-model, vertical-rhythm, present-but-wrong-value, transform, pseudo-marker, and motion blind spots
+
+The differ was still blind to six classes even with both sides measured. Each is now a mechanical
+check, captured in `extract-mock.js` and compared in `diff.mjs`. All six are **purely additive** — every
+pre-existing row is preserved byte-for-byte (verified 340/340 on home); each emits clear rows and dedups a
+single repeating root cause to ONE summary row (low-noise).
+
+- **(1) LAYOUT STRUCTURE.** Per PATH-matched flex/grid container (w≥240) diff the flow model — `display`,
+  `flex-direction/wrap`, `justify/align`, `row/column-gap`, and grid track-COUNT + a coarse fr-ratio
+  signature (so `1fr 1fr` vs `1fr` FLIPS but `547.5px` vs `548px` does NOT). PATH-only pairing (no geometry
+  fallback) because the tag-agnostic x/w bucket collides Framer's swarm of same-width nested wrappers into
+  contradictory row↔column flips. This catches the highest-frequency real defect: a row rendered as a column
+  (icon beside vs above), a 2-up grid as 1-up, a reflowed gap/justify.
+- **(2) VERTICAL RHYTHM / CUMULATIVE DRIFT.** Frame `contentH` (the true `scrollHeight`, not the
+  viewport-clamped `body` box) gives total doc-height. The cumulative drift down the page is reported
+  against TEXT ANCHORS (the unique heading-ish texts present on both sides, ordered top→bottom) — a reliable
+  cross-framework pairing, because a "Nth wide block at depth D" section pairing mispairs across the
+  Framer↔StyleX DOMs. The last anchor's top-offset is the `📏 cumulative-top-drift` (home surfaces ≈ −385px,
+  the long-known home drift) and one `📏 drift-contributors` row names the inter-anchor gap deltas that cause it.
+- **(3) VALUE-PRECISION (present-but-WRONG).** The box pass only catches presence/absence; this compares the
+  VALUE where a property is on BOTH sides — first box-shadow layer (offset/blur/spread ~1–2px, colour rgb-24),
+  gradient signature (fn/angle/stop-count/stop-colours), opaque bg + border colour (rgb-12 deltaE), and the
+  4-corner radius signature. Emits only beyond tolerance. (Real: the two persona-tint cards with their cream/mint
+  bg SWAPPED; cards square `[0,0,0,0]` vs rounded `[17,17,17,17]`.)
+- **(4) TRANSFORM / OPACITY / FILTER.** Decompose `matrix()`→{scale,rotate,translate} and diff transform /
+  opacity / filter, ignoring the identity/none case. (Real: the Framer header's `left:50%; translateX(−640px)`
+  centring vs the target's different technique.)
+- **(5) PSEUDO-ELEMENT CONTENT.** Capture a RENDERING `::before`/`::after` real content string (a `•`, a quote,
+  a `→`, a `counter(list-item)`, a `url()` — INVISIBLE to `getComputedStyle(element)` and to the text-probe loop)
+  plus its size/colour; diff presence + value. A repeating marker (every `<li>` missing the same bullet) dedups
+  to 3 rows + a `[×N elements]` summary. (Real: 10 missing `•` list bullets on home; 17 missing `counter()` ordered
+  markers on the legal page.)
+- **(6) ANIMATION / TRANSITION PRESENCE.** Capture running `getAnimations().length` + the declared
+  `transitionProperty/Duration`; emit when one side has motion and the other is static. The app side is paired
+  BROADLY (any sized container) so a static counterpart still pairs — otherwise "mock animates, app static" is
+  structurally unreportable. (Real: the nav "Book a demo" button's hover-colour transition, present on live,
+  absent on the rebuild.)
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present
