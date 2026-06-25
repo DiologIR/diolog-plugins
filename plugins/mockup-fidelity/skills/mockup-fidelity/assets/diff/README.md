@@ -173,6 +173,36 @@ A horizontally-scrolled row (a tab strip, content off-screen) is detected and it
 geometry skipped, so scroll position never reads as a gutter mismatch. The mock's
 frame width ≠ the device's, so only insets (not absolute x) are compared.
 
+## ⚠️ Reference the LIVE rendered site, not a re-served static scrape
+
+The single biggest source of "I matched the mock exactly but it still looks wrong": a
+**runtime-hydrated site (Framer, most page builders, any SPA) does NOT render the same when
+its scraped HTML is re-served from localhost.** The scrape freezes the markup + every
+breakpoint variant's CSS, but the framework's JS resolves the *final* desktop layout at
+runtime — and re-served off-origin (with its `framerusercontent`/`gstatic` fetches broken)
+that JS doesn't re-execute, so the page falls back to a *different variant*. Real divergences
+this caused (all where the scraped CSS literally contained BOTH values): a nav gap that was
+**10px in the served scrape but 16px on live**; a hero gradient that exists **only as an
+`<img>` on live** (gone from the scrape); `text-wrap`/font resolution that differed. Every one
+of those made the differ report "identical" against the wrong target.
+
+**So: extract the mock from the LIVE URL** (`extract-mock.js` runs fine against `https://…` via
+the same browser), not from a localhost-served scrape. Keep the scrape only for content/copy.
+If you can only get a scrape, treat its resolved geometry as *suspect* and spot-check key
+values against the live site.
+
+Two measurement disciplines that came from the same debugging:
+- **Measure the STYLED element, not the inner text node.** A CTA's text node was `h=20`
+  (read as "plain text link") while its button `<a>` was `h=42` (a pill). Pairing the text
+  node's box led to deleting a real pill. Walk to the styled ancestor (the differ's box-walk
+  already does this — trust it over a hand `find(text)`).
+- **Backgrounds can be `<img>`/`<canvas>`/SVG layers invisible to a `background-image` scan.**
+  A hero "gradient" was a full-bleed `<img>` (an SVG), so `getComputedStyle(...).backgroundImage`
+  was `none`. When hunting a visual fill, scan for large `img`/`canvas`/`svg` children too.
+- **Self-host the EXACT webfont the live site loads** (the specific Google `vNN` woff2), not a
+  same-named package — `@fontsource/inter` renders ~2px wider per label than Google's Inter
+  v20, shifting widths and wrap points. Glyph-width fidelity needs the byte-identical file.
+
 ## Known remaining blind spots (verify these by eye / structurally)
 
 The differ is **text-probe driven** — it diffs the styles of mock text nodes and

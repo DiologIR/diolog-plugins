@@ -289,6 +289,13 @@ for (const mn of mock) {
     const mFam = familyKind(mn.comp.fontFamily);
     if (mFam) rec(elName, 'font-family', A.family(an), mFam, A.family(an) === mFam);
     rec(elName, 'text-align', A.align(an), alignNorm(mn.comp.textAlign), A.align(an) === alignNorm(mn.comp.textAlign));
+    // text-wrap: `balance` vs `wrap` changes WHERE a multi-word heading breaks, even when the
+    // line fits — geometry can't catch it (the box width is similar). Normalise the shorthand
+    // (`balance`) and the longhand (`textWrapStyle: balance`) to one token, compare on the
+    // multi-word case only (a single word never wraps, so wrap-mode is moot there).
+    const wrapOf = c => /balance/.test(`${c.textWrap || ''} ${c.textWrapStyle || ''}`) ? 'balance'
+      : /pretty/.test(`${c.textWrap || ''} ${c.textWrapStyle || ''}`) ? 'pretty' : 'wrap';
+    if (/\s/.test(text)) { const mw = wrapOf(mn.comp), aw = an.comp ? wrapOf(an.comp) : 'wrap'; rec(elName, 'text-wrap', aw, mw, aw === mw); }
   } else {
     const mC = toHex(mn.comp.color); rec(elName, 'placeholder-color', A.phColor(an), mC, A.phColor(an) === mC);
     const mFs = px(mn.comp.fontSize); if (mFs != null) rec(elName, 'font-size', A.fontSize(an), mFs, close(A.fontSize(an), mFs, 0.6));

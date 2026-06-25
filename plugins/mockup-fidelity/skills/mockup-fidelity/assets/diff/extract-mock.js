@@ -76,6 +76,12 @@
     'borderBottomWidth', 'borderBottomColor',
     'boxShadow', 'display', 'flexDirection', 'alignItems', 'justifyContent',
     'textAlign', 'letterSpacing', 'lineHeight', 'opacity', 'textTransform',
+    // text-wrap: `balance` redistributes a heading to EQUAL-length lines, so a word wraps to
+    // the next line even when it FITS — a different wrap point from the greedy `wrap` the
+    // reference uses, and invisible to width/geometry (the text "fits", it just breaks
+    // elsewhere). This was a real miss: "The workspace for" (441px) fit a 558px column yet
+    // "for" wrapped, purely because of balance.
+    'textWrap', 'textWrapStyle',
     // LAYOUT props — consumed by structure-diff.mjs to catch grid/flex divergences
     // a per-property STYLE diff is structurally blind to (a 2×2 grid rendered 1×4,
     // a row that should be a column, a reflowed gap, an icon column that's missing).
