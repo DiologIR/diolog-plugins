@@ -1,4 +1,10 @@
 #!/usr/bin/env node
+// ⚠️ DEPRECATED (kept one version as a fallback) — superseded by `analyze.js`.
+// The single browser-injectable `analyze.js` now does BOTH steps in-page: MODE B captures the
+// target analysis and computes this entire diff (plus structure-diff.mjs's layout/missing/extra
+// pass) and returns prioritised, actionable findings — no Node step, no JSON round-trip. Prefer
+// `analyze.js` (see `run.md`); use this only for an in-flight pipeline. Removed in a future version.
+//
 // mockup-fidelity computed-style DIFFER — the mechanical analytic.
 //
 // This is the piece that makes "I diffed both sides" true instead of aspirational.

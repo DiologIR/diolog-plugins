@@ -1,3 +1,10 @@
+// ⚠️ DEPRECATED (kept one version as a fallback) — superseded by `analyze.js`.
+// `analyze.js` is now the single browser-injectable analyzer+differ: MODE A captures the
+// full analysis (the union of everything THIS file captured) and MODE B computes the full
+// diff in-page (everything diff.mjs + structure-diff.mjs did) and returns prioritised,
+// actionable findings. Prefer `analyze.js` (see `run.md`); use this three-file pipeline only
+// if something in-flight still depends on it. This file will be removed in a future version.
+//
 // Browser-context mock COMPUTED-style extractor for the mockup-fidelity diff.
 //
 // AUTHORING-AGNOSTIC: it reads `getComputedStyle` from the RENDERED DOM, so it

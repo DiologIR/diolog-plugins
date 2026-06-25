@@ -1,3 +1,8 @@
+// ⚠️ DEPRECATED (kept one version as a fallback) — superseded by `analyze.js`.
+// `analyze.js` MODE B now runs this layout/child-count/MISSING/EXTRA structure pass in-page as
+// part of the single analyzer+differ (its findings carry class `structure`/`layout`/`extra`).
+// Prefer `analyze.js` (see `run.md`); use this only for an in-flight pipeline. Removed in a future version.
+//
 // structure-diff.mjs — the LAYOUT/STRUCTURE differ (improvement #1).
 //
 // The per-property style differ (`diff.mjs`) matches elements by TEXT and compares

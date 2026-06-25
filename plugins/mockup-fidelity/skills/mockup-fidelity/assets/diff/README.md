@@ -1,5 +1,20 @@
 # Computed-style differ — the mechanical analytic
 
+> ## ➜ NEW PATH: `analyze.js` (single browser-injectable analyzer + differ) — see [`run.md`](./run.md)
+>
+> `analyze.js` REPLACES the three-file two-step pipeline below (`extract-mock.js` + `diff.mjs` +
+> `structure-diff.mjs`) with ONE self-contained, eval-injectable browser IIFE. It captures the
+> full analysis (MODE A on the LIVE reference) and then computes the **entire** diff in-page
+> (MODE B on the target — every detector here plus the structure pass), returning a structured,
+> prioritised, **actionable** `{ summary, findings:[{…, suggestedChange}], noiseExcluded }` the
+> skill's logic acts on directly. No Node diff step, no JSON round-trip. **Flow + contract:
+> [`run.md`](./run.md).**
+>
+> `extract-mock.js`, `diff.mjs`, and `structure-diff.mjs` are kept for **one version as a
+> deprecated fallback** (each carries a deprecation header) so nothing in-flight breaks; the rest
+> of this README documents that legacy pipeline and the detector rationale `analyze.js` ports
+> verbatim.
+
 Two scripts that turn "I diffed both sides" from an aspiration into a fact. They
 exist because the failure mode that ships drift is **eyeballing the dumps** — even
 with both sides measured to disk, scanning JSON by eye silently skips properties
@@ -195,6 +210,67 @@ single repeating root cause to ONE summary row (low-noise).
   BROADLY (any sized container) so a static counterpart still pairs — otherwise "mock animates, app static" is
   structurally unreportable. (Real: the nav "Book a demo" button's hover-colour transition, present on live,
   absent on the rebuild.)
+
+### v2.0.0 — interaction-state + responsive detectors (in `analyze.js`)
+
+Two whole classes survived v1.16: what the UI does on **hover/focus** (a state the static dump can
+never enter) and what it does at **other widths** (a single 1280 capture is blind to the mobile
+layout and to whether the breakpoint TRANSITION even agrees). Both are now in `analyze.js`, additive
+to every prior class (home 1280: all v1.14–v1.16 classes still fire at their baseline counts, plus
+`interaction` + `responsive`; total ~620 → 653, so noise stays controlled).
+
+- **`interaction` — `:hover` / `:focus` / `:focus-visible` / `:active`.** MODE A reads
+  `document.styleSheets` for each interactive element (`a, button, input, select, textarea, summary,
+  [role=button|link|tab|menuitem], [tabindex], [onclick]`, or `cursor:pointer`): collect rules whose
+  `selectorText` carries the pseudo, STRIP it, `element.matches(base)`, fold the matching rules'
+  VISUAL declarations (background/color/border/box-shadow/outline/opacity/transform/text-decoration/
+  filter) into a per-state override-set (`istates`). Each sheet's `.cssRules` is `try/catch`ed — a
+  cross-origin Framer/CDN sheet throws `SecurityError`; same-origin inline `<style>` (how diolog.app
+  ships) is readable; if EVERY sheet is unreadable the node records `istates.states:'unreadable'`.
+  MODE B pairs interactive elements (text+tag → nearest geometry) and diffs the override-sets →
+  `interaction/hover-bg`, `/hover-color`, `/hover-underline`, `/focus-outline`, `/<state>-state`
+  (one side wholly lacks the state), and `/states-unreadable` (cross-origin — reported ONCE,
+  low-severity, and NO false state-diffs). A repeating defect dedups to 3 rows + a `[×N elements]`
+  summary. (Real: the footer `a.Footer__styles.link` rows on home/persona/legal have a `:hover`
+  background + colour + underline on the Framer reference that the rebuild lacks.)
+- **`responsive` — per-width findings + desktop→mobile TRANSITION divergence.** The runner extracts
+  BOTH sides at `WIDTHS=[390,768,1280]` and hands MODE B `__MF_REFERENCE_BYWIDTH__` /
+  `__MF_TARGET_BYWIDTH__` (analyses keyed by `viewportW`). For KEY CONTAINERS (flex/grid boxes,
+  `<nav>`/`<header>`, card grids) it computes the 1280→390 TRANSITION per side (`display` /
+  `flex-direction` / grid track-count) and emits when the two sides' transitions DIVERGE →
+  `responsive/grid-cols-transition`, `/flex-direction-transition`, `/nav-hamburger-transition`. It
+  ALSO re-diffs at 390 and 768 (re-entrancy-guarded by `diff._inResponsive`) and surfaces the
+  highest-signal mobile findings prefixed `responsive/390px-…` / `responsive/768px-…`, capped per
+  width. (Real: home `div.framer-hz04no` is `flex/row`→`row` on the reference but `row`→`column` on
+  the target at 390 — a mobile stack the reference doesn't apply.) **Injection:** the multi-MB
+  bywidth maps exceed `ARG_MAX`, so serve them via the bundled `mfserve.js` (CORS static server) and
+  `fetch()` them in a small setref eval — full commands in [`run.md`](./run.md) § *v2.0.0*.
+
+### v2.0.1 — three false-positive FLOOD fixes + a discriminating score (in `analyze.js`)
+
+An independent verify of full-page web↔web runs found three false-positive floods (~25–30 % noise on
+home/persona/legal) and a score floored at 0/100. All three are fixed diff-side (capture unchanged), so the
+deprecated `extract-mock.js`/`diff.mjs` need no edit. Full rationale + before→after in [`run.md`](./run.md)
+§ *v2.0.1*.
+
+- **`rendered-font` is corroborated** — only flags a genuine target-vs-reference fallback (reference renders
+  the named face, target falls back) when corroborated by `document.fonts.check === false` OR a target
+  `wNamed ≈ wFallback` that is also distinctly ≠ the reference's `wNamed`; suppressed whenever the named face
+  is provably applied (`wNamed` distinct from the fallback). Kills the ~92 %-of-text-nodes flood, keeps the
+  genuine-fallback catch.
+- **Backdrop = EFFECTIVE backdrop** — full-bleed media child **OR** a CSS `background-image` (gradient/url)
+  on the element itself. `bg-media-layer absent` only when one side has a backdrop and the other has NONE;
+  both-present-but-different → lower-severity `value/backdrop-differs`. Kills the false Hero "FLAT" while
+  keeping the genuine flat-CTA gradient finding.
+- **Structure phantoms** — `buildMatch` adds a normalised-text fallback pairing (ignore tag, nearest
+  frame-normalised Y); any `missing`/`extra` whose text is present on the OTHER side too is routed to
+  `noiseExcluded.unpairedSameText`; unreliable cross-DOM `layout` pairing is logged to
+  `noiseExcluded.crossDomStructure`. Every remaining `missing`/`extra` is then a confident, genuine absence.
+- **Discriminating score** — `100·e^(−penalty/900)` (penalty weighted high=5/med=2/low=0.5), replacing the
+  `100 − penalty` cliff that floored every full page at 0. Ranks pages, tracks progress.
+
+`noiseExcluded` now has FOUR buckets — `repeatedTextMispairs`, `illustrationInternals`, `unpairedSameText`,
+`crossDomStructure` — all excluded from `findings`/`totalFindings`/`score`; consumers inspect them separately.
 
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
