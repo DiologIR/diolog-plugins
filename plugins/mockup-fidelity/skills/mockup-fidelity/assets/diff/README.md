@@ -295,6 +295,38 @@ measurement. Full rationale in [`run.md`](./run.md) § *v2.0.2*.
 (`capture()` is now async — awaits `document.fonts.ready` — so the injected IIFE is `(async function(){…})()`;
 `playwright-cli eval` awaits the returned promise transparently.)
 
+### v2.1.0 — RENDERED-GLYPH-SHAPE / font-feature-effectiveness detector (in `analyze.js` + `feature-check.mjs`)
+
+The v2.0.x checks compared DECLARED font props (incl. `font-feature-settings`) and whether the named family
+APPLIES. A real homepage bug passed ALL of them and was still wrong: body text declared
+`font-feature-settings:"cv11"` and "applied" Inter 15px/400 IDENTICALLY to live, and the controlled DOM-span
+width was identical (144.91 = 144.91) — yet the target rendered the **double-story** `a` while live rendered
+the **single-story** `a`, because the self-hosted Inter woff2 was a **SUBSET that STRIPPED the cv11
+character-variant glyph**, so the requested cv11 had no effect. Single- vs double-story `a` are the **SAME
+WIDTH**, so width / DOM-span / glyph-extent checks are structurally blind — only the rasterised glyph SHAPE
+reveals it. Full rationale + runner commands in [`run.md`](./run.md) § *v2.1.0*.
+
+- **Feature-effectiveness self-check (per side, strongest).** `capture()` records each text node's requested
+  `font-feature-settings` (`featReq`) and, per distinct `(family, weight, style, size, ffs)` combo, renders a
+  feature-sensitive probe (`a g l 0 1 ffi`) TWICE — once WITH the requested ffs, once with `normal` — and
+  tests whether the GLYPH SHAPE differs (width is NOT enough). WITH==WITHOUT (no pixel difference, ink
+  present) ⇒ the requested feature is INEFFECTIVE (the font lacks the glyph) ⇒ a high
+  `font/feature-ineffective` finding ({target: "cvXX requested but font lacks the glyph (renders default)",
+  suggestedChange: "self-host a full Inter that contains the cvXX glyphs — subset woff2 strip them"}).
+- **Cross-side glyph divergence (MODE B).** When the REFERENCE's same feature IS effective but the TARGET's
+  is not, MODE B escalates and names the reference — a true cross-side letterform divergence despite identical
+  computed font props.
+- **The rasteriser is TESTED, not assumed.** `capture()` probes `'fontFeatureSettings' in ctx`
+  (CanvasRenderingContext2D). **Supported → fully in-page** (pixel-hash both canvas variants). **NOT supported
+  (current Chromium) → runner-assisted:** an SVG-`<img>` rasteriser cannot see the page's loaded `@font-face`
+  faces, so `capture()` mounts persistent probe-PAIR nodes (recorded in `featureCheck.probes`, mounted after
+  the node walk so they never leak into `analysis.nodes`/`extra`), and the zero-dep `feature-check.mjs`
+  screenshots + pixel-diffs the pairs into `{ key, effective }` verdicts that you inject via
+  `globalThis.__MF_FEATURE_DIFFS__` for MODE B. If neither resolves a combo, MODE B emits ONE low
+  `font/feature-check-pending` note — never a silent pass. Validated on controlled fixtures: a full
+  InterVariable (cv11 ON vs OFF → ~5–12 % pixel difference ⇒ effective) vs a feature-less subset (0 % ⇒
+  INEFFECTIVE) — the detector fires high on the subset and does NOT flag when cv11 genuinely takes effect.
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present

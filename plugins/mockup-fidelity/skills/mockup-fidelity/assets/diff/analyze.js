@@ -400,6 +400,30 @@
 
       const fontRn = directText ? fontRender(cs) : null;
 
+      // FONT-FEATURE REQUEST (v2.1.0) — the computed `font-feature-settings` this text node REQUESTS
+      // (cvXX / ssXX / onum / lnum / tnum / pnum / zero / case / …). Recorded only for text nodes that
+      // actually request a non-default feature, so the post-walk RENDERED-GLYPH-SHAPE self-check can test
+      // whether each requested feature has any EFFECT (a subset webfont that stripped the cvXX glyph
+      // renders the default letterform despite the request — same WIDTH, so width/DOM-span checks are
+      // blind; only the rasterised glyph SHAPE reveals it). `firstFamily`/`weight`/`style`/`size` give the
+      // exact rendering inputs the self-check re-creates.
+      let featReq = null;
+      if (directText) {
+        const ffs = String(cs.fontFeatureSettings || 'normal');
+        const fff = firstFamily(cs.fontFamily);
+        if (ffs && ffs !== 'normal' && fff && !GENERIC.test(fff)) {
+          featReq = {
+            ffs,
+            family: cs.fontFamily,
+            first: fff,
+            weight: cs.fontWeight || '400',
+            style: cs.fontStyle || 'normal',
+            size: cs.fontSize || '16px',
+            features: (ffs.match(/["']([a-z]{2}\d{2}|[a-z]{3,4})["']|\b(onum|lnum|tnum|pnum|zero|case|smcp|c2sc|liga|dlig|salt|swsh|hist|frac|ordn|sups|subs)\b/gi) || []).slice(0, 12),
+          };
+        }
+      }
+
       // INTERACTION STATES — only resolve overrides for interactive elements (keeps the dump small).
       let istates = null;
       if (isInteractive(el)) istates = interactionStatesFor(el);
@@ -518,7 +542,7 @@
           h: +r.height.toFixed(1),
         },
         glyph, hardBreak, lines, wrap, bgLayer, fullBleedMedia, divider, hasSvgChild, arrowGlyph,
-        fontRn, pseudoContent, anims, istates, comp,
+        fontRn, featReq, pseudoContent, anims, istates, comp,
       });
       for (const c of el.children) walk(c, depth + 1, myIndex);
     };
@@ -540,6 +564,124 @@
       } catch (e) { return []; }
     })();
 
+    // ======================================================================
+    // RENDERED-GLYPH-SHAPE / FEATURE-EFFECTIVENESS SELF-CHECK (v2.1.0)
+    // ======================================================================
+    // The differ compares DECLARED font props (family/weight/size/letter-spacing/font-feature-settings)
+    // and whether the font APPLIES (DOM-span, not fallback) — but a requested OpenType feature
+    // (cv11 single-story 'a', ss01, onum old-style figures, …) can be DECLARED + the family can APPLY,
+    // yet have NO EFFECT because the self-hosted woff2 is a SUBSET that STRIPPED that feature's glyph.
+    // cv11 single-vs-double-story 'a' are the SAME WIDTH, so width / DOM-span / glyph-extent checks are
+    // structurally blind. The only signal is the rasterised glyph SHAPE.
+    //
+    // SELF-CHECK: for each distinct (family, weight, style, size, font-feature-settings) combo used by a
+    // text node that REQUESTS a feature, render a feature-sensitive probe ('a g l 0 1 …') TWICE in the
+    // element's exact computed font — once WITH the requested font-feature-settings and once with
+    // `normal` — and test whether they render DIFFERENTLY. WITH==WITHOUT (no pixel difference) ⇒ the
+    // requested feature is INEFFECTIVE (the font lacks the glyph) ⇒ a `font/feature-ineffective` finding.
+    //
+    // RASTERISATION MECHANISM — chosen by capability TEST, not assumption:
+    //  · canvas `ctx.fontFeatureSettings` (CanvasRenderingContext2D): if THIS Chromium supports it we draw
+    //    both variants to a canvas with the loaded document font and compare `getImageData` pixel hashes —
+    //    fully IN-PAGE, no runner round-trip. (As of current Chromium this is NOT implemented — we test
+    //    `'fontFeatureSettings' in ctx` at runtime and only take this path when true.)
+    //  · RUNNER-ASSISTED fallback (when canvas lacks the property): an SVG-`<img>` rasteriser cannot see
+    //    the page's loaded @font-face faces, so we instead render persistent on-screen probe-PAIR nodes
+    //    (`data-mf-fprobe`, the requested-ffs row directly above the normal row, same family/size/weight)
+    //    and record each pair's on/off RECTS + metadata in `featureCheck.probes`. The run.md flow then
+    //    screenshots the page and `feature-check.mjs` pixel-diffs each pair: identical pair ⇒ ineffective.
+    //    MODE B also consumes runner-injected results via `globalThis.__MF_FEATURE_DIFFS__` to emit the
+    //    finding inline. Probe nodes are parked off the visible frame (top-left of the viewport, high z)
+    //    so they don't disturb the measured layout (capture already finished the walk before they mount).
+    const featureCheck = (() => {
+      try {
+        // distinct combos that request a feature
+        const combos = new Map();
+        for (const n of out) {
+          if (!n.featReq) continue;
+          const fr = n.featReq;
+          const key = fr.first + '|' + fr.weight + '|' + fr.style + '|' + fr.size + '|' + fr.ffs;
+          if (!combos.has(key)) combos.set(key, { key, ...fr, sampleText: norm(n.text).slice(0, 8) || 'a', nodeIdxs: [] });
+          combos.get(key).nodeIdxs.push(n.i);
+        }
+        if (!combos.size) return { ran: false, reason: 'no feature-requesting text', canvasSupported: null, probes: [], combos: [] };
+
+        // capability TEST — does this Chromium's 2D context expose fontFeatureSettings?
+        let canvasSupported = false;
+        try {
+          const tc = document.createElement('canvas').getContext('2d');
+          canvasSupported = !!tc && ('fontFeatureSettings' in tc);
+        } catch (e) { canvasSupported = false; }
+
+        // a feature-sensitive probe string (covers cvXX 'a g l', figures, ligatures) — kept short.
+        const PROBE = 'a g l 0 1 ffi';
+
+        // ---- (A) IN-PAGE CANVAS path (preferred when supported) ----
+        if (canvasSupported) {
+          const W = 220, H = 64;
+          const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+          const ctx = cv.getContext('2d');
+          const hashOf = (ffs, combo) => {
+            ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+            ctx.fillStyle = '#000';
+            ctx.textBaseline = 'middle';
+            ctx.font = `${combo.style} ${combo.weight} ${px(combo.size) || 16}px ${combo.family}`;
+            try { ctx.fontFeatureSettings = ffs; } catch (e) {}
+            ctx.fillText(PROBE, 2, H / 2);
+            let dark = 0, sum = 0;
+            try {
+              const d = ctx.getImageData(0, 0, W, H).data;
+              for (let i = 0; i < d.length; i += 4) { const lum = (d[i] + d[i + 1] + d[i + 2]) / 3; if (lum < 140) { dark++; sum = (sum * 131 + (i >> 2)) % 2147483647; } }
+            } catch (e) { return null; }
+            return dark + ':' + sum;
+          };
+          const combosOut = [];
+          for (const c of combos.values()) {
+            const hOn = hashOf(c.ffs, c), hOff = hashOf('normal', c);
+            const effective = hOn != null && hOff != null ? hOn !== hOff : null;
+            combosOut.push({ key: c.key, first: c.first, weight: c.weight, style: c.style, size: c.size, ffs: c.ffs, features: c.features, nodeIdxs: c.nodeIdxs, effective, mechanism: 'canvas-fontFeatureSettings', hOn, hOff });
+          }
+          return { ran: true, mechanism: 'canvas-fontFeatureSettings', canvasSupported: true, probes: [], combos: combosOut };
+        }
+
+        // ---- (B) RUNNER-ASSISTED path — render persistent probe PAIRS for screenshot+pixel-diff ----
+        const host = document.createElement('div');
+        host.id = 'mf-fprobe-host';
+        host.setAttribute('aria-hidden', 'true');
+        host.style.cssText = 'position:fixed;left:0;top:0;z-index:2147483647;background:#fff;margin:0;padding:0;pointer-events:none;';
+        const PW = 240, PH = 30; // per probe-row
+        let row = 0;
+        const probes = [];
+        const combosOut = [];
+        for (const c of combos.values()) {
+          const yOn = row * PH, yOff = (row + 1) * PH;
+          const mk = (ffs, y, tag) => {
+            const d = document.createElement('div');
+            d.setAttribute('data-mf-fprobe', tag);
+            d.textContent = PROBE;
+            d.style.cssText = 'position:absolute;left:0;top:' + y + 'px;width:' + PW + 'px;height:' + PH + 'px;line-height:' + PH + 'px;'
+              + 'background:#fff;color:#000;white-space:nowrap;overflow:hidden;letter-spacing:normal;'
+              + 'font-family:' + c.family + ';font-weight:' + c.weight + ';font-style:' + c.style + ';font-size:' + c.size + ';'
+              + 'font-feature-settings:' + ffs + ';';
+            host.appendChild(d);
+            return d;
+          };
+          const idx = combosOut.length;
+          mk(c.ffs, yOn, 'on:' + idx);
+          mk('normal', yOff, 'off:' + idx);
+          // rects are relative to the viewport (position:fixed host at 0,0) → screenshot pixel coords (×DPR).
+          probes.push({ idx, key: c.key, onRect: { x: 0, y: yOn, w: PW, h: PH }, offRect: { x: 0, y: yOff, w: PW, h: PH } });
+          combosOut.push({ key: c.key, first: c.first, weight: c.weight, style: c.style, size: c.size, ffs: c.ffs, features: c.features, nodeIdxs: c.nodeIdxs, effective: null, mechanism: 'runner-screenshot' });
+          row += 2;
+        }
+        (document.body || document.documentElement).appendChild(host);
+        let dpr = 1; try { dpr = window.devicePixelRatio || 1; } catch (e) {}
+        return { ran: true, mechanism: 'runner-screenshot', canvasSupported: false, dpr, hostId: 'mf-fprobe-host', probes, combos: combosOut };
+      } catch (e) {
+        return { ran: false, reason: 'error:' + (e && e.message), canvasSupported: null, probes: [], combos: [] };
+      }
+    })();
+
     // FRAME content height — drift-aware (true scroll/content extent under the root).
     let contentH = f.height;
     try {
@@ -554,7 +696,7 @@
     let viewportW = f.width;
     try { viewportW = window.innerWidth || document.documentElement.clientWidth || f.width; } catch (e) {}
 
-    return { title: TITLE || SEL || 'body', viewportW, frame: { w: f.width, h: f.height, contentH }, fonts, nodes: out };
+    return { title: TITLE || SEL || 'body', viewportW, frame: { w: f.width, h: f.height, contentH }, fonts, featureCheck, nodes: out };
   }
 
   // ======================================================================
@@ -1012,6 +1154,84 @@
           if (!close(best.glyph.w, mi.glyph.w, 1.5)) add({ locator: loc, section: sect, class: 'icon', property: 'icon-glyph-w', target: best.glyph.w, reference: mi.glyph.w, deltaPx: +(Math.abs(best.glyph.w - mi.glyph.w)).toFixed(1), suggestedChange: `the drawn icon glyph width should be ${mi.glyph.w}px (currently ${best.glyph.w}px) at ${loc}` });
           if (!close(best.glyph.h, mi.glyph.h, 1.5)) add({ locator: loc, section: sect, class: 'icon', property: 'icon-glyph-h', target: best.glyph.h, reference: mi.glyph.h, deltaPx: +(Math.abs(best.glyph.h - mi.glyph.h)).toFixed(1), suggestedChange: `the drawn icon glyph height should be ${mi.glyph.h}px (currently ${best.glyph.h}px) at ${loc}` });
         }
+      }
+    }
+
+    // ============= RENDERED-GLYPH-SHAPE / FONT-FEATURE EFFECTIVENESS (v2.1.0) =============
+    // Two complementary signals, both reading the per-side `featureCheck` (capture-side self-check) that
+    // tested, per requested OpenType feature, whether rendering the same probe WITH vs WITHOUT the
+    // requested `font-feature-settings` produces a different GLYPH SHAPE:
+    //   (A) FEATURE-EFFECTIVENESS SELF-CHECK (strongest) — flag the TARGET's requested features that are
+    //       INEFFECTIVE (font lacks the glyph → renders default). This is the homepage cv11 bug: cv11
+    //       declared + applied identically to live, the controlled span widths matched, yet the target's
+    //       self-hosted Inter woff2 was a subset that stripped the cv11 glyph, so the requested cv11 had
+    //       no effect (double-story 'a' instead of single-story).
+    //   (B) CROSS-SIDE ESCALATION (MODE B) — when the REFERENCE's same feature IS effective but the
+    //       TARGET's is not, that is a real cross-side letterform divergence despite identical computed
+    //       font props → raise the severity and name the reference.
+    // `effective` is resolved EITHER in-page (canvas-fontFeatureSettings supported) OR by the runner
+    // (screenshot pixel-diff of the probe pairs, merged into featureCheck.combos before this pass).
+    {
+      const tfc = appDoc.featureCheck, rfc = refDoc.featureCheck;
+      const featureLabel = combo => {
+        const feats = (combo.features && combo.features.length) ? combo.features.map(s => String(s).replace(/["']/g, '')).join(', ') : combo.ffs;
+        return feats;
+      };
+      // index the reference combos by (first-family|features) so we can find the reference's verdict for
+      // the SAME requested feature on the SAME family, even if weight/size differ slightly.
+      const refByFeat = new Map();
+      if (rfc && rfc.combos) for (const rc of rfc.combos) {
+        const fk = (rc.first || '').toLowerCase() + '|' + (rc.ffs || '');
+        if (!refByFeat.has(fk)) refByFeat.set(fk, rc);
+      }
+      const fcLoc = combo => {
+        // a representative locator: the first target text node that uses this combo.
+        const ni = (combo.nodeIdxs || [])[0];
+        const n = ni != null ? appAll[ni] : null;
+        return n ? locatorFor(n) : `[text in ${combo.first} ${combo.size}/${combo.weight} feat:${featureLabel(combo)}]`;
+      };
+      const fcSect = combo => { const ni = (combo.nodeIdxs || [])[0]; const n = ni != null ? appAll[ni] : null; return n ? sectionFor(n, appLeads) : null; };
+      const featSeen = new Set();
+      if (tfc && tfc.combos) {
+        for (const tc of tfc.combos) {
+          if (tc.effective !== false) continue; // only INEFFECTIVE features are a defect (null = not yet resolved)
+          const fk = (tc.first || '').toLowerCase() + '|' + (tc.ffs || '');
+          if (featSeen.has(fk)) continue; featSeen.add(fk);
+          const rc = refByFeat.get(fk);
+          const lbl = featureLabel(tc);
+          const loc = fcLoc(tc), sect = fcSect(tc), count = (tc.nodeIdxs || []).length;
+          if (rc && rc.effective === true) {
+            // (B) cross-side divergence: reference renders the distinct letterform, target does not.
+            add({
+              locator: loc, section: sect, class: 'font', property: 'feature-ineffective',
+              target: `${lbl} requested but font lacks the glyph (renders default letterform)`,
+              reference: `${lbl} effective (distinct letterform rendered)`,
+              severity: 'high',
+              suggestedChange: `the reference renders a DISTINCT letterform for the requested ${lbl} on ${tc.first} (e.g. cv11 single-story 'a') but the target renders the DEFAULT glyph at the SAME width — its self-hosted ${tc.first} woff2 is a SUBSET that STRIPPED the ${lbl} glyph. Self-host a FULL ${tc.first} (the complete font with the cvXX/ssXX glyphs) so the declared font-feature-settings actually takes effect${count > 1 ? ` — affects ${count} text nodes` : ''}`,
+            });
+          } else {
+            // (A) self-check absolute: the target requests a feature that has no effect (font lacks glyph).
+            add({
+              locator: loc, section: sect, class: 'font', property: 'feature-ineffective',
+              target: `${lbl} requested but font lacks the glyph (renders default)`,
+              reference: rc && rc.effective === false ? `${lbl} also ineffective on reference` : `${lbl} requested`,
+              severity: rc && rc.effective === false ? 'low' : 'high',
+              suggestedChange: `self-host a full ${tc.first} that contains the ${lbl} glyphs (a subset woff2 strips them) — the requested font-feature-settings:${tc.ffs} has NO EFFECT on the rendered glyph shape (same width as the default, so width/DOM-span checks can't see it)${count > 1 ? ` — affects ${count} text nodes` : ''}`,
+            });
+          }
+        }
+      }
+      // honesty: if the target requested features but the verdict could not be resolved (runner pixel-diff
+      // not supplied AND canvas unsupported), surface ONE low note so a silent "no finding" isn't mistaken
+      // for "all features effective".
+      if (tfc && tfc.ran && tfc.mechanism === 'runner-screenshot' && tfc.combos && tfc.combos.some(c => c.effective == null)) {
+        const pending = tfc.combos.filter(c => c.effective == null).length;
+        add({
+          locator: '[font-feature self-check]', section: null, class: 'font', property: 'feature-check-pending',
+          target: `${pending} feature combo(s) unresolved`, reference: 'glyph-shape pixel-diff needed',
+          severity: 'low',
+          suggestedChange: `this Chromium lacks canvas fontFeatureSettings, so the rendered-glyph-shape self-check needs the RUNNER step: screenshot the page and run feature-check.mjs over analysis.featureCheck.probes (pixel-diff each on/off probe pair); inject the result via globalThis.__MF_FEATURE_DIFFS__ and re-run MODE B to resolve ${pending} requested OpenType feature(s)`,
+        });
       }
     }
 
@@ -1878,6 +2098,29 @@
     };
   }
 
+  // RUNNER-INJECTED FEATURE-EFFECTIVENESS RESULTS (v2.1.0).
+  // When canvas `fontFeatureSettings` is unsupported, the rendered-glyph-shape self-check needs a
+  // screenshot pixel-diff of the probe pairs (see capture()'s runner-screenshot path + feature-check.mjs).
+  // The runner pixel-diffs each pair and injects `globalThis.__MF_FEATURE_DIFFS__` — a map keyed by side
+  // ('reference'/'target') OR a flat array — of { key, effective } verdicts. We fold each verdict into the
+  // matching analysis.featureCheck.combos[].effective BEFORE the diff so MODE B can emit the finding.
+  const mergeFeatureDiffs = (analysis, side) => {
+    const inj = (typeof globalThis !== 'undefined' && globalThis.__MF_FEATURE_DIFFS__) || null;
+    if (!inj || !analysis || !analysis.featureCheck || !analysis.featureCheck.combos) return;
+    let list = Array.isArray(inj) ? inj : (inj[side] || inj.combos || null);
+    if (!list && !Array.isArray(inj)) {
+      // a flat object keyed by combo-key → verdict
+      list = Object.keys(inj).map(k => ({ key: k, effective: inj[k] && (inj[k].effective ?? inj[k]) }));
+    }
+    if (!Array.isArray(list)) return;
+    const byKey = new Map(list.map(v => [v.key, v]));
+    for (const c of analysis.featureCheck.combos) {
+      const v = byKey.get(c.key);
+      if (v && typeof v.effective === 'boolean') c.effective = v.effective;
+      else if (v && typeof v.effective === 'number') c.effective = v.effective > 0; // pctDifferent>0 ⇒ effective
+    }
+  };
+
   // ======================================================================
   // ENTRYPOINT
   // ======================================================================
@@ -1888,6 +2131,8 @@
     let ref = REFERENCE;
     if (typeof ref === 'string') { try { ref = JSON.parse(ref); } catch (e) {} }
     if (ref && ref.analysis && ref.analysis.nodes) ref = ref.analysis; // a saved MODE-B result → use its analysis
+    mergeFeatureDiffs(ref, 'reference');
+    mergeFeatureDiffs(targetAnalysis, 'target');
     result = diff(ref, targetAnalysis);
   } else {
     // MODE A — full analysis of the current page.

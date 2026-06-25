@@ -295,6 +295,78 @@ vs forced-fallback; arrow-present vs arrow-absent).
 > `(async function(){…})()` and resolves to the JSON string. `playwright-cli eval` awaits the returned
 > promise transparently — no runner change needed.
 
+## v2.1.0 — RENDERED-GLYPH-SHAPE / font-feature-effectiveness detector
+
+A whole defect class survived every prior check: a requested OpenType feature (a `cvXX` character variant
+like **cv11** single-story `a`, `ssXX`, `onum` old-style figures, …) that is DECLARED and whose family
+APPLIES (not a fallback) but that has NO EFFECT because the self-hosted woff2 is a **SUBSET that STRIPPED
+that feature's glyph**. The real homepage bug: body text declared `font-feature-settings:"cv11"` and
+"applied" Inter 15px/400 IDENTICALLY to live, and the controlled DOM-span width was identical
+(144.91 = 144.91) — yet the target rendered the **double-story** `a` while live rendered the **single-story**
+`a`, because the subset Inter woff2 lacked the cv11 glyph. Single- vs double-story `a` are the **SAME WIDTH**,
+so width / DOM-span / glyph-extent checks are structurally blind — only the rasterised glyph **SHAPE** sees it.
+
+`analyze.js` `capture()` records each text node's requested `font-feature-settings` (`featReq`) and runs a
+per-side SELF-CHECK: for each distinct `(family, weight, style, size, ffs)` combo, render a feature-sensitive
+probe (`a g l 0 1 ffi`) TWICE in the element's exact computed font — once WITH the requested ffs, once with
+`normal` — and test whether the GLYPH SHAPE differs (width is NOT enough; cv11 is same-width). **WITH==WITHOUT
+(no pixel difference, ink present) ⇒ the requested feature is INEFFECTIVE (the font lacks the glyph).** MODE B
+emits a high `font/feature-ineffective` finding for each ineffective requested feature on the target, and
+ESCALATES (names the reference) when the REFERENCE's same feature IS effective but the target's is not.
+
+### The rasterisation mechanism is TESTED, not assumed
+
+`capture()` probes `'fontFeatureSettings' in ctx` (CanvasRenderingContext2D) at runtime:
+
+- **canvas supported → fully IN-PAGE.** It draws both variants to a canvas with the loaded document font and
+  compares `getImageData` pixel hashes; `featureCheck.combos[].effective` is resolved in the analysis itself,
+  **no runner step**.
+- **canvas NOT supported (current Chromium) → RUNNER-assisted.** An SVG-`<img>` rasteriser cannot see the
+  page's loaded `@font-face` faces, so `capture()` instead mounts persistent on-screen probe-PAIR nodes
+  (`data-mf-fprobe`, the requested-ffs row directly above the `normal` row, same family/size/weight, parked at
+  the viewport origin and mounted AFTER the node walk so they never enter `analysis.nodes` / become `extra`
+  findings) and records each pair's on/off rects in `analysis.featureCheck.probes`. You then **screenshot the
+  page and pixel-diff the pairs**.
+
+#### Exact runner commands (canvas-unsupported path)
+
+```bash
+# (1) MODE A on BOTH sides — capture() mounts the probe host; screenshot the page WHILE it is mounted.
+mka_feat () { # url out png
+  playwright-cli open "$1"; playwright-cli resize 1280 2000; sleep 1.5
+  playwright-cli eval "() => { globalThis.__MF_OPTS__={chromeSelector:'__none__'}; globalThis.__MF_REFERENCE__=null; return 'a'; }"
+  playwright-cli eval "$(cat analyze.js)" --raw > "$2"     # analysis JSON (has featureCheck.probes)
+  playwright-cli screenshot --filename "$3"                # probe host still mounted → screenshot
+}
+mka_feat "https://diolog.app/"  reference.json  ref-page.png   # LIVE reference
+mka_feat "http://diolog.site/"  target.json     tgt-page.png   # target
+
+# (2) Pixel-diff each on/off probe pair → per-side { key, effective } verdicts.
+node feature-check.mjs --analysis reference.json --png ref-page.png --out ref-featdiffs.json
+node feature-check.mjs --analysis target.json    --png tgt-page.png --out tgt-featdiffs.json
+#   effective:false  = the requested feature has NO effect (subset font lacks the glyph) — the defect.
+
+# (3) Inject the verdicts (per side) and run MODE B — it folds them into featureCheck.combos[].effective
+#     before diffing and emits the font/feature-ineffective finding (escalated when ref is effective).
+node -e 'const fs=require("fs");let ref=JSON.parse(fs.readFileSync("reference.json","utf8"));if(typeof ref==="string")ref=JSON.parse(ref);
+  const rFD=JSON.parse(fs.readFileSync("ref-featdiffs.json","utf8")), tFD=JSON.parse(fs.readFileSync("tgt-featdiffs.json","utf8"));
+  const diffs={reference:rFD.map(v=>({key:v.key,effective:v.effective})), target:tFD.map(v=>({key:v.key,effective:v.effective}))};
+  fs.writeFileSync("__setref.js","() => { globalThis.__MF_OPTS__={chromeSelector:\"__none__\"}; globalThis.__MF_REFERENCE__="+JSON.stringify(ref)+"; globalThis.__MF_FEATURE_DIFFS__="+JSON.stringify(diffs)+"; return \"r\"; }")'
+playwright-cli open "http://diolog.site/"; playwright-cli resize 1280 2000; sleep 1.5
+playwright-cli eval "$(cat __setref.js)"
+playwright-cli eval "$(cat analyze.js)" --raw > findings.json     # MODE B with feature-effectiveness resolved
+```
+
+> **Honest "unresolved" note, never a silent pass.** If canvas is unsupported AND no
+> `globalThis.__MF_FEATURE_DIFFS__` was injected, MODE B emits ONE low `font/feature-check-pending` row
+> naming how many requested feature combos still need the runner pixel-diff — so an un-run self-check can't be
+> mistaken for "all features effective". When canvas IS supported the whole check is in-page and this note
+> never appears.
+
+> **Same-viewport / same-DPR.** `feature-check.mjs` reads `featureCheck.dpr` (recorded at capture) and scales
+> the probe rects to screenshot pixels; pass `--dpr N` to override. The probe pairs are tiny (a few 240×30px
+> rows at the viewport origin), so the page screenshot already contains them.
+
 ### Notes
 
 - **`playwright-cli eval` echoes the script source to stdout** — that's harmless noise. The real
@@ -330,4 +402,8 @@ gaps/grid-track-count+ratio), **(2) vertical-rhythm** (doc-height + cumulative-t
 contributors), **(3) value-precision** (shadow-value, gradient signature, precise bg/border colour
 deltaE, 4-corner radius), **(4) transform/opacity/filter** (matrix decompose), **(5) pseudo-content**
 (`•` / `counter()` / `→` / `url()`, deduped), **(6) animation/transition presence** — plus the
-**structure-diff** pass (grid-columns, child-count, MISSING in-mock, EXTRA target-only).
+**structure-diff** pass (grid-columns, child-count, MISSING in-mock, EXTRA target-only) — and the **v2.0.0**
+**interaction**-state + **responsive** detectors, and the **v2.1.0 rendered-glyph-shape /
+font-feature-effectiveness** detector (`font/feature-ineffective` — a requested `cvXX`/`ssXX`/`onum` feature
+that the subset webfont renders with NO effect, caught by a glyph-SHAPE pixel comparison, in-page via canvas
+`fontFeatureSettings` where supported else via the `feature-check.mjs` runner step).
