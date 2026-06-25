@@ -89,6 +89,55 @@
     'position', 'flexWrap', 'gridTemplateRows',
   ];
 
+  // RENDERED-FONT fingerprint (improvement D) — the declared computed `font-family`
+  // can MATCH the reference while the element actually renders in a FALLBACK face
+  // (the named webfont never loaded/applied on this origin). `document.fonts.check`
+  // is necessary but NOT sufficient — on some origins a face registers as "loaded"
+  // yet does not serve glyphs to rendered text (a Next/Framer hydration or CSP quirk),
+  // so `check('400 16px Inter')` returns true while text set in Inter measures at the
+  // generic-fallback width. The ground truth is a GLYPH METRIC: measure a fixed probe
+  // string via canvas in (a) the element's exact declared family stack, (b) the SAME
+  // stack with the leading NAMED families stripped (the generic-only baseline), and
+  // (c) the first named family ALONE. If (a) ≈ (b) the named face is NOT actually
+  // rendering (it fell straight to the generic); if (a) clearly differs from (b) it IS.
+  // We compare that boolean + the metric ratio across sides, so "declared Inter but
+  // rendered fallback on target, real Inter on ref" is caught even though both declare
+  // Inter and both `fonts.check` true. Memoised by family|weight|style|size.
+  const _mctx = (() => { try { return document.createElement('canvas').getContext('2d'); } catch (e) { return null; } })();
+  const FONT_PROBE = 'Diolog workspace 20 — investor-facing AaBbGg';
+  const GENERIC = /^(serif|sans-serif|monospace|system-ui|cursive|fantasy|ui-sans-serif|ui-serif|ui-monospace|-apple-system|"?BlinkMacSystemFont"?)$/i;
+  const firstFamily = (fam) => String(fam || '').split(',')[0].replace(/["']/g, '').trim();
+  const stripNamed = (fam) => {
+    // keep only the trailing generic(s) of the stack, so this is the "what the browser
+    // falls back to" baseline. If the stack has no generic, default to sans-serif.
+    const parts = String(fam || '').split(',').map(s => s.replace(/["']/g, '').trim());
+    const generics = parts.filter(p => GENERIC.test(p));
+    return (generics.length ? generics : ['sans-serif']).join(', ');
+  };
+  const _fontCache = new Map();
+  const fontRender = (cs) => {
+    if (!_mctx) return null;
+    const fam = cs.fontFamily, w = cs.fontWeight || '400', st = cs.fontStyle || 'normal', sz = cs.fontSize || '16px';
+    const first = firstFamily(fam);
+    if (!first || GENERIC.test(first)) return null; // already a generic — nothing to verify
+    const key = first + '|' + w + '|' + st + '|' + sz;
+    if (_fontCache.has(key)) return _fontCache.get(key);
+    const base = stripNamed(fam);
+    const meas = (stack) => { _mctx.font = `${st} ${w} ${sz} ${stack}`; return +_mctx.measureText(FONT_PROBE).width.toFixed(1); };
+    const wDeclared = meas(fam);            // the element's real stack
+    const wFallback = meas(base);           // generic-only baseline
+    const wNamed = meas(`"${first}"`);      // the first named family alone
+    // The named face is genuinely rendering when the declared stack does NOT collapse to
+    // the generic baseline (allow ~0.5px sub-pixel jitter). `available` is the additional
+    // fonts.check signal (kept for diagnosis); the metric is the authoritative one.
+    let available = false;
+    try { available = document.fonts.check(`${st} ${w} ${sz} "${first}"`); } catch (e) {}
+    const rendering = Math.abs(wDeclared - wFallback) > 0.5;
+    const v = { family: first, available, rendering, wDeclared, wFallback, wNamed };
+    _fontCache.set(key, v);
+    return v;
+  };
+
   const out = [];
   const walk = (el, depth, parent) => {
     if (el.matches && el.matches(CHROME)) return;
@@ -147,6 +196,39 @@
     for (const c of el.children) if (c.tagName === 'BR') { hardBreak = true; break; }
     let lines = null;
     if (directText) { try { const rng = document.createRange(); rng.selectNodeContents(el); lines = rng.getClientRects().length; } catch (e) {} }
+    // WRAP-POINT (improvement C) — the line COUNT can match while the BREAK POSITION
+    // differs (a tagline that wraps after a different word). Reconstruct the rendered
+    // line boxes by walking the leading text node char-by-char and grouping by `top`,
+    // then capture the FIRST line's text + an x for where line 1 ends. Diffing the
+    // first-line text catches "wraps after the hyphen in investor-facing" on live vs a
+    // different word on target even at equal line count. Cheap: only for nodes whose
+    // direct text actually wraps (lines > 1) and is a real sentence (has a space).
+    let wrap = null;
+    if (directText && lines && lines > 1 && /\s/.test(directText)) {
+      try {
+        const tn = [...el.childNodes].find(n => n.nodeType === 3 && n.textContent.replace(/\s+/g, ' ').trim());
+        if (tn) {
+          const s = tn.textContent; const rng2 = document.createRange();
+          let curTop = null, cur = '', lineArr = [], firstEndX = null;
+          for (let i = 0; i < s.length; i++) {
+            rng2.setStart(tn, i); rng2.setEnd(tn, i + 1);
+            const rects = rng2.getClientRects(); if (!rects.length) { cur += s[i]; continue; }
+            const top = Math.round(rects[0].top);
+            if (curTop === null) curTop = top;
+            if (Math.abs(top - curTop) > 3) {
+              if (lineArr.length === 0) firstEndX = +(rects[0].left - f.left).toFixed(1);
+              lineArr.push(cur.replace(/\s+/g, ' ').trim()); cur = ''; curTop = top;
+            }
+            cur += s[i];
+          }
+          if (cur.trim()) lineArr.push(cur.replace(/\s+/g, ' ').trim());
+          if (lineArr.length > 1) wrap = { first: lineArr[0], n: lineArr.length, endX: firstEndX };
+        }
+      } catch (e) { /* detached/hidden — skip */ }
+    }
+    // RENDERED-FONT fingerprint (improvement D) — see fontRender() above. Only for nodes
+    // with their own visible text (the rendered face is what the eye reads).
+    const fontRn = directText ? fontRender(cs) : null;
     // FULL-BLEED BACKGROUND LAYER — a "background" can be an <img>/<canvas>/<svg> child sized to
     // the element (a Framer hero gradient is an <img>, INVISIBLE to a `background-image` check).
     // Capture a near-full-size media child so the differ can compare it as a background.
@@ -161,6 +243,59 @@
         }
       }
     }
+    // CONTAINER FULL-BLEED MEDIA (improvement A) — a section's gradient/texture layer is
+    // frequently an ABSOLUTELY-POSITIONED descendant (not a direct child) sized to cover the
+    // section — a sibling of the content column, so it is NEVER an ancestor of any text node
+    // and the text-probe box-walk can't reach it. Scan ALL descendants for a media element
+    // (img/canvas/svg/video) or a positioned div carrying a background-image that covers ≥0.9×
+    // this node's width and ≥0.6× its height. This surfaces the CTA-band gradient (a full-bleed
+    // <img> SVG on live, flat-colour on target) to the container pass.
+    let fullBleedMedia = null;
+    if (r.width >= 400 && r.height >= 120) {
+      for (const d of el.querySelectorAll('img, canvas, svg, video')) {
+        const dr = d.getBoundingClientRect();
+        if (dr.width >= 0.9 * r.width && dr.height >= 0.6 * r.height) {
+          fullBleedMedia = { tag: d.tagName.toLowerCase(), src: (d.getAttribute('src') || d.getAttribute('href') || d.currentSrc || '').slice(0, 100) };
+          break;
+        }
+      }
+      if (!fullBleedMedia) {
+        for (const d of el.querySelectorAll('div, span')) {
+          const dcs = getComputedStyle(d);
+          if (!dcs.backgroundImage || dcs.backgroundImage === 'none') continue;
+          if (!/absolute|fixed/.test(dcs.position)) continue;
+          const dr = d.getBoundingClientRect();
+          if (dr.width >= 0.9 * r.width && dr.height >= 0.6 * r.height) {
+            fullBleedMedia = { tag: 'css-bg', src: dcs.backgroundImage.slice(0, 100) };
+            break;
+          }
+        }
+      }
+    }
+    // THIN-LINE DIVIDER (improvement A) — a ≥page-wide 1–2px hairline (an <hr>, a thin
+    // backgrounded box, OR a border-top/bottom on a wide element) is a non-text container
+    // the text-probe differ never reaches. Flag the node when it reads as such a line, so a
+    // divider present on live but absent on target (and vice-versa) is matched & compared.
+    // Read from the FOLDED `comp` (not raw `cs`) so a hairline drawn on a ::after/::before
+    // overlay — the common page-builder pattern, already folded into comp.borderTopWidth
+    // above — counts as a real divider (the footer rule on diolog.app lives on ::after).
+    let divider = null;
+    {
+      const bt = parseFloat(comp.borderTopWidth) || 0, bb = parseFloat(comp.borderBottomWidth) || 0;
+      const wide = r.width >= 0.4 * f.width;
+      const bgSolid = cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent';
+      if (wide && !directText && r.height > 0 && r.height <= 3 && (bgSolid || el.tagName === 'HR')) {
+        divider = { kind: 'line', thickness: +r.height.toFixed(1), color: cs.backgroundColor };
+      } else if (wide && (bt >= 1 || bb >= 1)) {
+        const side = bt >= 1 ? 'top' : 'bottom';
+        divider = { kind: 'border-' + side, thickness: side === 'top' ? bt : bb, color: side === 'top' ? comp.borderTopColor : comp.borderBottomColor };
+      }
+    }
+    // SVG CHILD presence (improvement B) — a button/link with a trailing ARROW carries an
+    // <svg> child the text-probe loop never sees. Capture a flag so a button that gains/loses
+    // its arrow (vs the reference) is caught once the button is paired by position.
+    let hasSvgChild = false;
+    for (const c of el.children) { const t = c.tagName.toLowerCase(); if (t === 'svg' || (t === 'img' && (c.getAttribute('src') || '').includes('.svg'))) { hasSvgChild = true; break; } }
     const myIndex = out.length;
     // Stable ANCHOR id (improvement #2): match elements by an explicit, layout-stable
     // identity instead of by text — kills the text-collision mispairs (nav "diolog"
@@ -190,7 +325,12 @@
       glyph,
       hardBreak,
       lines,
+      wrap,            // improvement C — first-line text + break-x
       bgLayer,
+      fullBleedMedia,  // improvement A — container's full-bleed gradient/media layer
+      divider,         // improvement A — thin page-wide hairline / wide border
+      hasSvgChild,     // improvement B — trailing-arrow svg child on a button
+      fontRn,          // improvement D — rendered-font fingerprint
       comp,
     });
     for (const c of el.children) walk(c, depth + 1, myIndex);

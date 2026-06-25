@@ -220,6 +220,32 @@ function mockStyledAncestor(node) {
 }
 const mockHasShadow = c => !!c && !!c.boxShadow && c.boxShadow !== 'none';
 
+// letter-spacing in px — `normal` resolves to 0 (its rendered value for tracking).
+const lsPx = v => { if (v == null) return null; if (/normal/i.test(String(v))) return 0; return px(v); };
+
+// The nearest BUTTON/LINK-styled ancestor of a text node — an <a>/<button>, or a styled box
+// that looks like a control (has a background/border + a small height + horizontal padding).
+// Used for the button-arrow / button-geometry / tracking checks (improvement B): the mock's
+// label is a text span INSIDE the <a>, so the arrow/height/width live on the ancestor.
+function isButtonish(n) {
+  if (!n) return false;
+  if (n.tag === 'a' || n.tag === 'button') return true;
+  const c = n.comp || {};
+  const r = n.rect || {};
+  const hasBox = (toHex(c.backgroundColor) !== 'transparent' && c.backgroundColor) || (c.boxShadow && c.boxShadow !== 'none') || (px(c.borderTopWidth) > 0) || px(c.borderTopLeftRadius) >= 4;
+  return !!hasBox && r.h > 0 && r.h <= 64 && px(c.paddingLeft) >= 8;
+}
+function buttonAncestor(node, byId) {
+  let cur = node, hops = 0;
+  while (cur && hops++ < 6) { if (isButtonish(cur)) return cur; cur = byId.get(cur.parent); }
+  return null;
+}
+function mockButtonAncestor(node) {
+  let cur = node, hops = 0;
+  while (cur && hops++ < 6) { if (isButtonish(cur)) return cur; cur = cur.parent >= 0 ? mock[cur.parent] : null; }
+  return null;
+}
+
 // ---------- diff ----------
 const rows = [], oks = [], unmatched = [];
 const rec = (el, prop, a, m, ok) => rows.push({ el, prop, app: a, mock: m, ok });
@@ -268,7 +294,25 @@ for (const mn of mock) {
   if (!text && !isPh) continue;
   if (CHROME_TXT.test(text)) continue;
 
-  const an = isPh ? app.find(n => A.placeholder(n) === text) : app.find(n => A.text(n) === text);
+  // REPEATED-TEXT DISAMBIGUATION (improvement B) — when the probe text is NON-unique
+  // (e.g. "Book a demo" appears in nav, hero AND the cta-band), `app.find` returns the
+  // FIRST match, so the cta-band instance is never compared to live's cta-band instance
+  // (it mispairs to the nav button). Instead: collect ALL same-text app candidates and
+  // pick the one whose VERTICAL position best matches this mock node's — normalised by
+  // frame height so the two pages' accumulated drift cancels. With a single candidate
+  // this is identical to the old behaviour; with several it pairs by structural position.
+  const cands = isPh
+    ? app.filter(n => A.placeholder(n) === text)
+    : app.filter(n => A.text(n) === text);
+  let an;
+  if (cands.length <= 1) an = cands[0];
+  else {
+    const mYrel = (mn.rect?.y ?? 0) / (mockFrameW ? (mockDoc.frame?.h || 1) : 1);
+    const mYn = (mn.rect?.y ?? 0) / (mockDoc.frame?.h || 1);
+    an = cands
+      .map(n => ({ n, d: Math.abs(((A.rect(n)?.y ?? 0) / (appDoc.frame?.h || mockDoc.frame?.h || 1)) - mYn) }))
+      .sort((a, b) => a.d - b.d)[0].n;
+  }
   if (!an) { if (text) unmatched.push({ text, tag: mn.tag, cls: mn.cls }); continue; }
 
   const elName = isPh ? `[placeholder] "${text}"` : `"${text}"`;
@@ -312,6 +356,46 @@ for (const mn of mock) {
     // BACKGROUND MEDIA LAYER — a hero "gradient" / texture is often an <img>/<canvas>/<svg>
     // child, invisible to a `background-image` computed-style check. Compare presence+type.
     if (mn.bgLayer) rec(elName, 'bg-media-layer', an.bgLayer ? an.bgLayer.tag : 'none', mn.bgLayer.tag, !!an.bgLayer && an.bgLayer.tag === mn.bgLayer.tag);
+    // WRAP-POINT (improvement C) — the line COUNT can match while the BREAK POSITION differs
+    // (a tagline that wraps after a different word). Compare the FIRST rendered line's text:
+    // if both sides wrap but line 1 ends on a different word, flag it. (line-count already
+    // covers the unequal-count case; this is the equal-count, different-break case.)
+    if (mn.wrap && an.wrap && mn.wrap.first && an.wrap.first) {
+      rec(elName, 'wrap-point(line1)', JSON.stringify(an.wrap.first), JSON.stringify(mn.wrap.first), an.wrap.first === mn.wrap.first);
+    }
+    // RENDERED-FONT (improvement D) — the declared font-family can MATCH while the element
+    // actually renders in a FALLBACK (the named face never applied on this origin). The
+    // extractor's glyph-metric fingerprint (fontRn) says whether the first declared family is
+    // truly rendering. Flag when the reference renders its named face but the target does NOT
+    // (declared-vs-rendered drift) — this is the governance-bullet / role-views-body "wrong
+    // font" class, invisible to font-size / family-kind / family-not-loaded (all match).
+    if (mn.fontRn && an.fontRn && mn.fontRn.family.toLowerCase() === an.fontRn.family.toLowerCase()) {
+      if (mn.fontRn.rendering && !an.fontRn.rendering) {
+        rec(elName, 'rendered-font',
+          `fallback (${an.fontRn.family} declared, not applied)`,
+          `${mn.fontRn.family} (applied)`, false);
+      }
+    }
+    // BUTTON ARROW + GEOMETRY + TRACKING (improvement B) — once a cta-band button pairs to the
+    // RIGHT instance (position-disambiguated above), compare the things that distinguish a
+    // mock button from a heavier target one: a trailing ARROW (svg child), the button HEIGHT &
+    // WIDTH (left/right-anchored buttons are skipped by the centred-only 📐 geometry, so check
+    // them explicitly here), and letter-spacing. Scoped to genuine button/link-styled nodes so
+    // it doesn't fire on prose. Compare the styled ancestor's box (the <a>/<button>) for svg &
+    // geometry, since the mock probe's text node sits inside it.
+    {
+      const aBtn = buttonAncestor(an, appById), mBtn = mockButtonAncestor(mn);
+      if (mBtn && aBtn) {
+        if (mBtn.hasSvgChild !== undefined)
+          rec(elName, 'button-arrow(svg)', !!aBtn.hasSvgChild, !!mBtn.hasSvgChild, !!aBtn.hasSvgChild === !!mBtn.hasSvgChild);
+        if (mBtn.rect && aBtn.rect) {
+          rec(elName, 'button-height', Math.round(aBtn.rect.h), Math.round(mBtn.rect.h), close(aBtn.rect.h, mBtn.rect.h, 3));
+          rec(elName, 'button-width', Math.round(aBtn.rect.w), Math.round(mBtn.rect.w), close(aBtn.rect.w, mBtn.rect.w, 8));
+        }
+        const mLs = lsPx(mBtn.comp?.letterSpacing), aLs = lsPx(aBtn.comp?.letterSpacing);
+        if (mLs != null && aLs != null) rec(elName, 'button-letter-spacing', aLs, mLs, close(aLs, mLs, 0.2));
+      }
+    }
     // gap to the next sibling (and to the previous — catches a NON-text leading row like an icon
     // tile whose gap to this label is the only signal). Same-viewport only; tolerate 3px.
     if (GEOM) {
@@ -457,6 +541,239 @@ if (GEOM) {
       rec(label, '📐 icon-glyph-w', best.glyph.w, mi.glyph.w, close(best.glyph.w, mi.glyph.w, 1.5));
       rec(label, '📐 icon-glyph-h', best.glyph.h, mi.glyph.h, close(best.glyph.h, mi.glyph.h, 1.5));
     }
+  }
+}
+
+// ---------- NON-TEXT CONTAINER PASS (improvement A) ----------
+// The text-probe differ only style-checks elements it pairs BY TEXT (or their nearest styled
+// ancestor), so it is BLIND to section / card / divider CONTAINERS that carry no text — a
+// section with a gradient/media-layer bg, a card's border, a page-wide hairline. Match those
+// containers STRUCTURALLY (by a tag-path key, the same approach as structure-diff.mjs) and
+// compare: background-color, a full-bleed media/gradient LAYER (fullBleedMedia), border
+// (top/bottom width+colour, folded from ::after) + radius, box-shadow, and a thin-line DIVIDER.
+// This is where cases 1 (section gradient flat on target), 4 (missing footer rule) and 8
+// (role-views cards lost their border) surface — none of which any text probe can reach.
+{
+  // structural path: tag chain + child-index from root (stable identity without text)
+  const kidsByParent = arr => { const m = new Map(); for (const n of arr) { if (!m.has(n.parent)) m.set(n.parent, []); m.get(n.parent).push(n); } return m; };
+  const mKidsP = kidsByParent(mock), aKidsP = kidsByParent(appAll);
+  const pathOf = (nodes, kids, n) => {
+    const parts = []; let cur = n, hops = 0;
+    while (cur && cur.parent >= 0 && hops++ < 40) {
+      const sibs = kids.get(cur.parent) || [];
+      parts.unshift(`${cur.tag}[${sibs.indexOf(cur)}]`);
+      cur = nodes[cur.parent];
+    }
+    return parts.join('/');
+  };
+  // a CONTAINER worth comparing: non-text, has visual identity (a bg, a border, a radius, a
+  // media/gradient layer, OR is a wide divider) and is reasonably large (a section/card/rule —
+  // not a 1px decorative dot). Skip the frame root itself (handled by [screen background]).
+  const isContainer = n => {
+    if (!n || n.tag === 'body' || /\b(body|scr|frame|screen)\b/.test(n.cls || '')) return false;
+    if (norm(n.text)) return false; // has its OWN text → already probed
+    const c = n.comp || {}; const r = n.rect || {};
+    if ((r.w || 0) < 80 || (r.h || 0) < 8) return false;
+    const hasBg = toHex(c.backgroundColor) !== 'transparent' && c.backgroundColor;
+    const hasBorder = (px(c.borderTopWidth) || 0) > 0 || (px(c.borderBottomWidth) || 0) > 0;
+    const hasRadius = (px(c.borderTopLeftRadius) || 0) >= 4;
+    const hasShadow = c.boxShadow && c.boxShadow !== 'none';
+    return !!(hasBg || hasBorder || hasRadius || hasShadow || n.fullBleedMedia || n.divider);
+  };
+  const mockContainers = mock.filter(isContainer);
+  const appByPath = new Map();
+  for (const a of appAll) if (isContainer(a)) { const p = pathOf(appAll, aKidsP, a); if (!appByPath.has(p)) appByPath.set(p, a); }
+  // also index app containers by a geometry key (rounded x/w) as a fallback when the structural
+  // paths drift (a wrapper div added/removed on one side) — pick the nearest-Y.
+  //
+  // TAG-AGNOSTIC geometry key (reliability fix): the SAME card is frequently a different ELEMENT
+  // TYPE across sides — a Framer reference draws a clickable card as an `<a>` while the rebuilt
+  // target renders it as a `<div>` (this is exactly the role-views "One workspace, every
+  // investor-facing desk" cards: mock `a @y3298 w359 bt=1 #e5e9f0`, target `div @y3079 w359
+  // bt=0`). A tag-locked key (`a|x|w` vs `div|x|w`) NEVER matches them, so the 1-vs-0 border
+  // comparison silently never runs and the missing-border defect is undetectable. So key the
+  // geometry index on x/w ONLY (no tag) — a card's POSITION + WIDTH is its stable identity here,
+  // and the border/bg/radius/shadow comparison is tag-independent. The structural-path pass above
+  // (which IS tag-aware) still runs first and wins for the cases where the markup matches, so this
+  // only changes behaviour for the cross-tag cards the old key dropped — no new noise on matches.
+  const geomKey = a => `${Math.round((a.rect.x || 0) / 8) * 8}|${Math.round((a.rect.w || 0) / 8) * 8}`;
+  const appByGeom = new Map();
+  for (const a of appAll) if (isContainer(a)) {
+    const k = geomKey(a);
+    if (!appByGeom.has(k)) appByGeom.set(k, []);
+    appByGeom.get(k).push(a);
+  }
+  const cFails = [], cUsed = new Set();
+  // DEDUP nested wrappers that carry the SAME full-bleed media / divider over the same Y-band:
+  // a gradient layer is usually 2–3 nested absolute divs (a relative→absolute→img chain), all of
+  // which would otherwise each emit an identical "media-layer absent" row. Collapse them by
+  // (kind|src|rounded-y) so the section-level finding is reported once. The SAME key dedups across
+  // BOTH the unpaired-absent branch and the paired branch (a media-layer/divider can be reported
+  // by either depending on whether a sibling wrapper paired), so a single defect reports once.
+  const mediaDedupKey = n => (n.fullBleedMedia ? 'media|' + n.fullBleedMedia.src : 'div|' + (n.divider?.kind || '')) + '|' + Math.round((n.rect.y || 0) / 24);
+  const absentSeen = new Set();
+  for (const m of mockContainers) {
+    const mp = pathOf(mock, mKidsP, m);
+    let a = appByPath.get(mp);
+    if (!a) {
+      // geometry fallback: same x/w bucket (tag-AGNOSTIC — a card may be `<a>` on the mock and
+      // `<div>` on the target, see geomKey above), nearest normalised Y (within 4% of frame H).
+      // Disambiguate WITHIN the bucket by a combined fit so a tag-agnostic key can't mispair two
+      // co-located full-width wrappers (a transparent outer div ↔ the dark nav bar): score each
+      // candidate by normalised-Y distance + a HEIGHT mismatch penalty, and prefer the SAME tag on
+      // a near-tie. Also gate on the height being comparable (within 40% or 60px) so a 58px header
+      // never pairs to a 248px card sharing its x/w.
+      const bucket = (appByGeom.get(geomKey(m)) || []).filter(n => !cUsed.has(n.i));
+      if (bucket.length) {
+        const mYn = (m.rect.y || 0) / (mockDoc.frame?.h || 1), mH = m.rect.h || 0;
+        const scored = bucket.map(n => {
+          const dY = Math.abs((n.rect.y || 0) / (appDoc.frame?.h || 1) - mYn);
+          const dH = Math.abs((n.rect.h || 0) - mH);
+          const hOk = dH <= Math.max(60, 0.4 * mH);
+          // cost: Y distance dominates; height delta is a tie-breaker (scaled to the same range);
+          // a different tag adds a tiny penalty so an exact-tag match wins an otherwise-tie.
+          const cost = dY + (dH / (mockDoc.frame?.h || 1)) * 0.5 + (n.tag === m.tag ? 0 : 0.005);
+          return { n, dY, hOk, cost };
+        }).filter(s => s.hOk).sort((x, y) => x.cost - y.cost)[0];
+        if (scored && scored.dY <= 0.04) a = scored.n;
+      }
+    }
+    if (!a) {
+      // A meaningful NON-TEXT visual the target never built: a section's full-bleed gradient/media
+      // layer, or a page-wide divider/rule. (A plain styled wrapper with no counterpart is NOT
+      // reported here — too noisy; only the media-layer + divider classes, which are the real
+      // "section gradient flat" / "rule missing" defects this pass exists to catch.)
+      if (!m.fullBleedMedia && !m.divider) continue;
+      const what = m.fullBleedMedia ? `media-layer ${m.fullBleedMedia.tag}` : `divider ${m.divider.kind}`;
+      const dk = mediaDedupKey(m);
+      if (absentSeen.has(dk)) continue; absentSeen.add(dk);
+      cFails.push({ el: `[container ${m.tag} @y${Math.round(m.rect.y)} w${Math.round(m.rect.w)}]`, prop: m.fullBleedMedia ? 'bg-media-layer' : 'divider', app: 'absent', mock: what });
+      continue;
+    }
+    cUsed.add(a.i);
+    const mc = m.comp || {}, ac = a.comp || {};
+    const lbl = `[container ${m.tag}.${(m.cls || '').split(/\s+/)[0]} @y${Math.round(m.rect.y)} w${Math.round(m.rect.w)}]`;
+    // background colour
+    const mBg = toHex(mc.backgroundColor), aBg = toHex(ac.backgroundColor);
+    if (mBg !== aBg) cFails.push({ el: lbl, prop: 'background', app: aBg, mock: mBg });
+    // full-bleed media / gradient layer (a section's <img>/css-gradient cover). Dedup against the
+    // unpaired-absent branch so the same section's media-layer defect isn't reported twice.
+    if (m.fullBleedMedia && !a.fullBleedMedia) {
+      const dk = mediaDedupKey(m);
+      if (!absentSeen.has(dk)) { absentSeen.add(dk); cFails.push({ el: lbl, prop: 'bg-media-layer', app: 'none', mock: m.fullBleedMedia.tag }); }
+    }
+    // border (top + bottom; folded from ::after in the extractor)
+    const mBt = px(mc.borderTopWidth) || 0, aBt = px(ac.borderTopWidth) || 0;
+    if (Math.abs(mBt - aBt) > 0.5) cFails.push({ el: lbl, prop: 'border-top-width', app: aBt, mock: mBt });
+    else if (mBt > 0 && toHex(mc.borderTopColor) !== toHex(ac.borderTopColor)) cFails.push({ el: lbl, prop: 'border-top-color', app: toHex(ac.borderTopColor), mock: toHex(mc.borderTopColor) });
+    const mBb = px(mc.borderBottomWidth) || 0, aBb = px(ac.borderBottomWidth) || 0;
+    if (Math.abs(mBb - aBb) > 0.5) cFails.push({ el: lbl, prop: 'border-bottom-width', app: aBb, mock: mBb });
+    // border-radius
+    const mR = px(mc.borderTopLeftRadius), aR = px(ac.borderTopLeftRadius);
+    if (mR != null && aR != null && !close(mR, aR, 2.5)) cFails.push({ el: lbl, prop: 'border-radius', app: aR, mock: mR });
+    // box-shadow presence
+    const mSh = mockHasShadow(mc), aSh = mockHasShadow(ac);
+    if (mSh !== aSh) cFails.push({ el: lbl, prop: 'shadow', app: aSh ? 'yes' : 'no', mock: mSh ? 'yes' : 'no' });
+    // divider (a wide hairline / wide border): present on mock, absent on target (deduped against
+    // the unpaired-absent branch over the same Y-band).
+    if (m.divider && !a.divider) {
+      const dk = mediaDedupKey(m);
+      if (!absentSeen.has(dk)) { absentSeen.add(dk); cFails.push({ el: lbl, prop: 'divider', app: 'absent', mock: `${m.divider.kind} ${m.divider.thickness}px` }); }
+    }
+  }
+  for (const f of cFails) rec(f.el, f.prop, f.app, f.mock, false);
+}
+
+// ---------- MEDIA / ILLUSTRATION GEOMETRY (improvement E) ----------
+// Illustrations/mockup cards are excluded from the text-probe + geometry passes as noise, so an
+// image rendered at the wrong VERTICAL position is never caught. Pair media/illustration
+// elements (img/canvas/svg/picture, and large mockup-card containers) by structure/geometry and
+// compare their POSITION ONLY — but relative to a stable SECTION ANCHOR on each side, so the
+// page's accumulated vertical drift (every section a few px off) cancels and only a GENUINE
+// in-section mispositioning fires. (Internal content is NOT compared — that's the noise this
+// historically re-introduced.) Case 6: the readiness mockup sits below its heading on live but
+// ABOVE it on target — a ~29px relative shift the absolute-y drift would otherwise mask.
+if (GEOM) {
+  // Exclude FULL-BLEED media (≥0.9×frame wide): a page-wide background layer is a decorative
+  // cover handled by the container pass (bg-media-layer), not a positioned in-column illustration
+  // — its "relative position" is meaningless and only adds noise (the hero bg anchoring to a nav
+  // link). The signal here is an in-COLUMN mockup card / image whose vertical placement vs its own
+  // section drifted (the readiness card sitting above vs below its eyebrow).
+  const frameW = mockDoc.frame?.w || mockFrameW;
+  const isMediaEl = n => ['img', 'canvas', 'svg', 'picture', 'video'].includes(n.tag) && (n.rect?.w || 0) >= 120 && (n.rect?.h || 0) >= 100 && (n.rect?.w || 0) < 0.9 * frameW;
+  const isMockupCard = n => (n.rect?.w || 0) >= 280 && (n.rect?.w || 0) < 0.9 * frameW && (n.rect?.h || 0) >= 260 && (px(n.comp?.borderTopLeftRadius) >= 8 || (toHex(n.comp?.backgroundColor) !== 'transparent' && n.comp?.backgroundColor)) && !norm(n.text);
+  const mMedia = mock.filter(n => isMediaEl(n) || isMockupCard(n));
+  const aMedia = app.filter(n => isMediaEl(n) || isMockupCard(n));
+  // SECTION-LEAD detector: a text node that titles a section — an EYEBROW (short, upper-ish) or a
+  // heading-sized line. Stable identity = its text. (Reliability fix: this is now a predicate, so
+  // BOTH sides resolve the anchor the same way and we can find the SAME lead by text.)
+  const isSectionLead = t => {
+    const tx = norm(t.text);
+    if (!tx || (t.rect?.h || 0) <= 0 || (t.rect?.w || 0) < 60) return false;
+    const sz = px(t.comp?.fontSize) || 0;
+    const eyebrow = /^[A-Z0-9 ·&,'’\-]+$/.test(tx) && tx.length <= 40; // ALL-CAPS short eyebrow
+    return eyebrow || sz >= 18;
+  };
+  // The section anchor for a media element = the NEAREST section-lead by absolute vertical distance
+  // to the media's top — NOT a one-sided "must be above" gap. The old `gap < -60` floor REJECTED the
+  // anchor exactly in the defect direction (a card that sits ABOVE its eyebrow has a negative gap),
+  // so a large mis-positioning silently dropped the very check meant to catch it; the window is now
+  // symmetric. Prefer an EYEBROW over a generic heading on a near-tie (the eyebrow is the strongest,
+  // most stable per-section marker), so the chosen anchor is deterministic across extractions.
+  const anchorOf = (node, nodes) => {
+    let best = null, bestScore = Infinity;
+    const my = node.rect.y;
+    for (const t of nodes) {
+      if (!isSectionLead(t)) continue;
+      const tMid = t.rect.y + (t.rect.h || 0) / 2;
+      const dist = Math.abs(my - tMid);
+      if (dist > 280) continue;                            // must be a near-by lead, not page-far
+      const tx = norm(t.text);
+      const eyebrow = /^[A-Z0-9 ·&,'’\-]+$/.test(tx) && tx.length <= 40;
+      const score = dist - (eyebrow ? 12 : 0);             // small eyebrow preference on a near-tie
+      if (score < bestScore) { bestScore = score; best = t; }
+    }
+    return best;
+  };
+  // Resolve the SAME section lead on the target by matching the mock anchor's TEXT, falling back to
+  // the target media's own nearest lead. Using the text-matched lead guarantees both rel-Y values
+  // are measured against the same section title (so page drift cancels), and it is order-independent.
+  const anchorByText = (txt, nodes) => {
+    const t = norm(txt);
+    let best = null, bestW = -1;
+    for (const n of nodes) { if (isSectionLead(n) && norm(n.text) === t && (n.rect?.w || 0) > bestW) { best = n; bestW = n.rect.w; } }
+    return best;
+  };
+  const aUsed = new Set();
+  for (const m of mMedia) {
+    const mAnchor = anchorOf(m, mock);
+    if (!mAnchor) continue;
+    const mRelY = m.rect.y - (mAnchor.rect.y + mAnchor.rect.h);
+    // pair to the app media of similar x/w (same column); among those, prefer the one whose nearest
+    // section-lead text matches the mock anchor; else the nearest-Y candidate; else the sole one.
+    const cands = aMedia.filter(n => !aUsed.has(n.i) && close(n.rect.x, m.rect.x, 24) && close(n.rect.w, m.rect.w, 40));
+    let a = cands.find(c => { const aAnc = anchorOf(c, app); return aAnc && norm(aAnc.text) === norm(mAnchor.text); });
+    if (!a && cands.length) {
+      const mYn = (m.rect.y || 0) / (mockDoc.frame?.h || 1);
+      a = cands.map(n => ({ n, d: Math.abs((n.rect.y || 0) / (appDoc.frame?.h || 1) - mYn) })).sort((x, y) => x.d - y.d)[0].n;
+    }
+    if (!a) continue;
+    aUsed.add(a.i);
+    // measure the target rel-Y against the SAME section lead (matched by the mock anchor's text);
+    // if the target lacks that exact lead, fall back to the target media's own nearest lead.
+    const aAnchor = anchorByText(mAnchor.text, app) || anchorOf(a, app);
+    if (!aAnchor) continue;
+    // GUARD against a cross-section mispair: the target media must be in the SAME section as its
+    // anchor — i.e. the anchor must sit within a sane in-section distance of the target media's top
+    // (the same proximity the mock side requires). Without this, a relaxed media pairing that lands
+    // on a media in a DIFFERENT section produces an absurd rel-Y (e.g. -1269px) — a false finding,
+    // not a real in-section shift. The legit defect (card above vs below its eyebrow) is at most a
+    // few hundred px; a multi-hundred-px |rel-Y| on EITHER side means the pairing is wrong, skip it.
+    const aRelY = a.rect.y - (aAnchor.rect.y + aAnchor.rect.h);
+    const inSection = Math.abs(aRelY) <= 320 && Math.abs(mRelY) <= 320;
+    if (!inSection) continue;
+    const lbl = `[media ${m.tag} @y${Math.round(m.rect.y)} w${Math.round(m.rect.w)} ↔"${norm(mAnchor.text).slice(0, 24)}"]`;
+    rec(lbl, '📐 media-rel-y(vs section)', Math.round(aRelY), Math.round(mRelY), close(aRelY, mRelY, 8));
   }
 }
 
