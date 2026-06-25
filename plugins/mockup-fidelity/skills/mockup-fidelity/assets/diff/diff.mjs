@@ -225,6 +225,14 @@ const rows = [], oks = [], unmatched = [];
 const rec = (el, prop, a, m, ok) => rows.push({ el, prop, app: a, mock: m, ok });
 const CHROME_TXT = /^\d{1,2}:\d{2}$|signal_cellular|wifi|battery_full/;
 
+// SIBLING-GAP — the vertical gap from an element to its NEXT sibling. Padding checks see a
+// box's own padding, but the gap BETWEEN two siblings (an icon-row → its label, one card → the
+// next card, a heading → its body) is a flex/grid `gap` or margin the per-box diff misses. Map
+// children by parent once, then compare each matched element's gap-to-next-sibling on both sides.
+const childrenByParent = arr => { const m = new Map(); for (const n of arr) { if (!m.has(n.parent)) m.set(n.parent, []); m.get(n.parent).push(n); } for (const v of m.values()) v.sort((a, b) => (a.i ?? 0) - (b.i ?? 0)); return m; };
+const mockKids = childrenByParent(mock), appKids = childrenByParent(appAll);
+const nextSibGap = (node, kids) => { const sibs = kids.get(node.parent); if (!sibs) return null; const idx = sibs.indexOf(node); const nx = sibs[idx + 1]; if (!nx || !node.rect || !nx.rect || nx.rect.h <= 0 || node.rect.h <= 0) return null; return +(nx.rect.y - (node.rect.y + node.rect.h)).toFixed(1); };
+
 // ---- SCREEN BACKGROUND (top-level, NOT tied to a text probe) ----
 // The per-element box check only reaches the nearest styled ancestor of a matched
 // text node — text sits in a card, so the walk stops there and the screen root is
@@ -296,6 +304,26 @@ for (const mn of mock) {
     const wrapOf = c => /balance/.test(`${c.textWrap || ''} ${c.textWrapStyle || ''}`) ? 'balance'
       : /pretty/.test(`${c.textWrap || ''} ${c.textWrapStyle || ''}`) ? 'pretty' : 'wrap';
     if (/\s/.test(text)) { const mw = wrapOf(mn.comp), aw = an.comp ? wrapOf(an.comp) : 'wrap'; rec(elName, 'text-wrap', aw, mw, aw === mw); }
+    // HARD BREAK + LINE COUNT — a `<br>` inside a heading reads as identical text but breaks the
+    // wrap differently ("One workspace.<br>Four…" vs greedy). Compare the explicit-break flag and
+    // the rendered line count (a different line count = a real, visible wrap difference).
+    if (mn.hardBreak !== undefined) rec(elName, 'hard-break(<br>)', !!an.hardBreak, !!mn.hardBreak, !!an.hardBreak === !!mn.hardBreak);
+    if (mn.lines != null && an.lines != null) rec(elName, 'line-count', an.lines, mn.lines, an.lines === mn.lines);
+    // BACKGROUND MEDIA LAYER — a hero "gradient" / texture is often an <img>/<canvas>/<svg>
+    // child, invisible to a `background-image` computed-style check. Compare presence+type.
+    if (mn.bgLayer) rec(elName, 'bg-media-layer', an.bgLayer ? an.bgLayer.tag : 'none', mn.bgLayer.tag, !!an.bgLayer && an.bgLayer.tag === mn.bgLayer.tag);
+    // gap to the next sibling (and to the previous — catches a NON-text leading row like an icon
+    // tile whose gap to this label is the only signal). Same-viewport only; tolerate 3px.
+    if (GEOM) {
+      const mGn = nextSibGap(mn, mockKids), aGn = nextSibGap(an, appKids);
+      if (mGn != null && aGn != null && (mGn > 1 || aGn > 1)) rec(elName, 'gap→next-sibling', aGn, mGn, close(aGn, mGn, 3));
+      const mSibs = mockKids.get(mn.parent), aSibs = appKids.get(an.parent);
+      const mPrev = mSibs && mSibs[mSibs.indexOf(mn) - 1], aPrev = aSibs && aSibs[aSibs.indexOf(an) - 1];
+      if (mPrev && aPrev && mPrev.rect && aPrev.rect && mn.rect && an.rect) {
+        const mGp = +(mn.rect.y - (mPrev.rect.y + mPrev.rect.h)).toFixed(1), aGp = +(an.rect.y - (aPrev.rect.y + aPrev.rect.h)).toFixed(1);
+        if (mGp > 1 || aGp > 1) rec(elName, 'gap←prev-sibling', aGp, mGp, close(aGp, mGp, 3));
+      }
+    }
   } else {
     const mC = toHex(mn.comp.color); rec(elName, 'placeholder-color', A.phColor(an), mC, A.phColor(an) === mC);
     const mFs = px(mn.comp.fontSize); if (mFs != null) rec(elName, 'font-size', A.fontSize(an), mFs, close(A.fontSize(an), mFs, 0.6));
@@ -382,6 +410,26 @@ for (const mn of mock) {
   }
 
   if (rows.slice(before).every(r => r.ok)) oks.push(elName);
+}
+
+// ---------- FONT FACES — synthesis risk + missing family (top-level) ----------
+// A face declared with a WEIGHT RANGE (e.g. "100 900") from one file makes the browser
+// FAUX-WEIGHT-SYNTHESIZE every other weight → blurry text on HiDPI (the diolog body text). The
+// reference instead loads discrete STATIC instances (400/500/600). Flag a range-weight face on
+// the app when the mock has none, and any mock font family the app didn't load (→ fallback).
+{
+  const mockFonts = mockDoc.fonts || [], appFonts = appDoc.fonts || [];
+  const isRange = w => /\s/.test(String(w)); // "100 900"
+  const appRange = appFonts.find(f => isRange(f.weight) && !/placeholder/i.test(f.family));
+  const mockHasRange = mockFonts.some(f => isRange(f.weight));
+  if (appRange && mockFonts.length && !mockHasRange) {
+    const mockWeights = mockFonts.filter(f => f.family.toLowerCase() === appRange.family.toLowerCase()).map(f => f.weight).join('/') || 'static instances';
+    rec(`[fonts] ${appRange.family}`, 'weight-range-synthesis-risk', appRange.weight, mockWeights, false);
+  }
+  const appFamilies = new Set(appFonts.map(f => f.family.toLowerCase()));
+  for (const fam of new Set(mockFonts.filter(f => !/placeholder/i.test(f.family)).map(f => f.family))) {
+    if (!appFamilies.has(fam.toLowerCase())) rec(`[fonts] ${fam}`, 'family-not-loaded', 'absent', 'loaded', false);
+  }
 }
 
 // ---------- ICON GLYPH sizes (no text → the text-probe loop never reaches them) ----------

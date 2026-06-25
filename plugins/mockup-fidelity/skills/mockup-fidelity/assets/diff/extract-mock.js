@@ -138,6 +138,29 @@
         if (isFinite(minX)) glyph = { w: +((maxX - minX) * sx).toFixed(1), h: +((maxY - minY) * sy).toFixed(1) };
       } catch (e) { /* getBBox can throw on a detached/hidden svg — skip */ }
     }
+    // HARD LINE BREAK + LINE COUNT — a heading with an explicit `<br>` ("One workspace.<br>Four
+    // specialist modules.") reads as identical TEXT (textContent collapses the <br> to a space),
+    // so the differ pairs it as matching while the rendered wrap differs. Capture a hard-break
+    // flag + the rendered line count (Range client-rect count) so the differ can compare WHERE
+    // text breaks, not just the string.
+    let hardBreak = false;
+    for (const c of el.children) if (c.tagName === 'BR') { hardBreak = true; break; }
+    let lines = null;
+    if (directText) { try { const rng = document.createRange(); rng.selectNodeContents(el); lines = rng.getClientRects().length; } catch (e) {} }
+    // FULL-BLEED BACKGROUND LAYER — a "background" can be an <img>/<canvas>/<svg> child sized to
+    // the element (a Framer hero gradient is an <img>, INVISIBLE to a `background-image` check).
+    // Capture a near-full-size media child so the differ can compare it as a background.
+    let bgLayer = null;
+    if (r.width > 200) for (const c of el.children) {
+      const t = c.tagName.toLowerCase();
+      if (t === 'img' || t === 'canvas' || t === 'svg' || t === 'video') {
+        const cr = c.getBoundingClientRect();
+        if (cr.width >= 0.9 * r.width && cr.height >= 0.7 * r.height) {
+          bgLayer = { tag: t, src: (c.getAttribute('src') || c.getAttribute('href') || c.currentSrc || '').slice(0, 100) };
+          break;
+        }
+      }
+    }
     const myIndex = out.length;
     // Stable ANCHOR id (improvement #2): match elements by an explicit, layout-stable
     // identity instead of by text — kills the text-collision mispairs (nav "diolog"
@@ -165,10 +188,29 @@
         h: +r.height.toFixed(1),
       },
       glyph,
+      hardBreak,
+      lines,
+      bgLayer,
       comp,
     });
     for (const c of el.children) walk(c, depth + 1, myIndex);
   };
   walk(root, 0, -1);
-  return JSON.stringify({ title: TITLE || SEL || 'body', frame: { w: f.width, h: f.height }, nodes: out });
+  // LOADED FONT FACES — a font declared with a WEIGHT RANGE from a single file (e.g. a static
+  // Inter-500 woff2 declared `font-weight: 100 900`) makes the browser FAUX-WEIGHT-SYNTHESIZE
+  // every other weight → blurry text on HiDPI. Capture the loaded faces (deduped) so the differ
+  // can flag a range-from-one-source vs the reference's discrete static instances.
+  const fonts = (() => {
+    try {
+      const seen = new Set(), out2 = [];
+      for (const ff of document.fonts) {
+        if (ff.status !== 'loaded') continue;
+        const k = ff.family + '|' + ff.weight + '|' + ff.style;
+        if (seen.has(k)) continue; seen.add(k);
+        out2.push({ family: ff.family.replace(/["']/g, ''), weight: ff.weight, style: ff.style });
+      }
+      return out2;
+    } catch (e) { return []; }
+  })();
+  return JSON.stringify({ title: TITLE || SEL || 'body', frame: { w: f.width, h: f.height }, fonts, nodes: out });
 }
