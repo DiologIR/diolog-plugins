@@ -96,7 +96,11 @@
   // Cleaned, self-contained HTML (inlined styles, no classes) for the `embed` mode.
   function toHtml(node, indent) {
     if (node.raw) return ' '.repeat(indent) + node.raw;
-    const styleStr = Object.entries(node.style).map(([k, v]) => `${camelToKebab(k)}:${v}`).join(';');
+    // Inline into a DOUBLE-quoted style attr, so any DOUBLE quotes in a value (a multi-word
+    // font-family like "JetBrains Mono") would terminate the attribute early and silently drop
+    // every following declaration (font, colour, size) — the element then falls back to
+    // inherited sans-serif/black. Single-quote value-internal quotes to keep the attr intact.
+    const styleStr = Object.entries(node.style).map(([k, v]) => `${camelToKebab(k)}:${String(v).replace(/"/g, "'")}`).join(';');
     const open = `<${node.tag}${styleStr ? ` style="${styleStr}"` : ''}>`;
     const inner = node.text && !node.children.length
       ? node.text
