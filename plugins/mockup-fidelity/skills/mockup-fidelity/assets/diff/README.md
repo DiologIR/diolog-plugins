@@ -272,6 +272,29 @@ deprecated `extract-mock.js`/`diff.mjs` need no edit. Full rationale + before→
 `noiseExcluded` now has FOUR buckets — `repeatedTextMispairs`, `illustrationInternals`, `unpairedSameText`,
 `crossDomStructure` — all excluded from `findings`/`totalFindings`/`score`; consumers inspect them separately.
 
+### v2.0.2 — DOM-span rendered-font + glyph-based button-arrow (in `analyze.js`)
+
+Two detector checks were unreliable in opposite directions; both are replaced with a RENDERED-DOM
+measurement. Full rationale in [`run.md`](./run.md) § *v2.0.2*.
+
+- **`rendered-font` uses a DOM-span probe, not canvas.** Canvas `measureText` ignores `unicode-range` and
+  doesn't replicate the browser's DOM font-matching, so it over/under-fired and MISSED a real site-wide
+  DOM fallback (the Inter-400 class). `capture()` now lays out a hidden `<span>` of a probe string twice per
+  distinct `(firstFamily, weight, style, fontSize)` combo — `'<Named>', monospace` vs bare `monospace`, and
+  again vs `serif` — and compares the rendered widths: collapsing to BOTH fallback baselines ⇒ the named
+  family is NOT applying (`applies:false`); distinct from at least one ⇒ it applies. Awaits
+  `document.fonts.ready` first. MODE B flags high-severity `font/rendered-font` ONLY when the two sides
+  DISAGREE (reference applies, target falls back, or vice-versa). Catches the fallback class; no flood on
+  correctly-rendered nodes.
+- **button-arrow is glyph-based, not svg-presence.** Capture records `arrowGlyph` — the rendered union-path
+  bbox (w&h) of a button/link's trailing svg (w&h>0 ⇒ a visible arrow is drawn; hidden/empty svg ⇒ null).
+  MODE B emits `structure/button-arrow(glyph)` when one side draws a visible arrow the other lacks (with the
+  measured size), and `icon/button-arrow-glyph-size` when both draw one but the glyph size differs. A
+  decorative/hidden svg no longer reads as a match, and a genuinely visible arrow difference is caught.
+
+(`capture()` is now async — awaits `document.fonts.ready` — so the injected IIFE is `(async function(){…})()`;
+`playwright-cli eval` awaits the returned promise transparently.)
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present

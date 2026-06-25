@@ -259,6 +259,42 @@ flat hero/CTA gradient, flat-vs-rounded card radius, the responsive `flex-direct
 `•` bullets / `counter(list-item)` markers, the swapped-tint `value` rows, and all `interaction` hover/focus
 rows. `node --check` clean.
 
+## v2.0.2 — DOM-span rendered-font + glyph-based button-arrow (two unreliable detectors replaced)
+
+Two detector checks were unreliable in opposite ways; both are replaced with a RENDERED-DOM measurement.
+
+- **FIX 1 — `rendered-font` now uses a DOM-SPAN probe, not canvas.** The old check measured the probe
+  string with `canvas.measureText`, which IGNORES `unicode-range` subsetting and does NOT reproduce the
+  browser's real DOM font-matching cascade — so it over/under-fired and MISSED a genuine DOM-level
+  fallback (a registered face the page never actually applies — the site-wide Inter-400 fallback class).
+  MODE A's `capture()` now lays out a hidden `<span>` of the probe string TWICE per distinct
+  `(firstFamily, weight, style, fontSize)` combo used by text nodes — once `font-family:'<Named>', monospace`
+  and once `font-family:monospace`, then repeats against `serif` — and measures both widths.
+  `width(named+fallback) === width(fallback)` for BOTH fallbacks ⇒ the named family is NOT applying (real
+  DOM fallback); distinct from at least one ⇒ it applies. Each combo records `applies:true/false`; each
+  text node is tagged with whether its declared family actually renders. `capture()` awaits
+  `document.fonts.ready` first so it measures the FINAL faces. MODE B emits a high-severity
+  `font/rendered-font` finding ONLY when the two sides DISAGREE — the REFERENCE applies its named family
+  for a matched element's combo but the TARGET falls back (or vice-versa); both-apply / both-fall-back →
+  no finding. This catches the Inter-400 fallback class and does NOT flood on correctly-rendered nodes
+  (validated: a page where the named font genuinely applies → 0 findings; a controlled @font-face-not-loaded
+  fallback → fires high on every affected text node).
+- **FIX 2 — button-arrow is GLYPH-based, not svg-presence.** The old check flagged on the mere presence of
+  an `<svg>` child, so a decorative/hidden svg read as a match while a genuinely VISIBLE arrow that one side
+  lacked read as fine. `capture()` now records `arrowGlyph` on each button/link — the RENDERED union-path
+  bbox (w&h in px) of its TRAILING svg (reusing the icon-glyph bbox technique; w>0 AND h>0 ⇒ a visible
+  arrow is actually drawn; a hidden/empty/`display:none` svg yields null). MODE B (with the repeated-text
+  disambiguation that pairs the cta-band button to its true counterpart) emits an `structure/button-arrow(glyph)`
+  finding when one side draws a visible trailing arrow glyph the other does not — with the measured glyph
+  size — plus an `icon/button-arrow-glyph-size` row when both draw an arrow but the glyph size differs.
+
+Both fixes are capture-side + diff-side; `node --check` clean. Validated on controlled fixtures (font-applies
+vs forced-fallback; arrow-present vs arrow-absent).
+
+> **`capture()` is now async** (it awaits `document.fonts.ready`), so the injected IIFE is
+> `(async function(){…})()` and resolves to the JSON string. `playwright-cli eval` awaits the returned
+> promise transparently — no runner change needed.
+
 ### Notes
 
 - **`playwright-cli eval` echoes the script source to stdout** — that's harmless noise. The real

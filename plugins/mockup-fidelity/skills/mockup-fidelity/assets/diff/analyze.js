@@ -41,7 +41,7 @@
 // layout-structure, vertical-rhythm, value-precision, transform/opacity/filter,
 // pseudo-content, animation. Plus the structure-diff layout/child-count/missing/extra pass.
 
-(function () {
+(async function () {
   'use strict';
 
   const OPTS = (typeof globalThis !== 'undefined' && globalThis.__MF_OPTS__) || {};
@@ -58,7 +58,10 @@
   // ======================================================================
   // PART 1 — CAPTURE THE CURRENT PAGE ANALYSIS  (the old extract-mock.js)
   // ======================================================================
-  function capture() {
+  async function capture() {
+    // Await webfont loading so the DOM-span rendered-font probe measures the FINAL faces, not a flash of
+    // fallback. document.fonts.ready resolves once all pending @font-face loads settle.
+    try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (e) {}
     const SEL = OPTS.frameSelector ?? (typeof window !== 'undefined' && window.MF_FRAME_SELECTOR);
     const TITLE = OPTS.frameTitle ?? (typeof window !== 'undefined' && window.MF_FRAME_TITLE);
     const INDEX = OPTS.frameIndex ?? (typeof window !== 'undefined' && window.MF_FRAME_INDEX); // 1-based ordinal
@@ -104,35 +107,80 @@
       'transitionProperty', 'transitionDuration',
     ];
 
-    // RENDERED-FONT fingerprint — a declared font-family can match while the element actually
-    // renders in a FALLBACK face. The ground truth is a GLYPH METRIC: measure a probe string in
-    // (a) the declared stack, (b) the generic-only baseline, (c) the first named family alone.
-    const _mctx = (() => { try { return document.createElement('canvas').getContext('2d'); } catch (e) { return null; } })();
-    const FONT_PROBE = 'Diolog workspace 20 — investor-facing AaBbGg';
+    // RENDERED-FONT fingerprint (v2.0.2 — DOM-SPAN probe, NOT canvas).
+    //
+    // The old check used canvas `measureText`, which IGNORES `unicode-range` subsetting and does NOT
+    // replicate the browser's real DOM font-matching cascade — so it could neither see a DOM-level
+    // fallback (a registered face that the page is actually NOT applying to its text) nor avoid
+    // over/under-firing on correctly-rendered nodes. The ground truth is the RENDERED width of a real
+    // hidden DOM span: lay the probe string out twice for the SAME (family, weight, style, size) combo
+    // — once with `'<NamedFamily>', <fallback>` and once with the bare `<fallback>` — and compare the
+    // measured widths. If the named family is genuinely applying, the two widths differ (the named
+    // face has distinct metrics); if width(named+fallback) === width(fallback) the browser fell back to
+    // the generic, i.e. the named family is NOT being applied. We do this against BOTH a monospace and a
+    // serif fallback: only if BOTH collapse to their fallback width do we conclude the named family does
+    // not apply (a single fallback could coincidentally match the named face's metrics; two distinct
+    // generics matching is decisive). This sees the real DOM cascade + unicode-range, unlike canvas.
     const GENERIC = /^(serif|sans-serif|monospace|system-ui|cursive|fantasy|ui-sans-serif|ui-serif|ui-monospace|-apple-system|"?BlinkMacSystemFont"?)$/i;
     const firstFamily = (fam) => String(fam || '').split(',')[0].replace(/["']/g, '').trim();
-    const stripNamed = (fam) => {
-      const parts = String(fam || '').split(',').map(s => s.replace(/["']/g, '').trim());
-      const generics = parts.filter(p => GENERIC.test(p));
-      return (generics.length ? generics : ['sans-serif']).join(', ');
+    // a single offscreen measuring host reused for every probe span (kept out of layout flow).
+    const _probeHost = (() => {
+      try {
+        const h = document.createElement('div');
+        h.setAttribute('aria-hidden', 'true');
+        h.style.cssText = 'position:absolute;left:-99999px;top:-99999px;visibility:hidden;white-space:nowrap;pointer-events:none;contain:layout style;';
+        (document.body || document.documentElement).appendChild(h);
+        return h;
+      } catch (e) { return null; }
+    })();
+    const FONT_PROBE = 'Diolog workspace 20 — investor-facing AaBbGg mmiiWW';
+    const _probeWidth = (family, weight, style, size) => {
+      if (!_probeHost) return 0;
+      const s = document.createElement('span');
+      s.textContent = FONT_PROBE;
+      s.style.fontFamily = family;
+      s.style.fontWeight = String(weight || '400');
+      s.style.fontStyle = style || 'normal';
+      s.style.fontSize = size || '16px';
+      s.style.letterSpacing = 'normal';
+      s.style.whiteSpace = 'nowrap';
+      _probeHost.appendChild(s);
+      const w = +s.getBoundingClientRect().width.toFixed(2);
+      _probeHost.removeChild(s);
+      return w;
     };
     const _fontCache = new Map();
+    // Per distinct (firstFamily, weight, style, fontSize) combo, decide whether the named family ACTUALLY
+    // renders (applies:true) or the browser falls back to the generic (applies:false), via the DOM-span
+    // double-fallback probe described above. Cached per combo.
     const fontRender = (cs) => {
-      if (!_mctx) return null;
       const fam = cs.fontFamily, w = cs.fontWeight || '400', st = cs.fontStyle || 'normal', sz = cs.fontSize || '16px';
       const first = firstFamily(fam);
       if (!first || GENERIC.test(first)) return null;
       const key = first + '|' + w + '|' + st + '|' + sz;
       if (_fontCache.has(key)) return _fontCache.get(key);
-      const base = stripNamed(fam);
-      const meas = (stack) => { _mctx.font = `${st} ${w} ${sz} ${stack}`; return +_mctx.measureText(FONT_PROBE).width.toFixed(1); };
-      const wDeclared = meas(fam);
-      const wFallback = meas(base);
-      const wNamed = meas(`"${first}"`);
+      const FB_TOL = 0.5; // px — widths within this of the fallback baseline count as "collapsed to fallback"
+      // probe against TWO distinct generic fallbacks so a coincidental metric match can't fool us.
+      const probeFallback = (generic) => {
+        const wNamed = _probeWidth(`'${first}', ${generic}`, w, st, sz);
+        const wFb = _probeWidth(generic, w, st, sz);
+        return { wNamed, wFb, distinct: Math.abs(wNamed - wFb) > FB_TOL };
+      };
+      const mono = probeFallback('monospace');
+      const serif = probeFallback('serif');
+      // applies = the named face is distinct from AT LEAST ONE fallback (its real metrics show through).
+      // NOT applying (DOM fallback) = it collapsed to BOTH the monospace AND the serif baseline.
+      const applies = mono.distinct || serif.distinct;
+      // document.fonts.check is recorded only as a positive corroborator (never a suppressor) — it is
+      // unreliable both ways (true while faux-rendering, etc.); the DOM-span metric is the authority.
       let available = false;
       try { available = document.fonts.check(`${st} ${w} ${sz} "${first}"`); } catch (e) {}
-      const rendering = Math.abs(wDeclared - wFallback) > 0.5;
-      const v = { family: first, available, rendering, wDeclared, wFallback, wNamed };
+      // `rendering` retained for backward-compat with any downstream reader, but is now the DOM truth.
+      const v = {
+        family: first, applies, available, rendering: applies,
+        wNamedMono: mono.wNamed, wFbMono: mono.wFb,
+        wNamedSerif: serif.wNamed, wFbSerif: serif.wFb,
+      };
       _fontCache.set(key, v);
       return v;
     };
@@ -244,6 +292,32 @@
       return result;
     };
 
+    // SVG GLYPH EXTENT — the union path bbox of an <svg>'s drawn shapes, in RENDERED px (scaled from the
+    // viewBox to the element's box). A bbox with w>0 AND h>0 means a VISIBLE glyph is actually drawn — the
+    // ground truth for "is there a real arrow here?", which `<svg>`-presence alone cannot tell (a hidden /
+    // empty / display:none svg has presence but no drawn glyph). Reused by the icon-glyph capture and by the
+    // button trailing-arrow capture (FIX 2).
+    const svgGlyphExtent = (svgEl) => {
+      try {
+        const sr = svgEl.getBoundingClientRect();
+        if (sr.width <= 0 || sr.height <= 0) return null; // not laid out / hidden → no visible glyph
+        const vb = svgEl.viewBox && svgEl.viewBox.baseVal;
+        const sx = vb && vb.width ? sr.width / vb.width : 1;
+        const sy = vb && vb.height ? sr.height / vb.height : 1;
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        for (const g of svgEl.querySelectorAll('path, line, polyline, polygon, rect, circle, ellipse')) {
+          const b = g.getBBox && g.getBBox();
+          if (!b || (b.width === 0 && b.height === 0)) continue;
+          minX = Math.min(minX, b.x); minY = Math.min(minY, b.y);
+          maxX = Math.max(maxX, b.x + b.width); maxY = Math.max(maxY, b.y + b.height);
+        }
+        if (!isFinite(minX)) return null;
+        const w = +((maxX - minX) * sx).toFixed(1), h = +((maxY - minY) * sy).toFixed(1);
+        if (w <= 0 || h <= 0) return null;
+        return { w, h };
+      } catch (e) { return null; }
+    };
+
     const out = [];
     const walk = (el, depth, parent) => {
       if (!CHROME_NONE && CHROME && el.matches && el.matches(CHROME)) return;
@@ -291,21 +365,7 @@
 
       // ICON GLYPH extent — for an <svg>, the union path bbox in rendered px (the visible glyph).
       let glyph = null;
-      if (el.tagName.toLowerCase() === 'svg') {
-        try {
-          const vb = el.viewBox && el.viewBox.baseVal;
-          const sx = vb && vb.width ? r.width / vb.width : 1;
-          const sy = vb && vb.height ? r.height / vb.height : 1;
-          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-          for (const g of el.querySelectorAll('path, line, polyline, polygon, rect, circle, ellipse')) {
-            const b = g.getBBox && g.getBBox();
-            if (!b) continue;
-            minX = Math.min(minX, b.x); minY = Math.min(minY, b.y);
-            maxX = Math.max(maxX, b.x + b.width); maxY = Math.max(maxY, b.y + b.height);
-          }
-          if (isFinite(minX)) glyph = { w: +((maxX - minX) * sx).toFixed(1), h: +((maxY - minY) * sy).toFixed(1) };
-        } catch (e) {}
-      }
+      if (el.tagName.toLowerCase() === 'svg') glyph = svgGlyphExtent(el);
 
       // HARD LINE BREAK + LINE COUNT — an explicit <br> reads as identical text but breaks differently.
       let hardBreak = false;
@@ -401,6 +461,43 @@
       let hasSvgChild = false;
       for (const c of el.children) { const t = c.tagName.toLowerCase(); if (t === 'svg' || (t === 'img' && (c.getAttribute('src') || '').includes('.svg'))) { hasSvgChild = true; break; } }
 
+      // TRAILING ARROW GLYPH (FIX 2 — glyph-based, not svg-presence). For a button/link, measure the
+      // RENDERED glyph bbox of its TRAILING svg (the rightmost svg within the element's own box). A glyph
+      // with w>0 AND h>0 = a VISIBLE arrow is actually drawn; a hidden / empty / display:none decorative
+      // svg yields null here even though `hasSvgChild` is true — that is exactly the case svg-presence
+      // got wrong. We scan svgs inside the element (not crossing into a nested button/link), take the one
+      // whose horizontal centre is furthest right (the trailing position), and record its visible extent.
+      let arrowGlyph = null;
+      {
+        const tag = el.tagName.toLowerCase();
+        const linkish = tag === 'a' || tag === 'button' || (el.matches && el.matches('[role="button"], [role="link"]'));
+        if (linkish && r.width > 0) {
+          let best = null, bestCx = -Infinity;
+          for (const sv of el.querySelectorAll('svg')) {
+            // skip svgs that belong to a NESTED interactive element (their own button/link owns them)
+            const owner = sv.closest('a, button, [role="button"], [role="link"]');
+            if (owner && owner !== el) continue;
+            const svr = sv.getBoundingClientRect();
+            if (svr.width <= 0 || svr.height <= 0) continue;
+            const cx = svr.left + svr.width / 2;
+            // trailing = rightmost svg whose centre is past the element's horizontal midpoint
+            if (cx >= r.left + r.width * 0.5 && cx > bestCx) { bestCx = cx; best = sv; }
+          }
+          // if no svg is in the trailing half, fall back to the rightmost svg overall (still the "trailing" one)
+          if (!best) {
+            for (const sv of el.querySelectorAll('svg')) {
+              const owner = sv.closest('a, button, [role="button"], [role="link"]');
+              if (owner && owner !== el) continue;
+              const svr = sv.getBoundingClientRect();
+              if (svr.width <= 0 || svr.height <= 0) continue;
+              const cx = svr.left + svr.width / 2;
+              if (cx > bestCx) { bestCx = cx; best = sv; }
+            }
+          }
+          if (best) arrowGlyph = svgGlyphExtent(best);
+        }
+      }
+
       const myIndex = out.length;
       const fid =
         el.getAttribute('data-fid') ||
@@ -420,12 +517,14 @@
           w: +r.width.toFixed(1),
           h: +r.height.toFixed(1),
         },
-        glyph, hardBreak, lines, wrap, bgLayer, fullBleedMedia, divider, hasSvgChild,
+        glyph, hardBreak, lines, wrap, bgLayer, fullBleedMedia, divider, hasSvgChild, arrowGlyph,
         fontRn, pseudoContent, anims, istates, comp,
       });
       for (const c of el.children) walk(c, depth + 1, myIndex);
     };
     walk(root, 0, -1);
+    // tear down the offscreen font-probe host now that every combo has been measured + cached.
+    try { if (_probeHost && _probeHost.parentNode) _probeHost.parentNode.removeChild(_probeHost); } catch (e) {}
 
     // LOADED FONT FACES — a range-weight face from a single file faux-weight-synthesizes other weights.
     const fonts = (() => {
@@ -757,52 +856,45 @@
         if (mn.lines != null && an.lines != null && an.lines !== mn.lines) add({ locator: loc, section: sect, class: 'wrap', property: 'line-count', target: an.lines, reference: mn.lines, suggestedChange: `make ${el} wrap to ${mn.lines} line(s) (adjust max-width / text-wrap)` });
         if (mn.bgLayer && (!an.bgLayer || an.bgLayer.tag !== mn.bgLayer.tag)) add({ locator: loc, section: sect, class: 'media', property: 'bg-media-layer', target: an.bgLayer ? an.bgLayer.tag : 'none', reference: mn.bgLayer.tag, suggestedChange: `add the ${mn.bgLayer.tag} background layer the mock renders behind ${el}` });
         if (mn.wrap && an.wrap && mn.wrap.first && an.wrap.first && an.wrap.first !== mn.wrap.first) add({ locator: loc, section: sect, class: 'wrap', property: 'wrap-point(line1)', target: an.wrap.first, reference: mn.wrap.first, suggestedChange: `adjust ${el} so line 1 ends with "${mn.wrap.first}" (mock breaks differently)` });
-        // RENDERED-FONT (v2.0.1 — corroborated cross-side comparison, no longer a bare per-node heuristic).
-        // The old test `mn.fontRn.rendering && !an.fontRn.rendering` fired on ~92% of target text nodes
-        // because the per-node canvas heuristic (`rendering = wDeclared≠wFallback`) is unreliable: the
-        // target's declared stack can measure the SAME width as the generic baseline for one probe string
-        // (wDeclared===wFallback → rendering:false) even though the named face IS loaded and applied. We saw
-        // tgt {available:true, wDeclared===wFallback===327.3, wNamed=298.4}: the named Inter face has DISTINCT
-        // metrics (wNamed 298.4 ≠ wFallback 327.3) and document.fonts.check passed — so it is genuinely applied,
-        // not a fallback. Flagging that is a false positive.
+        // RENDERED-FONT (v2.0.2 — DOM-span apply/fallback comparison, no canvas).
+        // The capture's `fontRn.applies` is now a RENDERED-DOM truth (a hidden span laid out twice and
+        // measured): true = the named family's real metrics show through, false = the browser fell back to
+        // the generic for that (family,weight,style,size) combo. This SEES a real DOM-level fallback
+        // (a registered face the page never actually applies — the Inter-400 fallback class) and does NOT
+        // flood on correctly-rendered nodes, unlike the old canvas heuristic.
         //
-        // CORROBORATION RULE — only flag a genuine target-vs-reference font mismatch. Require BOTH:
-        //   (1) the REFERENCE renders its named face (ref.rendering) but the TARGET appears to fall back
-        //       (!tgt.rendering), i.e. a side-vs-side divergence, AND
-        //   (2) corroboration that the target really is NOT using the named face:
-        //         · document.fonts.check is FALSE for the declared family on the target (tgt.available===false), OR
-        //         · the target's named-face metric proves it is NOT distinct from the fallback
-        //           (|wNamed − wFallback| ≤ TOL) — i.e. the named face has no distinct metrics so a "fallback"
-        //           read is real — AND that named metric also distinctly ≠ the reference's wNamed (the two sides
-        //           resolve the named family to different actual faces).
-        // Suppress whenever document.fonts.check passes (tgt.available) OR wNamed proves the named face has
-        // distinct metrics on the target (|tgt.wNamed − tgt.wFallback| > TOL). This keeps it able to catch a
-        // REAL fallback (named face genuinely missing/unapplied site-wide) while not firing on a correctly
-        // resolving font.
+        // MODE-B RULE: emit a high-severity finding ONLY when the two sides DISAGREE on whether the same
+        // declared family applies — the REFERENCE applies its named family for this combo but the TARGET
+        // falls back (or vice-versa). Both-apply or both-fall-back → no finding (matched behaviour).
         if (mn.fontRn && an.fontRn && mn.fontRn.family.toLowerCase() === an.fontRn.family.toLowerCase()) {
-          const FONT_TOL = 2.0; // px — canvas glyph-width metric tolerance for the probe string
           const r = mn.fontRn, t = an.fontRn;
-          const namedDistinctOnTarget = t.wNamed != null && t.wFallback != null && Math.abs(t.wNamed - t.wFallback) > FONT_TOL;
-          const namedDiffersFromRef = t.wNamed != null && r.wNamed != null && Math.abs(t.wNamed - r.wNamed) > FONT_TOL;
-          // PRIMARY SUPPRESSOR — the named face is provably APPLIED on the target: its glyph metric is
-          // distinct from the generic fallback (wNamed clearly ≠ wFallback). This is the strong physical
-          // signal that beats the unreliable per-node `rendering` flag and the unreliable fonts.check.
-          // NOTE: document.fonts.check (t.available) is deliberately NOT used as a suppressor — it returned
-          // TRUE on a correctly-rendering target AND can return true while the face faux-renders, so it is
-          // not trustworthy either way for suppression. It is only used (when FALSE) as a positive corroborator.
-          // Corroborated genuine fallback on the target (either branch suffices):
-          const corroborated =
-            (t.available === false) ||                       // fonts.check says the declared family is not usable, OR
-            (!namedDistinctOnTarget && namedDiffersFromRef); // the named face has NO distinct metrics here AND resolves to a different actual face than the reference's named face
-          if (r.rendering && !t.rendering && !namedDistinctOnTarget && corroborated) {
-            add({ locator: loc, section: sect, class: 'font', property: 'rendered-font', target: `fallback (${t.family} declared, not applied)`, reference: `${r.family} (applied)`, severity: 'high', suggestedChange: `ensure the ${r.family} webfont actually loads/applies for ${el} (declared but rendering a fallback face — corroborated by fonts.check / distinct named-face metrics)` });
+          if (r.applies && !t.applies) {
+            add({ locator: loc, section: sect, class: 'font', property: 'rendered-font', target: `fallback (${t.family} declared, not applied)`, reference: `${r.family} (applied)`, severity: 'high', suggestedChange: `the reference renders ${r.family} but ${el} falls back to the generic face — ensure the ${t.family} webfont actually loads AND applies (declared but not rendering; check @font-face load + unicode-range + that the family is wired to this element)` });
+          } else if (!r.applies && t.applies) {
+            add({ locator: loc, section: sect, class: 'font', property: 'rendered-font', target: `${t.family} (applied)`, reference: `fallback (${r.family} declared, not applied)`, severity: 'high', suggestedChange: `the reference falls back to a generic face for ${el} but the target applies ${t.family} — match the reference (the reference does NOT render its named face here)` });
           }
         }
         // BUTTON arrow + geometry + tracking
         {
           const aBtn = buttonAncestor(an, appById), mBtn = mockButtonAncestor(mn);
           if (mBtn && aBtn) {
-            if (mBtn.hasSvgChild !== undefined && !!aBtn.hasSvgChild !== !!mBtn.hasSvgChild) add({ locator: loc, section: sect, class: 'icon', property: 'button-arrow(svg)', target: !!aBtn.hasSvgChild, reference: !!mBtn.hasSvgChild, suggestedChange: mBtn.hasSvgChild ? `add the trailing arrow svg the mock button has on ${el}` : `remove the trailing arrow svg from ${el}` });
+            // BUTTON ARROW (FIX 2 — GLYPH-based, not svg-presence). Compare the RENDERED trailing-arrow
+            // glyph drawn on each side (`arrowGlyph` = the visible union-path bbox of the button's trailing
+            // svg, w&h>0 ⇒ a real arrow is painted). svg-presence was wrong both ways: a decorative/hidden
+            // svg read as a match, while a genuinely VISIBLE arrow that one side lacks read as fine. Flag an
+            // interaction/structure finding when one side draws a visible arrow glyph and the other does not.
+            const mArrow = mBtn.arrowGlyph && mBtn.arrowGlyph.w > 0 && mBtn.arrowGlyph.h > 0 ? mBtn.arrowGlyph : null;
+            const aArrow = aBtn.arrowGlyph && aBtn.arrowGlyph.w > 0 && aBtn.arrowGlyph.h > 0 ? aBtn.arrowGlyph : null;
+            if (!!mArrow !== !!aArrow) {
+              if (aArrow && !mArrow) {
+                add({ locator: loc, section: sect, class: 'structure', property: 'button-arrow(glyph)', target: `visible arrow ${aArrow.w}×${aArrow.h}px`, reference: 'no arrow drawn', severity: 'med', suggestedChange: `remove the trailing arrow glyph from ${el} — the target draws a visible ${aArrow.w}×${aArrow.h}px arrow the reference button does not` });
+              } else if (mArrow && !aArrow) {
+                add({ locator: loc, section: sect, class: 'structure', property: 'button-arrow(glyph)', target: 'no arrow drawn', reference: `visible arrow ${mArrow.w}×${mArrow.h}px`, severity: 'med', suggestedChange: `add the trailing arrow glyph the reference button draws on ${el} (a visible ${mArrow.w}×${mArrow.h}px arrow) — target draws none` });
+              }
+            } else if (mArrow && aArrow && (!close(aArrow.w, mArrow.w, 1.5) || !close(aArrow.h, mArrow.h, 1.5))) {
+              // both draw an arrow but the glyph size differs meaningfully → an arrow-size mismatch.
+              add({ locator: loc, section: sect, class: 'icon', property: 'button-arrow-glyph-size', target: `${aArrow.w}×${aArrow.h}px`, reference: `${mArrow.w}×${mArrow.h}px`, deltaPx: Math.round(Math.max(Math.abs(aArrow.w - mArrow.w), Math.abs(aArrow.h - mArrow.h))), suggestedChange: `set the trailing arrow glyph on ${el} to ${mArrow.w}×${mArrow.h}px (currently ${aArrow.w}×${aArrow.h}px)` });
+            }
             if (mBtn.rect && aBtn.rect) {
               if (!close(aBtn.rect.h, mBtn.rect.h, 3)) add({ locator: loc, section: sect, class: 'geometry', property: 'button-height', target: Math.round(aBtn.rect.h), reference: Math.round(mBtn.rect.h), deltaPx: Math.round(Math.abs(aBtn.rect.h - mBtn.rect.h)), suggestedChange: `set the button height to ${Math.round(mBtn.rect.h)}px on ${el}` });
               if (!close(aBtn.rect.w, mBtn.rect.w, 8)) add({ locator: loc, section: sect, class: 'geometry', property: 'button-width', target: Math.round(aBtn.rect.w), reference: Math.round(mBtn.rect.w), deltaPx: Math.round(Math.abs(aBtn.rect.w - mBtn.rect.w)), suggestedChange: `set the button width to ~${Math.round(mBtn.rect.w)}px on ${el} (padding/tracking)` });
@@ -1789,7 +1881,7 @@
   // ======================================================================
   // ENTRYPOINT
   // ======================================================================
-  const targetAnalysis = capture();
+  const targetAnalysis = await capture();
   let result;
   if (REFERENCE) {
     // MODE B — the reference may be the analysis object, or { analysis }, or double-wrapped string.
