@@ -99,6 +99,25 @@
     directText = directText.replace(/\s+/g, ' ').trim();
     const comp = {};
     for (const p of PROPS) comp[p] = cs[p];
+    // PSEUDO-ELEMENT BORDER/SHADOW — Framer & most page-builders draw a card's border or
+    // elevation on a ::after/::before OVERLAY (`content:""; border:1px solid var(--border-color)`
+    // or a box-shadow), which `getComputedStyle(element)` CANNOT see — so the element reads
+    // `border:0 / box-shadow:none` while the rendered card clearly has an edge. Fold a RENDERING
+    // pseudo's border/shadow into the element's effective values when the element itself has none,
+    // so the differ's existing border/radius/shadow checks catch the real edge. (This was a
+    // whole class of false "flat" reads on diolog.app's module cards.)
+    for (const ps of ['::after', '::before']) {
+      const pc = getComputedStyle(el, ps);
+      if (!pc || pc.content === 'none' || pc.content === 'normal') continue; // pseudo not rendered
+      if ((parseFloat(comp.borderTopWidth) || 0) === 0 && (parseFloat(pc.borderTopWidth) || 0) > 0) {
+        comp.borderTopWidth = pc.borderTopWidth; comp.borderTopColor = pc.borderTopColor;
+        comp.borderBottomWidth = comp.borderBottomWidth && parseFloat(comp.borderBottomWidth) ? comp.borderBottomWidth : pc.borderBottomWidth;
+        comp._borderFromPseudo = ps;
+      }
+      if ((!comp.boxShadow || comp.boxShadow === 'none') && pc.boxShadow && pc.boxShadow !== 'none') {
+        comp.boxShadow = pc.boxShadow; comp._shadowFromPseudo = ps;
+      }
+    }
     // ICON GLYPH extent — for an <svg> the element box is often padded around the drawn
     // glyph (a 12px box can hold a 6×3 OR an 8×4 chevron), so the box size alone misses a
     // wrong-sized icon. Capture the union path bbox in RENDERED px (viewBox units scaled to

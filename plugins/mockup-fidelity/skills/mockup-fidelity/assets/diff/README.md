@@ -145,6 +145,9 @@ line-height) — the defects a text-property diff structurally can't see:
   dimension (line-count, box height) where a 3px delta is a real defect; width is content-driven and
   noisy. Override with `--geom-tol-height`.
 
+- **Pseudo-element border/shadow (::before/::after overlay).** Framer & most page-builders draw a card's BORDER or elevation on a `::after` overlay (`content:""; border:1px solid var(--border-color)`) — invisible to `getComputedStyle(element)`, so the element reads `border:0 / box-shadow:none` while the rendered card clearly has an edge. `extract-mock.js` now folds a RENDERING pseudo's border/shadow into the element's effective values, so the differ's border/shadow checks catch it. (Root cause of a whole class of false "flat" reads on diolog.app cards — the visible #e5e9f0 border lived on `::after`, while every `getComputedStyle(el)` probe read 0.)
+- **Explicit `<br>` inside a heading.** The differ pairs by NORMALIZED text, so `"One workspace.<br>Four specialist modules."` matches `"One workspace. Four specialist modules."` (the `<br>` collapses to a space in textContent) — it is blind to a hard line break that changes the rendered wrap. Compare the heading's child structure / line count, or diff the raw innerHTML, when a heading wrap looks wrong.
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present
