@@ -395,6 +395,32 @@ inside the ReadinessMockup "Morrow Vale Resources" product illustration, a row l
   `illo-border-width` fires. An ordinary page with NO illustration roots is unaffected (normal font findings,
   zero illo activity). Full rationale in [`run.md`](./run.md) § *v2.3.0* and references/issue-to-check-map.md #33.
 
+### v2.4.0 — per-element vertical-offset + block-flow gap + value-based line-height (in `analyze.js`)
+
+An empirical recall test (controlled ReadinessMockup + case-study, ref vs broken) proved v2.3.0 MISSED a
+per-element move and a block-flow gap and only weakly caught a sub-px line-height. v2.4.0 adds three additive,
+low-noise detectors — all ride the normal MODE-A/B flow, no new flags. Full rationale + validation in
+[`run.md`](./run.md) § *v2.4.0* and `../../references/issue-to-check-map.md` #34–#36.
+
+- **`position/rel-offset` — moved without resizing.** For each MATCHED element, compute its top RELATIVE TO
+  ITS DIRECT PARENT on each side; if its own w&h match (a PURE move) but the relative-in-parent offset differs
+  by > ~4px, emit `position/rel-offset`. Catches an element shifted by a parent `align-items`/`justify`/margin
+  change without resizing — the per-element signal the parent's `layout/align-items` diff names only obliquely.
+  Both parents must pair; DEDUP per `(parent|delta)` so a whole column shifting once is ONE finding + a `[×N]`
+  summary.
+- **`spacing/gap→next-sibling(block-flow)` — block-flow gap between NON-TEXT containers.** The text-driven
+  `gap→/←-sibling` only reaches text-paired nodes and the layout detector only compares flex/grid `gap`, so
+  margin/padding spacing between block `<div>` boxes (a divided point list, stacked cards) was invisible.
+  Measures the gap from rendered geometry (`next.top − this.bottom`, INCLUDING margin) between PAIRED block
+  containers, flagging a > ~3px delta when both boxes pair to the SAME pair on each side; DEDUP repeated gaps.
+- **Value-based line-height + `font/illo-line-height`.** The line-height check now compares the RESOLVED px
+  VALUE with a tight ~0.6px tolerance (was a `max(2, 0.12·fs)` height-proxy floor that swallowed a 0.75px
+  delta), and the illustration STYLE pass gained a direct line-height comparison.
+- **Validated.** Broken fixture → all six recall cases fire (the move as `position/rel-offset`, the gap as the
+  block-flow gap, the 0.75px label as `illo-line-height`). Identical site → 0. Fixed live home
+  (`diolog.app`→`diolog.site`) → 0 `position`, 0 block-flow, 5 genuine residual line-height rows (real
+  sub-2px drift, no false positives). `node --check` clean.
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present

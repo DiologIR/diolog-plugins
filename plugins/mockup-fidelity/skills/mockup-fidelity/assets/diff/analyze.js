@@ -40,6 +40,19 @@
 // disambiguation, wrap-point, rendered-font, media-geometry, AND the v1.16 additions:
 // layout-structure, vertical-rhythm, value-precision, transform/opacity/filter,
 // pseudo-content, animation. Plus the structure-diff layout/child-count/missing/extra pass.
+//
+// v2.4.0 — three additive low-noise detectors closing recall-test blind spots:
+//   (1) PER-ELEMENT VERTICAL OFFSET (`position/rel-offset`) — a matched element MOVED inside its parent
+//       (a flex align-items/justify change, a top-margin shift) at the SAME size, caught per-element (not
+//       only via the parent's layout/align-items diff). Pure-move guarded (own w&h ~equal) + deduped per
+//       parent (a whole column shifting by one delta = ONE finding + a [×N] summary).
+//   (2) BLOCK-FLOW GAP between NON-TEXT containers (`spacing/gap→next-sibling(block-flow)`) — the gap to a
+//       paired block container's next sibling (next.top − this.bottom, INCLUDING margin), so block-flow
+//       margin/padding spacing between block boxes is checked, not only flex/grid `gap` or text-paired gaps.
+//   (3) VALUE-BASED LINE-HEIGHT — the line-height check now compares the RESOLVED px value with a tight
+//       ~0.6px tolerance (was a max(2, 0.12·fs) height-proxy floor that swallowed a 0.75px label delta);
+//       AND the illustration-internal STYLE pass gained `font/illo-line-height` so internal text rows are
+//       line-height-checked directly.
 
 (async function () {
   'use strict';
@@ -846,7 +859,7 @@
       geometry: 'med', font: 'med', value: 'med', transform: 'med', pseudo: 'med',
       animation: 'low', wrap: 'med', icon: 'med', spacing: 'med', media: 'med',
       'screen-bg': 'high', fonts: 'high', text: 'med', extra: 'low',
-      interaction: 'med', responsive: 'high',
+      interaction: 'med', responsive: 'high', position: 'med',
     };
 
     const add = (o) => {
@@ -1095,11 +1108,19 @@
         if (mW && A.weight(an) !== mW) add({ locator: loc, section: sect, class: 'font', property: 'font-weight', target: A.weight(an), reference: mW, suggestedChange: `set font-weight: ${mW} on ${el}` });
         const mC = toHex(mn.comp.color);
         if (mC && mC !== 'transparent' && A.color(an) !== mC) add({ locator: loc, section: sect, class: 'font', property: 'color', target: A.color(an), reference: mC, suggestedChange: `set color: ${mC} on ${el}` });
-        // line-height (resolve `normal` → ~1.2×)
+        // line-height (resolve `normal` → ~1.2×). v2.4.0: VALUE-based — compare the RESOLVED line-height px
+        // on both sides with a tight tolerance (LH_TOL ~0.6px), not the loose max(2, 0.12·fs) height-proxy
+        // tolerance that swallowed a 0.75px label line-height delta (recall MISS #5). The old floor existed
+        // because a non-text height proxy is noisy; but the line-height VALUE itself is a precise computed
+        // number, so a sub-px-but-real delta (1.45 vs 1.40 → 21.75 vs 21px) IS a defect worth flagging.
         const aLh = A.lineHeight(an);
         let mLh = px(mn.comp.lineHeight);
         if (mLh == null && /normal/i.test(mn.comp.lineHeight || '') && px(mn.comp.fontSize) != null) mLh = px(mn.comp.fontSize) * NORMAL_LH;
-        if (mLh != null && !close(aLh, mLh, Math.max(2, 0.12 * (px(mn.comp.fontSize) || 16)))) add({ locator: loc, section: sect, class: 'font', property: 'line-height', target: aLh, reference: +mLh.toFixed(1), suggestedChange: `set line-height: ${+mLh.toFixed(1)}px on ${el}` });
+        // resolve the TARGET's `normal` the same way so a value-based compare is apples-to-apples.
+        let aLhResolved = aLh;
+        if (aLhResolved == null && /normal/i.test(String(an.comp?.lineHeight || '')) && A.fontSize(an) != null) aLhResolved = A.fontSize(an) * NORMAL_LH;
+        const LH_TOL = 0.6;
+        if (mLh != null && aLhResolved != null && !close(aLhResolved, mLh, LH_TOL)) add({ locator: loc, section: sect, class: 'font', property: 'line-height', target: +aLhResolved.toFixed(2), reference: +mLh.toFixed(2), deltaPx: +(Math.abs(aLhResolved - mLh)).toFixed(2), suggestedChange: `set line-height: ${+mLh.toFixed(2)}px on ${el} (currently ${+aLhResolved.toFixed(2)}px — a ${+(Math.abs(aLhResolved - mLh)).toFixed(2)}px delta)` });
         const mFam = familyKind(mn.comp.fontFamily);
         if (mFam && A.family(an) !== mFam) add({ locator: loc, section: sect, class: 'font', property: 'font-family-kind', target: A.family(an), reference: mFam, severity: 'high', suggestedChange: `switch ${el} to a ${mFam} typeface (mock is ${mFam}, target is ${A.family(an)})` });
         if (A.align(an) !== alignNorm(mn.comp.textAlign)) add({ locator: loc, section: sect, class: 'font', property: 'text-align', target: A.align(an), reference: alignNorm(mn.comp.textAlign), suggestedChange: `set text-align: ${alignNorm(mn.comp.textAlign)} on ${el}` });
@@ -1637,6 +1658,16 @@
               if (mCol && mCol !== 'transparent' && mCol !== aCol) pushIllo({ loc, sect, class: 'font', property: 'illo-color', target: aCol, reference: mCol, sc: `set the illustration label colour to ${mCol}` });
               const mLs = lsPx(mc.letterSpacing), aLs = lsPx(ac.letterSpacing);
               if (mLs != null && aLs != null && !close(aLs, mLs, 0.2)) pushIllo({ loc, sect, class: 'font', property: 'illo-letter-spacing', target: aLs, reference: mLs, deltaPx: +(Math.abs(aLs - mLs)).toFixed(2), sc: `set the illustration label letter-spacing to ${mLs}px (mock ${mLs}px, target ${aLs}px)` });
+              // LINE-HEIGHT (v2.4.0) — the illustration STYLE pass had NO line-height comparison, so a row
+              // label's line-height drift inside a mockup card went fully unchecked (recall MISS #5). Resolve
+              // each side's `normal` to ~1.2×fs, then compare the px VALUE with the same tight tolerance the
+              // top-level value-based check uses (~0.6px) so a 0.75px label delta fires.
+              {
+                const fsM = px(mc.fontSize), fsA = px(ac.fontSize);
+                let mLh = px(mc.lineHeight); if (mLh == null && /normal/i.test(String(mc.lineHeight || '')) && fsM != null) mLh = fsM * NORMAL_LH;
+                let aLh2 = px(ac.lineHeight); if (aLh2 == null && /normal/i.test(String(ac.lineHeight || '')) && fsA != null) aLh2 = fsA * NORMAL_LH;
+                if (mLh != null && aLh2 != null && !close(aLh2, mLh, 0.6)) pushIllo({ loc, sect, class: 'font', property: 'illo-line-height', target: +aLh2.toFixed(2), reference: +mLh.toFixed(2), deltaPx: +(Math.abs(aLh2 - mLh)).toFixed(2), sc: `set the illustration label line-height to ${+mLh.toFixed(2)}px (mock ${+mLh.toFixed(2)}px, target ${+aLh2.toFixed(2)}px)` });
+              }
               const mFs = px(mc.fontSize), aFs = px(ac.fontSize);
               if (mFs != null && aFs != null && !close(aFs, mFs, 0.6)) pushIllo({ loc, sect, class: 'font', property: 'illo-font-size', target: aFs, reference: mFs, deltaPx: Math.round(Math.abs(aFs - mFs)), sc: `set the illustration label font-size to ${mFs}px` });
               const mW = parseInt(mc.fontWeight, 10), aW = parseInt(ac.fontWeight, 10);
@@ -2196,6 +2227,160 @@
           add({ locator: `${u.tag}.${(u.cls || '').split(/\s+/)[0]} — "${u.text}"`, section: sectionFor(u.node, mockLeads), class: 'structure', property: 'wrong-state', target: 'present elsewhere in dump', reference: 'expected on this surface', severity: 'med', suggestedChange: `"${u.text}" exists elsewhere in the target — you may have measured the wrong state/screen; re-measure the populated surface` });
         }
         // genuine absences are already covered by the structure-diff missing pass above; skip to avoid double-counting.
+      }
+    }
+
+    // ============= SHARED MATCHED-PAIR SET (v2.4.0) =============
+    // The per-element vertical-offset (Detector 1) and block-flow gap (Detector 2) passes both need a
+    // confident mock→target element pairing that spans CONTAINERS (not just text nodes). Re-use the same
+    // fid → tag+text → structural-path → geometry chain the structure pass uses, exposed here as a flat map.
+    const matchedPairs = (() => {
+      const pairs = new Map(), usedApp = new Set();
+      const take = (mn, an) => { if (an && !usedApp.has(an.i)) { pairs.set(mn.i, an); usedApp.add(an.i); return true; } return false; };
+      // (0) fid
+      const byFid = new Map(); for (const a of appAll) if (a.fid) byFid.set(a.fid, a);
+      for (const m of mock) if (m.fid && byFid.has(m.fid)) take(m, byFid.get(m.fid));
+      // (1) tag + normalised text
+      const byText = new Map();
+      for (const a of appAll) { const t = norm(a.text).slice(0, 60); if (t.length < 2) continue; const k = a.tag + '|' + t; if (!byText.has(k)) byText.set(k, []); byText.get(k).push(a); }
+      for (const m of mock) { if (pairs.has(m.i)) continue; const t = norm(m.text).slice(0, 60); if (t.length < 2) continue; take(m, (byText.get(m.tag + '|' + t) || []).find(a => !usedApp.has(a.i))); }
+      // (2) structural path
+      const kidsP = arr => { const mp = new Map(); for (const n of arr) { if (!mp.has(n.parent)) mp.set(n.parent, []); mp.get(n.parent).push(n); } return mp; };
+      const mKidsP = kidsP(mock), aKidsP = kidsP(appAll);
+      const pathOf = (nodes, kids, n) => { const parts = []; let cur = n, hops = 0; while (cur && cur.parent >= 0 && hops++ < 40) { const sibs = kids.get(cur.parent) || []; parts.unshift(`${cur.tag}[${sibs.indexOf(cur)}]`); cur = nodes[cur.parent]; } return parts.join('/'); };
+      const byPath = new Map(); for (const a of appAll) { const p = pathOf(appAll, aKidsP, a); if (!byPath.has(p)) byPath.set(p, a); }
+      for (const m of mock) { if (pairs.has(m.i)) continue; take(m, byPath.get(pathOf(mock, mKidsP, m))); }
+      return pairs;
+    })();
+
+    // ============= PER-ELEMENT VERTICAL OFFSET — "moved without resizing" (v2.4.0, Detector 1) =====
+    // A status/badge/label shifted DOWN (or up) by a parent alignment change (align-items center vs
+    // flex-start, justify-content, a different top margin) — WITHOUT resizing — was caught only as the
+    // PARENT's layout/align-items diff, never as the element ITSELF moving (recall WEAK #3, the "On track"
+    // status moved ~14px down). There is no per-element top/dy detector (only page-level cumulative drift).
+    //
+    // For each MATCHED element we compute its top RELATIVE TO ITS DIRECT PARENT (its paired counterpart's
+    // parent, frame-relative) on each side. If the element's SIZE matches (a pure move, not a reflow) but its
+    // relative-in-parent offset differs by > VOFF_TOL (~4px), emit a position/rel-offset finding. NOISE GUARDS:
+    //   · require the element to pair cleanly (matchedPairs) AND its OWN width+height ~equal (no reflow), so a
+    //     wrap/growth that also shifts children isn't double-counted as a move;
+    //   · require BOTH parents to themselves pair (matchedPairs), else "relative to parent" is meaningless;
+    //   · DEDUP per parent — a whole column shifting by the same delta is ONE alignment change, not N findings:
+    //     identical (parentKey|signed-delta) groups collapse to one row + a [×N] summary.
+    if (GEOM) {
+      const VOFF_TOL = 4;          // px — below this is sub-pixel/rounding noise
+      const SIZE_TOL = 3;          // px — w/h must match this tightly to count as a PURE move (not a reflow)
+      const voffRows = [];
+      for (const [mi, a] of matchedPairs) {
+        const m = mock[mi];
+        if (!m || !m.rect || !a.rect) continue;
+        if (m.rect.w <= 0 || m.rect.h <= 0 || a.rect.w <= 0 || a.rect.h <= 0) continue;
+        // PURE MOVE guard — own width AND height must match (a reflow that grew the box is a different class,
+        // already covered by geometry/height + wrap/line-count).
+        if (!close(a.rect.w, m.rect.w, SIZE_TOL) || !close(a.rect.h, m.rect.h, SIZE_TOL)) continue;
+        const mp = m.parent >= 0 ? mock[m.parent] : null;
+        const ap = a.parent >= 0 ? appById.get(a.parent) : null;
+        if (!mp || !ap || !mp.rect || !ap.rect) continue;
+        // both parents must themselves pair (so "relative to parent" is the SAME parent on both sides).
+        if (matchedPairs.get(mp.i) !== ap) continue;
+        const mRel = m.rect.y - mp.rect.y;       // top relative to the direct parent's top
+        const aRel = a.rect.y - ap.rect.y;
+        const d = aRel - mRel;
+        if (Math.abs(d) <= VOFF_TOL) continue;
+        const loc = locatorFor(a);
+        const sect = sectionFor(a, appLeads);
+        const elTxt = norm(m.text);
+        const el = elTxt ? `"${elTxt.slice(0, 32)}"` : `<${m.tag}>`;
+        voffRows.push({
+          loc, sect, mRel: +mRel.toFixed(1), aRel: +aRel.toFixed(1), d: +d.toFixed(1), el,
+          // dedup key: same parent + same signed (rounded) delta = one alignment change
+          dk: ap.i + '|' + Math.round(d),
+        });
+      }
+      // DEDUP per parent+delta — a column of children that all shifted by the same amount is ONE change.
+      const vg = new Map();
+      for (const r of voffRows) { if (!vg.has(r.dk)) vg.set(r.dk, []); vg.get(r.dk).push(r); }
+      for (const [, g] of vg) {
+        const dir = g[0].d > 0 ? 'down' : 'up';
+        g.slice(0, 3).forEach(r => add({
+          locator: r.loc, section: r.sect, class: 'position', property: 'rel-offset',
+          target: r.aRel, reference: r.mRel, deltaPx: Math.abs(Math.round(r.d)),
+          suggestedChange: `${r.el} sits ${Math.abs(Math.round(r.d))}px too far ${dir} inside its parent (top ${r.aRel}px from the parent vs the mock's ${r.mRel}px) at the SAME size — a pure vertical move, usually a parent align-items/justify-content/margin change. Set the parent's vertical alignment (or this element's top margin) so it sits ${r.mRel}px from the parent top`,
+        }));
+        if (g.length > 3) add({
+          locator: `[×${g.length} elements in one parent]`, section: g[0].sect, class: 'position', property: 'rel-offset',
+          target: g[0].aRel, reference: g[0].mRel, deltaPx: Math.abs(Math.round(g[0].d)),
+          suggestedChange: `${g.length} children of one parent all shifted ${Math.abs(Math.round(g[0].d))}px ${dir} at the same size — ONE parent alignment change (align-items/justify-content). Fix the parent's vertical alignment once`,
+        });
+      }
+    }
+
+    // ============= BLOCK-FLOW GAP between NON-TEXT containers (v2.4.0, Detector 2) =====
+    // The existing gap→/←-sibling check (in the text-probe pass) only runs on TEXT-PAIRED nodes. A
+    // case-study point list of NON-text containers spaced by block-flow MARGIN/PADDING (a display:block
+    // <div> per point) is invisible: the layout-structure gap check only compares flex/grid `gap`, and the
+    // text-probe gap check never reaches a text-less container (recall MISS #6: inter-point gap 38px ref vs
+    // 33px broken produced NO finding). This pass runs the SAME geometry-based gap (next.top - this.bottom,
+    // which INCLUDES margin) on PAIRED CONTAINERS, so block-flow spacing between block boxes is checked.
+    //   · gap is computed from rendered geometry, so it captures margin-collapse + padding + the real flow,
+    //     regardless of whether the spacing is margin, padding, or a flex/grid gap;
+    //   · only emitted when BOTH the container AND its next sibling pair cleanly (so the gap is between the
+    //     SAME two boxes on each side) and the delta > GAP_TOL (~3px);
+    //   · DEDUP repeated identical gaps (N points spaced the same → one row + a [×N] summary), so a list of
+    //     evenly-spaced points reports its single spacing defect once, not per point.
+    if (GEOM) {
+      const GAP_TOL = 3;
+      const isBlockContainer = n => {
+        if (!n || n.tag === 'body' || /\b(body|scr|frame|screen)\b/.test(n.cls || '')) return false;
+        if (!n.rect || (n.rect.w || 0) < 40 || (n.rect.h || 0) < 8) return false;
+        // a CONTAINER, not a leaf text run: it has children OR no direct text of its own. We want block-flow
+        // boxes (points, rows, cards) — skip pure inline/text leaves (those go through the text-probe gap).
+        const disp = n.comp?.display || '';
+        if (/inline(?!-)/.test(disp)) return false;        // inline / inline boxes don't drive block-flow gap
+        return true;
+      };
+      const bfRows = [];
+      const bfSeen = new Set();
+      for (const [mi, a] of matchedPairs) {
+        const m = mock[mi];
+        if (!isBlockContainer(m) || !isBlockContainer(a)) continue;
+        // next block-flow sibling on the MOCK side (source order within the same parent)
+        const mSibs = mockKids.get(m.parent); if (!mSibs) continue;
+        const mIdx = mSibs.indexOf(m); if (mIdx < 0) continue;
+        const mNext = mSibs[mIdx + 1];
+        if (!mNext || !isBlockContainer(mNext)) continue;
+        // the next sibling must ALSO pair, and to the app element that is the matched element's next sibling,
+        // so the gap is measured between the SAME two boxes on both sides.
+        const aNext = matchedPairs.get(mNext.i);
+        if (!aNext) continue;
+        const aSibs = appKids.get(a.parent);
+        if (!aSibs || aSibs.indexOf(aNext) < 0 || aSibs.indexOf(a) < 0) continue;
+        if (aSibs.indexOf(aNext) <= aSibs.indexOf(a)) continue; // aNext must come AFTER a in app source order too
+        const mGap = +(mNext.rect.y - (m.rect.y + m.rect.h)).toFixed(1);
+        const aGap = +(aNext.rect.y - (a.rect.y + a.rect.h)).toFixed(1);
+        if (mGap <= 1 && aGap <= 1) continue;                  // both touching → no spacing to compare
+        if (close(aGap, mGap, GAP_TOL)) continue;
+        // de-dup an exact pair already produced via the text-probe gap path (a paired text node whose
+        // styled box is this container) — key by the app box + next box so we don't double-report.
+        const pk = a.i + '>' + aNext.i;
+        if (bfSeen.has(pk)) continue; bfSeen.add(pk);
+        const loc = locatorFor(a) || `[container ${a.tag} @y${Math.round(a.rect.y)}]`;
+        const sect = sectionFor(a, appLeads);
+        bfRows.push({ loc, sect, mGap, aGap, dk: 'bf|' + Math.round(mGap) + '|' + Math.round(aGap) });
+      }
+      const bg = new Map();
+      for (const r of bfRows) { if (!bg.has(r.dk)) bg.set(r.dk, []); bg.get(r.dk).push(r); }
+      for (const [, g] of bg) {
+        g.slice(0, 3).forEach(r => add({
+          locator: r.loc, section: r.sect, class: 'spacing', property: 'gap→next-sibling(block-flow)',
+          target: r.aGap, reference: r.mGap, deltaPx: Math.round(Math.abs(r.aGap - r.mGap)),
+          suggestedChange: `the block-flow gap to the next sibling is ${r.aGap}px but the mock's is ${r.mGap}px — this spacing is margin/padding on a display:block container (not a flex/grid gap). Set the margin/padding so the inter-element gap is ${r.mGap}px`,
+        }));
+        if (g.length > 3) add({
+          locator: `[×${g.length} block-flow gaps]`, section: g[0].sect, class: 'spacing', property: 'gap→next-sibling(block-flow)',
+          target: g[0].aGap, reference: g[0].mGap, deltaPx: Math.round(Math.abs(g[0].aGap - g[0].mGap)),
+          suggestedChange: `${g.length} sibling block containers share the same wrong inter-element gap (${g[0].aGap}px vs the mock's ${g[0].mGap}px) — fix the per-item margin/padding once`,
+        });
       }
     }
 

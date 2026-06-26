@@ -51,7 +51,7 @@ round-trip between scripts.
       "id": "mf1",
       "locator": "text \"Book a demo\"  ·  a.framer-xxx  ·  @540,17 97×40",  // human + best-effort CSS/text locator for the TARGET element
       "section": "Compliance coverage",      // nearest section eyebrow/heading
-      "class": "gradient",                   // geometry|font|container-bg|border|shadow|gradient|layout|structure|rhythm|value|transform|pseudo|animation|wrap|icon|spacing|media|fonts|screen-bg|extra|interaction|responsive
+      "class": "gradient",                   // geometry|font|container-bg|border|shadow|gradient|layout|structure|rhythm|value|transform|pseudo|animation|wrap|icon|spacing|media|fonts|screen-bg|extra|interaction|responsive|position
       "property": "bg-media-layer",
       "target": "none",
       "reference": "img",
@@ -460,6 +460,43 @@ card's `::after` fold). The exclusion conflated "placeholder TEXT content (legit
 > `::after` → `illo-border-width` fires. An ordinary page with NO illustration roots is unaffected (normal font
 > findings, zero illo activity). 10/10 controlled assertions pass. See references/issue-to-check-map.md #33.
 
+## v2.4.0 — three detectors for the per-element-move, block-flow-gap, and sub-px line-height blind spots
+
+An empirical recall test (a controlled ReadinessMockup + case-study fixture, ref vs broken) proved v2.3.0
+MISSED a per-element move and a block-flow gap, and only weakly caught a sub-px line-height. v2.4.0 adds three
+ADDITIVE, low-noise detectors. All ride the normal MODE-A/B flow — no new flags, no runner.
+
+- **`position/rel-offset` — moved without resizing.** For each MATCHED element (shared fid→tag+text→path
+  pairing), compute its top RELATIVE TO ITS DIRECT PARENT on each side; if the element's own width AND height
+  match (a PURE move, not a reflow) but the relative-in-parent offset differs by > ~4px, emit
+  `position/rel-offset {target, reference, deltaPx}`. This catches an element shifted by a flex
+  `align-items`/`justify-content`/top-margin change without resizing (the "On track" status case) — a signal
+  the parent's `layout/align-items` diff names only obliquely. GUARDS: both parents must themselves pair;
+  DEDUP per `(parent|signed-delta)` so a whole column shifting by one delta is ONE finding + a `[×N elements
+  in one parent]` summary.
+- **`spacing/gap→next-sibling(block-flow)` — block-flow gap on NON-TEXT containers.** The existing
+  `gap→/←-sibling` runs only on TEXT-PAIRED nodes; the layout detector only compares flex/grid `gap`. So
+  block-flow MARGIN/PADDING spacing between block `<div>` containers (a divided point list, stacked cards)
+  was invisible. This runs the SAME geometry-based gap (`next.top − this.bottom`, which INCLUDES margin /
+  padding / margin-collapse) on PAIRED block containers and their next sibling, flagging a > ~3px delta —
+  only when both boxes pair to the SAME pair on each side. DEDUP repeated identical gaps → ≤3 rows + a `[×N
+  block-flow gaps]` summary.
+- **Value-based line-height + illustration line-height.** The line-height check now compares the RESOLVED px
+  VALUE (each `normal`→~1.2×fs) with a tight ~0.6px tolerance, replacing the `max(2, 0.12·fs)` height-proxy
+  floor that swallowed a 0.75px label delta. AND the illustration-internal STYLE pass gained
+  `font/illo-line-height` (same resolution + tolerance) so internal text rows are line-height-checked
+  directly, not just incidentally via height.
+
+> **Validation (controlled fixtures + real site).** Recreate ref-vs-broken (company letter-spacing, ticker
+> line-height, "On track" `align-items` move, status line-height, row-label line-height 0.75px, case-study
+> gap 38→33) and run the real MODE A→B flow: **all six fire** — #3 as a per-element `position/rel-offset`
+> (d=16, not just the parent align-items), #5 as `font/illo-line-height` + a value-based `font/line-height`,
+> #6 as `spacing/gap→next-sibling(block-flow)` (33 vs 38). The IDENTICAL site → **0** findings. On the
+> now-fixed live home (`diolog.app`→`diolog.site`) the three checks add **0** `position/rel-offset`, **0**
+> block-flow gap, and **5** genuine residual line-height rows (real 0.7–1px button/illustration drift the old
+> 2px floor hid — not false positives), so they do NOT flood. `node --check` clean. See
+> references/issue-to-check-map.md #34–#36.
+
 ## Every ported detector (lose none)
 
 `analyze.js` ports **all** of the prior pipeline's detectors. Per-element analysis (MODE A) and
@@ -486,4 +523,8 @@ that the subset webfont renders with NO effect, caught by a glyph-SHAPE pixel co
 `fontFeatureSettings` where supported else via the `feature-check.mjs` runner step), and the **v2.2.0
 font-metric / version** detector (`font/rendered-width-ratio` — the SAME family at the SAME size renders a
 consistently different WIDTH because the two sides ship a different font VERSION; measured in-page via the
-per-node `exactW` exact-text span, aggregated per family, deduped to one finding per family).
+per-node `exactW` exact-text span, aggregated per family, deduped to one finding per family), and the
+**v2.4.0** **per-element vertical-offset** (`position/rel-offset` — a matched element MOVED inside its parent
+at the same size, deduped per parent), **block-flow gap** (`spacing/gap→next-sibling(block-flow)` — the
+margin/padding gap between paired NON-TEXT block containers), and **value-based line-height** (a tight ~0.6px
+VALUE comparison + `font/illo-line-height` in the illustration STYLE pass) detectors.
