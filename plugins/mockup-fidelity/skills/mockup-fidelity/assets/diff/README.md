@@ -327,6 +327,33 @@ reveals it. Full rationale + runner commands in [`run.md`](./run.md) § *v2.1.0*
   InterVariable (cv11 ON vs OFF → ~5–12 % pixel difference ⇒ effective) vs a feature-less subset (0 % ⇒
   INEFFECTIVE) — the detector fires high on the subset and does NOT flag when cv11 genuinely takes effect.
 
+### v2.2.0 — FONT-METRIC / VERSION detector (`font/rendered-width-ratio`, in `analyze.js`)
+
+The sibling of v2.1.0's glyph-shape blind spot: a real homepage case-study body ("Beyond any single draft or
+reply…") with IDENTICAL declared font props on both sides — Inter, 18px, weight 400, letter-spacing −0.36px,
+line-height 27.9px, container width 507px — and the family APPLIES on both, yet LIVE wraps to 4 lines (height
+112) while the TARGET wraps to 3 lines (height 84). The exact text renders ~636px on live vs ~625px on target:
+the target self-hosts a DIFFERENT VERSION of Inter (rsms v4, ≈1.8% NARROWER than live's Google Inter v20) at
+the same size. The height-aware line-count check flagged the SYMPTOM; this detector surfaces the ROOT CAUSE —
+same family + size, consistently different rendered WIDTH ⇒ a different font version/metrics. Unlike cv11
+(#31, a same-WIDTH letterform) this IS a width difference, so it is measured directly IN-PAGE (no runner).
+
+- **`exactW` (capture).** `capture()` records each text node's exact-text width — the node's own text (capped
+  ~80 chars) laid out nowrap in an offscreen span using the element's EXACT computed font (family, weight,
+  style, size, letter-spacing, word-spacing, font-feature-settings).
+- **Per-family width-ratio (MODE B).** For each MATCHED text element where the SAME first font-family applies
+  on BOTH sides, compute the width RATIO `target/reference` and accumulate per family. A font-VERSION mismatch
+  is UNIFORM, so aggregate per family (median over ≥3 samples, ≥70%-same-direction guard) and emit ONE high
+  `font/rendered-width-ratio` finding per family when the median deviates from 1.0 by more than `0.7%` (the
+  real case is ~1.8%; a sub-pixel single-element diff does NOT fire). DEDUPED to per-family — no per-element
+  flood. `suggestedChange`: self-host the SAME font VERSION the reference uses (e.g. Google Inter v20 ≈ rsms
+  Inter v3.19, NOT v4). The height-differing line-count is emitted as a confident HIGH wrap finding (with the
+  height delta) pointing at this root cause — never bucketed into `noiseExcluded`.
+- **Validated on controlled fixtures.** Same `'Inter'` @font-face name, two different files: rsms v4 vs
+  Google/rsms v3.19. Cross-version → median ratio **0.980** (~2% narrower) ⇒ ONE finding; same-version →
+  median **1.0000** ⇒ NO finding; on the now-fixed live home (v3.19 = Google Inter) it fires **0** times.
+  Full rationale in [`run.md`](./run.md) § *v2.2.0*.
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present

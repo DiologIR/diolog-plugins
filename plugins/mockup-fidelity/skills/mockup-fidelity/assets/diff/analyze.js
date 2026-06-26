@@ -185,6 +185,43 @@
       return v;
     };
 
+    // EXACT-TEXT WIDTH (v2.2.0 — the FONT-METRIC / VERSION probe). Render the node's OWN text (the same
+    // representative string on both sides, capped to ~80 chars) in an offscreen nowrap span using the
+    // element's EXACT computed font — family, weight, style, size, letter-spacing, word-spacing AND
+    // font-feature-settings — and return the rendered width. Two builds of the SAME family at the SAME
+    // declared size (e.g. rsms Inter v4 vs Google Inter v20) have DIFFERENT per-glyph advance widths, so
+    // the SAME string renders to a CONSISTENTLY different width — a uniform ~1-2% ratio across every node
+    // in that family. That ratio is the only directly-measurable signal of a font-VERSION mismatch: the
+    // declared props are identical and the family applies on both sides, yet the rendered text is wider/
+    // narrower (which is what makes a block wrap to a different line count). Unlike the cv11 case (#31,
+    // same-width letterform), a font-version drift IS a width difference, so we measure it here in-page.
+    // Reuses the same offscreen `_probeHost`. Returns { w, fam, sample } or null for non-text/generic.
+    const EXACT_CAP = 80; // chars — long enough for a stable per-family ratio, short enough to keep the dump small
+    const exactTextWidth = (cs, rawText) => {
+      if (!_probeHost) return null;
+      const fam = cs.fontFamily;
+      const first = firstFamily(fam);
+      if (!first || GENERIC.test(first)) return null; // only a NAMED family can have a version mismatch
+      const t = String(rawText || '').replace(/\s+/g, ' ').trim().slice(0, EXACT_CAP);
+      if (t.length < 4) return null; // too short to give a stable, low-noise width
+      const s = document.createElement('span');
+      s.textContent = t;
+      // copy the EXACT rendering inputs so the measured width matches the in-flow render of this combo.
+      s.style.fontFamily = fam;
+      s.style.fontWeight = String(cs.fontWeight || '400');
+      s.style.fontStyle = cs.fontStyle || 'normal';
+      s.style.fontSize = cs.fontSize || '16px';
+      s.style.letterSpacing = cs.letterSpacing && cs.letterSpacing !== 'normal' ? cs.letterSpacing : 'normal';
+      s.style.wordSpacing = cs.wordSpacing && cs.wordSpacing !== 'normal' ? cs.wordSpacing : 'normal';
+      try { s.style.fontFeatureSettings = cs.fontFeatureSettings && cs.fontFeatureSettings !== 'normal' ? cs.fontFeatureSettings : 'normal'; } catch (e) {}
+      s.style.whiteSpace = 'nowrap';
+      _probeHost.appendChild(s);
+      const w = +s.getBoundingClientRect().width.toFixed(2);
+      _probeHost.removeChild(s);
+      if (!(w > 0)) return null;
+      return { w, fam: first, sample: t };
+    };
+
     // INTERACTION-STATE RULE INDEX — getComputedStyle resolves only the CURRENT (resting) state;
     // a :hover/:focus/:focus-visible/:active override lives in a stylesheet rule that never applies
     // unless the element is actually in that state (which we cannot force during a static dump). So
@@ -399,6 +436,9 @@
       }
 
       const fontRn = directText ? fontRender(cs) : null;
+      // EXACT-TEXT WIDTH (v2.2.0) — this node's own text rendered nowrap in its exact computed font, so
+      // MODE B can ratio target/reference per matched element and detect a font-VERSION (metric) mismatch.
+      const exactW = directText ? exactTextWidth(cs, directText) : null;
 
       // FONT-FEATURE REQUEST (v2.1.0) — the computed `font-feature-settings` this text node REQUESTS
       // (cvXX / ssXX / onum / lnum / tnum / pnum / zero / case / …). Recorded only for text nodes that
@@ -542,7 +582,7 @@
           h: +r.height.toFixed(1),
         },
         glyph, hardBreak, lines, wrap, bgLayer, fullBleedMedia, divider, hasSvgChild, arrowGlyph,
-        fontRn, featReq, pseudoContent, anims, istates, comp,
+        fontRn, exactW, featReq, pseudoContent, anims, istates, comp,
       });
       for (const c of el.children) walk(c, depth + 1, myIndex);
     };
@@ -949,6 +989,12 @@
 
     // ============= TEXT-PROBE PASS (per mock text/placeholder) =============
     const unmatched = [];
+    // FONT-METRIC / VERSION accumulator (v2.2.0). Per matched text element we render the SAME exact string
+    // in each side's exact computed font (capture-side `exactW`) and store the per-family width RATIO
+    // target/reference. A font-VERSION mismatch is UNIFORM — every node in that family shows ~the same
+    // ratio — so after the pass we aggregate per family (median) and emit ONE finding per family when the
+    // median deviates from 1.0 by more than a tolerance. Keyed by the lowercased first font-family name.
+    const fontMetricRatios = new Map(); // famKey -> [{ ratio, loc, sect, refW, tgtW, sample }]
     for (const mn of mock) {
       const isPh = mn.isPh, text = norm(mn.text);
       if (!text && !isPh) continue;
@@ -995,7 +1041,16 @@
           if (aw !== mw) add({ locator: loc, section: sect, class: 'wrap', property: 'text-wrap', target: aw, reference: mw, suggestedChange: `set text-wrap: ${mw} on ${el}` });
         }
         if (mn.hardBreak !== undefined && !!an.hardBreak !== !!mn.hardBreak) add({ locator: loc, section: sect, class: 'wrap', property: 'hard-break(<br>)', target: !!an.hardBreak, reference: !!mn.hardBreak, suggestedChange: mn.hardBreak ? `add an explicit <br> in ${el} to match the mock's hard line break` : `remove the <br> in ${el}` });
-        if (mn.lines != null && an.lines != null && an.lines !== mn.lines) add({ locator: loc, section: sect, class: 'wrap', property: 'line-count', target: an.lines, reference: mn.lines, suggestedChange: `make ${el} wrap to ${mn.lines} line(s) (adjust max-width / text-wrap)` });
+        if (mn.lines != null && an.lines != null && an.lines !== mn.lines) {
+          // A height-DIFFERING line-count is a REAL wrap divergence (the case-study symptom: live wraps to
+          // 4 lines/112px, target to 3 lines/84px), NOT span-splitting — so it is emitted as a confident
+          // finding, never bucketed into noiseExcluded. When the box heights also differ we escalate (the
+          // wrap genuinely changed the rendered height) and point at the font-metric root cause, since a
+          // same-declared-font width drift (the rendered-width-ratio check above) is its usual cause.
+          const mH = mn.rect?.h, aH = an.rect?.h;
+          const heightsDiffer = mH != null && aH != null && Math.abs(aH - mH) > 2;
+          add({ locator: loc, section: sect, class: 'wrap', property: 'line-count', target: an.lines, reference: mn.lines, ...(heightsDiffer ? { deltaPx: Math.round(Math.abs(aH - mH)), severity: 'high' } : {}), suggestedChange: heightsDiffer ? `${el} wraps to ${an.lines} lines (${Math.round(aH)}px tall) but the reference wraps to ${mn.lines} lines (${Math.round(mH)}px) — a real wrap divergence. Check the container width AND, if the declared font/size match, the rendered-width-ratio finding (a font-version metric drift renders the SAME text wider/narrower, changing where it wraps)` : `make ${el} wrap to ${mn.lines} line(s) (adjust max-width / text-wrap)` });
+        }
         if (mn.bgLayer && (!an.bgLayer || an.bgLayer.tag !== mn.bgLayer.tag)) add({ locator: loc, section: sect, class: 'media', property: 'bg-media-layer', target: an.bgLayer ? an.bgLayer.tag : 'none', reference: mn.bgLayer.tag, suggestedChange: `add the ${mn.bgLayer.tag} background layer the mock renders behind ${el}` });
         if (mn.wrap && an.wrap && mn.wrap.first && an.wrap.first && an.wrap.first !== mn.wrap.first) add({ locator: loc, section: sect, class: 'wrap', property: 'wrap-point(line1)', target: an.wrap.first, reference: mn.wrap.first, suggestedChange: `adjust ${el} so line 1 ends with "${mn.wrap.first}" (mock breaks differently)` });
         // RENDERED-FONT (v2.0.2 — DOM-span apply/fallback comparison, no canvas).
@@ -1014,6 +1069,22 @@
             add({ locator: loc, section: sect, class: 'font', property: 'rendered-font', target: `fallback (${t.family} declared, not applied)`, reference: `${r.family} (applied)`, severity: 'high', suggestedChange: `the reference renders ${r.family} but ${el} falls back to the generic face — ensure the ${t.family} webfont actually loads AND applies (declared but not rendering; check @font-face load + unicode-range + that the family is wired to this element)` });
           } else if (!r.applies && t.applies) {
             add({ locator: loc, section: sect, class: 'font', property: 'rendered-font', target: `${t.family} (applied)`, reference: `fallback (${r.family} declared, not applied)`, severity: 'high', suggestedChange: `the reference falls back to a generic face for ${el} but the target applies ${t.family} — match the reference (the reference does NOT render its named face here)` });
+          }
+        }
+        // FONT-METRIC / VERSION (v2.2.0) — accumulate the per-family rendered-width RATIO for this matched
+        // element. Only when BOTH sides measured an exact width for the SAME first font-family AND that
+        // family genuinely APPLIES on both (a fallback would itself change the width and is already reported
+        // by rendered-font above). The SAME representative string is rendered in each side's exact computed
+        // font, so any width difference at the same declared size is a per-glyph ADVANCE difference ⇒ a
+        // different font VERSION/metrics. Aggregated + emitted once-per-family after the loop.
+        if (mn.exactW && an.exactW && mn.exactW.w > 0 && an.exactW.w > 0 &&
+            mn.exactW.fam.toLowerCase() === an.exactW.fam.toLowerCase()) {
+          const bothApply = (!mn.fontRn || mn.fontRn.applies !== false) && (!an.fontRn || an.fontRn.applies !== false);
+          if (bothApply) {
+            const ratio = an.exactW.w / mn.exactW.w; // target / reference
+            const famKey = an.exactW.fam.toLowerCase();
+            if (!fontMetricRatios.has(famKey)) fontMetricRatios.set(famKey, []);
+            fontMetricRatios.get(famKey).push({ ratio, fam: an.exactW.fam, loc, sect, refW: mn.exactW.w, tgtW: an.exactW.w, sample: an.exactW.sample });
           }
         }
         // BUTTON arrow + geometry + tracking
@@ -1115,6 +1186,44 @@
         if (mPT != null && !close(abox.padTop, mPT)) add({ locator: loc, section: sect, class: 'spacing', property: 'box-pad-top', target: abox.padTop, reference: mPT, deltaPx: Math.round(Math.abs((abox.padTop || 0) - mPT)), suggestedChange: `set padding-top: ${mPT}px on the containing box (around ${el})` });
         const mPB = px(mb.comp.paddingBottom);
         if (mPB != null && !close(abox.padBottom, mPB)) add({ locator: loc, section: sect, class: 'spacing', property: 'box-pad-bottom', target: abox.padBottom, reference: mPB, deltaPx: Math.round(Math.abs((abox.padBottom || 0) - mPB)), suggestedChange: `set padding-bottom: ${mPB}px on the containing box (around ${el})` });
+      }
+    }
+
+    // ============= FONT-METRIC / VERSION MISMATCH (v2.2.0) =============
+    // The text-probe pass measured, per matched element, the rendered width of the SAME representative
+    // string in each side's EXACT computed font (same family/weight/size/letter-spacing/feature-settings).
+    // A font-VERSION mismatch (e.g. the target self-hosts rsms Inter v4 while live uses Google Inter v20)
+    // is UNIFORM: every element in that family renders ~the same width RATIO target/reference at the same
+    // declared size. We aggregate per family and emit ONE high finding per family when the MEDIAN ratio
+    // deviates from 1.0 by more than `FM_TOL` — the real case is ~1.8% (ratio ≈ 0.982); a sub-pixel
+    // single-element diff (well under the tolerance) does NOT fire, and a per-element flood is impossible
+    // because the emit is deduped to one row per family. This is the ROOT CAUSE behind a height-differing
+    // line-count: same declared font + size, consistently different rendered WIDTH ⇒ a different version.
+    {
+      const FM_TOL = 0.007;     // 0.7% — below the ~1.8% real case, above sub-pixel single-glyph noise
+      const FM_MIN_SAMPLES = 3; // require a few matched elements so one outlier can't fake a uniform shift
+      const median = arr => { const s = [...arr].sort((a, b) => a - b); const n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; };
+      for (const [, rows] of fontMetricRatios) {
+        if (rows.length < FM_MIN_SAMPLES) continue;
+        const ratios = rows.map(r => r.ratio);
+        const med = median(ratios);
+        if (Math.abs(med - 1) <= FM_TOL) continue; // within tolerance → same version, no finding
+        // CONSISTENCY guard: a font-version mismatch is uniform, so MOST elements should agree with the
+        // median direction. If the ratios are scattered (some wider, some narrower) it is NOT a version
+        // drift (more likely per-element noise / mixed faces) — require ≥70% on the median's side.
+        const sameDir = ratios.filter(r => (med > 1 ? r > 1 + FM_TOL / 2 : r < 1 - FM_TOL / 2)).length;
+        if (sameDir / ratios.length < 0.7) continue;
+        const fam = rows[0].fam;
+        const pct = +(Math.abs(med - 1) * 100).toFixed(1);
+        const dir = med < 1 ? 'narrower' : 'wider';
+        const rep = rows.find(r => Math.abs(r.ratio - med) === Math.min(...ratios.map(x => Math.abs(x - med)))) || rows[0];
+        add({
+          locator: rep.loc || `[font-metric ${fam}]`, section: rep.sect, class: 'font', property: 'rendered-width-ratio',
+          target: `${fam} renders ${med.toFixed(3)}x (≈${pct}% ${dir}) than reference at the same size`,
+          reference: '1.00',
+          severity: 'high',
+          suggestedChange: `${fam} at the SAME declared size renders ${pct}% ${dir} on the target than on the reference (e.g. "${(rep.sample || '').slice(0, 32)}" = ${rep.tgtW}px vs ${rep.refW}px) across ${rows.length} matched text elements — same family + size, consistently different rendered WIDTH ⇒ the two sides use a DIFFERENT FONT VERSION/metrics (this is what makes a block wrap to a different line count). Self-host the SAME font VERSION the reference uses (e.g. Google Inter v20 ≈ rsms Inter v3.19, NOT v4)`,
+        });
       }
     }
 

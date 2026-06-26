@@ -383,6 +383,42 @@ playwright-cli eval "$(cat analyze.js)" --raw > findings.json     # MODE B with 
 - **`data-fid` anchoring** still works: put the same `data-fid` (or `data-fidelity-id` /
   `data-testid`) on the matching reference + target nodes to make a region's pairing exact.
 
+## v2.2.0 — FONT-METRIC / VERSION detector (rendered-width-ratio)
+
+A class survived even the v2.1.0 glyph-shape check: a real homepage case-study body ("Beyond any single draft
+or reply…") with IDENTICAL declared font props on both sides — Inter, 18px, weight 400, letter-spacing
+−0.36px, line-height 27.9px, container width 507px — and the family APPLIES on both, yet LIVE wraps to 4 lines
+(height 112) while the TARGET wraps to 3 lines (height 84). The cause: the exact text renders ~636px on live
+vs ~625px on target — the target self-hosts a DIFFERENT VERSION of Inter (rsms v4, ≈1.8% NARROWER than live's
+Google Inter v20) at the same size. The differ's (height-aware) line-count check flagged the SYMPTOM but never
+the ROOT CAUSE: same family + size, consistently different rendered WIDTH ⇒ a different font version/metrics.
+
+Unlike the cv11 case (#31, a same-WIDTH letterform), this IS a width difference, so it is measured directly
+IN-PAGE — **no runner step**:
+
+- `capture()` records each text node's `exactW` — the node's own text (capped ~80 chars) laid out nowrap in an
+  offscreen span using the element's EXACT computed font (family, weight, style, size, letter-spacing,
+  word-spacing, font-feature-settings).
+- MODE B, per MATCHED text element where the SAME first font-family applies on BOTH sides, computes the width
+  RATIO `target/reference` and accumulates it per family. A font-VERSION mismatch is UNIFORM (every element in
+  that family shows ~the same ratio), so it aggregates per family — **median over ≥3 samples, with a
+  ≥70%-same-direction consistency guard** — and emits ONE high `font/rendered-width-ratio` finding per family
+  when the median deviates from 1.0 by more than `0.7%` (the real case is ~1.8%; a sub-pixel single-element diff
+  does NOT fire). Deduped to per-family — **no per-element flood**.
+- The finding's `suggestedChange`: self-host the SAME font VERSION the reference uses (e.g. Google Inter v20 ≈
+  rsms Inter v3.19, NOT v4). The height-aware line-count finding (line-count differs AND box heights differ) is
+  emitted as a confident HIGH row with the height `deltaPx` and points at this width-ratio root cause — it is a
+  REAL wrap divergence, never bucketed into `noiseExcluded`.
+
+This rides the normal MODE-A/B flow — no new flags, no runner. Just capture both sides with the same analyze.js
+(so both carry `exactW`); an OLD capture without `exactW` makes the detector a clean no-op.
+
+> **Validation (controlled fixtures).** Render the case-study string under the SAME `'Inter'` @font-face name
+> with two different font files: rsms Inter v4 vs Google/rsms Inter v3.19. Cross-version (v3.19 ref → v4 target)
+> → median width ratio **0.980** (~2% narrower) across the matched body elements ⇒ ONE high
+> `font/rendered-width-ratio` finding. Same-version (v3.19 → v3.19) → median **1.0000** ⇒ NO finding. On the
+> now-fixed live home (v3.19 = Google Inter) the detector fires **0** times — no false positive.
+
 ## Every ported detector (lose none)
 
 `analyze.js` ports **all** of the prior pipeline's detectors. Per-element analysis (MODE A) and
@@ -406,4 +442,7 @@ deltaE, 4-corner radius), **(4) transform/opacity/filter** (matrix decompose), *
 **interaction**-state + **responsive** detectors, and the **v2.1.0 rendered-glyph-shape /
 font-feature-effectiveness** detector (`font/feature-ineffective` — a requested `cvXX`/`ssXX`/`onum` feature
 that the subset webfont renders with NO effect, caught by a glyph-SHAPE pixel comparison, in-page via canvas
-`fontFeatureSettings` where supported else via the `feature-check.mjs` runner step).
+`fontFeatureSettings` where supported else via the `feature-check.mjs` runner step), and the **v2.2.0
+font-metric / version** detector (`font/rendered-width-ratio` — the SAME family at the SAME size renders a
+consistently different WIDTH because the two sides ship a different font VERSION; measured in-page via the
+per-node `exactW` exact-text span, aggregated per family, deduped to one finding per family).
