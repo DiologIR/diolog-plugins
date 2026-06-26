@@ -653,6 +653,42 @@ The score is re-computed over the merged set (same `100·e^(−penalty/900)` cur
 > **The target dir needs its own `node_modules`.** When the skill copies `assets/diff/*` into a project's
 > `.mockup-fidelity/`, run `npm install` there too (the harness imports `playwright-core` + `odiff-bin`).
 
+## v2.5.1 — the TYPOGRAPHIC-DECLARATION check (same font, different declared shaping)
+
+The v2.5.0 layers answer "is the right typeface FILE applied". A class ORTHOGONAL to that survived: the SAME
+file is applied on both sides, but a DECLARED typographic property changes what renders — and it slips every
+font-class layer AT ONCE. On the diolog.site↔diolog.app run a button rendered the SINGLE-story `a` (Inter
+`font-feature-settings: cv11`) where live is `normal` (double-story `a`), and elsewhere the `font-family`
+DECLARATION differed (`'Inter', system-ui, …, sans-serif` vs `Inter, sans-serif`). The class = "a declared
+typographic property that changes the rendered result but not which font loads": the computed-style differ
+compares `font-family` only by KIND (serif/sans/mono) and never looks at `font-feature-settings`; CDP
+`getPlatformFontsForNode` reports the SAME font FILE (a `cvXX` glyph is a variant WITHIN the file); and the
+odiff raster runs `antialiasing:true`, so a glyph-edge variant looks like font-smoothing noise and is
+suppressed.
+
+This rides the **normal MODE-A/B flow — no new flags, no runner**. `capture()` records `fontFeatureSettings`
++ `fontVariationSettings` per node (alongside the already-captured `fontFamily`); MODE B runs three EXACT
+comparisons per PAIRED text element, class `font`:
+
+- **`font/feature-settings`** — normalised `getComputedStyle.fontFeatureSettings` (lowercase, strip quotes,
+  sort the comma list, collapse whitespace; `''`/`normal` canonical). Emits when they differ (target
+  `cv03 cv04 cv09 cv11` vs ref `normal`); `suggestedChange` names the features ADDED/REMOVED.
+- **`font/variation-settings`** — same treatment for `fontVariationSettings` (a `wght`/`opsz` axis applied on
+  one side only).
+- **`font/family-exact`** — the FULL `fontFamily` string normalised; emits when the full declaration differs
+  even though the KIND matches (`'inter', system-ui, …, sans-serif` vs `inter, sans-serif`). COMPLEMENTS the
+  kind check, does NOT replace it.
+
+**Dedup is mandatory (these props are set site-wide).** Each new check DEDUPES per `(property |
+normalizedTarget | normalizedReference)` → ONE root-cause finding + a `[×N elements]` count (same pattern as
+the rendered-width-ratio / pseudo dedups). MED severity; same text-probe scoping the other font checks use.
+
+> **Validation (controlled fixtures, real MODE A→B).** (a) cv11 vs normal → `font/feature-settings` fires 1
+> deduped (`[×5 elements]`); (b) long system stack vs `Inter, sans-serif` → `font/family-exact` fires 1;
+> (c) `"wght" 600` vs `normal` → `font/variation-settings` fires 1; (d) identical → 0 new findings;
+> (e) equivalent-but-reordered/requoted/re-whitespaced declarations → 0 (normalisation doesn't false-positive).
+> `node --check` clean. See `../../references/issue-to-check-map.md` #41–#43.
+
 ## Every ported detector (lose none)
 
 `analyze.js` ports **all** of the prior pipeline's detectors. Per-element analysis (MODE A) and
@@ -683,4 +719,8 @@ per-node `exactW` exact-text span, aggregated per family, deduped to one finding
 **v2.4.0** **per-element vertical-offset** (`position/rel-offset` — a matched element MOVED inside its parent
 at the same size, deduped per parent), **block-flow gap** (`spacing/gap→next-sibling(block-flow)` — the
 margin/padding gap between paired NON-TEXT block containers), and **value-based line-height** (a tight ~0.6px
-VALUE comparison + `font/illo-line-height` in the illustration STYLE pass) detectors.
+VALUE comparison + `font/illo-line-height` in the illustration STYLE pass) detectors, and the **v2.5.1
+TYPOGRAPHIC-DECLARATION** detectors (`font/feature-settings`, `font/variation-settings`, `font/family-exact` —
+a declared `font-feature-settings` `cvXX`, a `font-variation-settings` axis, or the FULL `font-family`
+declaration differing across sides at the SAME loaded font FILE; normalised + deduped per
+`(property\|normTarget\|normRef)` to one finding + a `[×N elements]` count).

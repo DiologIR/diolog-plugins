@@ -460,6 +460,46 @@ The enriched `target.findings.json` carries the normal MODE-B shape plus the new
 **CDP rendered-font check, not any width and not the raster %, is the trustworthy signal for the font class.**
 See references/issue-to-check-map.md #37–#40.
 
+### v2.5.1 — the TYPOGRAPHIC-DECLARATION check (same font, different declared shaping, in `analyze.js`)
+
+The v2.5.0 layers answer "is the right typeface FILE applied". A class ORTHOGONAL to that survived: the SAME
+file is applied on both sides, but a DECLARED typographic property changes what renders. On the
+diolog.site↔diolog.app run a button rendered the SINGLE-story `a` (Inter `font-feature-settings: cv11`) where
+live is `normal` (double-story `a`), and elsewhere the `font-family` DECLARATION differed (`'Inter', system-ui,
+…, sans-serif` vs `Inter, sans-serif`). BOTH slipped every layer at once: the computed-style differ compares
+`font-family` only by KIND (serif/sans/mono) and never looks at `font-feature-settings`; CDP
+`getPlatformFontsForNode` reports the SAME font FILE because a `cvXX` glyph is a variant WITHIN the file; and
+the odiff raster runs `antialiasing:true`, so a glyph-edge variant reads as font-smoothing noise and is
+suppressed. The class = "a declared typographic property that changes the rendered result but not which font
+loads." This rides the normal MODE-A/B flow — no new flags, no runner.
+
+`capture()` now records `fontFeatureSettings` + `fontVariationSettings` per node (alongside the already-captured
+`fontFamily`), and MODE B runs three EXACT comparisons per PAIRED text element (class `font`):
+
+- **`font/feature-settings`** — compares `getComputedStyle.fontFeatureSettings` normalised (lowercase, strip
+  quotes, sort the comma list, collapse whitespace; `''`/`normal` canonical). Emits when they differ (e.g.
+  target `cv03 cv04 cv09 cv11` vs ref `normal`). `suggestedChange` names the exact features ADDED/REMOVED.
+- **`font/variation-settings`** — the same treatment for `fontVariationSettings` (catches a target applying a
+  `wght`/`opsz` axis live doesn't, or vice-versa).
+- **`font/family-exact`** — compares the FULL `fontFamily` string normalised (lowercase, normalise quotes,
+  collapse whitespace). Emits when the full declaration differs even though the KIND matches (e.g. `'inter',
+  system-ui, …, sans-serif` vs `inter, sans-serif`). This COMPLEMENTS the existing kind check, it does NOT
+  replace it.
+
+**No flooding (dedup is mandatory).** These properties are almost always set SITE-WIDE, so a single divergence
+repeats on every element. Each new check DEDUPES per `(property | normalizedTarget | normalizedReference)` to
+ONE root-cause finding + a `[×N elements]` count (same pattern as the rendered-width-ratio / pseudo dedups) —
+a whole-site `cv11` or stack difference surfaces as ONE finding, not hundreds. MED severity; same text-probe
+scoping the existing font checks use.
+
+> **Validation (controlled fixtures, real MODE A→B flow).** (a) ref `font-feature-settings: normal` vs target
+> `cv11` → `font/feature-settings` FIRES (1 deduped finding, `[×5 elements]`); (b) ref `Inter, sans-serif` vs
+> target a long `'Inter', system-ui, -apple-system, …, sans-serif` stack → `font/family-exact` FIRES (1 deduped);
+> (c) a `font-variation-settings` divergence (`"wght" 600` vs `normal`) → fires (1 deduped); (d) IDENTICAL pages
+> → 0 of the new findings; (e) equivalent-but-different-syntax declarations (same features/family reordered,
+> requoted, re-whitespaced) → 0 new findings (the normalisation does not false-positive on equivalent
+> declarations). `node --check` clean. See references/issue-to-check-map.md #41–#43.
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present

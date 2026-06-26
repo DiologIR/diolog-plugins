@@ -131,6 +131,12 @@
       'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius',
       'transform', 'filter',
       'transitionProperty', 'transitionDuration',
+      // TYPOGRAPHIC-DECLARATION props (v2.5.1) — declared shaping that changes the RENDERED result but not
+      // which font FILE loads, so the family-KIND check, the CDP getPlatformFontsForNode probe, and the
+      // antialiased raster diff are ALL blind to them: font-feature-settings (cvXX single-vs-double-story 'a'),
+      // font-variation-settings (a wght/opsz axis applied live but not on target), and the FULL font-family
+      // DECLARATION (a long system stack vs `Inter, sans-serif` — same kind, different declared cascade).
+      'fontFeatureSettings', 'fontVariationSettings',
     ];
 
     // RENDERED-FONT fingerprint (v2.0.2 — DOM-SPAN probe, NOT canvas).
@@ -1122,6 +1128,53 @@
     // ratio — so after the pass we aggregate per family (median) and emit ONE finding per family when the
     // median deviates from 1.0 by more than a tolerance. Keyed by the lowercased first font-family name.
     const fontMetricRatios = new Map(); // famKey -> [{ ratio, loc, sect, refW, tgtW, sample }]
+
+    // ============= TYPOGRAPHIC-DECLARATION accumulator (v2.5.1) =============
+    // Three DECLARED typographic properties change what is RENDERED but NOT which font file loads, so they
+    // slip every existing layer: the family-KIND check (#1170) only compares serif/sans/mono; the CDP
+    // getPlatformFontsForNode probe (#37) reports the same font FILE because a cvXX/axis variant is a glyph
+    // WITHIN the file; and the odiff raster runs antialiasing:true so a single-vs-double-story glyph edge
+    // looks like font-smoothing noise and is suppressed. Class = "same font, different declared shaping".
+    //   1. font-feature-settings — cvXX/ssXX/onum/tnum/… (the cv11 single-vs-double-story 'a' homepage bug)
+    //   2. font-variation-settings — a wght/opsz/slnt axis applied on one side but not the other
+    //   3. the FULL font-family DECLARATION — `'Inter', system-ui, …, sans-serif` vs `Inter, sans-serif`
+    //      (same KIND, different declared cascade — caught alongside, NOT replacing, the kind check)
+    // These props are almost always set SITE-WIDE, so a single divergence repeats on every element. We
+    // ACCUMULATE here per (property | normalizedTarget | normalizedReference) and emit ONE deduped
+    // root-cause finding + a `[×N elements]` count after the loop (same pattern as rendered-width-ratio /
+    // pseudo dedup) — a whole-site cv11 or stack difference surfaces as ONE finding, never hundreds.
+    const typoDecl = new Map(); // `${property}|${normTgt}|${normRef}` -> { property, target, reference, loc, sect, count, sc }
+    // font-feature-settings / font-variation-settings normaliser: lowercase, strip quotes, collapse
+    // whitespace, split the comma list, sort it (order is semantically irrelevant), rejoin. '' → 'normal'.
+    const normFeatureLike = (v) => {
+      let s = String(v ?? '').toLowerCase().replace(/["']/g, '').replace(/\s+/g, ' ').trim();
+      if (s === '' || s === 'normal') return 'normal';
+      const parts = s.split(',').map(p => p.trim()).filter(Boolean).sort();
+      return parts.length ? parts.join(', ') : 'normal';
+    };
+    // full font-family DECLARATION normaliser: lowercase, drop quotes, collapse whitespace, normalise the
+    // comma separators — so `'Inter', system-ui` and `inter ,  system-ui` compare equal but a genuinely
+    // different stack (`inter, sans-serif` vs `inter, system-ui, …, sans-serif`) does NOT.
+    const normFamilyDecl = (v) => String(v ?? '').toLowerCase().replace(/["']/g, '').replace(/\s+/g, ' ')
+      .split(',').map(p => p.trim()).filter(Boolean).join(', ');
+    // describe the cvXX/ssXX/axis features ADDED vs REMOVED going target→reference, for the suggestedChange.
+    const featureDelta = (normTgt, normRef) => {
+      const setOf = s => new Set(s === 'normal' ? [] : s.split(', '));
+      const t = setOf(normTgt), r = setOf(normRef);
+      const added = [...t].filter(x => !r.has(x));   // present on target, absent on reference
+      const removed = [...r].filter(x => !t.has(x)); // present on reference, absent on target
+      const bits = [];
+      if (removed.length) bits.push(`add ${removed.join(' ')}`);
+      if (added.length) bits.push(`remove ${added.join(' ')}`);
+      return bits.join('; ');
+    };
+    const addTypo = (property, normTgt, normRef, loc, sect, sc) => {
+      const key = property + '|' + normTgt + '|' + normRef;
+      let e = typoDecl.get(key);
+      if (!e) { e = { property, target: normTgt, reference: normRef, loc, sect, count: 0, sc }; typoDecl.set(key, e); }
+      e.count++;
+    };
+
     for (const mn of mock) {
       const isPh = mn.isPh, text = norm(mn.text);
       if (!text && !isPh) continue;
@@ -1204,6 +1257,37 @@
             add({ locator: loc, section: sect, class: 'font', property: 'rendered-font', target: `fallback (${t.family} declared, not applied)`, reference: `${r.family} (applied)`, severity: 'high', suggestedChange: `the reference renders ${r.family} but ${el} falls back to the generic face — ensure the ${t.family} webfont actually loads AND applies (declared but not rendering; check @font-face load + unicode-range + that the family is wired to this element)` });
           } else if (!r.applies && t.applies) {
             add({ locator: loc, section: sect, class: 'font', property: 'rendered-font', target: `${t.family} (applied)`, reference: `fallback (${r.family} declared, not applied)`, severity: 'high', suggestedChange: `the reference falls back to a generic face for ${el} but the target applies ${t.family} — match the reference (the reference does NOT render its named face here)` });
+          }
+        }
+        // TYPOGRAPHIC-DECLARATION (v2.5.1) — accumulate the three declared-shaping divergences for this
+        // matched text element, deduped per (property|normTarget|normRef) and emitted once after the loop.
+        // Scoped exactly like the other font checks: illustration internals carry placeholder content but
+        // this is a STYLE comparison (the site-wide feature/axis/stack is real), so we DON'T suppress it —
+        // it's the same computed declaration on every node. (No new illustration suppression needed; the
+        // dedup collapses repeats whether or not a node is inside a mockup card.)
+        {
+          // 1. font-feature-settings — cvXX / ssXX / onum / tnum / … that differ between the sides.
+          const tFfs = normFeatureLike(an.comp?.fontFeatureSettings);
+          const rFfs = normFeatureLike(mn.comp?.fontFeatureSettings);
+          if (tFfs !== rFfs) {
+            const delta = featureDelta(tFfs, rFfs);
+            addTypo('feature-settings', tFfs, rFfs, loc, sect,
+              `${el} declares font-feature-settings: ${tFfs} but the reference uses ${rFfs}${delta ? ` — ${delta}` : ''}. These OpenType features (e.g. cv11 single-story 'a') change the rendered LETTERFORM at the SAME width, so the family-kind / CDP-rendered-font / antialiased-raster checks are all blind to them — set font-feature-settings: ${rFfs === 'normal' ? 'normal' : `"${rFfs.split(', ').join('", "')}"`} to match the reference`);
+          }
+          // 2. font-variation-settings — a wght/opsz/slnt/… axis applied on one side but not the other.
+          const tFvs = normFeatureLike(an.comp?.fontVariationSettings);
+          const rFvs = normFeatureLike(mn.comp?.fontVariationSettings);
+          if (tFvs !== rFvs) {
+            const delta = featureDelta(tFvs, rFvs);
+            addTypo('variation-settings', tFvs, rFvs, loc, sect,
+              `${el} declares font-variation-settings: ${tFvs} but the reference uses ${rFvs}${delta ? ` — ${delta}` : ''}. A variable-font axis (wght/opsz/slnt) applied on one side and not the other shifts the rendered weight/optical-size without changing the loaded file — set font-variation-settings: ${rFvs} to match the reference`);
+          }
+          // 3. the FULL font-family DECLARATION — differs even though the KIND (#1170) matched.
+          const tFam = normFamilyDecl(an.comp?.fontFamily);
+          const rFam = normFamilyDecl(mn.comp?.fontFamily);
+          if (tFam && rFam && tFam !== rFam) {
+            addTypo('family-exact', tFam, rFam, loc, sect,
+              `${el} declares font-family: ${tFam} but the reference declares ${rFam} — the same typeface KIND but a different declared CASCADE (a different first family or fallback stack), which can resolve to a different rendered face on a machine missing the primary. Set the full font-family stack to "${mn.comp?.fontFamily}" to match the reference`);
           }
         }
         // FONT-METRIC / VERSION (v2.2.0) — accumulate the per-family rendered-width RATIO for this matched
@@ -1358,6 +1442,30 @@
           reference: '1.00',
           severity: 'high',
           suggestedChange: `${fam} at the SAME declared size renders ${pct}% ${dir} on the target than on the reference (e.g. "${(rep.sample || '').slice(0, 32)}" = ${rep.tgtW}px vs ${rep.refW}px) across ${rows.length} matched text elements — same family + size, consistently different rendered WIDTH ⇒ the two sides use a DIFFERENT FONT VERSION/metrics (this is what makes a block wrap to a different line count). Self-host the SAME font VERSION the reference uses (e.g. Google Inter v20 ≈ rsms Inter v3.19, NOT v4)`,
+        });
+      }
+    }
+
+    // ============= TYPOGRAPHIC-DECLARATION MISMATCH (v2.5.1) =============
+    // Emit the accumulated font-feature-settings / font-variation-settings / full-font-family-DECLARATION
+    // divergences, DEDUPED to ONE root-cause finding per (property|normTarget|normRef) + a `[×N elements]`
+    // count. These properties are almost always set SITE-WIDE, so a single divergence repeats on every text
+    // element — the dedup turns a whole-site cv11 or stack difference into ONE finding, never hundreds. MED
+    // severity (a declared-shaping drift, not a structural defect). Each closes a class the family-kind
+    // check, the CDP rendered-font probe (#37), and the antialiased raster diff are all structurally blind
+    // to (the font FILE is identical; only the requested glyph/axis/cascade differs).
+    {
+      const PROP_LABEL = {
+        'feature-settings': 'font-feature-settings',
+        'variation-settings': 'font-variation-settings',
+        'family-exact': 'font-family (full declaration)',
+      };
+      for (const e of typoDecl.values()) {
+        const n = e.count;
+        add({
+          locator: e.loc, section: e.sect, class: 'font', property: e.property,
+          target: e.target, reference: e.reference, severity: 'med',
+          suggestedChange: `${e.sc}${n > 1 ? ` [×${n} elements — ${PROP_LABEL[e.property] || e.property} is declared site-wide]` : ''}`,
         });
       }
     }
