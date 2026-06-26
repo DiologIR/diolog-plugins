@@ -271,6 +271,9 @@ deprecated `extract-mock.js`/`diff.mjs` need no edit. Full rationale + before→
 
 `noiseExcluded` now has FOUR buckets — `repeatedTextMispairs`, `illustrationInternals`, `unpairedSameText`,
 `crossDomStructure` — all excluded from `findings`/`totalFindings`/`score`; consumers inspect them separately.
+(As of v2.3.0, `illustrationInternals` also collects the SUPPRESSED placeholder-text entries for product-mockup
+internals — their STYLE is still compared by the illustration-internal STYLE pass; only the differing demo
+string is bucketed here.)
 
 ### v2.0.2 — DOM-span rendered-font + glyph-based button-arrow (in `analyze.js`)
 
@@ -353,6 +356,44 @@ same family + size, consistently different rendered WIDTH ⇒ a different font v
   Google/rsms v3.19. Cross-version → median ratio **0.980** (~2% narrower) ⇒ ONE finding; same-version →
   median **1.0000** ⇒ NO finding; on the now-fixed live home (v3.19 = Google Inter) it fires **0** times.
   Full rationale in [`run.md`](./run.md) § *v2.2.0*.
+
+### v2.3.0 — narrow the illustration-internal exclusion (in `analyze.js`)
+
+The illustration-internal exclusion (the principle behind #21) was TOO BROAD. It was added to stop the differ
+flooding on a product mockup's PLACEHOLDER CONTENT (fake tickers, demo numbers), but it dropped illustration
+internals ENTIRELY — so their real, checkable STYLING went uncompared and a real homepage defect went unchecked:
+inside the ReadinessMockup "Morrow Vale Resources" product illustration, a row label ("Announcement drafts") had
+`letter-spacing: normal` vs live's `-0.3px`, and the card had NO border vs live's `1px #e5e9f0` (on the card's
+`::after` fold). The exclusion conflated "placeholder TEXT content (legitimately differs)" with "computed STYLE
+(real, checkable)". v2.3.0 splits them.
+
+- **Illustration ROOT detection (MODE B).** Per side, an illustration root = a sizeable, styled, text-less-at-
+  its-own-level mockup card (the same geometry heuristic the media-rel-y #21 pass uses for `isMockupCard`) OR a
+  class-hinted container (`mockup`/`illustration`/`readiness`/`product`/`preview`/`device`/`screenshot`/`demo`/
+  `placeholder`) of non-trivial size that is NOT full-bleed (a full-bleed section is a real section). Every
+  DESCENDANT of a root is marked an illustration-internal; the ROOT itself is NOT (its own border/bg stays with
+  the normal container pass).
+- **Suppress the TEXT, keep the STYLE.** An illustration-internal TEXT node that the text passes would have
+  reported as `missing` / `extra` / `wrong-state` is routed to `noiseExcluded.illustrationInternals` instead of
+  `findings` (a different demo ticker/number is not a finding). A VISUAL internal (icon/divider/tile, no text) is
+  still kept — a missing illustration sub-shape IS a real structural defect.
+- **Illustration-internal STYLE pass.** Pairs internals across sides BY POSITION/STRUCTURE (relative offset inside
+  the root + tag — NOT text, which is placeholder and differs) and compares the COMPUTED STYLE: border (incl. the
+  folded `::after`/`::before`), border-radius, box-shadow, background/text colour, letter-spacing, font-size/
+  weight/family, padding, and geometry → `border/illo-border-width`·`illo-border-color`·`illo-border-radius`,
+  `shadow/illo-box-shadow`, `container-bg/illo-background`, `font/illo-color`·`illo-letter-spacing`·
+  `illo-font-size`·`illo-font-weight`·`illo-font-family-kind`, `spacing/illo-pad-left`·`illo-pad-top`,
+  `geometry/illo-width`·`illo-height`. DEDUPED — N identical mockup rows producing the same
+  `(property|target|reference)` collapse to ≤3 rows + a `[×N illustration sub-elements]` summary, so it does not
+  flood.
+- **Validated on controlled fixtures.** A broken recreate (ref card border `1px #e5e9f0` + row label `-0.3px` vs
+  target border `0` + label `normal`, with placeholder ticker `ASX:MVR`→`ASX:XYZ` + different demo numbers) →
+  fires BOTH the border finding AND the letter-spacing finding for the mockup sub-elements, and routes the
+  placeholder ticker/numbers to `noiseExcluded.illustrationInternals` (no content finding). A placeholder-content-
+  only diff (`ASX:MVR` vs `ASX:XYZ`, different numbers, identical styling) → ZERO findings. The now-fixed identical
+  site → ZERO illustration findings. A text-less internal sub-panel whose border is folded from `::after` →
+  `illo-border-width` fires. An ordinary page with NO illustration roots is unaffected (normal font findings,
+  zero illo activity). Full rationale in [`run.md`](./run.md) § *v2.3.0* and references/issue-to-check-map.md #33.
 
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.

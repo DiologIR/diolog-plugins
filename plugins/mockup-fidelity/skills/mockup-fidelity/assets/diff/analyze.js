@@ -924,6 +924,75 @@
     }
     const mockHasShadow = c => !!c && !!c.boxShadow && c.boxShadow !== 'none';
 
+    // ============= ILLUSTRATION-INTERNAL CLASSIFIER (v2.3.0) =============
+    // A product ILLUSTRATION / mockup card (the ReadinessMockup "Morrow Vale Resources" card, a hero
+    // product-shot, a readiness/preview panel) carries PLACEHOLDER content — fake tickers ("ASX:MVR"),
+    // demo numbers, sample row labels — that LEGITIMATELY differs between the reference and the rebuild.
+    // The old behaviour treated those nodes' TEXT as missing/extra/wrong-state findings → a flood, OR (the
+    // miss this fix closes) dropped them ENTIRELY as noise, so their real, checkable STYLING (a card border,
+    // a row label's letter-spacing, a corner radius) was NEVER compared and real defects went unchecked.
+    //
+    // The correct split: SUPPRESS the placeholder TEXT-content comparison for illustration internals (a
+    // different demo number/ticker is not a finding), but STILL run the COMPUTED-STYLE / box / letter-spacing
+    // / geometry comparison on them (their styling is real). To do that we (a) identify illustration ROOTS on
+    // each side, (b) mark every descendant index as an illustration-internal, and (c) gate the text passes to
+    // route an internal's text finding into `noiseExcluded.illustrationInternals` instead of `findings`,
+    // while a dedicated style pass (below) pairs internals across sides BY POSITION/STRUCTURE (not text) and
+    // emits border/radius/shadow/bg/colour/letter-spacing/font/padding/gap/geometry findings for them.
+    //
+    // An illustration ROOT = a sizeable, styled, TEXT-LESS-at-its-own-level card/panel that is NOT a page
+    // section wrapper — same geometry heuristic the media-rel-y pass already uses for `isMockupCard`, plus a
+    // class-name hint (mockup / illustration / readiness / product / preview / device / screenshot / demo /
+    // ph / placeholder). It must be reasonably deep (not the body/screen/frame root) and NOT span the full
+    // frame width (a full-bleed section is a real section, not an illustration).
+    const ILLO_CLASS_HINT = /\b(mockup|mock-?up|illustration|illo|readiness|product-?(shot|card|preview|mock)|preview|device|screenshot|screen-?shot|demo|figure|hero-?(visual|art|image|graphic)|placeholder)\b/i;
+    const isIlloRoot = (n, frameW) => {
+      if (!n || !n.rect) return false;
+      const r = n.rect;
+      if (n.tag === 'body' || /\b(body|scr|frame|screen)\b/.test(n.cls || '')) return false;
+      if ((r.w || 0) >= 0.92 * frameW) return false;            // full-bleed → a real section, not an illustration
+      const classHint = ILLO_CLASS_HINT.test(n.cls || '');
+      const c = n.comp || {};
+      const styled = (toHex(c.backgroundColor) !== 'transparent' && c.backgroundColor) ||
+                     (c.boxShadow && c.boxShadow !== 'none') ||
+                     px(c.borderTopWidth) > 0 || px(c.borderTopLeftRadius) >= 8;
+      const ownText = norm(n.text);                              // text on the ROOT level itself (rare for a card)
+      // geometry-qualifying mockup card (matches the media-rel-y pass): wide + tall + styled + no own text
+      const cardLike = (r.w || 0) >= 280 && (r.h || 0) >= 240 && styled && !ownText;
+      // class-hinted illustration: a named mockup/illustration container of non-trivial size
+      const namedIllo = classHint && (r.w || 0) >= 180 && (r.h || 0) >= 140;
+      return cardLike || namedIllo;
+    };
+    // Build the descendant-index SET for a side: every node whose ancestor chain hits an illustration root.
+    // We DON'T include the root itself in the suppression set (the root's OWN border/bg is a legitimate,
+    // non-placeholder finding the normal container pass should still catch) — only its INTERNALS.
+    const illoDescSet = (nodes, getParent, frameW) => {
+      const roots = [];
+      for (const n of nodes) if (isIlloRoot(n, frameW)) roots.push(n);
+      const rootIdx = new Set(roots.map(n => n.i));
+      const desc = new Set();          // indices that are INSIDE an illustration (excluding the root)
+      const rootOf = new Map();        // internal index -> the illustration root it belongs to
+      for (const n of nodes) {
+        let cur = n, hops = 0, hitRoot = null;
+        while (cur && hops++ < 60) {
+          const p = getParent(cur);
+          if (p == null) break;
+          if (rootIdx.has(p.i)) { hitRoot = p; break; }
+          // if an ANCESTOR is itself an internal we've already recorded, inherit its root (faster + robust)
+          cur = p;
+        }
+        if (hitRoot) { desc.add(n.i); rootOf.set(n.i, hitRoot); }
+      }
+      return { roots, rootIdx, desc, rootOf };
+    };
+    const mockParentOf = n => (n && n.parent >= 0 ? mock[n.parent] : null);
+    const appParentOf = n => (n && n.parent >= 0 ? appById.get(n.parent) : null);
+    const mockIllo = illoDescSet(mock, mockParentOf, mockFrameW);
+    const appIllo = illoDescSet(appAll, appParentOf, appFrameW);
+    // is THIS node an illustration-internal (placeholder content lives here) on its side?
+    const mockIsIlloInternal = n => n && mockIllo.desc.has(n.i);
+    const appIsIlloInternal = n => n && appIllo.desc.has(n.i);
+
     // EFFECTIVE BACKDROP (v2.0.1, FIX 2) — a section's full-bleed gradient/media may be expressed two ways:
     //   (a) a full-bleed <img>/canvas/svg/video child OR positioned css-bg descendant (captured as
     //       `node.fullBleedMedia`), OR
@@ -1485,6 +1554,119 @@
       }
     }
 
+    // ============= ILLUSTRATION-INTERNAL STYLE PASS (v2.3.0) =============
+    // The text passes now SUPPRESS illustration internals' placeholder TEXT-content findings (above). This
+    // pass restores their STYLE coverage — the half of the old over-broad exclusion that was wrongly dropped.
+    // It pairs illustration ROOTS across sides (geometry: x/w + nearest frame-normalised Y), then pairs each
+    // root's INTERNALS across sides BY POSITION/STRUCTURE — NOT by text, because the text is placeholder and
+    // differs (e.g. "ASX:MVR" vs "ASX:XYZ"). For each paired internal it compares the COMPUTED STYLE: border
+    // (incl. the ::after/::before fold already in `comp`), border-radius, box-shadow, background/text colour,
+    // letter-spacing, font-size/weight/family, padding, and geometry (size). It does NOT compare the text
+    // STRING (suppressed by design). To avoid flooding on a repeated mockup row (N identical rows with the
+    // same style), identical findings are deduped to a few rows + a `[×N]` summary.
+    {
+      const mockRoots = mockIllo.roots;
+      const appRoots = appIllo.roots;
+      if (mockRoots.length && appRoots.length) {
+        // helpers scoped to this pass
+        const fH_m = mockDoc.frame?.h || 1, fH_a = appDoc.frame?.h || 1;
+        const subtreeOf = (nodes, getKids, rootI) => {
+          const out = [], stack = [rootI];
+          while (stack.length) { const cur = stack.pop(); for (const k of (getKids.get(cur) || [])) { out.push(k); stack.push(k.i); } }
+          return out;
+        };
+        const mKidsMap = mockKids, aKidsMap = appKids;     // already built (childrenByParent), parent->kids
+        const appUsedRoot = new Set();
+        // pair each mock illustration root to the nearest unused app illustration root by x/w + normalised Y
+        const rootPairs = [];
+        for (const mr of mockRoots) {
+          const cands = appRoots.filter(a => !appUsedRoot.has(a.i) && close(a.rect.x, mr.rect.x, 40) && close(a.rect.w, mr.rect.w, 60));
+          if (!cands.length) continue;
+          const myN = (mr.rect.y || 0) / fH_m;
+          const best = cands.map(a => ({ a, d: Math.abs((a.rect.y || 0) / fH_a - myN) })).sort((x, y) => x.d - y.d)[0];
+          if (best && best.d <= 0.06) { appUsedRoot.add(best.a.i); rootPairs.push({ mr, ar: best.a }); }
+        }
+        // collect raw style findings here, then dedup by a (property|targetVal|referenceVal) signature.
+        const illoRaw = [];
+        const pushIllo = (o) => illoRaw.push(o);
+        for (const { mr, ar } of rootPairs) {
+          const mSubs = subtreeOf(mock, mKidsMap, mr.i).filter(n => (n.rect?.w || 0) > 0 && (n.rect?.h || 0) > 0);
+          const aSubs = subtreeOf(appAll, aKidsMap, ar.i).filter(n => (n.rect?.w || 0) > 0 && (n.rect?.h || 0) > 0);
+          if (!mSubs.length || !aSubs.length) continue;
+          const sect = sectionFor(mr, mockLeads);
+          const aUsed = new Set();
+          // pair an internal by RELATIVE position inside its root (offset from the root's top-left, both
+          // normalised by the root size so a slightly-different-size rebuilt card still aligns) + tag.
+          const relOf = (n, root) => ({
+            rx: ((n.rect.x - root.rect.x) / Math.max(1, root.rect.w)),
+            ry: ((n.rect.y - root.rect.y) / Math.max(1, root.rect.h)),
+          });
+          for (const ms of mSubs) {
+            const mr2 = relOf(ms, mr);
+            // candidate app internals: same-ish relative position; prefer same tag, then nearest by rel-dist.
+            let best = null, bestCost = Infinity;
+            for (const as of aSubs) {
+              if (aUsed.has(as.i)) continue;
+              const ar2 = relOf(as, ar);
+              const dPos = Math.abs(mr2.rx - ar2.rx) + Math.abs(mr2.ry - ar2.ry);
+              if (dPos > 0.14) continue;                     // not the same position inside the card
+              const cost = dPos + (as.tag === ms.tag ? 0 : 0.03) + Math.abs((as.rect.w - ms.rect.w)) / Math.max(1, ar.rect.w) * 0.2;
+              if (cost < bestCost) { bestCost = cost; best = as; }
+            }
+            if (!best) continue;
+            aUsed.add(best.i);
+            const as = best;
+            const mc = ms.comp || {}, ac = as.comp || {};
+            const loc = `[illustration ${ms.tag}${ms.cls ? '.' + (ms.cls.split(/\s+/)[0]) : ''} @rel ${(relOf(ms, mr).rx * 100).toFixed(0)}%,${(relOf(ms, mr).ry * 100).toFixed(0)}%]`;
+            // --- BORDER (folded ::after/::before already in comp) ---
+            const mBt = px(mc.borderTopWidth) || 0, aBt = px(ac.borderTopWidth) || 0;
+            if (!close(aBt, mBt, 0.6)) pushIllo({ loc, sect, class: 'border', property: 'illo-border-width', target: aBt, reference: mBt, deltaPx: Math.round(Math.abs(aBt - mBt)), sc: `set the illustration sub-element border to ${mBt}px (mock draws ${mBt}px${mc._borderFromPseudo ? ' via ' + mc._borderFromPseudo : ''}, target ${aBt}px)` });
+            else if (mBt >= 0.6 && toHex(mc.borderTopColor) !== toHex(ac.borderTopColor)) pushIllo({ loc, sect, class: 'border', property: 'illo-border-color', target: toHex(ac.borderTopColor), reference: toHex(mc.borderTopColor), sc: `set the illustration sub-element border colour to ${toHex(mc.borderTopColor)}` });
+            // --- BORDER-RADIUS ---
+            const mRad = px(mc.borderTopLeftRadius), aRad = px(ac.borderTopLeftRadius);
+            if (mRad != null && aRad != null && !close(aRad, mRad, 2.5)) pushIllo({ loc, sect, class: 'border', property: 'illo-border-radius', target: aRad, reference: mRad, deltaPx: Math.round(Math.abs(aRad - mRad)), sc: `set the illustration sub-element border-radius to ${mRad}px` });
+            // --- BOX-SHADOW presence ---
+            if (mockHasShadow(mc) !== mockHasShadow(ac)) pushIllo({ loc, sect, class: 'shadow', property: 'illo-box-shadow', target: mockHasShadow(ac) ? 'yes' : 'no', reference: mockHasShadow(mc) ? 'yes' : 'no', sc: mockHasShadow(mc) ? 'add the box-shadow the mock draws on this illustration sub-element' : 'remove the box-shadow from this illustration sub-element' });
+            // --- BACKGROUND colour ---
+            const mBg = toHex(mc.backgroundColor), aBg = toHex(ac.backgroundColor);
+            if (mBg && mBg !== aBg && !(mBg === 'transparent' && aBg === 'transparent')) pushIllo({ loc, sect, class: 'container-bg', property: 'illo-background', target: aBg, reference: mBg, sc: `set the illustration sub-element background to ${mBg}` });
+            // --- TEXT colour + LETTER-SPACING + FONT (only when this internal carries its OWN text; style,
+            //     not the string — the string is suppressed) ---
+            if (norm(ms.text) && norm(as.text)) {
+              const mCol = toHex(mc.color), aCol = toHex(ac.color);
+              if (mCol && mCol !== 'transparent' && mCol !== aCol) pushIllo({ loc, sect, class: 'font', property: 'illo-color', target: aCol, reference: mCol, sc: `set the illustration label colour to ${mCol}` });
+              const mLs = lsPx(mc.letterSpacing), aLs = lsPx(ac.letterSpacing);
+              if (mLs != null && aLs != null && !close(aLs, mLs, 0.2)) pushIllo({ loc, sect, class: 'font', property: 'illo-letter-spacing', target: aLs, reference: mLs, deltaPx: +(Math.abs(aLs - mLs)).toFixed(2), sc: `set the illustration label letter-spacing to ${mLs}px (mock ${mLs}px, target ${aLs}px)` });
+              const mFs = px(mc.fontSize), aFs = px(ac.fontSize);
+              if (mFs != null && aFs != null && !close(aFs, mFs, 0.6)) pushIllo({ loc, sect, class: 'font', property: 'illo-font-size', target: aFs, reference: mFs, deltaPx: Math.round(Math.abs(aFs - mFs)), sc: `set the illustration label font-size to ${mFs}px` });
+              const mW = parseInt(mc.fontWeight, 10), aW = parseInt(ac.fontWeight, 10);
+              if (mW && aW && mW !== aW) pushIllo({ loc, sect, class: 'font', property: 'illo-font-weight', target: aW, reference: mW, sc: `set the illustration label font-weight to ${mW}` });
+              const mFam = familyKind(mc.fontFamily), aFam = familyKind(ac.fontFamily);
+              if (mFam && aFam && mFam !== aFam) pushIllo({ loc, sect, class: 'font', property: 'illo-font-family-kind', target: aFam, reference: mFam, sc: `switch the illustration label to a ${mFam} typeface` });
+            }
+            // --- PADDING (left/top) ---
+            const mPL = px(mc.paddingLeft), aPL = px(ac.paddingLeft);
+            if (mPL != null && aPL != null && !close(aPL, mPL, 2)) pushIllo({ loc, sect, class: 'spacing', property: 'illo-pad-left', target: aPL, reference: mPL, deltaPx: Math.round(Math.abs(aPL - mPL)), sc: `set padding-left: ${mPL}px on this illustration sub-element` });
+            const mPT = px(mc.paddingTop), aPT = px(ac.paddingTop);
+            if (mPT != null && aPT != null && !close(aPT, mPT, 2)) pushIllo({ loc, sect, class: 'spacing', property: 'illo-pad-top', target: aPT, reference: mPT, deltaPx: Math.round(Math.abs(aPT - mPT)), sc: `set padding-top: ${mPT}px on this illustration sub-element` });
+            // --- GEOMETRY (rendered size, same-viewport only) ---
+            if (GEOM) {
+              if (!close(as.rect.w, ms.rect.w, 6)) pushIllo({ loc, sect, class: 'geometry', property: 'illo-width', target: Math.round(as.rect.w), reference: Math.round(ms.rect.w), deltaPx: Math.round(Math.abs(as.rect.w - ms.rect.w)), sc: `set the illustration sub-element width to ~${Math.round(ms.rect.w)}px` });
+              if (!close(as.rect.h, ms.rect.h, 4)) pushIllo({ loc, sect, class: 'geometry', property: 'illo-height', target: Math.round(as.rect.h), reference: Math.round(ms.rect.h), deltaPx: Math.round(Math.abs(as.rect.h - ms.rect.h)), sc: `set the illustration sub-element height to ~${Math.round(ms.rect.h)}px` });
+            }
+          }
+        }
+        // DEDUP — a mockup with N identical rows produces N copies of the same (property|target|reference).
+        // Emit up to 3 distinct locators per signature + a [×N] summary so a repeated row-style reports once.
+        const groups = new Map();
+        for (const r of illoRaw) { const k = r.property + '|' + r.class + '|' + String(r.target) + '|' + String(r.reference); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(r); }
+        for (const [, g] of groups) {
+          g.slice(0, 3).forEach(r => add({ locator: r.loc, section: r.sect, class: r.class, property: r.property, target: r.target, reference: r.reference, ...(r.deltaPx != null ? { deltaPx: r.deltaPx } : {}), suggestedChange: r.sc }));
+          if (g.length > 3) add({ locator: `[×${g.length} illustration sub-elements]`, section: g[0].sect, class: g[0].class, property: g[0].property, target: g[0].target, reference: g[0].reference, ...(g[0].deltaPx != null ? { deltaPx: g[0].deltaPx } : {}), suggestedChange: `${g[0].sc} — applies to ${g.length} repeated mockup rows (one root cause)` });
+        }
+      }
+    }
+
     // ============= v1.16 SHARED CONTAINER PAIRING =============
     function pairContainers(predicate, opts = {}) {
       const { geomFallback = true, appPredicate = predicate } = opts;
@@ -1953,6 +2135,15 @@
         if (pairs.has(m.i)) continue;
         if (!(sigText(m).length >= 2 || isVisual(m))) continue;
         const kind = visualKind(m), tx = sigText(m);
+        // ILLUSTRATION-INTERNAL GUARD (v2.3.0): an unpaired TEXT node inside a product illustration is
+        // placeholder content (a demo ticker/number/sample label) — its TEXT legitimately differs, so it is
+        // NOT a real absence. Route to noiseExcluded.illustrationInternals; the illustration STYLE pass still
+        // compares its computed style. A VISUAL internal (icon/divider/tile) with no text is kept (a missing
+        // illustration sub-shape IS a real structural defect), so this suppresses TEXT internals only.
+        if (mockIsIlloInternal(m) && tx) {
+          noiseExcluded.illustrationInternals.push({ note: 'placeholder-text(mock)', text: tx.slice(0, 60), tag: m.tag, y: Math.round(m.rect?.y || 0) });
+          continue;
+        }
         // PHANTOM GUARD: this text exists on the target too → not a real absence.
         if (tx && appTextSet.has(tx)) {
           if (!sameTextSeen.has('m|' + tx)) { sameTextSeen.add('m|' + tx); noiseExcluded.unpairedSameText.push({ side: 'mock', text: tx.slice(0, 60), tag: m.tag, y: Math.round(m.rect?.y || 0) }); }
@@ -1970,6 +2161,13 @@
         if (!(sigText(a).length >= 2 || isVisual(a))) continue;
         const tx = sigText(a);
         if (CHROME_TXT.test(tx)) continue;
+        // ILLUSTRATION-INTERNAL GUARD (v2.3.0): a target-only TEXT node inside a product illustration is
+        // placeholder content — its TEXT legitimately differs from the reference's placeholder, so it is NOT
+        // a real extra. Route to noiseExcluded.illustrationInternals (the style pass still checks its style).
+        if (appIsIlloInternal(a) && tx) {
+          noiseExcluded.illustrationInternals.push({ note: 'placeholder-text(target)', text: tx.slice(0, 60), tag: a.tag, y: Math.round(a.rect?.y || 0) });
+          continue;
+        }
         // PHANTOM GUARD: this text exists on the reference too → not a real extra.
         if (tx && mockTextSet.has(tx)) {
           if (!sameTextSeen.has('a|' + tx)) { sameTextSeen.add('a|' + tx); noiseExcluded.unpairedSameText.push({ side: 'target', text: tx.slice(0, 60), tag: a.tag, y: Math.round(a.rect?.y || 0) }); }
@@ -1987,6 +2185,12 @@
       const appAllText = new Set(appAll.filter(n => A.text(n)).map(n => A.text(n)));
       for (const u of unmatched) {
         if (!u.text) continue;
+        // ILLUSTRATION-INTERNAL GUARD (v2.3.0): placeholder text inside an illustration that didn't pair is
+        // not a wrong-state signal — its content legitimately differs. Bucket it, don't emit.
+        if (mockIsIlloInternal(u.node)) {
+          noiseExcluded.illustrationInternals.push({ note: 'placeholder-text(unmatched-mock)', text: norm(u.text).slice(0, 60), tag: u.tag, y: Math.round(u.node?.rect?.y || 0) });
+          continue;
+        }
         if (appAllText.has(norm(u.text))) {
           // present ELSEWHERE in the dump → wrong-state coverage signal, not an absence
           add({ locator: `${u.tag}.${(u.cls || '').split(/\s+/)[0]} — "${u.text}"`, section: sectionFor(u.node, mockLeads), class: 'structure', property: 'wrong-state', target: 'present elsewhere in dump', reference: 'expected on this surface', severity: 'med', suggestedChange: `"${u.text}" exists elsewhere in the target — you may have measured the wrong state/screen; re-measure the populated surface` });

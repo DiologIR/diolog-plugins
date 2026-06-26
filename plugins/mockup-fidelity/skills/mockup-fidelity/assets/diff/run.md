@@ -251,7 +251,9 @@ are fixed diff-side (no capture-field change), and the score is rescaled to disc
 `unpairedSameText`, `crossDomStructure` — all kept OUT of `findings` / `totalFindings` / `score` so the
 headline reflects only CONFIDENT findings. Consumers can inspect each bucket separately (e.g. to eye-check a
 same-text node the matcher couldn't confidently pair, or to see that the layout class is structurally
-unreliable for this Framer↔StyleX pair).
+unreliable for this Framer↔StyleX pair). As of v2.3.0, `illustrationInternals` also collects the SUPPRESSED
+placeholder-text entries for product-mockup internals (a different demo ticker/number) — only the differing
+STRING is bucketed here; the internals' STYLE is still compared (see § *v2.3.0*).
 
 Verified before→after (MODE B, ref=`https://diolog.app/`, target=`http://diolog.site/`): home 653→519
 (score 0→20), persona 792→704 (0→12), legal 471→327 (0→36). Real high-severity findings retained:
@@ -418,6 +420,45 @@ This rides the normal MODE-A/B flow — no new flags, no runner. Just capture bo
 > → median width ratio **0.980** (~2% narrower) across the matched body elements ⇒ ONE high
 > `font/rendered-width-ratio` finding. Same-version (v3.19 → v3.19) → median **1.0000** ⇒ NO finding. On the
 > now-fixed live home (v3.19 = Google Inter) the detector fires **0** times — no false positive.
+
+## v2.3.0 — narrow the illustration-internal exclusion (suppress placeholder TEXT, still STYLE-check)
+
+The illustration-internal exclusion (the principle behind #21) was TOO BROAD. It was meant to stop the differ
+flooding on a product mockup's PLACEHOLDER CONTENT (fake tickers, demo numbers) — but it dropped illustration
+internals ENTIRELY, so their real STYLING went uncompared and a real homepage defect went UNCHECKED. Inside the
+ReadinessMockup "Morrow Vale Resources" product illustration, a row label ("Announcement drafts") had
+`letter-spacing: normal` vs live's `-0.3px`, and the card had NO border vs live's `1px #e5e9f0` (drawn on the
+card's `::after` fold). The exclusion conflated "placeholder TEXT content (legitimately differs)" with
+"computed STYLE (real, checkable)". v2.3.0 SPLITS them — it rides the normal MODE-A/B flow, no new flags.
+
+- **Illustration ROOT detection (MODE B).** Per side, an illustration root = a sizeable, styled, text-less-at-
+  its-own-level mockup card (the SAME geometry heuristic the media-rel-y #21 pass uses for `isMockupCard`) OR a
+  class-hinted container (`mockup`/`illustration`/`readiness`/`product`/`preview`/`device`/`screenshot`/`demo`/
+  `placeholder`) of non-trivial size that is NOT full-bleed (a full-bleed section is a real section, not an
+  illustration). Every DESCENDANT index is marked an illustration-internal; the ROOT itself is NOT (its own
+  border/bg stays with the normal container pass).
+- **Suppress the TEXT, keep the STYLE.** An illustration-internal TEXT node that the structure pass would report
+  as `missing`/`extra` or the unmatched pass as `wrong-state` is routed to `noiseExcluded.illustrationInternals`
+  instead of `findings` (a different demo ticker/number is not a finding). A VISUAL internal (icon/divider/tile,
+  no text) is still kept — a missing illustration sub-shape IS a real structural defect.
+- **Illustration-internal STYLE pass.** Pairs internals across sides BY POSITION/STRUCTURE (relative offset
+  inside the root + tag — NOT text, which is placeholder and differs) and compares the COMPUTED STYLE: border
+  (incl. the folded `::after`/`::before`), border-radius, box-shadow, background/text colour, letter-spacing,
+  font-size/weight/family, padding, geometry → `border/illo-border-width`·`illo-border-color`·`illo-border-radius`,
+  `shadow/illo-box-shadow`, `container-bg/illo-background`, `font/illo-color`·`illo-letter-spacing`·
+  `illo-font-size`·`illo-font-weight`·`illo-font-family-kind`, `spacing/illo-pad-left`·`illo-pad-top`,
+  `geometry/illo-width`·`illo-height`. DEDUPED — N identical mockup rows producing the same
+  `(property|target|reference)` collapse to ≤3 rows + a `[×N illustration sub-elements]` summary, so the restored
+  coverage does not flood.
+
+> **Validation (controlled fixtures).** A broken recreate (ref card border `1px #e5e9f0` + row label `-0.3px`
+> vs target border `0` + label `normal`, with placeholder ticker `ASX:MVR`→`ASX:XYZ` + different demo numbers)
+> → fires BOTH the border finding AND the letter-spacing finding for the mockup sub-elements, and routes the
+> placeholder ticker/numbers to `noiseExcluded.illustrationInternals` (NO content finding). A placeholder-content-
+> only diff (`ASX:MVR` vs `ASX:XYZ`, different numbers, identical styling) → ZERO findings. The now-fixed
+> identical site → ZERO illustration findings. A text-less internal sub-panel whose border is folded from
+> `::after` → `illo-border-width` fires. An ordinary page with NO illustration roots is unaffected (normal font
+> findings, zero illo activity). 10/10 controlled assertions pass. See references/issue-to-check-map.md #33.
 
 ## Every ported detector (lose none)
 
