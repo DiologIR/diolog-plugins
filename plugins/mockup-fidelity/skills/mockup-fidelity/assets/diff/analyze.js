@@ -41,6 +41,19 @@
 // layout-structure, vertical-rhythm, value-precision, transform/opacity/filter,
 // pseudo-content, animation. Plus the structure-diff layout/child-count/missing/extra pass.
 //
+// v2.5.0 — the RASTER + CDP-rendered-font + IoU-text-less + systematic-pseudo layer. analyze.js gains the
+//   SYSTEMATIC PSEUDO-ELEMENT STYLE capture (`pseudoStyle` per node: ::before/::after content, border-
+//   width/-color, background/-image, box-shadow, position, border-radius) and a MODE-B pass that compares
+//   it for EVERY paired element (not just illustrations / not just the border-fold), so a pseudo-DRAWN
+//   border or overlay present/different on one side is caught universally. The other three v2.5.0 layers
+//   (CDP rendered-font, element-scoped odiff raster diff, IoU bounding-box pairing for text-less nodes) run
+//   in the Node-side HARNESS `capture.mjs` (Playwright node API + odiff-bin), which injects THIS analyze.js
+//   verbatim (MODE A on the reference, MODE B on the target — contract unchanged) and ENRICHES its findings
+//   with bbox-delta + odiff mismatch% + the genuinely-rendered typeface. The CDP rendered-font check
+//   (CSS.getPlatformFontsForNode) is the root-cause font instrument getComputedStyle cannot provide: it sees
+//   that live renders its loaded web font while the target falls back to the system face even though both
+//   declare the same font-family. See run.md § v2.5.0 and capture.mjs.
+//
 // v2.4.0 — three additive low-noise detectors closing recall-test blind spots:
 //   (1) PER-ELEMENT VERTICAL OFFSET (`position/rel-offset`) — a matched element MOVED inside its parent
 //       (a flex align-items/justify change, a top-margin shift) at the SAME size, caught per-element (not
@@ -409,6 +422,38 @@
         (pseudoContent ||= {})[ps] = { content: val.slice(0, 40), fontSize: pc.fontSize, color: pc.color };
       }
 
+      // SYSTEMATIC PSEUDO-ELEMENT STYLE (v2.5.0) — extract getComputedStyle(el,'::before') and
+      // (el,'::after') for EVERY element (not just illustrations / not just the border-fold), so a
+      // pseudo-DRAWN border, overlay, or decorative shape is checked UNIVERSALLY in MODE B — independent of
+      // whether the element itself has a border. The fold above only copies a pseudo border/shadow into the
+      // element's effective `comp` WHEN the element itself has none; it cannot catch a side that draws a
+      // DIFFERENT pseudo border/overlay than the other, or a pseudo overlay present on one side only. This
+      // records the rendering pseudo's own box properties for a direct cross-side comparison. Recorded only
+      // for a pseudo that actually RENDERS (content set / non-none) to keep the dump small.
+      let pseudoStyle = null;
+      for (const ps of ['::before', '::after']) {
+        const pc = getComputedStyle(el, ps);
+        if (!pc) continue;
+        const content = pc.content;
+        if (!content || content === 'none' || content === 'normal') continue; // a non-rendering pseudo
+        const bw = parseFloat(pc.borderTopWidth) || 0;
+        const bg = pc.backgroundColor;
+        const bgImg = pc.backgroundImage;
+        const radius = parseFloat(pc.borderTopLeftRadius) || 0;
+        const hasBg = (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') || (bgImg && bgImg !== 'none');
+        // only keep a pseudo that draws SOMETHING visual (a border, a fill, a radius'd shape) — a bare
+        // content:'' with no paint is noise.
+        if (bw <= 0 && !hasBg && radius <= 0 && (content === '""' || content === "''")) continue;
+        (pseudoStyle ||= {})[ps] = {
+          content: content.replace(/^["']|["']$/g, '').slice(0, 40),
+          borderTopWidth: pc.borderTopWidth, borderTopColor: pc.borderTopColor,
+          borderBottomWidth: pc.borderBottomWidth, borderBottomColor: pc.borderBottomColor,
+          background: bg, backgroundImage: (bgImg && bgImg !== 'none') ? String(bgImg).slice(0, 100) : 'none',
+          position: pc.position, borderTopLeftRadius: pc.borderTopLeftRadius,
+          boxShadow: (pc.boxShadow && pc.boxShadow !== 'none') ? String(pc.boxShadow).slice(0, 120) : 'none',
+        };
+      }
+
       // ANIMATION / TRANSITION presence — count of running animations.
       let anims = 0;
       try { anims = (el.getAnimations ? el.getAnimations() : []).filter(a => a.playState === 'running' || a.playState === 'paused').length; } catch (e) {}
@@ -595,7 +640,7 @@
           h: +r.height.toFixed(1),
         },
         glyph, hardBreak, lines, wrap, bgLayer, fullBleedMedia, divider, hasSvgChild, arrowGlyph,
-        fontRn, exactW, featReq, pseudoContent, anims, istates, comp,
+        fontRn, exactW, featReq, pseudoContent, pseudoStyle, anims, istates, comp,
       });
       for (const c of el.children) walk(c, depth + 1, myIndex);
     };
@@ -2381,6 +2426,75 @@
           target: g[0].aGap, reference: g[0].mGap, deltaPx: Math.round(Math.abs(g[0].aGap - g[0].mGap)),
           suggestedChange: `${g.length} sibling block containers share the same wrong inter-element gap (${g[0].aGap}px vs the mock's ${g[0].mGap}px) — fix the per-item margin/padding once`,
         });
+      }
+    }
+
+    // ============= SYSTEMATIC PSEUDO-ELEMENT comparison (v2.5.0) =====
+    // The existing pseudo handling does two narrow things: (a) the capture-side FOLD copies a pseudo's
+    // border/shadow into the element's effective `comp` ONLY when the element itself has none, and (b) the
+    // PSEUDO-CONTENT detector compares the ::before/::after content STRING (bullets, counters, arrows). What
+    // neither catches: a pseudo that draws a DIFFERENT border/overlay/fill on one side vs the other, or a
+    // pseudo-drawn OVERLAY/border present on one side and absent on the other, on an ordinary (non-list,
+    // non-illustration) element. Page-builders (Framer et al.) routinely draw a card's border, a focus ring,
+    // a gradient overlay, or a hairline on `::after { content:""; border/background/box-shadow }`. This pass
+    // compares getComputedStyle(el,'::before'|'::after') box properties for EVERY paired element.
+    //   · runs over matchedPairs (every paired element, not just illustrations);
+    //   · compares per pseudo: presence, border-top-width + colour, background (colour OR image), box-shadow
+    //     presence, and border-radius — the properties a pseudo-drawn border/overlay carries;
+    //   · DEDUP a repeating identical pseudo defect (every card's ::after border) to ≤3 rows + a [×N] summary.
+    {
+      const pseudoRaw = [];
+      const hexT = c => toHex(c);
+      for (const [mi, a] of matchedPairs) {
+        const m = mock[mi];
+        if (!m) continue;
+        const mps = m.pseudoStyle || null, aps = a.pseudoStyle || null;
+        if (!mps && !aps) continue;
+        for (const ps of ['::before', '::after']) {
+          const mp = mps && mps[ps], ap = aps && aps[ps];
+          if (!mp && !ap) continue;
+          const loc = locatorFor(a);
+          const sect = sectionFor(a, appLeads);
+          // PRESENCE — one side draws a rendering pseudo the other lacks entirely (a pseudo overlay/border).
+          if (!!mp !== !!ap) {
+            const present = mp || ap;
+            const drawsBorder = (parseFloat(present.borderTopWidth) || 0) > 0;
+            const drawsBg = present.background && hexT(present.background) !== 'transparent';
+            const drawsImg = present.backgroundImage && present.backgroundImage !== 'none';
+            const drawsShadow = present.boxShadow && present.boxShadow !== 'none';
+            const what = drawsBorder ? `a ${present.borderTopWidth} ${hexT(present.borderTopColor)} border`
+              : drawsImg ? 'a background-image overlay'
+              : drawsBg ? `a ${hexT(present.background)} fill`
+              : drawsShadow ? 'a box-shadow' : 'a decorative shape';
+            pseudoRaw.push({
+              loc, sect, class: mp ? 'border' : 'pseudo', property: `pseudo-${ps.replace(/:/g, '')}-presence`,
+              target: ap ? `${ps} present` : `no ${ps}`, reference: mp ? `${ps} present (draws ${what})` : `no ${ps}`,
+              dk: 'pp|' + ps + '|' + (mp ? 'ref' : 'tgt') + '|' + what,
+              sc: mp ? `the reference draws ${what} on the ${ps} pseudo-element of ${loc} — the target's ${ps} renders nothing. Add the matching ${ps} { content:""; … } overlay`
+                     : `the target draws ${what} on a ${ps} pseudo-element ${loc} that the reference does not — remove it (mock wins)`,
+            });
+            continue;
+          }
+          // BOTH present — compare the box properties.
+          const mbw = parseFloat(mp.borderTopWidth) || 0, abw = parseFloat(ap.borderTopWidth) || 0;
+          if (!close(abw, mbw, 0.6)) pseudoRaw.push({ loc, sect, class: 'border', property: `pseudo-${ps.replace(/:/g, '')}-border-width`, target: abw, reference: mbw, deltaPx: Math.round(Math.abs(abw - mbw)), dk: 'pbw|' + ps + '|' + abw + '|' + mbw, sc: `set the ${ps} pseudo border-width to ${mbw}px on ${loc} (a pseudo-drawn border — invisible to getComputedStyle(el))` });
+          else if (mbw >= 0.6 && hexT(mp.borderTopColor) !== hexT(ap.borderTopColor)) pseudoRaw.push({ loc, sect, class: 'border', property: `pseudo-${ps.replace(/:/g, '')}-border-color`, target: hexT(ap.borderTopColor), reference: hexT(mp.borderTopColor), dk: 'pbc|' + ps + '|' + hexT(ap.borderTopColor) + '|' + hexT(mp.borderTopColor), sc: `set the ${ps} pseudo border colour to ${hexT(mp.borderTopColor)} on ${loc}` });
+          const mbg = hexT(mp.background), abg = hexT(ap.background);
+          if (mbg !== abg && !(mbg === 'transparent' && abg === 'transparent')) pseudoRaw.push({ loc, sect, class: 'container-bg', property: `pseudo-${ps.replace(/:/g, '')}-background`, target: abg, reference: mbg, dk: 'pbg|' + ps + '|' + abg + '|' + mbg, sc: `set the ${ps} pseudo background to ${mbg} on ${loc} (a pseudo-drawn fill/overlay)` });
+          const mImg = mp.backgroundImage !== 'none', aImg = ap.backgroundImage !== 'none';
+          if (mImg !== aImg) pseudoRaw.push({ loc, sect, class: 'container-bg', property: `pseudo-${ps.replace(/:/g, '')}-bg-image`, target: aImg ? 'present' : 'none', reference: mImg ? 'present' : 'none', dk: 'pbi|' + ps + '|' + aImg + '|' + mImg, sc: mImg ? `add the ${ps} pseudo background-image overlay the reference draws on ${loc}` : `remove the ${ps} pseudo background-image overlay from ${loc}` });
+          const mSh = mp.boxShadow !== 'none', aSh = ap.boxShadow !== 'none';
+          if (mSh !== aSh) pseudoRaw.push({ loc, sect, class: 'shadow', property: `pseudo-${ps.replace(/:/g, '')}-box-shadow`, target: aSh ? 'yes' : 'no', reference: mSh ? 'yes' : 'no', dk: 'psh|' + ps + '|' + aSh + '|' + mSh, sc: mSh ? `add the ${ps} pseudo box-shadow on ${loc}` : `remove the ${ps} pseudo box-shadow from ${loc}` });
+          const mRad = parseFloat(mp.borderTopLeftRadius) || 0, aRad = parseFloat(ap.borderTopLeftRadius) || 0;
+          if (!close(aRad, mRad, 2.5)) pseudoRaw.push({ loc, sect, class: 'border', property: `pseudo-${ps.replace(/:/g, '')}-border-radius`, target: aRad, reference: mRad, deltaPx: Math.round(Math.abs(aRad - mRad)), dk: 'prd|' + ps + '|' + aRad + '|' + mRad, sc: `set the ${ps} pseudo border-radius to ${mRad}px on ${loc}` });
+        }
+      }
+      // DEDUP repeated identical pseudo defects (every card's ::after border) → ≤3 rows + a [×N] summary.
+      const pg = new Map();
+      for (const r of pseudoRaw) { if (!pg.has(r.dk)) pg.set(r.dk, []); pg.get(r.dk).push(r); }
+      for (const [, g] of pg) {
+        g.slice(0, 3).forEach(r => add({ locator: r.loc, section: r.sect, class: r.class, property: r.property, target: r.target, reference: r.reference, ...(r.deltaPx != null ? { deltaPx: r.deltaPx } : {}), suggestedChange: r.sc }));
+        if (g.length > 3) add({ locator: `[×${g.length} elements]`, section: g[0].sect, class: g[0].class, property: g[0].property, target: g[0].target, reference: g[0].reference, ...(g[0].deltaPx != null ? { deltaPx: g[0].deltaPx } : {}), suggestedChange: `${g[0].sc} — applies to ${g.length} elements with the same pseudo-drawn defect (one root cause)` });
       }
     }
 

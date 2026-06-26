@@ -421,6 +421,45 @@ low-noise detectors — all ride the normal MODE-A/B flow, no new flags. Full ra
   (`diolog.app`→`diolog.site`) → 0 `position`, 0 block-flow, 5 genuine residual line-height rows (real
   sub-2px drift, no false positives). `node --check` clean.
 
+### v2.5.0 — RASTER + CDP-rendered-font + IoU-text-less + systematic-pseudo layer (`capture.mjs` + `analyze.js`)
+
+The detectors above read `getComputedStyle`. Four classes survive that — three of which need a RENDERED
+measurement a computed-style dump structurally cannot provide. v2.5.0 adds the **`capture.mjs` HARNESS**
+(Node — `playwright-core` + `odiff-bin`) that injects `analyze.js` verbatim (MODE A on the reference, MODE B
+on the target — the injectable contract is **unchanged**) and layers on three rendered signals, plus a
+fourth (systematic pseudo) inside `analyze.js`. Full flow, flags, classification, and the font-hinting note:
+[`run.md`](./run.md) § *v2.5.0*. Install: `npm install` in `assets/diff` (odiff-bin@4.3.8 +
+playwright-core@1.61.1 — prebuilt binaries, no node-gyp, reuses the host chromium cache).
+
+- **CDP rendered-font (the headline fix, `font/cdp-rendered-font`).** Per visible text node the harness calls
+  `CSS.getPlatformFontsForNode` over a raw CDP session and records the *genuinely-rendered* typeface
+  (`familyName` + `isCustomFont`). It flags when the rendered face DIFFERS across sides — **even when
+  `getComputedStyle` font-family agrees or is a generic** (live renders the loaded web font `Inter Medium`
+  / `isCustomFont:true` while the target falls back to the system `Helvetica`). This is the trustworthy font
+  signal; `analyze.js`'s DOM-span probe (#20) approximates it, CDP measures it. Deduped per root cause.
+- **Element-scoped raster diff (`raster/element-raster-diff`, via `odiff`).** A full-page screenshot per
+  side; each PAIRED element is cropped by its bbox and the two crops run through `odiff`. odiff mismatch +
+  **same-size box** (computed styles match) ⇒ a HIGH rendering anomaly — a **missing decorative child** (a
+  trailing → svg, a divider, an icon), an occlusion, or a paint/glyph difference the DOM passes are blind to;
+  odiff mismatch + size mismatch ⇒ a MED finding that corroborates a geometry/wrap finding. The diff crop is
+  written for inspection. Threshold (12%) + `antialiasing:true` keep it from flooding on text edges.
+- **IoU text-less pairing.** After text/structure pairing, remaining text-less nodes (bare svg/icon/
+  decorative div) are paired across sides by bbox **Intersection-over-Union ≥ 0.9**, so an arrow/icon becomes
+  a raster/presence-checkable pair. `analyze.js` already captures `getBoundingClientRect` per node.
+- **Systematic pseudo-element comparison (in `analyze.js`).** `capture()` now records `pseudoStyle` per node
+  (`::before`/`::after` content, border-width/-color, background/-image, box-shadow, position, border-radius)
+  and a MODE-B pass compares it for **every paired element** (not just illustrations / not only the
+  border-fold) — so a pseudo-drawn border or overlay present-on-one-side or differing is caught universally
+  (`border/pseudo-after-border-width`, `container-bg/pseudo-after-background`, `shadow/pseudo-after-box-shadow`,
+  `border/pseudo-before-presence`, …). Deduped to ≤3 rows + a `[×N elements]` summary.
+
+The enriched `target.findings.json` carries the normal MODE-B shape plus the new `font/cdp-rendered-font` and
+`raster/element-raster-diff` rows (each with a `renderedFont` / `raster` + `bboxDelta` evidence block) and a
+`summary.layers` block. **Font-render-hinting determinism:** chromium launches with
+`--font-render-hinting=none` for stable raster crops — but this does NOT make headless == a real browser; the
+**CDP rendered-font check, not any width and not the raster %, is the trustworthy signal for the font class.**
+See references/issue-to-check-map.md #37–#40.
+
 The report has five sections:
 - **❌ Mismatches** — element · property · target vs mock. Fix every row.
 - **⚠︎⚠︎ WRONG STATE** — a mock probe unmatched on the measured screen but present

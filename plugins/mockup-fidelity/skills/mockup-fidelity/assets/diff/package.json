@@ -1,0 +1,11 @@
+{
+  "name": "mockup-fidelity-diff",
+  "version": "2.5.0",
+  "private": true,
+  "description": "Runtime deps for the mockup-fidelity raster layer + CDP rendered-font harness (capture.mjs). analyze.js itself is a zero-dep browser IIFE; these deps power the Node-side harness that orchestrates capture + CDP + odiff around it.",
+  "type": "module",
+  "dependencies": {
+    "odiff-bin": "4.3.8",
+    "playwright-core": "1.61.1"
+  }
+}

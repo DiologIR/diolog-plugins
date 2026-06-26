@@ -9,6 +9,40 @@ round-trip between scripts.
 > The old three files are kept for ONE version as a **deprecated fallback** (each carries a
 > deprecation header). Nothing in-flight breaks, but new work uses `analyze.js`.
 
+> ## ➜ v2.5.0: the `capture.mjs` HARNESS — the RASTER + CDP-rendered-font layer
+>
+> For web↔web, **prefer the `capture.mjs` harness over the raw `playwright-cli eval` flow below.** It is a
+> Node orchestrator (`playwright-core` + `odiff-bin`) that injects THIS `analyze.js` verbatim (MODE A on the
+> reference, MODE B on the target — the injectable contract is **unchanged**) AND adds the three RENDERED
+> signals a `getComputedStyle` dump structurally cannot give you:
+> 1. **CDP rendered-font** — per visible text node it calls `CSS.getPlatformFontsForNode` and records the
+>    *genuinely-rendered* typeface (`familyName` + `isCustomFont`). Live can resolve to its loaded web font
+>    (`Inter Medium`, custom) while the target falls back to the system face (`Helvetica`, not custom) even
+>    though `getComputedStyle` font-family lists Inter first on BOTH sides. **This is the trustworthy font
+>    signal** — `analyze.js`'s DOM-span probe approximates it, CDP measures it.
+> 2. **element-scoped raster diff (odiff)** — a full-page screenshot per side; each PAIRED element is cropped
+>    by its bbox and the two crops run through `odiff`. A same-size box with a high pixel-diff and no other
+>    finding is a *rendering anomaly* — a **missing decorative child** (a trailing → svg, a divider, an icon),
+>    an occlusion, or a paint difference the DOM passes are blind to.
+> 3. **IoU text-less pairing** — after text/structure pairing, remaining text-less nodes (bare svg/icon/
+>    decorative div) are paired across sides by bbox Intersection-over-Union ≥ 0.9, so an arrow/icon becomes a
+>    raster-checkable pair.
+>
+> ```bash
+> npm install            # in assets/diff — installs odiff-bin@4.3.8 + playwright-core@1.61.1 (no browser DL,
+>                        # reuses the host ms-playwright chromium cache; clean & fast, no node-gyp)
+> node capture.mjs --ref https://diolog.app/ --target http://diolog.site/ --out ./mf-home --width 1280 --height 2000
+> #   → ./mf-home/target.findings.json  — the analyze.js findings ENRICHED with renderedFont + raster blocks
+> #     and summary.layers; plus reference.analysis.json, {reference,target}.fonts.json, *.full.png, raster/*.png
+> ```
+>
+> Read the enriched findings exactly like the MODE-B shape below, plus the new `class:"font"
+> property:"cdp-rendered-font"` and `class:"raster" property:"element-raster-diff"` rows and `summary.layers`.
+> Full flag list + classification + the font-hinting note are in [§ v2.5.0](#v250--raster-layer--cdp-rendered-font--iou-text-less-pairing--systematic-pseudo).
+> The raw `playwright-cli eval` flow below still works and remains correct for the responsive multi-width
+> capture and for RN-adjacent cases the harness doesn't cover; the harness is the web↔web default because the
+> CDP font path and a real headless screenshot are unreachable through the `playwright-cli` wrapper.
+
 ## The architecture
 
 > *A script injected into the page performs a full analysis AND diff; the skill's logic uses the
@@ -496,6 +530,128 @@ ADDITIVE, low-noise detectors. All ride the normal MODE-A/B flow — no new flag
 > block-flow gap, and **5** genuine residual line-height rows (real 0.7–1px button/illustration drift the old
 > 2px floor hid — not false positives), so they do NOT flood. `node --check` clean. See
 > references/issue-to-check-map.md #34–#36.
+
+## v2.5.0 — RASTER layer + CDP rendered-font + IoU text-less pairing + systematic pseudo
+
+The prior detectors all read `getComputedStyle`. Four classes survive that — and three of them need a
+RENDERED measurement a computed-style dump structurally cannot give:
+
+- **The declared font matches but the RENDERED face differs.** `getComputedStyle` reports the same
+  `font-family` (Inter first) on both sides, and `document.fonts.check` passes on both — yet live renders its
+  loaded web font while the target silently falls back to the system face. The DOM-span probe (#20) is an
+  approximation; the ground truth is what the engine actually rasterised.
+- **A missing DECORATIVE CHILD passes the structure diff.** The structure pass matches an element when both
+  boxes exist; a trailing → svg, a hairline divider, or an icon the target omits *inside* a matched element
+  is invisible to it (the element pairs; only its missing child differs).
+- **A text-less svg/icon/decorative div is never PAIRED.** `analyze.js` pairs by text + structural path; a
+  bare arrow has no text, so it falls into the unpaired pool and is never presence/raster-checked.
+- **A pseudo-DRAWN border/overlay that DIFFERS (not just folds).** The capture-side fold copies a pseudo's
+  border into the element's `comp` *only when the element itself has none*, and the pseudo-CONTENT detector
+  compares the content STRING — neither catches a `::after { border }` that differs across sides, or an
+  overlay present on one side only, on an ordinary element.
+
+### (1) The harness — `capture.mjs` (Node: `playwright-core` + `odiff-bin`)
+
+`capture.mjs` is the orchestrator. It launches chromium **with `['--font-render-hinting=none']`** (see the
+determinism note), injects `analyze.js` verbatim — MODE A on the reference, MODE B on the target, the
+injectable contract **unchanged** — and layers on the three rendered signals, writing one enriched
+`target.findings.json`.
+
+```bash
+npm install            # in assets/diff
+node capture.mjs --ref <refURL|file> --target <targetURL|file> --out <dir> [flags]
+```
+
+| flag | default | meaning |
+|---|---|---|
+| `--ref` / `--target` | — (required) | reference (LIVE URL) and target — a URL or a local file path |
+| `--out` | — (required) | artifact directory (created) |
+| `--analyze` | `./analyze.js` | path to the analyzer to inject |
+| `--width` / `--height` | `1280` / `2000` | viewport (same on both sides) |
+| `--frame-selector` / `--frame-title` / `--frame-index` | — | forwarded to `analyze.js __MF_OPTS__` |
+| `--chrome-selector` | `__none__` | forwarded — `__none__` so web app chrome IS measured |
+| `--iou` | `0.9` | IoU threshold for text-less pairing |
+| `--raster-min` | `64` | min element area (px²) to raster-diff (skips 1px slivers) |
+| `--raster-max` | `600` | cap on paired elements raster-diffed (runtime guard) |
+| `--no-raster` / `--no-fonts` | off | skip a layer |
+
+Outputs in `--out`: `reference.analysis.json` (MODE A), **`target.findings.json`** (MODE B + the v2.5.0
+layers), `{reference,target}.fonts.json` (per-text-node CDP fonts), `{reference,target}.full.png` (raster
+sources), `raster/pair-N-diff.png` (diff crops for raster findings).
+
+### (2) CDP rendered-font (the headline fix)
+
+Per visible text node the harness gets the genuinely-rendered typeface via the **PROVEN CDP sequence** — the
+two non-obvious gotchas are baked in: you can NOT get a usable CDP `objectId` from a Playwright JSHandle
+(do the element lookup *inside* a `Runtime.evaluate`, `returnByValue:false`); and you MUST call
+`DOM.getDocument` BEFORE `DOM.requestNode` or the `nodeId` is unresolvable. Then
+`CSS.getPlatformFontsForNode({nodeId})` returns the actual `{familyName, isCustomFont, glyphCount}`. The font
+layer pairs reference↔target nodes by `tag|text` (disambiguating repeated text by nearest bbox) and emits a
+high `font/cdp-rendered-font` finding when the rendered `familyName` DIFFERS — **even when `getComputedStyle`
+font-family agrees or is a generic**. Deduped per `(declaredFamily|renderedRef|renderedTgt)` — a site-wide
+fallback is ONE root cause carrying the `affectedNodes` count. (Observed against the real sites: live's
+"See the platform"/"Book a demo" buttons render `Inter Medium` (`isCustomFont:true`) while the target falls
+back to `Helvetica`/`Inter`; `getComputedStyle` would have hidden it.)
+
+### (3) Element-scoped raster diff (odiff)
+
+The harness re-derives the MODE-B element pairing (fid → tag+text → structural path, then the IoU text-less
+step), crops each paired element from both full-page PNGs by its bbox, and runs **`odiff`** (`compare(...,
+{failOnLayoutDiff:false, antialiasing:true})`) on the two crops. Classification per the research:
+
+- **odiff mismatch + same-size box (computed styles match) ⇒ a `raster/element-raster-diff` HIGH finding** —
+  a rendering anomaly: a **missing decorative child** (a trailing → svg, a divider, an icon), an occlusion,
+  or a paint/glyph difference the DOM passes did not catch. The diff crop path is in `raster.diffImage`.
+- **odiff mismatch + size mismatch ⇒ a MED finding** that *corroborates* a geometry/wrap finding `analyze.js`
+  already emitted (with the `bboxDelta`).
+
+Only mismatches above a `12%` threshold are emitted (antialiased text edges are suppressed by
+`antialiasing:true` and the threshold), so the raster layer does not flood. `odiff` ships prebuilt platform
+binaries (incl. `odiff-macos-arm64`), no node-gyp; exit 0 = match, 22 = diff (the Node API returns
+`{match, diffPercentage}`).
+
+### (4) IoU bounding-box pairing for text-less nodes
+
+After text/structure pairing, the harness pairs remaining **text-less** mock nodes to remaining text-less app
+nodes by **bbox Intersection-over-Union ≥ `--iou` (0.9)** — so a bare arrow/icon/decorative div becomes a
+paired candidate the raster + presence layers evaluate. `analyze.js` already captures `getBoundingClientRect`
+(`node.rect`, frame-relative) for every node, which is what the IoU pairing consumes. The count surfaces in
+`summary.layers.iouTextlessPairs`.
+
+### (5) Systematic pseudo-element extraction (IN `analyze.js`)
+
+`capture()` now records `pseudoStyle` per node — `getComputedStyle(el,'::before')` and `(el,'::after')`:
+content, border-width/-color (top+bottom), background + background-image, box-shadow, position, border-radius
+— for **every** element whose pseudo actually renders. A MODE-B pass compares it for **every paired element**
+(not just illustrations, not only the fold), emitting `border/pseudo-after-border-width`,
+`container-bg/pseudo-after-background`, `shadow/pseudo-after-box-shadow`,
+`border/pseudo-before-presence`, … — so a pseudo-drawn border/overlay present-on-one-side or differing is
+caught universally. Deduped (every card's `::after` border → ≤3 rows + a `[×N elements]` summary).
+
+### Font-render-hinting determinism
+
+The harness launches chromium with `['--font-render-hinting=none']` so glyph rasterisation is stable across
+machines, which reduces font-edge false positives in the raster crops. **This does NOT make headless == a
+real browser.** A headless renderer can still skew a width number or a raster %; the **CDP rendered-font
+check — not any width and not the raster % — is the trustworthy signal for the FONT class.** Treat a raster
+% as a TRIGGER to inspect the diff crop, and the rendered-font finding as the authority on whether the right
+typeface is actually applied.
+
+### Enriched JSON payload (the "diff-as-instruction" shape)
+
+`target.findings.json` is the normal MODE-B shape with:
+- new `findings[]` rows of `class:"font" property:"cdp-rendered-font"` (carrying a `renderedFont:{declaredFamily,
+  reference:{familyName,isCustomFont}, target:{…}, affectedNodes}` block) and `class:"raster"
+  property:"element-raster-diff"` (carrying `raster:{mismatchPct, classifiedAs, sizeMismatch, refRect, targetRect,
+  diffImage}` + `bboxDelta`);
+- `summary.layers = { analyze, cdpRenderedFont:{compared,divergent,distinctRootCauses,emitted}, raster:{pairsCompared,
+  mismatches,emitted}, iouTextlessPairs }`;
+- `renderedFontDetail[]` and `rasterDetail[]` (the full per-pair evidence) alongside `analysis`.
+
+The score is re-computed over the merged set (same `100·e^(−penalty/900)` curve). `node --check` clean.
+
+> **The target dir needs its own `node_modules`.** When the skill copies `assets/diff/*` into a project's
+> `.mockup-fidelity/`, run `npm install` there too (the harness imports `playwright-core` + `odiff-bin`).
 
 ## Every ported detector (lose none)
 
