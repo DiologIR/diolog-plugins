@@ -92,12 +92,13 @@ Don't preamble a triage section with a codebase summary. Start with the verdict 
 
 ## UI & logic preview (every Ready section, immediately before Assumptions)
 
-A **rough sanity check for the author, not a spec** — so a product person can confirm "yes, that's the surface area I expected" or catch a surprise (most importantly, a customer-facing screen they never intended). Forward-looking (what will *change*), not an inventory of what exists. Same non-technical bans. Three short parts:
-- **Where it shows up:** one line naming the surfaces that change, each tagged *(customer-facing)*, *(internal/admin)*, or *(behind the scenes — nothing visible changes)*. **If nothing customer-facing changes, say so explicitly — the single most important signal.**
-- **What users will see:** up to ~5 one-line plain-language headlines grouped by surface; or "Nothing visible — behind-the-scenes only."
+A **rough sanity check for the author, not a spec** — so a product person can confirm "yes, that's the surface area I expected" or catch a surprise (most importantly, a customer-facing screen they never intended), **and so a designer can tell which surfaces need mocking and what each one gains.** Forward-looking (what will *change*), not an inventory of what exists. Same non-technical bans. Parts:
+- **Where it shows up:** name every surface that changes, each tagged *(customer-facing)*, *(internal/admin)*, or *(behind the scenes — nothing visible changes)*, and mark each as an **existing surface that gains UI** or a **new surface/screen**. **If nothing customer-facing changes, say so explicitly — the single most important signal.**
+- **What users will see — per surface:** for **each** surface above that gains or changes UI, one short line naming the **concrete elements added or changed** on it (the control, state, panel, badge, field), enough that a designer knows what to mock — not a single behaviour headline that hides which screens are touched. A feature that bolts onto three existing screens gets three lines, one per screen; **do not collapse touched surfaces into one line, and never drop a touched surface to save space** — an unnamed surface is a screen the designer won't mock. (Behind-the-scenes only → "Nothing visible — behind-the-scenes only.")
 - **Behaviour changes:** up to ~3 short lines on what the product does differently; omit if none.
+- **Design reference:** if the feature description points at a visual mock (a mockup, showcase, prototype, Figma, or HTML file), name it here as the canonical visual reference for those surfaces. Omit if none exists.
 
-Readable in well under 30 seconds. Describe the change, don't restate the description.
+Keep each line short and scannable — still a fast read, just per-surface. Describe the change per surface; don't restate the description.
 
 ## Assumptions block
 
@@ -194,6 +195,15 @@ Append one of these under the spec (after the `---` separator), dated.
 >
 > *If any of these are wrong, edit it inline in this file and re-run `/triage DIO-0001`.*
 
+**GOOD (multi-surface feature — per-surface UI so a designer can mock each screen):**
+> **UI & logic preview** *(rough sanity check — is this the surface area you expected?)*
+> - **Where it shows up:** the document editor and the slide builder *(customer-facing — existing surfaces that gain UI)*; a connected-figures report *(customer-facing — new screen)*. Nothing investor-facing changes.
+> - **What users will see — per surface:**
+>   - Document editor: an inline pill on a number (connected / changed / overridden states), a "make master value" action, and a popover showing where the number is used and when it was last published.
+>   - Slide builder: a "connect a figure" control in the element panel, and a connected/changed state on the slide element itself.
+>   - Report (new): stat cards (values / locations / overrides) above a list of every value with its usage count and last-published-by.
+> - **Design reference:** connected-figures-showcase.html mocks every surface above — match its layout, states and copy.
+
 **GOOD (S3 block — assumptions where safe + one truly essential question):**
 > ## Triage — 2026-06-18
 >
@@ -218,3 +228,5 @@ Append one of these under the spec (after the `---` separator), dated.
 **BAD (re-asks an answered question):** "Which inspiration section is this about?" when the author already edited the spec to say "the content library".
 
 **BAD (no investigation):** "This task is unclear. Please specify which component and page you mean."
+
+**BAD (names the surfaces but not what each gains):** "**Where it shows up:** the document editor, the spreadsheet and the slide builder." followed by one behaviour line ("numbers stay in sync everywhere") → a designer can't tell what to mock on each screen. List, per surface, the concrete elements it gains (a pill, a control, a panel, a state), and name any visual mock the description points at as the design reference.
