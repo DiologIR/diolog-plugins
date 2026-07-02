@@ -232,8 +232,8 @@
     },
     {
       "name": "acceptance-e2e",
-      "description": "Turn a Diolog web feature's requirements into an acceptance-criteria-traceable Playwright e2e UI suite. From a Linear issue # + a plan*.md + the live page, it enumerates every acceptance criterion into a traceability matrix, grounds selectors against the running app (dev-login + company-context), authors specs in the apps/web/e2e harness that assert content/render correctness (a chart actually draws, a figure is actually sourced) rather than mere element presence, runs them with isolation-safe disposable-clone data, and fixes the tractable product bugs the suite surfaces.",
-      "version": "1.1.0",
+      "description": "Turn any web feature's requirements into an acceptance-criteria-traceable Playwright e2e UI suite. From a requirements source (an issue/ticket, a spec or plan*.md, or a description) + the running app, it enumerates every acceptance criterion into a traceability matrix, grounds selectors against the live page, authors specs in the PROJECT'S OWN harness that assert content/render correctness (a chart actually draws, a figure is actually sourced) rather than mere element presence, runs them with isolation-safe disposable data, and fixes the tractable product bugs the suite surfaces. Project-agnostic: it discovers the repo's harness, auth, tenant/context model, run command, and base URL rather than assuming any one stack. Ships a portable e2e-playbook plus an optional Diolog-specific worked example.",
+      "version": "1.2.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -251,6 +251,17 @@
       },
       "source": "./plugins/diolog-brand-voice",
       "category": "productivity"
+    },
+    {
+      "name": "ship-feature",
+      "description": "End-to-end feature delivery conductor for the Diolog product. Takes ONE feature (inline description or a markdown file) and drives it from a bare idea to merged, tested, production code by orchestrating the existing skills in a single in-session flow: design-craft (represent the whole feature UI in the design-system elements/composites/mock-pages, grounded in apps/web-design-system plus an optional DESIGN.md design-language spec when provided or present, and any provided HTML/CSS/JS mock) → triage (spec) → plan → work (isolated worktree) → a deferred-work loop (re-work, or child triage+plan+work for extra phases, all on the SAME branch) → gap-fix → acceptance-e2e (a comprehensive Playwright suite over every user flow/action/menu, run against the feature branch locally and fixed) → finalize (commit → rebase → merge into the integration branch → push → clean up worktree(s)). Stays in-session to keep the accumulated feature context across every stage and leans on the on-disk spec/plan/mock artifacts as durable, resumable memory; one feature = one branch = one worktree, with the merge behind a fail-closed pre-merge gate. Builds on the design-craft, feature-spec-pipeline, and acceptance-e2e plugins.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/ship-feature",
+      "category": "development"
     }
   ]
 }

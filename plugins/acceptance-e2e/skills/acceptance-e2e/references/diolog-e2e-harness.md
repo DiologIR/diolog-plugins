@@ -1,4 +1,12 @@
-# Diolog `apps/web/e2e` harness — facts, recipes, worked example
+# Diolog `apps/web/e2e` harness — optional worked example
+
+> **This file is Diolog-specific and entirely optional.** The skill itself is
+> project-agnostic — the portable method and pattern catalogue live in
+> `e2e-playbook.md`, which applies to any web app. This file is *one concrete
+> instantiation*: the exact harness facts, auth/tenant recipes, run commands, and two
+> fully worked builds for the Diolog web repo. Read it **only** when you're actually
+> working in that repo; in any other project, discover the equivalents (playbook §1)
+> and ignore everything below.
 
 Concrete details for authoring acceptance-criteria e2e suites in the Diolog web
 repo. Read the section you need; you don't need all of it at once.
