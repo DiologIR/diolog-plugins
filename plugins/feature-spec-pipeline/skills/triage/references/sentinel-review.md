@@ -67,6 +67,8 @@ Reserve **questions** for gaps where no safe default exists. A gap is "essential
 
 Non-essential gaps become **assumptions**, not questions. Golden rule: if option (a) is "do the obvious safe thing (recommended)" and (b) is "do the unsafe/less-consistent thing", that's not a question — write it as an assumption.
 
+When a documented assumption picks a default over a **materially different** alternative (not merely the safe-vs-unsafe case above), name the alternative it beat in one clause — "assuming X (rather than Y)" — so the human can veto it knowingly rather than discovering the silent pick after the build (Karpathy "present interpretations, don't pick silently"). This surfaces the choice without demoting it to a blocking question.
+
 ## 5. Severity and verdict
 
 Tag every finding: **Critical** (blocks all downstream work or creates regulatory risk), **High** (material rework/UX debt), **Medium** (fixable in-spec, worth calling out), **Low** (note for the planner, not the PM).

@@ -103,6 +103,9 @@ Do NOT add at this tier: Edge Cases, Testing, Requirements Traceability, Prerequ
 ## Edge cases
 - [ONLY genuine edge cases needing code. Omit if none.]
 
+## Acceptance criteria
+- [ ] [Testable "done when" check, phrased so the worker can verify it by exercising the real path — "creating X persists and re-reads with field Y", "non-owner gets 403", not "X works". 3–8 bullets; this is the durable checklist /work lifts into its build checklist and re-audits against, so keep each one concrete and verifiable — not a restatement of the step titles.]
+
 ## Verify
 - [One block of bullets: browser/runtime, responsive, console errors, type/lint gates. One step beats four.]
 
@@ -110,7 +113,7 @@ Do NOT add at this tier: Edge Cases, Testing, Requirements Traceability, Prerequ
 - [Real things a reader might assume are in scope.]
 ```
 
-Do NOT add a Requirements Traceability table at this tier — the per-step **Fulfils** line carries the mapping.
+Add the **Acceptance criteria** list at this tier (Karpathy "goal-driven": verifiable success criteria the worker can loop against) — but keep it short and testable, NOT a per-requirement Requirements Traceability table (that stays a Large-tier device; the per-step **Fulfils** line carries the finer mapping).
 
 ## Template — Large (<700 lines)
 
