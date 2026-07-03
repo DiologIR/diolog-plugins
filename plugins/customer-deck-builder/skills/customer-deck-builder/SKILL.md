@@ -51,6 +51,28 @@ references/BUILD-GUIDE.md       per-slide geometry + cross-slide consistency log
 is a variable, what is reusable copy, and what to ask. Consult `DESIGN.md` and
 `BUILD-GUIDE.md` whenever you edit copy, rebrand, or add a slide.
 
+## Diolog product & design references (on disk, not bundled)
+
+These living Diolog files drive *which* features to highlight and how the product
+mocks look. They are large, so scan the relevant sections (via the table of
+contents) rather than reading them wholesale:
+
+- **`/Users/lukerhodes/Dev/diolog-team-files/web/exhisting-features-marketing.md`** —
+  the plain-language catalog of every Diolog feature (19 areas: dashboard, AI chat,
+  smart inbox, document authoring, calendar & obligations, disclosure consistency
+  checker, perception studies, sentiment, social monitoring, surveys, workflows,
+  embeddable widgets, investor portals, and more). Use it to choose which features
+  to highlight for this client and to describe them accurately.
+- **`/Users/lukerhodes/Dev/diolog-team-files/web/DESIGN-WebApp.md`** — the real
+  web-app design system (tokens, type, and the component vocabulary: sidebar,
+  cards, chips, tables, KPI tiles). Use it so the slide-4 product mocks read as the
+  real product.
+- **`/Users/lukerhodes/Dev/diolog-team-files/web/DESIGN-WebApp Showcase.html`** —
+  a rendered showcase of app surfaces; skim to see how real screens are composed.
+
+If these paths are absent (running outside the Diolog workstation), fall back to
+the mock recipes in `BUILD-GUIDE.md` §6 and the three default modules.
+
 ## Workflow
 
 ### 1 — Scope the request
@@ -86,6 +108,22 @@ invite free-form context — tone, audience, real numbers, anything to weave in.
 
 Do not interrogate. Anything with a good default (Diolog presenter, go-live,
 hours) can stay as-is unless the user cares. Never ask for what you can infer.
+
+### 3b — Choose which features to highlight (from the discovery interview)
+When the deck is meant to be tailored, the user will give you a **customer
+discovery interview / call notes / brief** (ask for it if the deck should be
+tailored and none was supplied). Read it as the strongest signal of what this
+client actually needs, then:
+- Pull out the client's real pains, priorities and buying triggers.
+- Scan `exhisting-features-marketing.md` (by its table of contents) and pick the
+  **three** product areas that best answer those pains. These become the three
+  slide-4 workspace mocks and their column copy (`01/02/03`), and they steer the
+  emphasis of the summary (03), approach (05) and value (06) slides.
+- Do **not** feature what the interview implies they do not want (e.g. if they are
+  low-volume and not chasing retail engagement, do not lead with the investor inbox
+  or always-on engagement).
+If there is no interview, keep the default three (Presentation Studio, Compliance
+Guardian, Investor Portal) and the template copy.
 
 ### 4 — Write the config
 Put the gathered values into `<OUT>/deck.config.json` → `tokens`. Set `title`,
@@ -187,12 +225,17 @@ templates already do. The deck's list-bullet glyph and numeric ranges (e.g.
 `20-30 h`) are the only place an en dash is acceptable. Australian English;
 plain, precise; no AI clichés.
 
-**Mockups — use the `email-mockups` skill.** The product-UI mockups (the slide-4
-browser / app device frames, or any new mock) are built with the **`email-mockups`**
-skill, which produces impression-not-replica product vignettes in the Diolog
-system. Use the mock recipes in `BUILD-GUIDE.md` §6 for structure, and drive the
-visual build through `email-mockups`. Keep every mock accent on `var(--accent)` so
-a rebrand carries through automatically.
+**Mockups — real product surfaces, at the template's scale.** The slide-4
+browser/app mocks should read as the *actual* Diolog product for the features you
+chose in step 3b. Design their content from `DESIGN-WebApp.md` (the real app's
+tokens and its sidebar / card / chip / table / KPI vocabulary) and the
+`DESIGN-WebApp Showcase.html`, and use the **`email-mockups`** skill for guidance
+on making impression-not-replica product vignettes. But **stay inside the
+template's mock frame, scale and style**: the 540×300 browser-chrome card, the
+skeleton-primitive sizes, and the coordinate recipes in `BUILD-GUIDE.md` §6. Borrow
+the app's *layout and components*, not its palette: keep the mock's accent on
+`var(--accent)` and its dark surfaces on the deck navy so it still belongs to the
+deck and follows a rebrand. Do NOT import the web app's blue as a second accent.
 
 **Containers — never a rounded box with a one-sided border.** A rounded container
 with a border on only one side (e.g. a left accent stripe) is banned; it reads as

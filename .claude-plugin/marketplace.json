@@ -266,7 +266,7 @@
     {
       "name": "customer-deck-builder",
       "description": "Build a branded, print-ready customer proposal / pitch deck from Diolog's 9-slide template system. Fills company-agnostic templates with a specific client's identity, contacts, pricing and numbers (prompting with multiple-choice questions for missing details), keeps the IR-proposal spine, and can design new slides into the same system via design-craft. Outputs a single self-contained web page with pan/zoom (trackpad + controls, fit-deck / fit-slide / 100%) that prints to a vertical, paged PDF at native 1920×1080 slide size.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"

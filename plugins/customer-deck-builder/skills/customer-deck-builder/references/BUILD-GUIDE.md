@@ -313,6 +313,8 @@ Foot value: right-aligned to card-right (x+540), 798, Inter 600 11px #0a1733 upp
 
 The three "product screenshots" are **pure CSS skeletons** — no images except one sparkline SVG. This is the deck's signature move for showing product without a real screenshot. Master this recipe; it is reusable for any future feature.
 
+**Which surfaces to show, and how they should look.** The three mocks are chosen per client from the discovery interview (SKILL.md §3b) against the Diolog feature catalog (`.../web/exhisting-features-marketing.md`). Design each mock's *content* — the sidebar, cards, chips, tables, KPI tiles and the specific screen it depicts — from the real web-app design system (`.../web/DESIGN-WebApp.md` + `DESIGN-WebApp Showcase.html`), and use the `email-mockups` skill for guidance on impression-not-replica vignettes. But keep everything **within this frame, scale and style**: the 540×300 browser-chrome card and the skeleton sizes/coordinates below. Borrow the app's layout and components, not its palette — the mock's accent stays `var(--accent)` and its dark bands stay the deck navy, never the web app's blue.
+
 ### 6.1 The mock shell (`.mk`)
 ```
 .mk  { (x, 611) 540×300  background:#fff; border:1px solid #e2e7ee;

@@ -66,10 +66,13 @@ frame file directly** (they are plain HTML) — there is no token for them.
 - **Slide 2** — the three constraints and the left narrative (IR/design/disclosure
   pain). Re-point the entities; keep the argument unless told to.
 - **Slide 3** — the three summary cards (approach / why now / outcome).
-- **Slide 4** — the three capability columns and the **product-UI mockups**
-  (Presentation Studio, Compliance Guardian, Investor Portal). Mock financials
-  (`$142.6m`, share price `$1.24`, announcement dates) are illustrative — swap
-  only if the user gives real figures; otherwise they read as a generic example.
+- **Slide 4** — the three capability columns and the **product-UI mockups**.
+  Default to Presentation Studio, Compliance Guardian, Investor Portal, but when a
+  discovery interview is supplied, swap in the three product areas that best fit
+  the client (SKILL.md §3b) and design their mocks from the real web-app system
+  (see the Diolog references in SKILL.md). Keep them within the mock frame/scale of
+  `BUILD-GUIDE.md` §6. Mock financials (`$142.6m`, share price `$1.24`, dates) are
+  illustrative — swap only if the user gives real figures.
 - **Slide 5** — the human/production split lists and the bottom line.
 - **Slide 6** — the value table rows (activity / today / with Diolog / saved) and
   the note. Numbers are indicative; override with the client's real baseline if
@@ -118,6 +121,13 @@ recommended option first. Good starting questions:
 **Q — Deck scope / slides?**
 - All 9 as-is · Drop some · Add a slide (e.g. team, timeline, case study)
 → edit `slides[]`; "add" triggers the new-screen flow (design-craft).
+
+**Q — Which features matter most for this client?**
+- Do you have a discovery interview / call notes I can use? · Use the default
+  three modules · Let me pick the features
+→ drives the slide-4 mocks + copy (SKILL.md §3b). With an interview, pick the three
+  product areas from the feature catalog that best answer the client's stated
+  pains; without one, keep the default three.
 
 Always also invite **free-form context**: "Anything else about the offer, the
 audience, tone, or specific numbers I should weave in?" Feed that into copy edits.
