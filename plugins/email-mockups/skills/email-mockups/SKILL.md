@@ -34,6 +34,12 @@ product-update email does — not pixel-dense product shots. You build them on t
 real Diolog design system, using the feature's real words and layout, then take
 them into Figma.
 
+This HTML is also **Claude-design output for the diolog site pipeline** (DIO-0015): the
+same token-true mock can be imported into the marketing site's editor, where it becomes an
+editable component tree rendered by the site's own token-driven renderer — the single source
+of truth, tweaked in place. Build it **token-true and structurally convertible** (see
+"Output as diolog-site design input" below) so that conversion lands faithfully.
+
 ## The pipeline
 
 ```
@@ -243,6 +249,42 @@ frames and count as "no Figma MCP" here.
 
 Either way, close with caveats and next steps only — these are visual references for
 emails, not production email HTML.
+
+---
+
+## Output as diolog-site design input (DIO-0015 alignment)
+
+The HTML this skill produces is **Claude-design output for the diolog site pipeline**, not
+only a Figma/PNG source. A product-UI mock built here can be imported directly into the
+marketing site's editor ("Import a design"), where it becomes an editable **component tree**
+rendered by the site's own token-driven renderer — the single source of truth, then tweaked in
+place (no re-export, no drift). For that conversion to land faithfully — the importer snaps raw
+values to the nearest design token by VALUE (`#1f3fa6 → brand`, `16px → s16`, `1rem → body`) so
+a token-true mock converts *structurally* rather than as a re-style guess — the output must be
+**token-true and structurally convertible**:
+
+- **Token-true values (non-negotiable).** Every colour, space, radius, type size and shadow must
+  be a real Diolog design-system value — the `--dio-` token values in `assets/mock-kit.css`, which
+  mirror `apps/website/components/tokens.stylex.ts` / `DESIGN.md`. Never introduce an off-system
+  hex/px when a token exists. A deliberate one-off survives as a raw value, but it should be rare —
+  every stray value is a value the site can't theme or restyle later.
+- **Convertible structure.** Build with **flow layout** (flex / grid / normal flow), never absolute
+  positioning or fixed pixel offsets — absolute layout doesn't reflow and doesn't convert. Use
+  **semantic, node-mappable elements**: headings (`h2`–`h6`), text (`p`/`span`), links/buttons
+  (`a`/`button`), images (`img`), plain containers (`div`) — these map 1:1 to the site's node types
+  (heading / text / link / button / image / box). Keep nesting shallow and the tree clean; mark a
+  product-embed region with a recognisable container rather than a deep bespoke widget.
+- **Container-relative, not viewport-locked.** The site renders inside a container-query scope, so
+  prefer container-relative sizing and avoid `vw`/`vh` and viewport media queries in anything meant
+  to convert.
+- **Self-contained is fine.** The kit-inlined single file is correct: the editor import renders it
+  in a real browser and reads computed styles, so kit classes resolve and convert cleanly.
+
+This does not change the email deliverable (graphics still export as PNG/Figma). It means the
+*same* token-true, cleanly-structured HTML doubles as a drop-in design source for the site, so a
+mock tweaked once in the site editor (or via its MCP control plane) stays the single source of
+truth. When a mock is destined for the site rather than (or as well as) an email, favour the
+clean, convertible product surface over email-only treatments.
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "email-mockups",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Turn a named Diolog feature (or several) into email-ready product-mockup graphics on a Figma canvas. Reads the feature's real context — docs/marketing/product-feature-guide.md + features-build/plain/NN-*.md + the rendered mock UI read in a browser via playwright-cli (the served web / customer / investor design-system hosts) — then designs and builds, via the design-craft skill, impression-not-replica mockups that lead with the feature's payoff (a full product-window app shot — the complete app shell in a clean window — for hero features, plus a product-surface vignette, soft panel + peeking device, collage/overlap, phone bezel, and a website frame for actual public sites) and make the product look genuinely smart (a real insight, an italic quote from the record, named source chips) as titled, spaced artboards in one self-contained HTML file using the live design tokens, and recreates that layout in Figma via whatever write-capable Figma MCP is connected. Each artboard also carries a brief non-technical marketing caption beneath it for IR teams and the agencies who serve them (no em-dashes), with an optional email-hero split format, and semantic emphasis via a soft wash and icon rather than AI-slop left-only borders. If no Figma MCP is present, the HTML file is the final deliverable.",
   "author": {
     "name": "DiologIR",
