@@ -1,0 +1,50 @@
+{
+  "title": "{{CLIENT_NAME}} · Diolog Proposal",
+  "design": { "accent": "", "navy": "" },
+  "client_logo": "",
+
+  "tokens": {
+    "CLIENT_NAME": "Alfabs Australia",
+    "CLIENT_SHORT": "Alfabs",
+    "CLIENT_TICKER": "AAL",
+    "CLIENT_EXCHANGE": "ASX",
+    "CLIENT_SECTOR": "Industrials",
+    "CLIENT_DOMAIN": "alfabs.com.au",
+
+    "PREPARED_FOR": "PREPARED FOR THE ALFABS BOARD · CFO & CEO",
+    "DECK_DATE": "JULY 2026",
+
+    "PARTNER_FIRST": "Becca",
+    "PARTNER_NAME": "Rebecca Culbertson",
+    "PARTNER_ROLE": "Investor Relations, Fraction IR",
+    "PARTNER_EMAIL": "rebecca@fractionir.com",
+
+    "PRESENTER_NAME": "Amy Benson",
+    "PRESENTER_TITLE": "Director, Diolog",
+    "PRESENTER_CONTACT": "amy@diolog.com.au   ·   0439 667 489   ·   diolog.app",
+
+    "CTA_PRIMARY_LABEL": "BOOK A CHAT WITH AMY TO DISCUSS FURTHER",
+    "CTA_PRIMARY_URL": "https://calendly.com/amyfromdiolog/intro",
+    "CTA_SECONDARY_LABEL": "VIEW PERSONALISED DEMO",
+    "CTA_SECONDARY_URL": "https://diolog.app",
+
+    "CURRENCY": "A$",
+    "PRICE_TIER1": "1,499",
+    "PRICE_TIER2": "1,999",
+    "HOURS_CYCLE": "~50",
+    "HOURS_YEAR": "~110",
+    "GO_LIVE": "~2 weeks"
+  },
+
+  "slides": [
+    { "file": "01-cover.html",        "label": "Cover" },
+    { "file": "02-the-brief.html",    "label": "The brief" },
+    { "file": "03-summary.html",      "label": "Summary" },
+    { "file": "04-the-workspace.html","label": "The workspace" },
+    { "file": "05-the-approach.html", "label": "The approach" },
+    { "file": "06-value.html",        "label": "The value case" },
+    { "file": "07-governance.html",   "label": "Governance & security" },
+    { "file": "08-investment.html",   "label": "Investment" },
+    { "file": "09-next-steps.html",   "label": "Next step" }
+  ]
+}

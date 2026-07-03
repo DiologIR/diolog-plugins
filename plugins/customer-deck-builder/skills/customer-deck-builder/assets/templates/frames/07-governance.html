@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, initial-scale=1">
+<title>7 - Governance · {{CLIENT_NAME}} - Diolog Proposal</title>
+<link rel="stylesheet" href="deck.css">
+<style>
+  .chip     { position:absolute; top:372px; height:34px; background:#fff; border:1px solid #d7dce6; border-radius:8px; }
+  .chip-dot { position:absolute; top:386px; width:6px; height:6px; background:var(--accent); border-radius:2px; }
+  .chip-txt { position:absolute; top:382px; font-size:11px; font-weight:600; letter-spacing:.6px; color:var(--navy); white-space:nowrap; }
+  .g-lbl    { position:absolute; left:110px; width:280px; font-size:12px; font-weight:500; letter-spacing:1.2px; color:#13224a; text-transform:uppercase; }
+  .g-title  { position:absolute; left:430px; width:1380px; font-size:18px; font-weight:600; color:var(--navy); }
+  .g-body   { position:absolute; left:430px; width:1320px; font-size:17px; font-weight:400; line-height:22px; color:#6b7689; }
+  .g-rule   { position:absolute; left:110px; width:1700px; height:1px; background:#e4e7ee; }
+</style>
+</head>
+<body>
+<div class="frame" data-node-id="7:50">
+
+  <div class="top-label">{{CLIENT_NAME_UPPER}} · DIOLOG PROPOSAL · GOVERNANCE &amp; SECURITY</div>
+  <div class="kicker-tick"></div>
+  <div class="section-label">GOVERNANCE · {{SECTION_NUM}}</div>
+
+  <p class="abs display" style="left:108px; top:196px; width:1500px; font-size:60px; line-height:66px;">Disclosure-grade by default.</p>
+  <p class="abs" style="left:110px; top:296px; width:1500px; font-size:20px; font-weight:400; line-height:26px; color:#48526a;">Why this is safer than putting sensitive numbers - FY guidance, results, outlook - into Claude or Microsoft Copilot directly.</p>
+
+  <!-- Chips -->
+  <div class="chip" style="left:110px; width:249px;"></div>
+  <div class="chip-dot" style="left:128px;"></div>
+  <div class="chip-txt" style="left:142px;">PRIVATE, SEGREGATED INSTANCE</div>
+
+  <div class="chip" style="left:373px; width:267px;"></div>
+  <div class="chip-dot" style="left:391px;"></div>
+  <div class="chip-txt" style="left:405px;">NO MODEL TRAINING ON YOUR DATA</div>
+
+  <div class="chip" style="left:654px; width:186px;"></div>
+  <div class="chip-dot" style="left:672px;"></div>
+  <div class="chip-txt" style="left:686px;">HOSTED IN AUSTRALIA</div>
+
+  <!-- Rows -->
+  <div class="g-lbl" style="top:460px;">DATA SEGREGATION</div>
+  <div class="g-title" style="top:458px;">Your own private instance.</div>
+  <div class="g-body" style="top:488px;">{{CLIENT_SHORT}} data lives in a segregated instance - never in the same database as any other company, and never a shared public model.</div>
+  <div class="g-rule" style="top:544px;"></div>
+
+  <div class="g-lbl" style="top:564px;">NO MODEL TRAINING</div>
+  <div class="g-title" style="top:562px;">Your data never trains the model.</div>
+  <div class="g-body" style="top:592px;">Back-training and model calls on your data are blocked at the infrastructure level. Nothing is stored or recalled by the model - unlike using Claude or Copilot directly.</div>
+  <div class="g-rule" style="top:648px;"></div>
+
+  <div class="g-lbl" style="top:668px;">DATA RESIDENCY</div>
+  <div class="g-title" style="top:666px;">Australian region.</div>
+  <div class="g-body" style="top:696px;">All critical infrastructure and data hosted in Sydney (ap-southeast-2).</div>
+  <div class="g-rule" style="top:752px;"></div>
+
+  <div class="g-lbl" style="top:772px;">ENCRYPTION &amp; ACCESS</div>
+  <div class="g-title" style="top:770px;">Encrypted, access-controlled, fully audited.</div>
+  <div class="g-body" style="top:800px;">AES-256 at rest, TLS in transit. Whitelisted provisioning and an immutable per-action audit trail.</div>
+  <div class="g-rule" style="top:856px;"></div>
+
+  <div class="g-lbl" style="top:876px;">IP &amp; MODELS</div>
+  <div class="g-title" style="top:874px;">{{CLIENT_SHORT}} retains all input and output.</div>
+  <div class="g-body" style="top:904px;">Anthropic’s Claude (Sonnet &amp; Opus) under a private, governed deployment. No prompts or completions retained by upstream providers. Optional BYOK.</div>
+
+  <div class="footer-rule"></div>
+  <div class="footer-left">{{CLIENT_SHORT_UPPER}} · CONFIDENTIAL</div>
+  <div class="footer-right">{{PAGE_N}} / {{PAGE_TOTAL}}</div>
+
+</div>
+</body>
+</html>

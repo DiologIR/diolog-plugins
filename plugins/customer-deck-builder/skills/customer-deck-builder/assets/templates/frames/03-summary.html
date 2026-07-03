@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, initial-scale=1">
+<title>3 - Summary · {{CLIENT_NAME}} - Diolog Proposal</title>
+<link rel="stylesheet" href="deck.css">
+<style>
+  .sum-card {
+    position:absolute; top:380px; width:540px; height:470px;
+    background:#f4f6f9; border-radius:10px;
+    box-shadow:0 10px 30px 0 rgba(10,23,51,.1);
+  }
+  .sum-kick   { position:absolute; top:416px; font-size:12px; font-weight:600; letter-spacing:1.4px; color:#6b7a99; }
+  .sum-kick b { color:var(--accent); font-weight:600; }
+  .sum-title  { position:absolute; top:454px; width:468px; font-size:21px; font-weight:600; line-height:28px; color:var(--navy); }
+  .sum-body   { position:absolute; top:548px; width:468px; font-size:17px; font-weight:400; line-height:23px; color:#48526a; }
+  .sum-rule   { position:absolute; top:772px; width:468px; height:1px; background:#e3e7ee; }
+  .sum-lbl    { position:absolute; top:798px; width:200px; font-size:11px; font-weight:500; letter-spacing:1.4px; color:var(--muted); text-transform:uppercase; }
+  .sum-val    { position:absolute; top:798px; width:200px; text-align:right; transform:translateX(-100%);
+                font-size:11px; font-weight:600; letter-spacing:1px; color:var(--navy); text-transform:uppercase; }
+</style>
+</head>
+<body>
+<div class="frame" data-node-id="1:17">
+
+  <div class="top-label">{{CLIENT_NAME_UPPER}} · DIOLOG PROPOSAL · THE SUMMARY</div>
+  <div class="kicker-tick"></div>
+  <div class="section-label">SUMMARY · {{SECTION_NUM}}</div>
+
+  <p class="abs display" style="left:108px; top:196px; width:1660px; font-size:62px; line-height:70px;">A sharper, safer, better-resourced IR function.</p>
+
+  <!-- Card 01 -->
+  <div class="sum-card" style="left:110px;"></div>
+  <div class="sum-kick" style="left:146px;"><b>01</b> · THE APPROACH</div>
+  <div class="sum-title" style="left:146px;">{{PARTNER_FIRST}} + Diolog, as your IR function.</div>
+  <div class="sum-body" style="left:146px;">A private, governed workspace where {{PARTNER_FIRST}} drafts, checks and publishes every investor-facing deliverable - announcements, results decks, the investor portal - with no new headcount.</div>
+  <div class="sum-rule" style="left:146px;"></div>
+  <div class="sum-lbl" style="left:146px;">TIME BACK</div>
+  <div class="sum-val" style="left:614px;">{{HOURS_YEAR}} HRS / YR</div>
+
+  <!-- Card 02 -->
+  <div class="sum-card" style="left:690px;"></div>
+  <div class="sum-kick" style="left:726px;"><b>02</b> · WHY NOW</div>
+  <div class="sum-title" style="left:726px;">Lean team, rising disclosure expectations.</div>
+  <div class="sum-body" style="left:726px;">Every reporting cycle still demands polished, consistent, compliant communication. Diolog removes the manual lift.</div>
+  <div class="sum-rule" style="left:726px;"></div>
+  <div class="sum-lbl" style="left:726px;">NEW HEADCOUNT</div>
+  <div class="sum-val" style="left:1194px;">NONE</div>
+
+  <!-- Card 03 -->
+  <div class="sum-card" style="left:1270px;"></div>
+  <div class="sum-kick" style="left:1306px;"><b>03</b> · THE OUTCOME</div>
+  <div class="sum-title" style="left:1306px;">Professional, protected, register-ready.</div>
+  <div class="sum-body" style="left:1306px;">Sharper decks and a credible investor portal lift how the market sees {{CLIENT_SHORT}}; continuous-disclosure checks reduce risk; built-in engagement supports engaging and growing the register.</div>
+  <div class="sum-rule" style="left:1306px;"></div>
+  <div class="sum-lbl" style="left:1306px;">GO LIVE</div>
+  <div class="sum-val" style="left:1774px;">{{GO_LIVE}}</div>
+
+  <div class="footer-rule"></div>
+  <div class="footer-left">{{CLIENT_SHORT_UPPER}} · CONFIDENTIAL</div>
+  <div class="footer-right">{{PAGE_N}} / {{PAGE_TOTAL}}</div>
+
+</div>
+</body>
+</html>

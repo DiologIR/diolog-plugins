@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, initial-scale=1">
+<title>New slide · template</title>
+<link rel="stylesheet" href="deck.css">
+<!--
+  BLANK SLIDE TEMPLATE - copy this to frames/NN-name.html for a NEW screen.
+  It already carries the shared chrome (running header, red tick, section label,
+  footer) wired to the auto-numbering tokens, so the build renumbers it for you.
+  Keep the 110px margins and the headline baseline at top:196. Fill the content
+  region (roughly y:330–920) using the component recipes in BUILD-GUIDE.md §5,
+  designed via /design-craft:design-craft against DESIGN.md. Do NOT hand-type the
+  page numbers - leave {{SECTION_NUM}} / {{PAGE_N}} / {{PAGE_TOTAL}} in place.
+  Optional per-slide CSS goes in a <style> block here in the head.
+-->
+</head>
+<body>
+<div class="frame">
+
+  <!-- shared chrome - keep verbatim -->
+  <div class="top-label">{{CLIENT_NAME_UPPER}} · DIOLOG PROPOSAL · SECTION TITLE</div>
+  <div class="kicker-tick"></div>
+  <div class="section-label">SECTION TITLE · {{SECTION_NUM}}</div>
+
+  <!-- headline (Playfair via .display), baseline at top:196 -->
+  <p class="abs display" style="left:108px; top:196px; width:1600px; font-size:60px; line-height:66px;">New slide headline.</p>
+
+  <!-- optional sub-paragraph -->
+  <p class="abs" style="left:110px; top:300px; width:1500px; font-size:20px; font-weight:400; line-height:28px; color:#48526a;">One supporting line under the headline, in the body colour.</p>
+
+  <!-- CONTENT REGION (y ≈ 330–920): build with BUILD-GUIDE §5 component recipes -->
+
+  <!-- shared footer - keep verbatim -->
+  <div class="footer-rule"></div>
+  <div class="footer-left">{{CLIENT_SHORT_UPPER}} · CONFIDENTIAL</div>
+  <div class="footer-right">{{PAGE_N}} / {{PAGE_TOTAL}}</div>
+
+</div>
+</body>
+</html>

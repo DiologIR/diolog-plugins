@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, initial-scale=1">
+<title>9 - Next steps · {{CLIENT_NAME}} - Diolog Proposal</title>
+<link rel="stylesheet" href="deck.css">
+<style>
+  .cta      { position:absolute; height:36px; background:#fefefe; border:1px solid #e4e7ee; border-radius:18px; }
+  .cta-dot  { position:absolute; left:120px; width:8px; height:8px; background:#1f3fa6; border-radius:4px; }
+  .cta-txt  { position:absolute; left:136px; font-size:12px; font-weight:500; letter-spacing:.6px; color:var(--navy);
+              text-decoration:underline; white-space:nowrap; }
+</style>
+</head>
+<body>
+<div class="frame" data-node-id="8:56">
+
+  <div class="top-label">{{CLIENT_NAME_UPPER}} · DIOLOG PROPOSAL</div>
+  <div class="kicker-tick"></div>
+  <div class="section-label">NEXT STEP · {{SECTION_NUM}}</div>
+
+  <p class="abs display" style="left:106px; top:186px; width:1200px; font-size:84px; line-height:normal;">Next step</p>
+
+  <p class="abs" style="left:110px; top:360px; width:1100px; font-size:30px; font-weight:600; color:var(--navy);">Let’s get {{CLIENT_SHORT}} live on Diolog.</p>
+  <p class="abs" style="left:110px; top:416px; width:1080px; font-size:20px; font-weight:400; line-height:29px; color:#48526a;">From here it’s simple - either book a longer demo so the {{CLIENT_SHORT}} team can see it on their own data, or choose the subscription that fits and we’ll have you live within 24 hours.</p>
+
+  <!-- CTA: book a chat -->
+  <div class="cta" style="left:106px; top:516px; width:347px;"></div>
+  <div class="cta-dot" style="top:530px;"></div>
+  <a class="cta-txt" style="top:526px;" href="{{CTA_PRIMARY_URL}}" target="_blank">{{CTA_PRIMARY_LABEL}}</a>
+
+  <!-- CTA: view demo -->
+  <div class="cta" style="left:106px; top:568px; width:219px;"></div>
+  <div class="cta-dot" style="top:582px;"></div>
+  <a class="cta-txt" style="top:578px;" href="{{CTA_SECONDARY_URL}}" target="_blank">{{CTA_SECONDARY_LABEL}}</a>
+
+  <!-- Contacts -->
+  <p class="abs" style="left:110px; top:743px; width:700px; font-size:16px; font-weight:700; letter-spacing:.5px; color:var(--navy);">{{PARTNER_NAME_UPPER}}</p>
+  <p class="abs" style="left:110px; top:769px; width:700px; font-size:17px; font-weight:400; color:#48526a;">{{PARTNER_ROLE}}</p>
+  <p class="abs" style="left:110px; top:797px; width:900px; font-size:14px; font-weight:500; color:var(--navy);">{{PARTNER_EMAIL}}</p>
+
+  <p class="abs" style="left:110px; top:858px; width:700px; font-size:16px; font-weight:700; letter-spacing:.5px; color:var(--navy);">{{PRESENTER_NAME_UPPER}}</p>
+  <p class="abs" style="left:110px; top:884px; width:700px; font-size:17px; font-weight:400; color:#48526a;">{{PRESENTER_TITLE}}</p>
+  <p class="abs" style="left:110px; top:912px; width:900px; font-size:14px; font-weight:500; color:var(--navy);">{{PRESENTER_CONTACT}}</p>
+
+  <!-- diolog wordmark -->
+  <p class="abs wordmark" style="left:1641px; top:900px; width:300px; font-size:60px; letter-spacing:-2px; color:#13224a;">diolog</p>
+
+  <div class="footer-rule"></div>
+  <div class="footer-left">{{CLIENT_SHORT_UPPER}} · CONFIDENTIAL</div>
+  <div class="footer-right">{{PAGE_N}} / {{PAGE_TOTAL}}</div>
+
+</div>
+</body>
+</html>

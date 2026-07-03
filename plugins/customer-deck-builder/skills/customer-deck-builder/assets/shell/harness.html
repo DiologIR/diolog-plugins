@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{DECK_TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700&family=Newsreader:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Shared deck stylesheet (inlined by the build)
+   ============================================================ */
+/*__DECK_CSS__*/
+
+/* ============================================================
+   Pan / zoom / print harness
+   ============================================================ */
+:root { --deck-gap: 90px; --mat: #dfe3ea; --label: #6b7689; }
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; background: var(--mat); overflow: hidden;
+             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+#stage { position: fixed; inset: 0; overflow: hidden; cursor: grab;
+         touch-action: none; user-select: none; -webkit-user-select: none; }
+#stage.is-panning { cursor: grabbing; }
+
+/* The transformed world. On screen the slides sit in a grid (≈2 rows), reading
+   left-to-right: row 1 = slides 1..cols, row 2 continues. --deck-cols is set by
+   the build. In print (below) the grid collapses to a single vertical column. */
+#canvas { position: absolute; top: 0; left: 0;
+          display: grid; grid-template-columns: repeat(var(--deck-cols, 5), 1920px);
+          gap: 104px 72px; align-items: start;
+          transform-origin: 0 0; will-change: transform; }
+
+.slide-wrap { position: relative; width: 1920px; margin: 0; }
+.slide-wrap .frame { margin: 0; box-shadow: 0 24px 70px rgba(10, 23, 51, .22); }
+
+.slide-label { position: absolute; left: 4px; top: -52px; margin: 0;
+               font: 600 22px 'Inter', sans-serif; letter-spacing: 1.5px;
+               color: var(--label); text-transform: uppercase; white-space: nowrap; }
+.slide-label b { color: var(--accent); font-weight: 600; margin-right: 10px; }
+
+/* ---- Floating control bar ---- */
+#controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 4px; z-index: 10;
+            background: #ffffff; border: 1px solid #e4e7ee; border-radius: 14px;
+            padding: 7px 8px; box-shadow: 0 12px 34px rgba(10, 23, 51, .18);
+            font-family: 'Inter', sans-serif; }
+#controls button { appearance: none; border: 0; background: transparent;
+            font: 600 13px 'Inter', sans-serif; color: #0a1733; cursor: pointer;
+            padding: 8px 12px; border-radius: 9px; white-space: nowrap; letter-spacing: .2px; }
+#controls button:hover { background: #f4f6f9; }
+#controls button:active { background: #edf1f6; }
+#controls .icon { font-size: 17px; line-height: 1; padding: 8px 13px; }
+#controls .sep { width: 1px; height: 22px; background: #e4e7ee; margin: 0 4px; }
+#zoom-pct { font: 600 12px 'Inter', sans-serif; color: #6b7689; min-width: 48px;
+            text-align: center; letter-spacing: .4px; }
+#controls .primary { background: #0a1733; color: #fff; }
+#controls .primary:hover { background: #13224a; }
+
+#hint { position: fixed; left: 50%; bottom: 74px; transform: translateX(-50%);
+        font: 500 11.5px 'Inter', sans-serif; color: #8a95ab; letter-spacing: .3px;
+        background: rgba(255,255,255,.7); padding: 4px 12px; border-radius: 999px;
+        pointer-events: none; opacity: 1; transition: opacity .6s ease; }
+#hint.hide { opacity: 0; }
+
+/* ============================================================
+   Print → one slide per page, native size, vertical paged PDF.
+   In the print dialog choose: Margins = None, Background graphics = ON.
+   ============================================================ */
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { background: #fff; overflow: visible; height: auto; }
+  #controls, #hint { display: none !important; }
+  #stage { position: static; overflow: visible; inset: auto; }
+  /* collapse the on-screen grid to one vertical column, one slide per page */
+  #canvas { position: static; transform: none !important; width: auto;
+            display: block !important; gap: 0 !important; }
+  .slide-wrap { margin: 0 !important; width: 1920px; height: 1080px;
+                page-break-after: always; break-after: page; }
+  .slide-wrap:last-child { page-break-after: auto; break-after: auto; }
+  .slide-label { display: none; }
+  .frame { box-shadow: none !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="canvas">
+<!--__DECK_SLIDES__-->
+  </div>
+</div>
+
+<div id="hint">Scroll to pan · pinch or ⌘/Ctrl-scroll to zoom · drag to move</div>
+
+<div id="controls">
+  <button class="icon" data-act="zoom-out" title="Zoom out">&minus;</button>
+  <span id="zoom-pct">100%</span>
+  <button class="icon" data-act="zoom-in" title="Zoom in">+</button>
+  <span class="sep"></span>
+  <button data-act="fit-all" title="Fit whole deck (F)">Fit deck</button>
+  <button data-act="fit-page" title="Fit current slide (G)">Fit slide</button>
+  <button data-act="reset-100" title="Actual size (1)">100%</button>
+  <span class="sep"></span>
+  <button class="primary" data-act="print" title="Print / Save as PDF (⌘P)">Print / PDF</button>
+</div>
+
+<script>
+(function () {
+  var stage  = document.getElementById('stage');
+  var canvas = document.getElementById('canvas');
+  var pct    = document.getElementById('zoom-pct');
+  var hint   = document.getElementById('hint');
+  var wraps  = Array.prototype.slice.call(canvas.querySelectorAll('.slide-wrap'));
+
+  var SLIDE_W = 1920, SLIDE_H = 1080, PAD = 60;
+  var state = { s: 1, x: 0, y: 0 };
+  var MIN = 0.04, MAX = 4;
+  // 100% detent: zooming snaps to exactly 100% and briefly "locks" there;
+  // you must keep zooming (accumulate BREAK worth of intent) to push past it.
+  var SNAP = 1, snapped = false, accum = 0, BREAK = 28;
+
+  function contentSize() { return { w: canvas.offsetWidth, h: canvas.offsetHeight }; }
+  function vp() { return { w: stage.clientWidth, h: stage.clientHeight }; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  function apply() {
+    canvas.style.transform = 'translate(' + state.x + 'px,' + state.y + 'px) scale(' + state.s + ')';
+    pct.textContent = Math.round(state.s * 100) + '%';
+  }
+
+  // Zoom keeping the given viewport point (px,py) anchored.
+  function zoomAround(nextScale, px, py) {
+    nextScale = clamp(nextScale, MIN, MAX);
+    var wx = (px - state.x) / state.s;   // world point under cursor
+    var wy = (py - state.y) / state.s;
+    state.s = nextScale;
+    state.x = px - wx * state.s;
+    state.y = py - wy * state.s;
+    apply();
+  }
+
+  // Detent-aware zoom: snaps to 100% when crossing it, then requires `intent`
+  // (signed magnitude of the gesture) to accumulate past BREAK before releasing.
+  function zoomTo(nextScale, px, py, intent) {
+    if (snapped) {
+      if (intent * accum < 0) accum = 0;                 // reversed direction, restart
+      accum += intent;
+      if (Math.abs(accum) < BREAK) return;               // stay locked at 100%
+      snapped = false; accum = 0;                        // break out, apply below
+    } else if ((state.s - SNAP) * (nextScale - SNAP) < 0 || Math.abs(nextScale - SNAP) < 0.015) {
+      snapped = true; accum = 0;                         // crossing/landing on 100%, lock
+      zoomAround(SNAP, px, py);
+      return;
+    }
+    zoomAround(nextScale, px, py);
+  }
+
+  function fitAll() {
+    var c = contentSize(), v = vp();
+    state.s = clamp(Math.min((v.w - PAD * 2) / c.w, (v.h - PAD * 2) / c.h), MIN, MAX);
+    state.x = (v.w - c.w * state.s) / 2;
+    state.y = Math.max(PAD, (v.h - c.h * state.s) / 2);
+    snapped = false; accum = 0;
+    apply();
+  }
+
+  // Index of the slide whose centre is nearest the viewport centre (world space, 2-D).
+  function currentIndex() {
+    var v = vp();
+    var cx = (v.w / 2 - state.x) / state.s, cy = (v.h / 2 - state.y) / state.s;
+    var best = 0, bestD = Infinity;
+    wraps.forEach(function (w, i) {
+      var mx = w.offsetLeft + w.offsetWidth / 2, my = w.offsetTop + w.offsetHeight / 2;
+      var d = (mx - cx) * (mx - cx) + (my - cy) * (my - cy);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    return best;
+  }
+
+  function centreOn(i, scale) {
+    var v = vp(), w = wraps[i];
+    state.s = clamp(scale, MIN, MAX);
+    state.x = v.w / 2 - (w.offsetLeft + w.offsetWidth / 2) * state.s;
+    state.y = v.h / 2 - (w.offsetTop + w.offsetHeight / 2) * state.s;
+    apply();
+  }
+
+  function fitPage() {
+    var v = vp();
+    var s = Math.min((v.w - PAD * 2) / SLIDE_W, (v.h - PAD * 2) / SLIDE_H);
+    centreOn(currentIndex(), s);
+    snapped = false; accum = 0;
+  }
+  function actual() { centreOn(currentIndex(), 1); snapped = true; accum = 0; }  // land locked at 100%
+
+  // ---- Wheel: trackpad pan + pinch/⌘-scroll zoom ----
+  stage.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    if (e.ctrlKey || e.metaKey) {                       // pinch-zoom (browsers send ctrlKey)
+      zoomTo(state.s * Math.exp(-e.deltaY * 0.01), e.clientX, e.clientY, -e.deltaY);
+    } else {                                            // two-finger / wheel pan
+      state.x -= e.deltaX; state.y -= e.deltaY; apply();
+    }
+    dropHint();
+  }, { passive: false });
+
+  // ---- Drag to pan ----
+  var drag = null;
+  stage.addEventListener('pointerdown', function (e) {
+    if (e.button !== 0) return;
+    drag = { x: e.clientX, y: e.clientY, ox: state.x, oy: state.y, moved: false };
+    stage.setPointerCapture(e.pointerId);
+    stage.classList.add('is-panning');
+  });
+  stage.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved && Math.abs(dx) + Math.abs(dy) < 4) return;
+    drag.moved = true;
+    state.x = drag.ox + dx; state.y = drag.oy + dy; apply(); dropHint();
+  });
+  function endDrag(e) { if (drag) { drag = null; stage.classList.remove('is-panning'); } }
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  // ---- Controls ----
+  document.getElementById('controls').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var v = vp();
+    switch (b.dataset.act) {
+      case 'zoom-in':  zoomTo(state.s * 1.25, v.w / 2, v.h / 2,  BREAK); break;
+      case 'zoom-out': zoomTo(state.s / 1.25, v.w / 2, v.h / 2, -BREAK); break;
+      case 'fit-all':  fitAll(); break;
+      case 'fit-page': fitPage(); break;
+      case 'reset-100':actual(); break;
+      case 'print':    window.print(); break;
+    }
+  });
+
+  // ---- Keyboard ----
+  window.addEventListener('keydown', function (e) {
+    if (e.metaKey && e.key.toLowerCase() === 'p') return;        // let ⌘P print
+    var v = vp();
+    switch (e.key) {
+      case '=': case '+': zoomTo(state.s * 1.25, v.w / 2, v.h / 2,  BREAK); break;
+      case '-': case '_': zoomTo(state.s / 1.25, v.w / 2, v.h / 2, -BREAK); break;
+      case 'f': case 'F': fitAll(); break;
+      case 'g': case 'G': fitPage(); break;
+      case '0': fitAll(); break;
+      case '1': actual(); break;
+      case 'ArrowDown': state.y -= 120; apply(); break;
+      case 'ArrowUp':   state.y += 120; apply(); break;
+      case 'ArrowRight':state.x -= 120; apply(); break;
+      case 'ArrowLeft': state.x += 120; apply(); break;
+    }
+  });
+
+  var hinted = false;
+  function dropHint() { if (!hinted) { hinted = true; hint.classList.add('hide'); } }
+
+  window.addEventListener('resize', function () { /* keep transform; user can re-fit */ });
+  fitAll();                     // initial: whole deck zoomed to fit
+})();
+</script>
+</body>
+</html>

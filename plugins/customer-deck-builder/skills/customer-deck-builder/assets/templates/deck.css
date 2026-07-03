@@ -1,0 +1,94 @@
+/* ============================================================
+   Diolog customer proposal deck. Shared stylesheet.
+   Every frame is a 1920 x 1080 canvas with absolutely
+   positioned children placed at exact coordinates.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700&family=Newsreader:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg:        #f5f7fb;
+  --navy:      #0a1733;
+  --body:      #3c4660;
+  --muted:     #8a95ab;
+  --light:     #b3bcca;
+  --divider:   #d9dee5;
+  --accent:    #d62b1f;
+  --card:      #ffffff;
+  --card-line: #e6eaf0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: #dfe3ea;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+/* The fixed-size slide canvas (interior slides are white) */
+.frame {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  background: #ffffff;
+  overflow: hidden;
+  margin: 0 auto;
+}
+.frame--cover { background: var(--bg); }
+
+/* Absolutely positioned primitives inherit position from inline style */
+.abs { position: absolute; }
+
+/* ---- Shared type helpers ---- */
+.wordmark {
+  font-family: 'Newsreader', serif;
+  font-weight: 500;
+  color: var(--navy);
+}
+.display {
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  color: var(--navy);
+}
+.eyebrow {                       /* small tracked kicker */
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* ---- Slide header (kicker block, pages 2–9) ---- */
+.top-label {                     /* running header, top-right */
+  position: absolute; top: 60px; left: 1810px;
+  transform: translateX(-100%);
+  width: 700px; text-align: right;
+  font-size: 11px; font-weight: 500; letter-spacing: 1.6px;
+  color: var(--light); text-transform: uppercase;
+}
+.kicker-tick {
+  position: absolute; left: 110px; top: 150px;
+  width: 40px; height: 4px; background: var(--accent);
+}
+.section-label {
+  position: absolute; left: 110px; top: 165px; width: 900px;
+  font-size: 12px; font-weight: 500; letter-spacing: 2px;
+  color: var(--muted); text-transform: uppercase;
+}
+
+/* ---- Slide footer (pages 2–9) ---- */
+.footer-rule {
+  position: absolute; left: 110px; top: 1000px;
+  width: 1700px; height: 1px; background: #e4e7ee;
+}
+.footer-left {
+  position: absolute; left: 110px; top: 1018px; width: 800px;
+  font-size: 11px; font-weight: 500; letter-spacing: 1.6px;
+  color: var(--light); text-transform: uppercase;
+}
+.footer-right {
+  position: absolute; left: 1810px; top: 1018px; width: 700px;
+  transform: translateX(-100%); text-align: right;
+  font-size: 11px; font-weight: 500; letter-spacing: 1.6px;
+  color: var(--light); text-transform: uppercase;
+}
