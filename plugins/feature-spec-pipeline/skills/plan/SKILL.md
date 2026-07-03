@@ -15,7 +15,7 @@ Runs **in your current session** with `Read`/`Glob`/`Grep`/`Write`/`Edit`, `Bash
 
 ## Procedure
 
-1. **Read the spec** at `docs/specs/spec-<ID>.md`. The `## Feature description` section is the original intent; the latest `## Triage` section carries the **Assumptions** (the defaults for anything the description didn't pin down) and any answers/edits the human added (authoritative). Summarize intent — don't transcribe the spec into the plan. If the spec status is `Needs More Info`, the essential questions aren't answered yet: don't invent a plan — say so and recommend a re-triage first (end with `NEEDS TRIAGE`).
+1. **Read the spec** at `docs/specs/spec-<ID>.md`. The `## Feature description` section is the original intent; the latest `## Triage` section carries the **Assumptions** (the defaults for anything the description didn't pin down) and any answers/edits the human added (authoritative). Summarize intent — don't transcribe the spec into the plan. If the spec status is `Needs More Info`, first try to resolve the open questions the way triage should have — from the codebase, the closest analogue, and the safer default — and plan on those documented assumptions. Decline to plan **only** when the *core* intent genuinely cannot be planned without a real **external (non-internal) dependency** — a product / policy / brand decision only the human can make, or an external contract / credential / system you lack. Even then, plan every part that dependency does not block and name only the blocked slice; reserve `NEEDS TRIAGE` for when the whole feature hinges on the missing external answer.
 
 2. **Classify the plan-size tier** (Trivial / Small / Standard / Large) before writing — it sets the template and length budget. When in doubt, pick the smaller tier. See `references/plan-tiers.md`.
 
@@ -44,7 +44,8 @@ When step 3 uses the `Workflow` tool to investigate in parallel:
 
 ## Guidelines
 
-- If the spec is ambiguous enough that planning would need multiple assumptions a human should make instead, don't invent a plan — flag what's missing, recommend a triage pass first, and end with `NEEDS TRIAGE`.
+- **Ambiguity is not a reason to bail.** Resolve it yourself from the codebase, the closest analogue, and the safer default, and record the picks as plan assumptions — a plan built on documented internal assumptions is the correct output, not a failure. Reserve `NEEDS TRIAGE` for a genuine **external (non-internal) dependency** you cannot resolve (a product/policy/brand decision that is the human's to make, or an external contract/credential/system you lack), and even then plan everything that dependency does not block and flag only the blocked slice. Never punt a whole spec over gaps you could settle yourself.
+- **Plan every requirement and subfeature the spec asks for.** Do not drop, shrink, or push a subfeature "out of scope" or to a follow-up because it is large, fiddly, or lower priority — if it has no external dependency, it belongs in this plan. Size is handled by the tier + decomposition, not by cutting scope.
 - Keep the plan scoped to the spec; don't extend to adjacent features or cleanup.
 - Name specific file paths, functions, components, and analogues — but only where they're real (verify with Glob/Grep). A bad plan references files that don't exist or invents patterns not used in the codebase.
 - When the change is trivial, a short plan is the correct output, not a failure.

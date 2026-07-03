@@ -59,11 +59,12 @@ Call these out — cheap to fix pre-spec, expensive post-build. Flag under Engin
 
 Default stance: **state an assumption, don't ask a question.** For each gap, decide whether you can pick a reasonable default using: codebase investigation, existing Diolog design-system / IR norms, the closest analogue you found, or the safer/less-irreversible option. If you can, **make the assumption and document it** — the human can still correct it before the planner runs.
 
-Reserve **questions** for gaps where no safe default exists. A gap is "essential" (question-worthy) only when one or more is true:
-- The answer is a product decision whose reasonable defaults would produce meaningfully different UX, and the codebase doesn't favour one.
-- The answer is subjective brand/voice/copy/threshold the codebase can't supply.
-- The answer governs a destructive, irreversible, or customer-visible-at-scale action where picking wrong is costly to undo.
-- The answer resolves a genuine contradiction between the description and prior human answers, where only the author can adjudicate.
+**The test is internal vs external dependency.** A gap you can resolve *yourself* — from codebase investigation, the closest analogue you found, the Diolog design-system / IR norms, or the safer/less-irreversible option — is an **internal dependency**: resolve it, document the pick as an assumption, and proceed. Only a gap whose answer is a genuine **external (non-internal) dependency** — something you cannot supply and only the human or an outside party/system can — is question-worthy. A gap is "essential" only when **all** of these hold:
+- **No safe default exists from any internal source** (code, analogue, norms, safer option). If any yields a reasonable default, it is internal — assume it, don't ask.
+- **Guessing wrong is expensive to undo** — it forces a rebuild or a destructive / irreversible / customer-visible-at-scale action, not a tweak the human can request later.
+- **The decision is genuinely the human's or an external party's to make** — a product / policy / brand / threshold choice the code cannot supply, a real contradiction only the author can adjudicate, or an external contract / credential / system you lack.
+
+If a gap fails any one of these it is **internal**: pick the obvious safe default, record it as an assumption, and proceed. Do **not** raise a question because a human *might* prefer to decide, because the feature is large or complex, or because the wording is loose — none of those is an external dependency. The bar is high on purpose: every essential question stalls the whole pipeline (a `Needs More Info` spec blocks the planner), so when in doubt, **assume and proceed**.
 
 Non-essential gaps become **assumptions**, not questions. Golden rule: if option (a) is "do the obvious safe thing (recommended)" and (b) is "do the unsafe/less-consistent thing", that's not a question — write it as an assumption.
 
@@ -75,7 +76,7 @@ Tag every finding: **Critical** (blocks all downstream work or creates regulator
 
 Apply Cagan's test: *"Would an empowered engineering team proceed confidently from this spec today?"* If no, state the specific block. **The default is to proceed — only block when warranted:**
 
-- **Block → NEEDS IMPROVEMENT.** Triggers (any one): an essential question (§4) you couldn't reasonably default; OR any uncovered S3 gap; OR a genuine contradiction between description and prior human answers; OR an unresolved red flag that would force a mid-build rethink. Do NOT block for non-essential gaps you could reasonably assume — those become assumptions in a Ready section.
+- **Block → NEEDS IMPROVEMENT.** Triggers (any one): an essential question (§4 — a genuine *external* dependency) you couldn't reasonably default; OR any uncovered S3 gap; OR a genuine contradiction between description and prior human answers; OR an unresolved red flag that would force a mid-build rethink. Every one of these is external by definition; a gap you can settle from code, analogues, norms, or the safer default is internal and is **never** a block. Prefer READY-with-assumptions over NEEDS IMPROVEMENT whenever the core intent is buildable — block only when the feature genuinely cannot be built safely without the human's answer, and even then block on the specific external gap, not the whole feature.
 - **Approve with assumptions → READY.** Include the Assumptions block so the author can correct before the planner runs. Trigger: one or more assumptions made, no essential question remains.
 - **Approve → READY** with no Assumptions block. Trigger: nothing to assume or ask.
 
