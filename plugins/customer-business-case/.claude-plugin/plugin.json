@@ -1,0 +1,9 @@
+{
+  "name": "customer-business-case",
+  "version": "1.0.0",
+  "description": "Generate a single printable A4-page executive business case in Diolog's house style from a customer's proposal deck. Uses the /design-craft skill against a bundled single-page DESIGN.md and a templated version of the Alfabs business case, with all copy in the Diolog brand voice (create-diolog-business-case). Produces one dense, print-clean page (problem, solution, value, quantified outcome, investment, next step) on a fixed 794x1123 A4 canvas that prints to exactly one page.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}

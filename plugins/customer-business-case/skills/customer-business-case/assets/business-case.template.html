@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{CLIENT_SHORT}} · Diolog business case</title>
+<!--
+  ============================================================================
+  DIOLOG SINGLE-PAGE BUSINESS CASE  ·  A4 TEMPLATE (fill and adapt)
+  ============================================================================
+  On screen this is a pan/zoom viewer; when printed it collapses to EXACTLY ONE
+  A4 page. The document itself is the ".bc-page" canvas (794 x 1123px = A4 @96dpi)
+  and holds all the tuned spacing/section decisions. Reproduce this look; do not
+  re-derive it.
+
+  EDIT ONLY THE .bc-page CONTENT (the {{placeholders}} and copy inside it). Leave
+  the VIEWER HARNESS (#bc-stage / #bc-canvas / #bc-controls / the <script>) and the
+  print CSS untouched, or printing to a single A4 page will break.
+
+  HOW TO USE (see references/build-guidance.md for the full method):
+    1. Copy this file to a new name for the client.
+    2. Replace every {{PLACEHOLDER}} in .bc-page with the client's real content,
+       written in the Diolog brand voice (use the diolog-brand-voice skill:
+       create-diolog-business-case). Pull facts/figures from the customer deck.
+    3. The placeholders are the MINIMUM to fill. Using /design-craft + the bundled
+       DESIGN.md you MAY rewrite copy, add/merge/re-order content, and adjust the
+       layout INSIDE .bc-page, as long as it stays one 794x1123 page.
+    4. Keep the eight-section arc and the two-card rhythm (one navy card, wash
+       cards). Verify nothing overflows the .bc-page.
+
+  VIEWER (screen): scroll/pinch to zoom (toward the cursor), drag to pan, buttons
+  for Fit / 100% / zoom. Zoom snaps to a brief detent at 100%.
+  PRINT: Save as PDF, A4, Margins None, Background graphics on -> one clean page.
+
+  HARD RULES (from DESIGN.md):
+    - No em dashes or en dashes anywhere. Ranges use "to" (A$25k to 46k, 20 to 30h).
+    - Exactly ONE navy card (the solution, section 03). Everything else is white
+      or wash (#F5F7FB). Never a rounded box bordered on one side only.
+    - One accent blue (#1F3FA6) for kickers, key figures, links, the single CTA.
+    - Newsreader (headings), Inter (body), JetBrains Mono (kickers/labels/figures).
+    - Every figure in a right-aligned mono cell with white-space:nowrap.
+  ============================================================================
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+  :root{ --desk:#E9ECF1; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; height:100%; background:var(--desk);
+             font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+
+  /* ── viewer harness (screen only) ────────────────────────────────────── */
+  #bc-stage{ position:fixed; inset:0; overflow:hidden; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; }
+  #bc-stage.is-panning{ cursor:grabbing; }
+  #bc-canvas{ position:absolute; top:0; left:0; width:794px; transform-origin:0 0; will-change:transform; }
+  .bc-page{ box-shadow:0 8px 40px rgba(15,26,46,.14); }
+
+  #bc-controls{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+                display:flex; align-items:center; gap:4px; z-index:10;
+                background:#fff; border:1px solid #E3E5EA; border-radius:14px; padding:7px 8px;
+                box-shadow:0 12px 34px rgba(15,26,46,.18); }
+  #bc-controls button{ appearance:none; border:0; background:transparent; font:600 13px 'Inter',sans-serif;
+                       color:#0F1A2E; cursor:pointer; padding:8px 12px; border-radius:9px; white-space:nowrap; }
+  #bc-controls button:hover{ background:#F5F7FB; }
+  #bc-controls .icon{ font-size:17px; line-height:1; padding:8px 13px; }
+  #bc-controls .sep{ width:1px; height:22px; background:#E3E5EA; margin:0 4px; }
+  #bc-pct{ font:600 12px 'Inter',sans-serif; color:#5E6A82; min-width:46px; text-align:center; letter-spacing:.3px; }
+  #bc-controls .primary{ background:#1F3FA6; color:#fff; }
+  #bc-controls .primary:hover{ background:#142A78; }
+  #bc-hint{ position:fixed; left:50%; bottom:74px; transform:translateX(-50%);
+            font:500 11.5px 'Inter',sans-serif; color:#5E6A82; background:rgba(255,255,255,.72);
+            padding:4px 12px; border-radius:999px; pointer-events:none; transition:opacity .6s ease; }
+  #bc-hint.hide{ opacity:0; }
+
+  /* ── PRINT: collapse the viewer, print one clean A4 page. Keep intact. ── */
+  @media print{
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: 794px 1123px; margin: 0; }
+    html, body { background:#fff !important; margin:0 !important; padding:0 !important; height:auto !important; overflow:visible !important; }
+    #bc-controls, #bc-hint { display:none !important; }
+    #bc-stage { position:static !important; inset:auto !important; overflow:visible !important; cursor:auto !important; }
+    #bc-canvas { position:static !important; transform:none !important; width:auto !important; }
+    .bc-page { margin:0 !important; box-shadow:none !important; }
+    div[style*="width: 794px"] { margin:0 !important; box-shadow:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="bc-stage">
+<div id="bc-canvas">
+
+<!-- ══ THE DOCUMENT: A4 canvas (794 x 1123px). Edit inside here only. ══════ -->
+<div class="bc-page" style="width: 794px; height: 1123px; margin: 0 auto; background: #FFFFFF; color: #3D4A66; font-family: 'Inter',sans-serif; font-size: 9.5px; line-height: 1.5; letter-spacing: -.011em; padding: 26px 40px 20px; box-sizing: border-box; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between">
+
+  <!-- ── HEADER ─────────────────────────────────────────────────────────── -->
+  <header style="display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:9px;border-bottom:1px solid rgba(15,26,46,.08)">
+    <div style="font-family:'Newsreader',serif;font-size:34px;font-weight:400;letter-spacing:-.025em;color:#0F1A2E;line-height:.9">diolog</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#5E6A82;padding-bottom:4px">Executive business case  ·  Prepared for {{CLIENT_LEGAL_NAME}}  ·  {{CLIENT_EXCHANGE}}: {{CLIENT_TICKER}}</div>
+  </header>
+
+  <!-- ── 01 / THE CASE ──────────────────────────────────────────────────── -->
+  <section>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;letter-spacing:.04em;margin-bottom:3px">01 / The case</div>
+    <h1 style="font-family:'Newsreader',serif;font-weight:400;font-size:24px;line-height:1.04;letter-spacing:-.022em;color:#0F1A2E;margin:0 0 4px;max-width:620px">{{HEADLINE}}</h1>
+    <div style="font-size:10.5px;line-height:1.5;color:#5E6A82;letter-spacing:-.02em;margin:0">{{STANDFIRST}}</div>
+  </section>
+
+  <!-- ── 02 / THE PROBLEM  +  03 / THE SOLUTION ─────────────────────────── -->
+  <section style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch">
+
+    <div style="padding-top:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;letter-spacing:.04em;margin-bottom:5px">02 / The problem</div>
+      <h2 style="font-family:'Newsreader',serif;font-weight:400;font-size:15px;line-height:1.15;letter-spacing:-.014em;color:#0F1A2E;margin:0 0 8px">{{PROBLEM_HEADING}}</h2>
+
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;gap:9px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;padding-top:2px;min-width:14px">01</span>
+          <div>
+            <div style="font-size:9.5px;font-weight:600;color:#0F1A2E;margin-bottom:1px">{{PROBLEM_1_TITLE}}</div>
+            <div style="font-size:9px;color:#5E6A82;line-height:1.45">{{PROBLEM_1_BODY}}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:9px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;padding-top:2px;min-width:14px">02</span>
+          <div>
+            <div style="font-size:9.5px;font-weight:600;color:#0F1A2E;margin-bottom:1px">{{PROBLEM_2_TITLE}}</div>
+            <div style="font-size:9px;color:#5E6A82;line-height:1.45">{{PROBLEM_2_BODY}}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:9px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;padding-top:2px;min-width:14px">03</span>
+          <div>
+            <div style="font-size:9.5px;font-weight:600;color:#0F1A2E;margin-bottom:1px">{{PROBLEM_3_TITLE}}</div>
+            <div style="font-size:9px;color:#5E6A82;line-height:1.45">{{PROBLEM_3_BODY}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The ONE navy card: the solution hero (the visual anchor of the page) -->
+    <div style="background:#0A1733;color:#E8EEF8;border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;display:flex;flex-direction:column">
+      <div style="position:absolute;inset:0;background:radial-gradient(420px 220px at 90% -20%,rgba(31,63,166,.4),transparent 60%);pointer-events:none"></div>
+      <div style="position:relative;display:flex;flex-direction:column;height:100%">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#8FA9EE;letter-spacing:.04em;margin-bottom:5px">03 / The solution</div>
+        <h2 style="font-family:'Newsreader',serif;font-weight:400;font-size:16px;line-height:1.15;letter-spacing:-.014em;color:#FFF;margin:0 0 7px">{{SOLUTION_HEADING}}</h2>
+        <p style="font-size:9.5px;color:#C9D3E4;line-height:1.5;margin:0 0 9px">{{SOLUTION_BODY}}</p>
+        <ul style="list-style:none;padding:0;margin:auto 0 0;display:flex;flex-direction:column;gap:4px;font-size:9px;color:#C9D3E4">
+          <li style="display:flex;gap:7px"><i class="ph ph-check" style="color:#8FA9EE;font-size:11px;margin-top:1px"></i>{{SOLUTION_CAP_1}}</li>
+          <li style="display:flex;gap:7px"><i class="ph ph-check" style="color:#8FA9EE;font-size:11px;margin-top:1px"></i>{{SOLUTION_CAP_2}}</li>
+          <li style="display:flex;gap:7px"><i class="ph ph-check" style="color:#8FA9EE;font-size:11px;margin-top:1px"></i>{{SOLUTION_CAP_3}}</li>
+          <li style="display:flex;gap:7px"><i class="ph ph-check" style="color:#8FA9EE;font-size:11px;margin-top:1px"></i>{{SOLUTION_CAP_4}}</li>
+        </ul>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── 04 / THE VALUE  (standalone horizontal 4-up strip) ─────────────── -->
+  <section style="margin-top:14px">
+    <div style="margin-bottom:6px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;letter-spacing:.04em;margin-bottom:3px">04 / The value</div>
+      <h2 style="font-family:'Newsreader',serif;font-weight:400;font-size:15px;line-height:1.15;letter-spacing:-.014em;color:#0F1A2E;margin:0">{{VALUE_HEADING}}</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <div style="border-top:1.5px solid #1F3FA6;padding-top:7px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#1F3FA6;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">{{VALUE_1_TAG}}</div>
+        <div style="font-size:9.5px;font-weight:600;color:#0F1A2E;margin-bottom:2px">{{VALUE_1_TITLE}}</div>
+        <div style="font-size:9px;color:#5E6A82;line-height:1.45">{{VALUE_1_BODY}}</div>
+      </div>
+      <div style="border-top:1.5px solid #1F3FA6;padding-top:7px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#1F3FA6;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">{{VALUE_2_TAG}}</div>
+        <div style="font-size:9.5px;font-weight:600;color:#0F1A2E;margin-bottom:2px">{{VALUE_2_TITLE}}</div>
+        <div style="font-size:9px;color:#5E6A82;line-height:1.45">{{VALUE_2_BODY}}</div>
+      </div>
+      <div style="border-top:1.5px solid #1F3FA6;padding-top:7px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#1F3FA6;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">{{VALUE_3_TAG}}</div>
+        <div style="font-size:9.5px;font-weight:600;color:#0F1A2E;margin-bottom:2px">{{VALUE_3_TITLE}}</div>
+        <div style="font-size:9px;color:#5E6A82;line-height:1.45">{{VALUE_3_BODY}}</div>
+      </div>
+      <div style="border-top:1.5px solid #1F3FA6;padding-top:7px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#1F3FA6;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">{{VALUE_4_TAG}}</div>
+        <div style="font-size:9.5px;font-weight:600;color:#0F1A2E;margin-bottom:2px">{{VALUE_4_TITLE}}</div>
+        <div style="font-size:9px;color:#5E6A82;line-height:1.45">{{VALUE_4_BODY}}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 05 / THE OUTCOME  +  06 / WHAT DIOLOG REPLACES ─────────────────── -->
+  <section style="display:grid;grid-template-columns:1.15fr .85fr;gap:22px;margin-top:12px">
+
+    <div>
+      <div style="margin-bottom:8px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;letter-spacing:.04em;margin-bottom:3px">05 / The outcome</div>
+        <h2 style="font-family:'Newsreader',serif;font-weight:400;font-size:15px;line-height:1.15;letter-spacing:-.014em;color:#0F1A2E;margin:0">{{OUTCOME_HEADING}}</h2>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;font-size:9px">
+        <thead>
+          <tr style="border-bottom:1px solid rgba(15,26,46,.12)">
+            <th style="text-align:left;padding:5px 8px 5px 0;font-family:'JetBrains Mono',monospace;font-size:8px;color:#5E6A82;letter-spacing:.08em;text-transform:uppercase;font-weight:400">Activity</th>
+            <th style="text-align:right;padding:5px 6px;font-family:'JetBrains Mono',monospace;font-size:8px;color:#5E6A82;letter-spacing:.08em;text-transform:uppercase;font-weight:400;white-space:nowrap">Today</th>
+            <th style="text-align:right;padding:5px 6px;font-family:'JetBrains Mono',monospace;font-size:8px;color:#5E6A82;letter-spacing:.08em;text-transform:uppercase;font-weight:400;white-space:nowrap">With Diolog</th>
+            <th style="text-align:right;padding:5px 0 5px 6px;font-family:'JetBrains Mono',monospace;font-size:8px;color:#1F3FA6;letter-spacing:.08em;text-transform:uppercase;font-weight:400;white-space:nowrap">Saved</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(15,26,46,.08)">
+            <td style="padding:7px 8px 7px 0;color:#0F1A2E">{{OUT_1_ACTIVITY}}</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#5E6A82;white-space:nowrap">{{OUT_1_TODAY}}</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#0F1A2E;white-space:nowrap">{{OUT_1_WITH}}</td>
+            <td style="text-align:right;padding:7px 0 7px 8px;font-family:'JetBrains Mono',monospace;color:#1F3FA6;font-weight:500">{{OUT_1_SAVED}}</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(15,26,46,.08)">
+            <td style="padding:7px 8px 7px 0;color:#0F1A2E">{{OUT_2_ACTIVITY}}</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#5E6A82;white-space:nowrap">{{OUT_2_TODAY}}</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#0F1A2E;white-space:nowrap">{{OUT_2_WITH}}</td>
+            <td style="text-align:right;padding:7px 0 7px 8px;font-family:'JetBrains Mono',monospace;color:#1F3FA6;font-weight:500">{{OUT_2_SAVED}}</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(15,26,46,.08)">
+            <td style="padding:7px 8px 7px 0;color:#0F1A2E">{{OUT_3_ACTIVITY}}</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#5E6A82;white-space:nowrap">{{OUT_3_TODAY}}</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#0F1A2E;white-space:nowrap">{{OUT_3_WITH}}</td>
+            <td style="text-align:right;padding:7px 0 7px 8px;font-family:'JetBrains Mono',monospace;color:#1F3FA6;font-weight:500">{{OUT_3_SAVED}}</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(15,26,46,.08)">
+            <td style="padding:7px 8px 7px 0;color:#0F1A2E">{{OUT_4_ACTIVITY}}</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#5E6A82;white-space:nowrap">{{OUT_4_TODAY}}</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#0F1A2E;white-space:nowrap">{{OUT_4_WITH}}</td>
+            <td style="text-align:right;padding:7px 0 7px 8px;font-family:'JetBrains Mono',monospace;color:#1F3FA6;font-weight:500">{{OUT_4_SAVED}}</td>
+          </tr>
+          <tr><td colspan="4" style="height:5px;padding:0;border:0"></td></tr>
+          <tr style="background:#F5F7FB">
+            <td style="padding:7px 8px;font-weight:600;color:#0F1A2E;border-top-left-radius:6px;border-bottom-left-radius:6px">Total per cycle</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#0F1A2E;font-weight:500;white-space:nowrap">{{OUT_TOTAL_TODAY}}</td>
+            <td style="text-align:right;padding:7px 8px;font-family:'JetBrains Mono',monospace;color:#0F1A2E;font-weight:500;white-space:nowrap">{{OUT_TOTAL_WITH}}</td>
+            <td style="text-align:right;padding:7px 10px 7px 8px;font-family:'JetBrains Mono',monospace;color:#1F3FA6;font-weight:600;border-top-right-radius:6px;border-bottom-right-radius:6px">{{OUT_TOTAL_SAVED}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;flex-direction:column">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;letter-spacing:.04em;margin-bottom:3px">06 / What Diolog replaces</div>
+      <h2 style="font-family:'Newsreader',serif;font-weight:400;font-size:15px;line-height:1.15;letter-spacing:-.014em;color:#0F1A2E;margin:0 0 8px">{{REPLACES_HEADING}}</h2>
+      <div style="display:flex;flex-direction:column;font-size:9px;flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid rgba(15,26,46,.08)"><span style="color:#0F1A2E">{{REP_1_LABEL}}</span><span style="font-family:'JetBrains Mono',monospace;color:#5E6A82;white-space:nowrap">{{REP_1_VALUE}}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid rgba(15,26,46,.08)"><span style="color:#0F1A2E">{{REP_2_LABEL}}</span><span style="font-family:'JetBrains Mono',monospace;color:#5E6A82;white-space:nowrap">{{REP_2_VALUE}}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid rgba(15,26,46,.08)"><span style="color:#0F1A2E">{{REP_3_LABEL}}</span><span style="font-family:'JetBrains Mono',monospace;color:#5E6A82;white-space:nowrap">{{REP_3_VALUE}}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid rgba(15,26,46,.08)"><span style="color:#0F1A2E">{{REP_4_LABEL}}</span><span style="font-family:'JetBrains Mono',monospace;color:#5E6A82;white-space:nowrap">{{REP_4_VALUE}}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid rgba(15,26,46,.08)"><span style="color:#0F1A2E">{{REP_5_LABEL}}</span><span style="font-family:'JetBrains Mono',monospace;color:#5E6A82;white-space:nowrap">{{REP_5_VALUE}}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 8px;margin-top:5px;background:#F5F7FB;border-radius:6px">
+          <span style="color:#0F1A2E;font-weight:600">Estimated annual savings</span>
+          <span style="font-family:'JetBrains Mono',monospace;color:#1F3FA6;font-weight:600;white-space:nowrap">{{REP_TOTAL_VALUE}}</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── 07 / INVESTMENT  (wash card, NOT navy) ─────────────────────────── -->
+  <section style="background:#F5F7FB;border-radius:10px;padding:9px 16px;border:1px solid rgba(15,26,46,.06);margin-top:14px">
+    <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:20px;align-items:center">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;letter-spacing:.04em;margin-bottom:6px">07 / Investment</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5E6A82;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Recommended plan for {{CLIENT_SHORT}}</div>
+        <div style="font-family:'Newsreader',serif;font-size:16px;font-weight:400;letter-spacing:-.014em;color:#0F1A2E;line-height:1.15;margin-bottom:6px">{{PLAN_NAME}}</div>
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <span style="font-family:'Newsreader',serif;font-size:20px;color:#0F1A2E;letter-spacing:-.02em;line-height:1">{{PRICE}}</span>
+          <span style="font-size:10px;color:#5E6A82">{{PRICE_CADENCE}}</span>
+        </div>
+      </div>
+      <ul style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;font-size:9px;color:#5E6A82">
+        <li style="display:flex;gap:6px"><i class="ph ph-check" style="color:#1F3FA6;font-size:11px;margin-top:1px"></i>{{INV_FEAT_1}}</li>
+        <li style="display:flex;gap:6px"><i class="ph ph-check" style="color:#1F3FA6;font-size:11px;margin-top:1px"></i>{{INV_FEAT_2}}</li>
+        <li style="display:flex;gap:6px"><i class="ph ph-check" style="color:#1F3FA6;font-size:11px;margin-top:1px"></i>{{INV_FEAT_3}}</li>
+        <li style="display:flex;gap:6px"><i class="ph ph-check" style="color:#1F3FA6;font-size:11px;margin-top:1px"></i>{{INV_FEAT_4}}</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── 08 / NEXT STEPS  (wash card, single CTA) ───────────────────────── -->
+  <section style="background:#F5F7FB;border-radius:10px;padding:9px 16px;border:1px solid rgba(15,26,46,.06)">
+    <div style="display:flex;gap:16px;align-items:center">
+      <div style="flex:1">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1F3FA6;letter-spacing:.04em;margin-bottom:3px">08 / Next steps</div>
+        <div style="font-family:'Newsreader',serif;font-size:14px;font-weight:400;color:#0F1A2E;letter-spacing:-.014em;line-height:1.2">{{NEXT_STEPS_COPY}}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:160px;align-items:flex-end">
+        <a href="https://calendly.com/amyfromdiolog/intro" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#1F3FA6;color:#FFF;font-size:10px;font-weight:500;letter-spacing:-.02em;padding:9px 16px;border-radius:999px;text-decoration:none;white-space:nowrap">Book a chat to explore further <i class="ph ph-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+  <footer style="display:flex;justify-content:space-between;align-items:flex-end;padding-top:12px;border-top:1px solid rgba(15,26,46,.08);font-size:8.5px;color:#5E6A82">
+    <div style="display:flex;gap:20px">
+      <div>
+        <div style="color:#0F1A2E;font-weight:500">{{PARTNER_NAME}}  ·  {{PARTNER_ORG}}</div>
+        <div>{{PARTNER_EMAIL}}</div>
+      </div>
+      <div>
+        <div style="color:#0F1A2E;font-weight:500">Amy Benson  ·  Diolog</div>
+        <div>amy@diolog.com.au  ·  diolog.app</div>
+      </div>
+    </div>
+    <div style="font-family:'Newsreader',serif;font-size:11px;color:#5E6A82;letter-spacing:-.01em;text-align:right">Disclosure, without doubt.</div>
+  </footer>
+
+</div><!-- ══ /.bc-page ══════════════════════════════════════════════════ -->
+
+</div><!-- /#bc-canvas -->
+</div><!-- /#bc-stage -->
+
+<div id="bc-hint">Scroll or pinch to zoom · drag to pan · Fit / 100%</div>
+
+<div id="bc-controls">
+  <button class="icon" data-act="out" title="Zoom out">&minus;</button>
+  <span id="bc-pct">100%</span>
+  <button class="icon" data-act="in" title="Zoom in">+</button>
+  <span class="sep"></span>
+  <button data-act="fit" title="Fit page (F)">Fit</button>
+  <button data-act="actual" title="Actual size (1)">100%</button>
+  <span class="sep"></span>
+  <button class="primary" data-act="print" title="Print / Save as PDF (⌘P)">Print / PDF</button>
+</div>
+
+<script>
+(function () {
+  var stage  = document.getElementById('bc-stage');
+  var canvas = document.getElementById('bc-canvas');
+  var pct    = document.getElementById('bc-pct');
+  var hint   = document.getElementById('bc-hint');
+
+  var PW = 794, PH = 1123, PAD = 48;
+  var state = { s: 1, x: 0, y: 0 };
+  var MIN = 0.1, MAX = 4;
+  // 100% detent: zoom snaps to exactly 100% and briefly "locks" there; keep
+  // zooming (accumulate BREAK worth of intent) to move past it.
+  var SNAP = 1, snapped = false, accum = 0, BREAK = 26;
+
+  function vp() { return { w: stage.clientWidth, h: stage.clientHeight }; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function apply() {
+    canvas.style.transform = 'translate(' + state.x + 'px,' + state.y + 'px) scale(' + state.s + ')';
+    pct.textContent = Math.round(state.s * 100) + '%';
+  }
+  function zoomAround(ns, px, py) {
+    ns = clamp(ns, MIN, MAX);
+    var wx = (px - state.x) / state.s, wy = (py - state.y) / state.s;
+    state.s = ns; state.x = px - wx * state.s; state.y = py - wy * state.s; apply();
+  }
+  // Detent-aware zoom: snaps to 100% on crossing, needs `intent` to accumulate
+  // past BREAK before releasing.
+  function zoomTo(ns, px, py, intent) {
+    if (snapped) {
+      if (intent * accum < 0) accum = 0;
+      accum += intent;
+      if (Math.abs(accum) < BREAK) return;
+      snapped = false; accum = 0;
+    } else if ((state.s - SNAP) * (ns - SNAP) < 0 || Math.abs(ns - SNAP) < 0.015) {
+      snapped = true; accum = 0; zoomAround(SNAP, px, py); return;
+    }
+    zoomAround(ns, px, py);
+  }
+  function fit() {
+    var v = vp();
+    state.s = clamp(Math.min((v.w - PAD * 2) / PW, (v.h - PAD * 2) / PH), MIN, MAX);
+    state.x = (v.w - PW * state.s) / 2;
+    state.y = Math.max(PAD, (v.h - PH * state.s) / 2);
+    snapped = false; accum = 0; apply();
+  }
+  function actual() {
+    var v = vp();
+    state.s = 1; state.x = (v.w - PW) / 2; state.y = Math.max(PAD, (v.h - PH) / 2);
+    snapped = true; accum = 0; apply();
+  }
+
+  // Wheel = zoom toward the cursor (mouse wheel and trackpad both; pinch too).
+  stage.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    var k = e.ctrlKey ? 0.01 : 0.0015;               // trackpad pinch vs wheel notch
+    zoomTo(state.s * Math.exp(-e.deltaY * k), e.clientX, e.clientY, -e.deltaY);
+    dropHint();
+  }, { passive: false });
+
+  // Drag = pan (mouse or trackpad).
+  var drag = null;
+  stage.addEventListener('pointerdown', function (e) {
+    if (e.button !== 0) return;
+    drag = { x: e.clientX, y: e.clientY, ox: state.x, oy: state.y, moved: false };
+    stage.setPointerCapture(e.pointerId); stage.classList.add('is-panning');
+  });
+  stage.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved && Math.abs(dx) + Math.abs(dy) < 4) return;
+    drag.moved = true; state.x = drag.ox + dx; state.y = drag.oy + dy; apply(); dropHint();
+  });
+  function endDrag() { if (drag) { drag = null; stage.classList.remove('is-panning'); } }
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  document.getElementById('bc-controls').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; var v = vp();
+    switch (b.dataset.act) {
+      case 'in':     zoomTo(state.s * 1.25, v.w / 2, v.h / 2,  BREAK); break;
+      case 'out':    zoomTo(state.s / 1.25, v.w / 2, v.h / 2, -BREAK); break;
+      case 'fit':    fit(); break;
+      case 'actual': actual(); break;
+      case 'print':  window.print(); break;
+    }
+  });
+  window.addEventListener('keydown', function (e) {
+    if (e.metaKey && e.key.toLowerCase() === 'p') return;
+    var v = vp();
+    switch (e.key) {
+      case '=': case '+': zoomTo(state.s * 1.25, v.w / 2, v.h / 2,  BREAK); break;
+      case '-': case '_': zoomTo(state.s / 1.25, v.w / 2, v.h / 2, -BREAK); break;
+      case 'f': case 'F': case '0': fit(); break;
+      case '1': actual(); break;
+      case 'ArrowDown': state.y -= 100; apply(); break;
+      case 'ArrowUp':   state.y += 100; apply(); break;
+      case 'ArrowRight':state.x -= 100; apply(); break;
+      case 'ArrowLeft': state.x += 100; apply(); break;
+    }
+  });
+
+  var hinted = false;
+  function dropHint() { if (!hinted) { hinted = true; hint.classList.add('hide'); } }
+  fit();                       // open fit-to-viewport
+})();
+</script>
+</body>
+</html>
