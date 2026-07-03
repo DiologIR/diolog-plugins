@@ -273,6 +273,17 @@
       },
       "source": "./plugins/customer-deck-builder",
       "category": "productivity"
+    },
+    {
+      "name": "design-md-from-website",
+      "description": "Generate a spec-compliant DESIGN.md for any live website from its real pages — the browser-driven, measure-first successor to design-md-from-screenshots. Given a URL it uses playwright-cli (isolated named sessions, parallel probe agents with rate-limit backoff, full-page screenshots + getComputedStyle-by-role measured tokens + a colour census) to MEASURE the design of the key pages (home, about, product/services, contact, and any investor hub/portal) instead of guessing hexes and fonts from a screenshot, then synthesises an authoritative DESIGN.md in the official google-labs design.md format (YAML token frontmatter + Overview/Colors/Typography/Layout/Elevation/Shapes/Components/Do's & Don'ts + per-token provenance + self-critique) and refines it into an intentional, upgraded identity.",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/design-md-from-website",
+      "category": "development"
     }
   ]
 }
