@@ -52,7 +52,7 @@ Worktrees are already central to this pipeline — `/work` creates `.worktrees/<
 
 - **The conductor lives in the main working tree.** That's where the docs are (`docs/specs`, `docs/plans`, `LEDGER.md` — every sub-skill reads them from the main tree because they're untracked on the feature branch) and where design-craft iterates on the mock UI. You never `cd` into the worktree yourself; `/work` and `/gap-fix` do their code edits there via absolute paths.
 - **Never open a second worktree.** The naive reading of "child spec → child `/work`" would have `/work` create `.worktrees/DIO-child` on a *new* branch — fragmenting the feature so it can't "be merged" as one unit. Keep all implementation — parent, deferred, child — on `ai/<id>` in the one worktree (see `deferred-work-loop.md` for the mechanics).
-- **The worktree is the local sandbox for e2e too.** The feature isn't on production yet, so the acceptance suite runs against the app served from the feature branch's worktree, not `diolog.ai` (see `e2e-and-finalize.md`).
+- **The worktree is the local sandbox for e2e too.** The feature isn't on production yet, so the acceptance suite runs against the app served from the feature branch's worktree, not the deployed/production URL (see `e2e-and-finalize.md`).
 - **The final phase collapses the worktree.** After the merge + push, `git worktree remove .worktrees/<ID>` and delete the merged local branch — the worktree existed only to isolate the in-progress feature from the main tree; once merged it has no reason to linger.
 
 ## TL;DR

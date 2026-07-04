@@ -6,7 +6,7 @@ Four native Claude Code skills that run a **markdown-doc** feature pipeline — 
 |-------|--------------|
 | **/triage** | Turns a feature idea (inline text or a notes file) into a versioned spec. Allocates an id like `DIO-0001` from `docs/feature-specs/LEDGER.md`, writes `docs/specs/spec-DIO-0001.md` capturing the original details, runs a codebase grounding pass + a Specification Sentinel product/UX/compliance review, then appends a short, non-technical "Ready for Implementation Plan" section (UI & logic preview + Assumptions) or — only for genuinely essential gaps — an Essential Questions section, and sets the spec status. Never writes an implementation spec. |
 | **/plan** | Classifies a plan-size tier (Trivial/Small/Standard/Large), investigates the codebase (fanning out via the Workflow tool for big specs), writes the plan to `docs/plans/plan-DIO-0001.md`, links it from the spec, and moves the spec to `Ready for Work`. |
-| **/work** | Implements the plan in an isolated git worktree via **dynamic ultracode workflows** (understand → implement → rebase onto `origin/staging` → acceptance-review vs the spec → resolve every finding → finalize). Commits locally and appends a progress section to the spec; **no remote PR** — the branch stays local for human review. |
+| **/work** | Implements the plan in an isolated git worktree via **dynamic ultracode workflows** (understand → implement → rebase onto the detected integration branch (`origin/staging`, else the repo default) → acceptance-review vs the spec → resolve every finding → finalize). Commits locally and appends a progress section to the spec; **no remote PR** — the branch stays local for human review. |
 | **/gap-fix** | The post-`/work` **remediation** step. Re-enters the branch/worktree `/work` produced, **always re-audits the delivered code against the original spec** (requirement completeness, correctness, guardrails, UI fidelity, security) — merging in any gaps you hand it (inline, a file, a `## Gaps` section, or a human/QA review) — and **implements the fixes in code** (file-disjoint fan-out + typecheck gates), looping audit→fix until only optional Low items remain. Commits locally and appends a gap-fix progress note to the spec; **no remote PR**. Reuses `/work`'s acceptance-review muscle as a standalone finisher — distinct from `spec-validation` (audit-only, no fixes). |
 
 ## How it differs from linear-issue-pipeline
@@ -38,7 +38,7 @@ docs/
 ## Requirements
 
 - The **Workflow** (dynamic workflows / ultracode) capability available — research preview; `/plan` and `/work` use it to fan out parallel investigation. If unavailable, the skills still run, just without the parallel speed-up.
-- Run from the **target repository root** (the repo whose code is being triaged/planned/built), which provides `CLAUDE.md`, the `docs/` tree, the codebase, and `origin/staging`.
+- Run from the **target repository root** (the repo whose code is being triaged/planned/built), which provides `CLAUDE.md`, the `docs/` tree, the codebase, and an integration branch (`origin/staging`, else the repo default — detected, not hardcoded).
 - No Linear MCP needed.
 
 ## Usage

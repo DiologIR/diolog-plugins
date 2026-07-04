@@ -14,8 +14,8 @@ The suite is only as complete as its inputs. Hand `/acceptance-e2e` **all** of:
 "Comprehensive" here means: every user flow, every action, every interaction, and every menu the feature exposes — across its states — traced to an AC in the matrix. A menu the mock UI shows but the AC list omits is still a flow to cover; use the mock as the coverage checklist, the ACs as the assertions.
 
 ### Adapt: run against the branch's app locally, not production
-`/acceptance-e2e`'s default target is `http://diolog.ai/<route>` — but the feature **isn't merged yet**, so production doesn't have it. The suite must run against **the app served from the feature branch's worktree**:
-- Serve `apps/web` from `.worktrees/<ID>` (the branch `ai/<id>`) — the repo's dev/serve command — and point the harness's base URL at that local instance (an env override / Playwright `baseURL`, per the harness reference). Keep the dev-login + company-context conventions.
+`/acceptance-e2e` discovers its target from the repo, and for a released feature that's often the deployed/production URL — but this feature **isn't merged yet**, so production doesn't have it. The suite must run against **the app served from the feature branch's worktree**:
+- Serve the app (e.g. `apps/web`) from `.worktrees/<ID>` (the branch `ai/<id>`) — the repo's dev/serve command — and point the harness's base URL at that local instance (an env override / Playwright `baseURL`, per the harness reference). Keep the repo's dev-login + tenant/context conventions.
 - Author the e2e specs **on the feature branch** (in the worktree's `apps/web/e2e`) so they commit with `ai/<id>` and merge with the feature.
 - Everything else the skill mandates still holds: assert outcomes not chrome, operate on disposable-clone data, tag `@read-only`/`@mutating`, and **run the full suite green twice** (flakes and isolation breaks only surface on the second run).
 
@@ -30,7 +30,7 @@ The merge + push is the one **irreversible** step in the run. Full-auto means *a
 
 ### The pre-merge gate — ALL must be true (fail closed)
 Verify each by **actually checking**, not by recalling that an earlier phase "passed":
-- [ ] **All build gates green, actually run now:** `pnpm validate:all`, `pnpm validate:graphql`, `pnpm typecheck`, `pnpm lint` (scoped sensibly) in the worktree. A gate you couldn't run is a **blocker**, not an implied pass.
+- [ ] **All build gates green, actually run now:** the repo's own validate / codegen / typecheck / lint commands (e.g. `pnpm validate:all`, `pnpm validate:graphql`, `pnpm typecheck`, `pnpm lint`), scoped sensibly, in the worktree. A gate you couldn't run is a **blocker**, not an implied pass.
 - [ ] **No unresolved Critical / High / Medium** findings from `/work`'s acceptance review or `/gap-fix` — only optional, documented Low items may remain.
 - [ ] **e2e green twice**, covering every flow/action/menu, with surfaced bugs fixed.
 - [ ] **Reachability + clause tables** on the spec show every capability wired and every clause satisfied (no `✗`, no unresolved `partial`).

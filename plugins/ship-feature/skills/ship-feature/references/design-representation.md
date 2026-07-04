@@ -13,7 +13,7 @@ Goal: before a single line of the feature is spec'd, planned, or built, make sur
 Invoke **`/design-craft`** with the feature + the three inputs above as context. The design-craft skill carries the full design philosophy and its own procedures (design-system-extract, generate-variations, component-extract, polish-pass, accessibility-audit, ai-slop-check) — use the ones that fit. Your specific bar for *this* orchestration is **coverage**, not just polish:
 
 - **Every surface** the feature introduces or changes has a mock page (or an updated one).
-- **Every state** each surface can be in is represented — not just the happy path but empty, loading, error, and (where the feature is AI-assisted) the AI/streaming state. Diolog features routinely have all five; a mock that only shows the populated happy path has under-represented the feature.
+- **Every state** each surface can be in is represented — not just the happy path but empty, loading, error, and (where the feature is AI-assisted) the AI/streaming state. Data-rich product features routinely have all five; a mock that only shows the populated happy path has under-represented the feature.
 - **Every reusable part** is a real design-system **element** or **composite** (tokens → elements → composites → pages), not a one-off inline block. When a surface genuinely needs a dense bespoke organism, build it — then fold the reusable parts back into the system. The system is the floor, not the ceiling.
 - **Fidelity matches the reference.** Populated lists/tables with realistic domain-true data, real component previews, multiple content regions per surface — the information density of a real product surface, matching any reference the user points at, not a thin wireframe of it.
 

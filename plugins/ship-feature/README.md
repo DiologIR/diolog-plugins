@@ -1,6 +1,6 @@
 # ship-feature
 
-One skill that takes a **feature** all the way — from a bare description to **merged, tested, production code** — by conducting the Diolog pipeline skills in order, in a single in-session flow. It's the "do the whole thing" layer on top of [`design-craft`](../design-craft), [`feature-spec-pipeline`](../feature-spec-pipeline) (`/triage`, `/plan`, `/work`, `/gap-fix`), and [`acceptance-e2e`](../acceptance-e2e).
+One skill that takes a **feature** all the way — from a bare description to **merged, tested, production code** — by conducting the feature-delivery pipeline skills in order, in a single in-session flow. It's the "do the whole thing" layer on top of [`design-craft`](../design-craft), [`feature-spec-pipeline`](../feature-spec-pipeline) (`/triage`, `/plan`, `/work`, `/gap-fix`), and [`acceptance-e2e`](../acceptance-e2e).
 
 ```
 feature (text / .md  [+ optional HTML/CSS/JS mock])
@@ -27,7 +27,7 @@ The final merge + push is the one irreversible step. It runs **full-auto** — c
 
 ## Requirements
 
-- The Diolog product repo as the target (run from its root): `CLAUDE.md`, the design system (`apps/web-design-system` + its `tokens/tokens.css`, plus an optional `DESIGN.md` design-language spec when one is provided or present), the `docs/` tree + `docs/feature-specs/LEDGER.md`, the e2e harness (`apps/web/e2e`), and an integration branch (`origin/staging`, else the repo default — detected, not hardcoded).
+- Your product repo as the target (run from its root): `CLAUDE.md`, a design system (e.g. `apps/web-design-system` + its `tokens/tokens.css`, plus an optional `DESIGN.md` design-language spec when one is provided or present), the `docs/` tree + `docs/feature-specs/LEDGER.md`, an e2e harness (e.g. `apps/web/e2e`), and an integration branch (`origin/staging`, else the repo default — detected, not hardcoded). The bracketed paths are the common defaults; the conductor locates the repo's own equivalents.
 - The **Workflow** (dynamic workflows / ultracode) capability, which the sub-skills use to fan out.
 - The sibling plugins installed: `design-craft`, `feature-spec-pipeline`, `acceptance-e2e`.
 

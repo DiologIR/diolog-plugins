@@ -104,7 +104,7 @@ Keep each line short and scannable — still a fast read, just per-surface. Desc
 
 - One line per assumption, lens-tagged, with a one-line rationale in parentheses. Declarative, not a question.
 - End with: *"If any of these are wrong, edit the answer inline (or correct an assumption) in this file and re-run `/triage <ID>` before the planner picks this up."*
-- **Compress hard:** ≤15 words per assumption, ≤10 per rationale; noun-phrase shorthand ("*matches Diolog empty-state pattern*", "*safer default*"). One line each — split, don't pile on sub-points.
+- **Compress hard:** ≤15 words per assumption, ≤10 per rationale; noun-phrase shorthand ("*matches existing empty-state pattern*", "*safer default*"). One line each — split, don't pile on sub-points.
 - **Do not cap the number of assumptions.** List every load-bearing default; never drop a material one to shorten. Merge two that share a rationale.
 
 **Lens tags — use only these user-facing labels** (map internal Sentinel lenses onto them):
