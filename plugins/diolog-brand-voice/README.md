@@ -2,7 +2,7 @@
 
 A Claude Code plugin that writes publish-ready content in **Diolog's brand voice** — an Australian investor-communication company ("the workspace for everything investor-facing", tagline *"Disclosure, without doubt."*). One bundled brand-voice persona drives three surface-specific skills, and one deterministic voice-lint gates every draft.
 
-It's the opposite of a generic "write me some copy" pass. Two things make it work: **voice fidelity** (it must read as Diolog, not as a capable stranger) and **grounding** (the substance comes from supplied research, never from invention). This is the *brand* voice, not a person's; posts in Luke Rhodes' personal voice live in `create-luke-article`.
+It's the opposite of a generic "write me some copy" pass. Two things make it work: **voice fidelity** (it must read as Diolog, not as a capable stranger) and **grounding** (the substance comes from supplied research, never from invention). This is the *brand* voice, not a person's; posts in Luke Rhodes' personal voice live in `create-luke-content`.
 
 ## The three skills
 
@@ -39,7 +39,7 @@ A shared `shared/diolog_voice_lint.py` hard-fails on any em/en dash or banned/AI
 
 ## Where this fits
 
-Consistent with, and the fuller counterpart to, the two deployed generation prompts in the main Diolog repo (`apps/website/personas/diolog-content-writer-system-prompt.md` and `diolog-linkedin-writer-system-prompt.md`). This plugin covers brand **blog / web / email / business-case**; LinkedIn / social brand posts remain the domain of the deployed `diolog-linkedin-writer` prompt, and posts in Luke's personal voice the domain of `create-luke-article`.
+Consistent with, and the fuller counterpart to, the two deployed generation prompts in the main Diolog repo (`apps/website/personas/diolog-content-writer-system-prompt.md` and `diolog-linkedin-writer-system-prompt.md`). This plugin covers brand **blog / web / email / business-case**; LinkedIn / social brand posts remain the domain of the deployed `diolog-linkedin-writer` prompt, and posts in Luke's personal voice the domain of `create-luke-content`.
 
 ## Installation
 
@@ -72,7 +72,7 @@ run five disconnected tools. Figures attached.
 - Does not invent facts, figures, quotes, or a stance — missing grounding is flagged or framed as opinion, never fabricated.
 - Does not guarantee outcomes or claim 100% compliance; compliance confidence caps at 95%.
 - Does not publish anything; it produces drafts for a human to review and publish.
-- Does not write LinkedIn/social brand posts (use the deployed `diolog-linkedin-writer` prompt) or personal-voice posts (use `create-luke-article`).
+- Does not write LinkedIn/social brand posts (use the deployed `diolog-linkedin-writer` prompt) or personal-voice posts (use `create-luke-content`).
 
 ## Bundled resources
 

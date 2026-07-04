@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
 """
-voice_lint.py — deterministic guardrail for a Luke-voiced article draft.
+voice_lint.py — deterministic guardrail for a Luke-voiced content draft.
 
 Why this exists: the no-em-dash rule and the no-AI-cliche rule are the two
 things a language model most reliably slips on, and "I checked" is not the same
-as checking. Run this on the final draft (the article body only, without the
+as checking. Run this on the final draft (the content body only, without the
 graphic-concept block) before delivering. It is fast, dependency-free, and
 catches the mechanical failures so the human review can focus on whether it
 actually sounds like Luke.
 
 Usage:
     python3 voice_lint.py draft.md
-    python3 voice_lint.py --format linkedin draft.md      # adds feed-post length checks
-    python3 voice_lint.py --format blog draft.md          # adds long-form length checks
+    python3 voice_lint.py --format linkedin draft.md      # feed-post length checks
+    python3 voice_lint.py --format blog draft.md          # long-form length checks
+    python3 voice_lint.py --format marketing draft.md     # exclamation-density check
+    python3 voice_lint.py --format review draft.md        # hype/exclamation checks
+    python3 voice_lint.py --format slack draft.md         # message-length check
+    python3 voice_lint.py --format short draft.md         # short-form budget checks
+    python3 voice_lint.py --format brief draft.md         # segment-length check
     cat draft.md | python3 voice_lint.py -
 
 Exit code is non-zero if any em dash or banned cliche is found, so it can gate
-delivery. Length/hook notes are advisory and never fail the run on their own.
+delivery. Format-specific notes are advisory and never fail the run on their own.
 """
 
 import argparse
@@ -63,8 +68,11 @@ def find_lines(text, needle_predicate):
 def main():
     ap = argparse.ArgumentParser(description="Lint a Luke-voiced draft.")
     ap.add_argument("path", help="Path to the draft, or - for stdin")
-    ap.add_argument("--format", choices=["linkedin", "blog"], default=None,
-                    help="Add format-specific length/hook checks")
+    ap.add_argument("--format",
+                    choices=["linkedin", "blog", "marketing", "review",
+                             "slack", "short", "brief"],
+                    default=None,
+                    help="Add format-specific advisory checks")
     args = ap.parse_args()
 
     text = read_text(args.path)
@@ -133,6 +141,50 @@ def main():
     elif args.format == "blog":
         if words < 1200:
             print(f"warn  {words} words is short for a long-form article (aim ~1500-2200)")
+    elif args.format == "marketing":
+        bangs = text.count("!")
+        sections = max(1, len(re.findall(r"^#{1,3} ", text, re.M)))
+        if bangs > sections:
+            print(f"warn  {bangs} exclamation marks across {sections} section(s); "
+                  "the register allows at most one per section")
+        for adj in ("revolutionary", "seamless", "cutting-edge", "world-class",
+                    "next-generation", "innovative"):
+            if adj in text.lower():
+                print(f"warn  hype adjective \"{adj}\"; demonstrate the benefit concretely instead")
+    elif args.format == "review":
+        if "!" in text:
+            print("warn  exclamation mark in a review; published reviews stay calm "
+                  "(caps/bangs live only in private notes)")
+        for bare in ("this is wrong", "this is bad", "don't do this"):
+            if bare in text.lower():
+                print(f"warn  bare negation \"{bare}\"; add the failure scenario and a concrete path")
+    elif args.format == "slack":
+        if words > 120:
+            print(f"warn  {words} words is long for a Slack message; split the topic "
+                  "or suggest a doc/call")
+        if re.search(r"^(hi|hey|hello)\b", text.strip().lower()) :
+            print("warn  greeting opener; mid-thread Slack goes straight in")
+    elif args.format == "short":
+        if words > 90:
+            print(f"warn  {words} words is past short-form ({'~80'} is the ceiling); "
+                  "pick the single sharpest idea")
+        if chars > 280:
+            print(f"info  {chars} chars exceeds an X/Twitter post budget (280)")
+    elif args.format == "brief":
+        # Segment = a run of non-empty lines between headings/blank-line seams.
+        seg_words, longest = 0, 0
+        for line in text.splitlines():
+            if not line.strip() or re.match(r"^#{1,6} ", line):
+                longest = max(longest, seg_words)
+                seg_words = 0
+            else:
+                seg_words += len(re.findall(r"\b\w+\b", line))
+        longest = max(longest, seg_words)
+        if longest > 450:
+            print(f"warn  longest unbroken segment is ~{longest} words; "
+                  "insert a seam (heading, example, transition) before ~450")
+        if "try" not in text.lower() and "today" not in text.lower():
+            print("warn  no visible 'try this today' action; ADHD/brief closes need one")
 
     print()
     if failures:
