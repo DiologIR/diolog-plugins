@@ -30,7 +30,7 @@ const ready = () => args.items.filter(i => !done.has(i.id) && !running.has(i.id)
   && i.deps.every(d => done.has(d)))
 while (done.size < args.items.length) {
   for (const item of ready().slice(0, 8 - running.size))
-    running.set(item.id, agent(runnerPrompt(item), {label: item.id, model: 'opus'})
+    running.set(item.id, agent(runnerPrompt(item), {label: item.id, model: 'opus', effort: 'high', agentType: 'claude'})
       .then(report => ({item, report})))
   const {item, report} = await Promise.race(running.values())
   running.delete(item.id)
@@ -41,13 +41,69 @@ while (done.size < args.items.length) {
 
 In practice you may prefer batches: run one workflow per "as many slots as are ready", return the ready-to-merge reports, finalize serially in-session, update ORCHESTRATOR.md, then launch the next workflow. That trades a little parallelism for much simpler state — fine. What is not fine: exceeding 8 concurrent runners, starting an item whose deps haven't merged, or two merges at once.
 
+## Launching runners — verified model routing (field-learned 2026-07, motif-studio fleet)
+
+The model override is the single most expensive thing to get wrong: a fleet of runners silently on the
+session model (e.g. a Mythos-class model) at the background default effort (**xhigh**) burns tokens far
+faster than Opus-at-high, and nothing in the launch result tells you it happened. Hard-won rules:
+
+1. **Never launch runners as direct background `Agent` tool calls.** In the field, `model: 'opus'` on a
+   backgrounded Agent call did not reliably stick (the user's UI showed the runners on the session model),
+   and background agents default to **xhigh** effort with no per-call knob on that path. The reliable lane
+   is a **single-agent Workflow wrapper** per runner — the Workflow `agent()` call exposes both knobs and
+   they verifiably apply:
+
+   ```js
+   export const meta = { name: 'runner-<ID>', description: 'Fleet runner <ID> (opus, high effort)',
+     phases: [{ title: 'Run' }] }
+   const a = typeof args === 'string' ? JSON.parse(args) : args        // args can arrive JSON-encoded
+   if (!a || typeof a.prompt !== 'string' || a.prompt.length < 100)
+     throw new Error('args.prompt missing — abort before spawning')     // never spawn on an empty prompt
+   phase('Run')
+   return await agent(a.prompt, {label: 'runner:<ID>', model: 'opus', effort: 'high', agentType: 'claude'})
+   ```
+
+   The two guards are not optional decoration: in the field, `args` once reached the script as a JSON
+   **string**, `args.prompt` was `undefined`, and every runner burned ~60k tokens politely replying
+   "no task was provided" — the guard turns that into a fast, free failure.
+
+2. **Set `effort` explicitly.** `effort: 'high'` is the runner default; reserve higher tiers for a
+   specific hard verify/judge stage, never fleet-wide.
+
+3. **Verify at two levels; trust neither the launch parameters nor a probe.**
+   - *In the prompt*: make the runner's FIRST ACTION a self-check — "your system prompt states the model
+     powering you; if it is not claude-opus-4-8, reply exactly `WRONG-MODEL: <id>` and stop."
+   - *On the wire*: after launch, grep the model id from the first assistant turn of each runner's
+     transcript (`agent-*.jsonl` under the workflow run's transcript dir):
+     `grep -o '"model":"[^"]*"' <transcript> | head -1`. A one-off probe agent is NOT sufficient evidence —
+     in the field a foreground probe returned opus while the real background runners ran on the session model.
+
+4. **Pin routing downward.** The runner itself spawns subagents (ship-feature fans out constantly), and
+   those inherit the **session** model unless pinned. Every runner prompt must carry — and instruct the
+   runner to propagate into every prompt that itself spawns agents:
+   "pass `model:'opus'` on every Agent tool call and `{model:'opus', effort:'high'}` on every Workflow
+   `agent()` call."
+
+5. **On a mid-run model/effort correction**: stop the runners (their killed state is recoverable), append
+   each one's last-known progress to its prompt as a RESUME note (the on-disk worktree/spec/scratchpad
+   artifacts are the memory), and relaunch through the workflow lane. Runners stopped on an external
+   failure (session limit, network) relaunch the same way — same scriptPath + args; failed agents re-run
+   live since only successes cache.
+
 ## The runner prompt (base template)
 
-Every runner is an Opus agent (`model: 'opus'`, full tool access so it can invoke skills). Base prompt — fill the ⟨⟩:
+Every runner is an Opus agent launched through the **verified workflow lane above** (`model: 'opus'`,
+`effort: 'high'`, `agentType: 'claude'` — full tool access so it can invoke skills). Base prompt — fill the ⟨⟩:
 
 ```
 You are a feature runner in an orchestrated fleet. Deliver ONE feature by invoking the
 ship-feature skill (Skill tool: "ship-feature:ship-feature") on it, from the repo root.
+
+FIRST ACTION — model self-check: your system prompt states the model powering you. If it is
+NOT claude-opus-4-8, reply immediately with exactly "WRONG-MODEL: <that id>" and stop.
+MODEL ROUTING: pass model:'opus' on every Agent tool call and {model:'opus', effort:'high'}
+on every Workflow agent() call; propagate this instruction into every prompt that itself
+spawns agents.
 
 Feature: ⟨ID · title⟩
 Sources — read all that exist, in full, before starting:

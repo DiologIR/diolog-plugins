@@ -34,7 +34,7 @@ Everything is **discovered inside the project — never hardcode absolute paths*
 
 ## Operating discipline
 
-- **You stay in-session, on the session model.** The orchestrating context (you) holds the whole map. Runner agents get Opus (`model: 'opus'`); the optional coding lane gets Cursor `composer-2.5`. Never hand the *orchestration itself* to a subagent.
+- **You stay in-session, on the session model.** The orchestrating context (you) holds the whole map. Runner agents get Opus at `effort: 'high'` — launched ONLY through the verified single-agent-Workflow lane in `references/scheduling-and-concurrency.md` ("Launching runners — verified model routing"), never as direct background Agent calls, whose model override has been observed not to stick and whose effort defaults to xhigh. The optional coding lane gets Cursor `composer-2.5`. Never hand the *orchestration itself* to a subagent.
 - **`ORCHESTRATOR.md` is the memory, not the transcript.** Update it after every state change (run started, run landed, merge done, item blocked, new deferred child discovered). A fresh session must be able to resume the whole fleet from that file alone. If your context is compacted, re-read `ORCHESTRATOR.md`, the root DESIGN md, and the ledger before doing anything else.
 - **Plan before execution.** `ORCHESTRATOR.md` and `orchestrator-hierarchy.html` are written, shown to the user, and committed **before** the first fleet slot starts.
 - **Dependencies rule the schedule.** An item never starts before the items it depends on have **merged** (not merely finished). Distinguish *internal* dependencies (on other queued items — these order the DAG) from *external* ones (a person, credential, or third-party service — these flag the item and skip it, they never stall the rest of the fleet).
@@ -93,7 +93,7 @@ Triage every untriaged item **serially, before the fleet fans out** (invoke the 
 
 Up to **8 slots**. Fill a slot with the highest-value ready item (all internal deps merged); when a slot frees, refill immediately — don't barrier on whole waves when the DAG allows overlap. The Workflow-based slot scheduler (a ready-queue + `Promise.race` refill loop) is sketched in `references/scheduling-and-concurrency.md`.
 
-**Each slot = one runner agent (Opus)** whose prompt tells it to invoke the `ship-feature` skill on its item and hand back a structured report. The runner prompt template (verbatim base, in the scheduling reference) always includes:
+**Each slot = one runner agent (Opus at high effort, via the verified workflow lane — see the scheduling reference; verify the model on the wire from each runner's transcript, don't trust the launch parameters)** whose prompt tells it to invoke the `ship-feature` skill on its item and hand back a structured report. The runner prompt template (verbatim base, in the scheduling reference) always includes a first-action model self-check and the pin-Opus-downward routing instruction, plus:
 
 - The item: its brief/spec/plan paths, resume state (existing worktree/branch if any), and the matched mock path as `ship-feature`'s mock input.
 - **The context contract** (below) — including the instruction that when relevant deep research exists for the feature, the agent must read the **entire** deep-research document, not skim it.
@@ -109,7 +109,7 @@ At the end: every item merged / parked-with-reason, `ORCHESTRATOR.md` statuses f
 | Role | Model | Why |
 |---|---|---|
 | Orchestrator (this session) | the session model | Holds the map; makes judgment calls; cheap per-token share |
-| Fleet runners + everything `ship-feature` spawns | **Opus** (`model: 'opus'`) | The heavy build/verify reasoning |
+| Fleet runners + everything `ship-feature` spawns | **Opus** (`{model: 'opus', effort: 'high'}` via the workflow lane; self-check + transcript-verified; runners pin `model:'opus'` on everything they spawn) | The heavy build/verify reasoning — subagents otherwise inherit the session model |
 | Mechanical plan-scoped coding (optional lane) | **Cursor CLI `composer-2.5`** | Much cheaper per token than Opus; Opus verifies + fixes |
 
 The composer lane is an *optimization, never a requirement*: use it only where it plausibly saves Opus tokens net of verification (well-specified, file-scoped edits the plan already decided). Rules, delegation criteria, the verify-fix loop, and graceful fallback when `cursor-agent` isn't installed are in `references/cursor-composer.md`. If in doubt, Opus writes the code.
