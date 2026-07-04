@@ -141,11 +141,11 @@ gate evidence (typecheck/tests/e2e results verbatim), deferred children discover
 | Design-system shared files (tokens, base elements) | Runners never edit; feature-scoped composites/pages only; wanted-but-skipped shared edits go in the report and become orchestrator-scheduled items |
 | `docs/specs/`, `docs/plans/` | Per-feature files only — a runner touches only its own `<ID>`'s (and its children's) files |
 
-## Pausing the fleet (field-learned 2026-07)
+## Pausing & resuming the fleet (field-learned 2026-07)
 
 When the user needs to pause (usage limits, host load), TaskStop is safe — killed runners resume
 from their on-disk artifacts — but it discards each runner's warm context (often several hundred
-k tokens of in-flight reasoning). Two rules make a pause nearly lossless:
+k tokens of in-flight reasoning). The rules that make a pause nearly lossless:
 
 1. **Harvest transcripts immediately after stopping.** Each runner's `agent-*.jsonl` (under the
    workflow run's transcript dir) holds its final assistant turns — extract the last 2–3 text
@@ -155,10 +155,41 @@ k tokens of in-flight reasoning). Two rules make a pause nearly lossless:
    rate-limit bug that a fresh resume would have re-debugged from scratch.)
 2. **Pause at the cheapest moment, not a "natural" one.** Waiting for runners to finish phases
    burns more tokens than resume re-grounding costs; stop immediately, harvest, checkpoint.
-   Prefer pausing the least-deep runners first when only dialing down (stage boundaries lose least).
+   When only dialing down (not a full pause), stop the least-deep runners first — stage
+   boundaries lose least.
 
-On resume, try SendMessage to the runner's transcript agentId first — it may revive the agent
-with context intact; fall back to a fresh workflow-lane relaunch carrying the harvested notes.
+### Resume lanes & the prompt cache (cheapest first, when they apply)
+
+There is **no session-pinning knob at the API level**: the prompt cache is keyed on the exact
+byte prefix (system prompt + message history + model), not on an agent/session id. "Resuming the
+same agent" matters only because it makes the harness replay the identical transcript — which is
+what makes the prefix match and the cache hit. Anything that alters the prefix (context
+compaction, a newly injected system-reminder, a model change) forfeits the hit.
+
+1. **Same-conversation revival — SendMessage to the runner's agentId** (from its spawn result,
+   or the `agent-*.jsonl` filename in the workflow transcript dir). The harness reloads the same
+   transcript and the agent continues with its full context intact. If revived while the cache is
+   still warm, the entire prefix is a cache hit — near-free. **TTL reality check:** the harness's
+   cache TTL is ~5 minutes (refreshed while the agent is active); the API's extended 1-hour TTL is
+   a harness-level `cache_control` choice that skill/orchestrator code cannot set — do not design
+   pauses around it. Past TTL, revival still works but re-processes the whole transcript once as
+   uncached input — no work is redone, but for a ~500k-token runner that input cost is real; weigh
+   it against lane 3.
+2. **Workflow journal replay — relaunch with `{scriptPath, resumeFromRunId}`.** Completed
+   `agent()` calls return their cached results for free; killed/failed agents re-run live. This is
+   the lane for re-running a runner that DIED (session limit, network) — it does not preserve the
+   dead agent's context, only the workflow's completed-step results.
+3. **Fresh relaunch with harvested notes.** New agent, small prompt carrying the checkpoint plus
+   the transcript-harvested intent notes. After long pauses this is usually cheapest: re-grounding
+   reads cost less than re-processing a huge dead context, PROVIDED the harvest captured the
+   valuable state (rule 1 above is what makes this lane safe).
+
+**Decision rule:** pausing for minutes (host dial-down) → revive via lane 1 immediately on
+resume, while the cache may still be warm. Pausing for hours (usage-limit reset) → the cache is
+cold either way; pick lane 1 only when a runner held rich state the harvest couldn't fully
+capture (deep multi-file WIP with no commits), else lane 3. Either way, run the pre-resume
+reconcile: reread ORCHESTRATOR.md, `git worktree list`, and each branch's ahead/dirty counts —
+runners may have committed more than the checkpoint recorded.
 
 ## Failure handling
 
