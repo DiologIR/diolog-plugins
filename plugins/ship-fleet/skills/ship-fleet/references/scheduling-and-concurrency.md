@@ -63,6 +63,15 @@ faster than Opus-at-high, and nothing in the launch result tells you it happened
    return await agent(a.prompt, {label: 'runner:<ID>', model: 'opus', effort: 'high', agentType: 'claude'})
    ```
 
+   **Workflow-inner agents cannot be re-invoked.** Two field consequences: (a) SendMessage revival
+   never works for them ("No transcript found") — the handover doc is their only pause artifact;
+   (b) a runner that ends its turn to WAIT for a background task (a Monitor, a build, an e2e run)
+   is dead the moment it stops — its wrapper returns and the wake-up notification has nowhere to
+   land. Put it in every runner prompt: "NEVER end your turn to wait for a background task — your
+   wrapper returns when you stop and no notification can reach you; wait synchronously (foreground
+   the command, or poll in a loop) instead." When it happens anyway, the orchestrator relaunches
+   for the tail with a transcript-harvested handover (cheap if the runner committed first).
+
    The two guards are not optional decoration: in the field, `args` once reached the script as a JSON
    **string**, `args.prompt` was `undefined`, and every runner burned ~60k tokens politely replying
    "no task was provided" — the guard turns that into a fast, free failure.
