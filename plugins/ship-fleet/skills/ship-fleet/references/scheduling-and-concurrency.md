@@ -141,6 +141,25 @@ gate evidence (typecheck/tests/e2e results verbatim), deferred children discover
 | Design-system shared files (tokens, base elements) | Runners never edit; feature-scoped composites/pages only; wanted-but-skipped shared edits go in the report and become orchestrator-scheduled items |
 | `docs/specs/`, `docs/plans/` | Per-feature files only — a runner touches only its own `<ID>`'s (and its children's) files |
 
+## Pausing the fleet (field-learned 2026-07)
+
+When the user needs to pause (usage limits, host load), TaskStop is safe — killed runners resume
+from their on-disk artifacts — but it discards each runner's warm context (often several hundred
+k tokens of in-flight reasoning). Two rules make a pause nearly lossless:
+
+1. **Harvest transcripts immediately after stopping.** Each runner's `agent-*.jsonl` (under the
+   workflow run's transcript dir) holds its final assistant turns — extract the last 2–3 text
+   blocks per runner and write them into the ORCHESTRATOR checkpoint as in-flight-intent notes.
+   Near-zero cost, and it captures exactly the things git can't: a half-diagnosed bug, the next
+   planned step, a decided-but-unapplied fix. (In the field this recovered a fully-diagnosed
+   rate-limit bug that a fresh resume would have re-debugged from scratch.)
+2. **Pause at the cheapest moment, not a "natural" one.** Waiting for runners to finish phases
+   burns more tokens than resume re-grounding costs; stop immediately, harvest, checkpoint.
+   Prefer pausing the least-deep runners first when only dialing down (stage boundaries lose least).
+
+On resume, try SendMessage to the runner's transcript agentId first — it may revive the agent
+with context intact; fall back to a fresh workflow-lane relaunch carrying the harvested notes.
+
 ## Failure handling
 
 - Runner failed with a diagnosable cause → restart the slot with the failure appended to the prompt (max 2 restarts, then park).
