@@ -127,6 +127,14 @@ Resume state: ⟨"fresh" | "resume in .worktrees/ID on ai/id — do NOT create a
 Rules that override ship-feature's defaults:
 - STOP BEFORE MERGE. Run every stage through acceptance-e2e green, commit on the branch,
   but do not rebase-merge-push-clean; the orchestrator serializes finalization.
+- WORKTREE-FIRST, including design-craft: create `.worktrees/⟨ID⟩` on `ai/⟨id⟩` BEFORE any
+  file edit and run EVERY phase inside it. ship-feature's design-craft stage predates the
+  worktree in its default flow — override that. N concurrent runners share the main tree,
+  and one runner's mid-edit DS file breaks main's typecheck for everyone (this recurred
+  three times in one fleet before being diagnosed as structural rather than runner error).
+  Orchestrator counterpart: at every merge, diff any main-tree-dirty files against the
+  incoming branch — discard copies the branch subsumes, fold newer ones onto the branch
+  first; never stash-pop blindly over a live runner's work.
 - Propagate the context contract: every subagent you or ship-feature spawns gets the same
   source/design/practices/research paths above. ⟨+ composer lane block when enabled — see
   cursor-composer.md⟩
