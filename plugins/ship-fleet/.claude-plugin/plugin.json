@@ -1,6 +1,6 @@
 {
   "name": "ship-fleet",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Backlog-wide feature-delivery orchestrator. Surveys ALL remaining feature work in a product repo — LEDGER.md, docs/specs/spec-*.md, docs/plans/plan-*.md, untriaged briefs in docs/features-to-triage/, refined HTML mocks in design/mocks/html, deep research in docs/deep-research/ — reconciles any in-progress worktrees, then writes ORCHESTRATOR.md (a combined plan + ledger for everything left) and orchestrator-hierarchy.html (a visual dependency hierarchy) BEFORE any execution. It then drives the backlog to done by running the ship-feature skill per feature: dependency-ordered, up to 8 concurrent Opus runner agents, with mechanical plan-scoped coding optionally delegated to the Cursor CLI (composer-2.5) and verified/fixed by Opus, while the orchestrating session itself stays on the session model. Includes a preflight that checks the project's directory/file conventions (offering to clone diolog-team-files for CODING_PRACTICES.md / NEW_PROJECT_BEST_PRACTICES.md, gather stray feature briefs into docs/features-to-triage/, and validate the monolith layout against NEW_PROJECT_BEST_PRACTICES.md). Builds on the ship-feature plugin (and through it design-craft, feature-spec-pipeline, acceptance-e2e).",
   "author": {
     "name": "DiologIR",
