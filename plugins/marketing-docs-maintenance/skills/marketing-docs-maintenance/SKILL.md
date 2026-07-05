@@ -1,6 +1,6 @@
 ---
 name: marketing-docs-maintenance
-description: "Keep the Diolog marketing/feature documentation set in the diolog-team-files repo (~/Dev/diolog-team-files/web) current when a feature ships, a Linear ticket lands, or an area goes stale. Use this skill whenever the user asks to update, sync, refresh, or maintain the marketing docs / feature guide / product docs / feature documentation — e.g. 'update the marketing docs for DIO-1234', 'document this feature in the feature guide', 'the inbox docs are out of date', 'sync the product docs with what shipped', 'add this to the technical/marketing features doc', 'keep the feature documentation current' — or after implementing/changing a user-facing feature when the docs should follow. It updates the two assembled published docs — existing-features-technical.md (full technical detail) and exhisting-features-marketing.md (plain, non-technical) — plus the per-area detail files under existing-features-references/ (final/ and plain/ numbered per area 01-22, backed by the live/ and raw/ capture layers). Enforces the content standards (technical files carry component names / routes / GraphQL ops / exact copy and NO opinions; plain files carry zero technical terms, second person, sentence case, no em dashes, no emojis), the pair-consistency rule (each assembled doc must agree with its per-area source), the supersede-don't-accumulate currency rule, and the live-app > source > ticket source-of-truth hierarchy. The canonical standards guide is docs/marketing/MAINTENANCE.md in the Diolog app repo — this skill operationalises it, but the published docs now live in diolog-team-files/web (paths below), which supersedes the in-repo file locations MAINTENANCE.md lists. Trigger even if the user doesn't say 'marketing docs' explicitly; any 'reflect this shipped feature in the documentation' request for the Diolog feature docs qualifies."
+description: "Keep the Diolog marketing/feature documentation set in the diolog-team-files repo (~/Dev/diolog-team-files/web) current when a feature ships, a Linear ticket lands, or an area goes stale. Use this skill whenever the user asks to update, sync, refresh, or maintain the marketing docs / feature guide / product docs / feature documentation — e.g. 'update the marketing docs for DIO-1234', 'document this feature in the feature guide', 'the inbox docs are out of date', 'sync the product docs with what shipped', 'add this to the technical/marketing features doc', 'keep the feature documentation current' — or after implementing/changing a user-facing feature when the docs should follow. It updates the two assembled published docs — existing-features-technical.md (full technical detail) and exhisting-features-marketing.md (plain, non-technical) — plus the per-area detail files under existing-features-references/ (final/ and plain/ numbered per area 01-22, backed by the live/ and raw/ capture layers), and the auxiliary surfaces outbound-contact-surfaces.md (contact/delivery inventory), ui-interaction-details.md (micro-interaction/motion/console reference), and INCORPORATED.md (the Linear-ticket reconciliation ledger). Enforces the content standards (technical files carry component names / routes / GraphQL ops / exact copy and NO opinions; plain files carry zero technical terms, second person, sentence case, no em dashes, no emojis), the pair-consistency rule (each assembled doc must agree with its per-area source), the supersede-don't-accumulate currency rule, and the live-app > source > ticket source-of-truth hierarchy. The canonical standards guide is docs/marketing/MAINTENANCE.md in the Diolog app repo — this skill operationalises it, but the published docs now live in diolog-team-files/web (paths below), which supersedes the in-repo file locations MAINTENANCE.md lists. Trigger even if the user doesn't say 'marketing docs' explicitly; any 'reflect this shipped feature in the documentation' request for the Diolog feature docs qualifies."
 allowed-tools:
   - "Read"
   - "Write"
@@ -53,6 +53,16 @@ The per-area detail. Four layers:
 **Flow:** `raw/` (from source) + `live/` (from the browser) reconcile into `final/` (technical) and `plain/` (plain); `final/` assembles into `existing-features-technical.md`, `plain/` assembles into `exhisting-features-marketing.md`.
 
 The **maintained, always-complete, always-in-sync** set is: the two assembled docs + the numbered `final/` and `plain/` per-area files. `live/` and `raw/` are capture layers — they are evidence, not deliverables; keep them for the areas you actively re-verify, and let them feed the numbered files. Each assembled doc must agree with its per-area source (technical pair; plain pair), and the technical and plain descriptions of the same feature must agree in scope and counts.
+
+### Auxiliary surfaces (top level of `web/`, alongside the two assembled docs)
+
+Three further files at `~/Dev/diolog-team-files/web`. Not part of the per-area four-file sync; each is a standalone surface with its own trigger.
+
+| File | What it is | When to update |
+|------|-----------|----------------|
+| `outbound-contact-surfaces.md` | Cross-cutting inventory of **every** surface where a user provides contact data (email addresses, CSVs, people picks) or triggers outbound delivery (email, push, in-app, SMS, link sharing), grouped by the surface that initiates the action, with the contact-input methods / delivery channels / options for each. Medium structured detail — uses field names for precision, no code. | Whenever a new contact-input or outbound-delivery surface is added, or an existing one's input methods / channels / options change. |
+| `ui-interaction-details.md` | Focused **technical** reference for micro-interactions, motion, layout conventions, empty states, and the staff AI-configuration console that are easy to miss in the per-area files. Records exact labels (in quotes), layout, dimensions, and motion; component names for orientation only. **Auxiliary** — where it overlaps a per-area file, that per-area file remains the source of truth. | When a documented micro-interaction / motion / layout convention / console UI changes, or a new one worth recording lands. |
+| `INCORPORATED.md` | Reconciliation **ledger** — a running record of which Linear issues have been folded into the doc set (Status · Disposition · Areas · notes). A maintenance aid only; **not** a product-detail surface. | Check it **first** on a maintenance pass to skip already-covered tickets; append a row for **every** ticket you process (including ones deliberately left out, with the reason). |
 
 ### Area map (01–22) — `final/` and `plain/` share this numbering
 
@@ -125,13 +135,20 @@ Plus refresh the capture layers when you re-verify an area:
 5. `existing-features-references/live/<area>.md` — when you do a fresh **live browser** pass
 6. `existing-features-references/raw/<area>.md` — when you do a fresh **source** pass
 
+And update the auxiliary surfaces when they apply:
+
+7. `outbound-contact-surfaces.md` — **only** if a new outbound / sharing / contact surface was added or an existing one's input methods / channels / options changed.
+8. `ui-interaction-details.md` — **only** if a documented micro-interaction / motion / layout convention / console UI changed (or a new one worth recording landed).
+9. `INCORPORATED.md` — when working from a Linear ticket: check it **first** to skip already-covered tickets, and append a row for the ticket you processed (Status · Disposition · Areas · notes).
+
 Steps:
-1. Read the ticket (description + comments).
+1. Read the ticket (description + comments). Check `INCORPORATED.md` — skip if already reconciled.
 2. Identify affected area file(s).
 3. Read the current content in those files.
 4. Verify against the live app / source (per the hierarchy); record fresh observations in `live/`/`raw/` as needed.
 5. **Replace** outdated content — do **not** append `UPDATE:` blocks, changelog entries, or "as of DIO-xxxx" notes. The docs describe the present state only.
 6. Verify pair consistency: the technical file (`final/XX`) agrees with `existing-features-technical.md` §2.XX; the plain file (`plain/XX`) agrees with `exhisting-features-marketing.md` §X; counts and names match across the technical/plain pair.
+7. Update `outbound-contact-surfaces.md` / `ui-interaction-details.md` if the change touched them, and append the ticket row to `INCORPORATED.md`.
 
 When **multiple areas** are affected, you may fan out **one sub-agent per area** (via `Agent`) — but give each agent disjoint area files so they don't collide. The two assembled documents (`existing-features-technical.md`, `exhisting-features-marketing.md`) are shared: each area edits a different section (`2.XX` / `X`), so if agents race on the same assembled file, serialise those section edits in a final pass. Use `TaskCreate`/`TaskUpdate` to track areas.
 
@@ -173,6 +190,7 @@ When **multiple areas** are affected, you may fan out **one sub-agent per area**
 
 - The affected area's four maintained files are updated: `final/XX`, `existing-features-technical.md` §2.XX, `plain/XX`, `exhisting-features-marketing.md` §X (plus any `live/`/`raw/` capture you refreshed).
 - The technical pair agrees; the plain pair agrees; counts and names match across the technical/plain pair.
+- `outbound-contact-surfaces.md` and `ui-interaction-details.md` updated if the change touched them; `INCORPORATED.md` has a row for the ticket processed.
 - No `UPDATE:`/changelog residue; outdated content replaced.
 - No register leaks (no code terms in plain files; no opinions in technical files).
 - Plain files obey the style rules (second person, sentence-case headings, no em dashes, no emojis).
@@ -193,4 +211,7 @@ document the new presentation studio in the technical + marketing feature docs
 ```
 ```
 sync existing-features-technical.md and the marketing guide with what shipped on workflows
+```
+```
+document the new survey distribution surface (and outbound-contact-surfaces.md)
 ```

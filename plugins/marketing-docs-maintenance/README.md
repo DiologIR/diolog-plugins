@@ -12,6 +12,7 @@ Given a feature change (usually a Linear ticket), it:
    - `existing-features-references/final/XX-*.md` and `existing-features-technical.md` §2.XX — **full technical detail** (component names, routes, GraphQL ops, exact copy, validation, states, permissions).
    - `existing-features-references/plain/XX-*.md` and `exhisting-features-marketing.md` §X — **zero technical detail** (plain English, second person, sentence-case headings).
    - backed by the `live/<area>.md` (browser-verified observations) and `raw/<area>.md` (source-derived) capture layers, which feed the numbered files.
+   - plus three auxiliary surfaces at the top level of `web/`: `outbound-contact-surfaces.md` (contact-input / outbound-delivery inventory), `ui-interaction-details.md` (micro-interaction / motion / layout / console reference), and `INCORPORATED.md` (the Linear-ticket reconciliation ledger — checked first, appended per ticket).
 4. **Enforces the standards** — no register leaks (no code terms in plain files, no opinions in technical files), pair consistency (each assembled doc agrees with its per-area source; counts and names match across the technical/plain pair), and the supersede-don't-accumulate currency rule (replace outdated content, never append `UPDATE:` blocks).
 
 ## Why it works
