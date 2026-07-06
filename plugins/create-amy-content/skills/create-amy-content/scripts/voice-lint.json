@@ -2,15 +2,22 @@
   "person": "Amy Benson (metadata only; the script doesn't read it)",
   "em_dash": "forbid",
   "banned_phrases": [
+    "ai-driven",
+    "automate your compliance",
+    "compliance guaranteed",
+    "data-driven insights",
+    "disrupting the",
+    "exciting news!",
+    "game changing",
+    "geopolitical disruption",
+    "i'm thrilled to announce",
+    "in the ever-changing world",
     "let's face it",
     "market whiplash",
-    "geopolitical disruption",
-    "underscores the importance",
-    "in the ever-changing world",
-    "game changing",
-    "exciting news!",
-    "i'm thrilled to announce",
-    "thrilled to share"
+    "never miss anything again",
+    "revolutionary",
+    "thrilled to share",
+    "underscores the importance"
   ],
   "advisory_phrases": [
     "; ",
@@ -19,8 +26,10 @@
     "additionally,"
   ],
   "ai_vocab_extra": [
-    "synergies",
-    "stakeholder alignment"
+    "leverage",
+    "paradigm",
+    "stakeholder alignment",
+    "synergies"
   ],
   "spelling": "AU",
   "exclamations": "allow",
