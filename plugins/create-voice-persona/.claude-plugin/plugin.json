@@ -1,0 +1,9 @@
+{
+  "name": "create-voice-persona",
+  "version": "1.0.1",
+  "description": "Build a complete, reusable voice persona package for any person from examples of their real writing \u2014 the generalised factory behind the create-luke-content pattern. Mines a writing corpus into an evidence-anchored base voice (every rule traced to a quoted sample), layers purpose-tailored persona variants on top (LinkedIn posts as the flagship, grounded in bundled LinkedIn engagement deep research plus any user-supplied research; plus long-form, marketing, short-form, chat, email, code review, speaker notes), generates a per-person deterministic voice lint, and bundles a distilled 'Signs of AI writing' field guide (from Wikipedia's WP:AISIGNS) so everything the persona writes avoids every known AI tell. Delivers a ready-to-install create-<name>-content plugin skill or a portable docs folder.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}

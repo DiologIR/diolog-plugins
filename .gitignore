@@ -3,3 +3,7 @@
 
 # skill-creator eval/benchmark workspaces (dev artifacts, not part of the shipped plugin)
 plugins/*/skills/*-workspace/
+
+# Python bytecode (voice_lint.py and friends)
+__pycache__/
+*.pyc
