@@ -9,6 +9,16 @@ The pipeline is adapted from the everything-claude-code `code-reviewer` agent (8
 
 ---
 
+## Contents
+
+- [Phase 1 — Context Gathering](#phase-1-context-gathering)
+- [Phase 2 — Routing](#phase-2-routing)
+- [Phase 2.5 — Sharding](#phase-25-sharding)
+- [Phase 3 — Find (single-context, only when Phase 2.5 was skipped)](#phase-3-find-single-context-only-when-phase-25-was-skipped)
+- [Phase 4 — Verify (independent verifier fan-out)](#phase-4-verify-independent-verifier-fan-out)
+- [Phase 5 — Final filter (Gate 0)](#phase-5-final-filter-gate-0)
+- [Phase 6 — Report](#phase-6-report)
+
 ## Phase 1 — Context Gathering
 
 **Goal:** Understand what changed, why, and how it integrates with the rest of the codebase.

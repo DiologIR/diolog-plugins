@@ -1,6 +1,6 @@
 {
   "name": "create-persona",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generates dense, agent-ready persona definitions from a target role — identity kernel, responsibility matrix with classification tags ([CRITICAL] / [WORKFLOW] / [POWER-USER] / [GOLDEN-NUGGET]), decision frameworks, maturity model, selection matrix, capability heat map, dependency graph, metrics, constraints, and two interaction examples. Tuned to current Claude model behaviour (literalism, adaptive thinking, positive framing). Evidence base from 2025 persona research (EmoCharacter, LABE, PPA, CPER, Over-Specification Paradox) ships in references/playbook.md.",
   "author": {
     "name": "DiologIR",

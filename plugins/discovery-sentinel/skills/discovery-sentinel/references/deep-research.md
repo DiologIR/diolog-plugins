@@ -1,5 +1,14 @@
 # **Product Discovery Persona Deep Research: B2B SaaS in Regulated Financial Services**
 
+## Contents
+
+- [**Domain 1: Product Discovery Methodologies and Feedback Taxonomy**](#domain-1-product-discovery-methodologies-and-feedback-taxonomy)
+- [**Domain 2: SaaS & Regulated Industry Discovery Patterns**](#domain-2-saas-regulated-industry-discovery-patterns)
+- [**Domain 3: Operational Frameworks & Techniques**](#domain-3-operational-frameworks-techniques)
+- [**Domain 4: AI-Augmented Discovery**](#domain-4-ai-augmented-discovery)
+- [**Domain 5: Anti-Patterns, Biases & Guardrails**](#domain-5-anti-patterns-biases-guardrails)
+- [---](#---)
+
 ## **Domain 1: Product Discovery Methodologies and Feedback Taxonomy**
 
 ### **Core Discovery Methodologies in Production Environments**

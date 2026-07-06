@@ -50,6 +50,8 @@ Run these phases **in order; none may be skipped**, and **carry the work all the
 
 At the end of each phase — A, B, C, D, E, and F — and **before** starting the next, verify that phase's output against **BOTH**: (1) the implementation plan at `docs/plans/<id>.md`, and (2) the **original Tasks ticket** description + every comment (human corrections, the UI amendment). Look for drift, missing requirements, regressions, and guardrail violations introduced in that phase. **Fix any issue you find before advancing**, then re-verify. Do NOT move to the next phase while the current phase's output diverges from the plan or the ticket. (Phase D is the full, comprehensive acceptance review of the whole implementation; this gate is the lighter *incremental* check scoped to what the just-finished phase produced — both run. For a heavy phase you may run this gate as its own small reviewer workflow.)
 
+**A green gate is necessary but not sufficient — never mistake it for "it works."** Typecheck plus a passing test suite do NOT prove a surface behaves: a test that stubs the unit under test hides exactly the runtime breakage it appears to cover. Treat every new critical seam — a persisted read/write round-trip, an auth/scope/visibility check, a sanitiser, an external adapter, a served page/endpoint — as unverified until the REAL (un-stubbed) path is exercised; if the only way to show it works is to run it, run it. Never report a gate as passed that you did not actually run.
+
 - After **A** — the build spec covers every plan step and every ticket functional + UI requirement; nothing is silently dropped or pushed out of scope.
 - After **B** — each implemented slice matches its plan step and the ticket; the typecheck / codegen / validate gates are green.
 - After **C** — the rebase preserved every requirement; no plan/ticket behaviour was lost while resolving conflicts; gates still green.
@@ -60,17 +62,30 @@ At the end of each phase — A, B, C, D, E, and F — and **before** starting th
 ### Phase A — Understand & specify (workflow)
 Fan out parallel reader subagents — one per plan slice / subsystem (backend module, schemas, chat orchestrator, settings, UI, etc.). Each reads the relevant existing code in `WT`, the plan steps it owns, and the ticket requirements it must satisfy, and returns: exact files to create/modify, interfaces/contracts, the closest existing analogue, and the ticket acceptance checks it fulfils. Synthesize into ONE dependency-ordered build spec: the ordered slice list, each slice's **file set (disjoint across any slices run in parallel)**, and the requirements it covers. The spec must exist before any code is written.
 
+**Produce the acceptance checklist up front, as part of the build spec — do NOT defer it to Phase D.** Enumerate, as an explicit numbered checklist, every requirement and constraint from the ticket + comments + plan (the Clause table, built now); and for every new user-facing capability, the UI→producer wire it must complete end-to-end (the Reachability table, built now). Assign each row to the slice that owns it. Building this list *before* code is what stops a requirement being silently dropped; carry the same checklist into Phase D and re-audit against it — do not regenerate a different one.
+
 ### Phase B — Implement (workflow)
 Build from the spec in dependency order. Parallelize ONLY file-disjoint slices — **never two subagents editing the same file at once**. Order: backend schemas/module/service/resolver first; `pnpm graphql:codegen` after schema changes; BFF + frontend after the GraphQL/BFF contracts exist. After each wave, a gate subagent runs the scoped `pnpm typecheck` / `pnpm graphql:codegen` / `pnpm validate:graphql` and reports failures; the next wave does not start until the gate is green. Production code only — no mocks, stubs, placeholders, or fallbacks. Commit the implementation in `WT` (stage only files you created/modified — never `git add .`).
+
+**Each slice self-certifies before it reports done — "I edited these files" is not done.** Every implementer subagent returns: the checklist row(s) it satisfied at `file:line`, the real (non-test) caller that reaches its new code, and — for any critical seam it touched — the real-path exercise it actually ran and the observed result. **Wire-through gate (with typecheck after the frontend/BFF wave):** for every new endpoint, exported client/BFF function, and action-seam field, grep the diff for a real, non-test caller — an API route with no BFF caller, a client fn referenced only by itself + a test, or an optional action-seam field (`actions?.x?.() ?? fallback`) the host never populates is **dead-on-arrival: fail the wave and wire it now**, don't defer to Phase D. Build surgically and simply (Karpathy): every changed line traces to a checklist row; no drive-by refactors, no speculative abstraction.
 
 ### Phase C — Rebase onto staging
 `git -C "$WT" fetch origin staging`, then rebase `ai/<id>` onto `origin/staging` and **resolve every conflict faithfully** — integrate both sides, never drop existing staging work or your own. Re-run the typecheck/build gate to confirm the integration compiles. **Do NOT push.**
 
 ### Phase D — Acceptance review vs the original ticket (workflow)
-Fan out parallel reviewer subagents auditing the implemented worktree code against the **original ticket description + every comment** (especially human corrections and any UI amendment), the plan, and any UI mocks. One reviewer per dimension: (1) **requirement completeness** — every functional + UI requirement is fully implemented, not partial or stubbed; (2) **correctness** — bugs, data flow, edge cases; (3) **guardrails** — no mocks/stubs/fallbacks, prompts in the `prompts` collection, AI via the gateway (no direct provider SDK), auth/BFF patterns, visibility/MNPI enforced at READ and WRITE; (4) **UI fidelity** — copy, badge labels, states, design rules vs the mocks; (5) **security** — visibility leakage, multi-company isolation, secrets, citation-tag stripping. Each reviewer returns findings tagged **Critical / High / Medium / Low** with `file:line` and the exact ticket/plan/mock clause violated. Then **adversarially verify** each finding with independent subagents (confirm it's real against the actual code) to suppress false positives.
+
+**Ground the review in two oracles BEFORE you fan out, and emit BOTH as tables — "I reviewed it" is not falsifiable; a filled table is.** Start from the acceptance checklist built in Phase A (do not regenerate a different list) and fill in each row's satisfying `file:line`:
+- **Clause table** — every requirement/constraint/assumption row names the exact `file:line` that satisfies it, or files a finding at that clause's severity. Verify give-away words literally ("enforced **server-side**", "**Owner**-only", "de-duped **per list**") — these are the invariants an implementer most often half-builds.
+- **Reachability table** — for EVERY new user-facing capability, trace `file:line` at each hop: UI entry → host action → BFF/client fn → API route → producer → back. A missing hop is an automatic **Critical** (a dead-on-arrival feature that type-checks), not a Medium.
+
+Fan out parallel reviewer subagents auditing the implemented worktree code against the **original ticket description + every comment** (especially human corrections and any UI amendment), the plan, and any UI mocks. One reviewer per dimension: (1) **requirement completeness** — every functional + UI requirement is fully implemented, not partial or stubbed; (2) **correctness** — bugs, data flow, edge cases; (3) **guardrails** — no mocks/stubs/fallbacks, prompts in the `prompts` collection, AI via the gateway (no direct provider SDK), auth/BFF patterns, visibility/MNPI enforced at READ and WRITE **server-side, never on a client-supplied value**; (4) **UI fidelity** — copy, badge labels, states, design rules vs the mocks; (5) **security** — visibility leakage, multi-company isolation, secrets, citation-tag stripping, injection + untrusted input; (6) **simplicity & surgical diff (Karpathy)** — no speculative abstraction, dead scaffolding, or drive-by edits outside the slice's scope. Each reviewer returns findings tagged **Critical / High / Medium / Low** with `file:line` and the exact ticket/plan/mock clause violated. Then **adversarially verify** each finding with independent subagents (confirm it's real against the actual code) to suppress false positives.
+
+**Exercise, don't just read.** For the miss-classes that survive a code-read plus an all-green gate — compile-clean-but-runtime-broken boundaries, inert/not-wired-end-to-end affordances, mis-wired actions (a `schedule` that calls `publish`), optional-callback seams hiding unwired code, hardcoded data behind a real-looking UI, client-asserted identity/authority, wrong-target or silently-capped mutations, boundary-value logic — exercise the real path (call the endpoint, render the page, round-trip a persisted doc, feed a hostile input) or record the path as unverified in the findings. The full worked catalogue lives in the generalized twin (`feature-spec-pipeline/skills/work`, Phase D) — the two skills must stay in sync; when one Phase D evolves, port the change to the other.
+
+**Run a completeness critic as the last reviewer** — one subagent that attacks the audit itself: which checklist rows were never matched to a `file:line`, which reachability hop was never traced, which critical seam was read but never exercised? Its output seeds the next audit round.
 
 ### Phase E — Resolve findings (workflow)
-Fix **every confirmed finding at all severity levels** (Critical → Low). Parallelize file-disjoint fixes; serialize overlapping ones. Re-gate with typecheck / lint / validate. Loop Phase D → Phase E until an acceptance pass surfaces no confirmed Critical/High/Medium findings and only optional Low items remain; document any Low you intentionally defer.
+Fix **every confirmed finding at all severity levels** (Critical → Low), test-first where the finding is a bug (write the failing check that reproduces it, then make it pass) and **surgically** (the fix touches only what the finding names). Parallelize file-disjoint fixes; serialize overlapping ones. Re-gate with typecheck / lint / validate. **Loop Phase D → Phase E until *two consecutive* audit rounds — run with different reviewer lenses, not a re-run of the same one — surface no new confirmed Critical/High/Medium** and only optional Low items remain. One clean pass is a shallow fixpoint (the reviewer went quiet, not the code went correct); require the loop to go *dry*. Document any Low you intentionally defer.
 
 ### Phase F — Finalize
 Run the full gates (`pnpm validate:all`, `pnpm validate:graphql`, `pnpm typecheck`, `pnpm lint`, scoped sensibly) and commit any outstanding fixes in `WT`. **Do NOT push and do NOT open a PR** — the branch stays local in the worktree for human review. Post a completion comment on the issue via `mcp__diolog-tasks__create_comment`:
@@ -83,11 +98,21 @@ Run the full gates (`pnpm validate:all`, `pnpm validate:graphql`, `pnpm typechec
 **Built by slice:**
 - <slice>: <files / what changed>
 **Rebase:** <clean, or conflicts resolved in: file list>
+**Reachability (every new capability reaches its producer):**
+| Capability | UI entry | Host action | BFF/client | API route | Producer | Wired? |
+|---|---|---|---|---|---|---|
+| <capability> | `file:line` | `file:line` | `file:line` | `file:line` | `file:line` | ✅ / ✗ |
+**Clause coverage:**
+| Clause | Satisfied at | Status |
+|---|---|---|
+| <clause> | `file:line` | ✅ / partial / ✗ |
 **Acceptance review:** <N findings — Critical/High/Medium/Low counts> found and resolved.<any deferred Low items, with reason>
-**Gates:** validate:all / validate:graphql / typecheck / lint — <pass/fail>
+**Gates:** validate:all / validate:graphql / typecheck / lint — <pass/fail (actually run)>
 
 — Claude (AI Assistant)
 ```
+
+**Gate on the tables, not on effort:** do not move to `Developer Review` while any Reachability row is `✗` or any Clause row is `✗`/partial with an unresolved finding.
 
 Then move the issue to `Developer Review` via `mcp__diolog-tasks__update_issue` with the resolved state ID (skip only if already in `Developer Review`, `In Progress`, `In Review`, or further downstream).
 

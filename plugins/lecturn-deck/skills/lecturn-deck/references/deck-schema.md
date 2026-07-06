@@ -11,6 +11,25 @@ renderers consume, the export service renders, and a PPTX/PDF/Slides import land
 
 ---
 
+## Contents
+
+- [0. How to read this](#0-how-to-read-this)
+- [1. Design rules](#1-design-rules)
+- [2. Conventions & shared building blocks](#2-conventions-shared-building-blocks)
+- [3. Deck](#3-deck)
+- [4. Slide](#4-slide)
+- [5. Element base](#5-element-base)
+- [6. Element types](#6-element-types)
+- [7. Theme snapshot](#7-theme-snapshot)
+- [8. Import report & provenance](#8-import-report-provenance)
+- [9. The AI-facing (model) subset](#9-the-ai-facing-model-subset)
+- [10. Validation & conformance](#10-validation-conformance)
+- [11. PPTX → schema crosswalk](#11-pptx-schema-crosswalk)
+- [12. Worked example](#12-worked-example)
+- [13. Versioning & evolution](#13-versioning-evolution)
+- [Appendix A — colour token map (Lecturn ⇄ PPTX scheme)](#appendix-a-colour-token-map-lecturn-pptx-scheme)
+- [Appendix B — unit conversions (import time only)](#appendix-b-unit-conversions-import-time-only)
+
 ## 0. How to read this
 
 Every field is tagged with the **tier** it belongs to. The tier — not a separate type — is what

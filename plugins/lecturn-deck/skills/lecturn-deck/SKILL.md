@@ -1,7 +1,6 @@
 ---
 name: lecturn-deck
-description: Convert PowerPoint (.pptx) to and from the lecturn.deck/1 JSON slide schema, and author/validate that JSON, using the bundled stdlib-only Python converter and the bundled schema spec. Use this skill whenever the user wants to turn a .pptx into structured JSON (deck/slide/element tree), build a .pptx from a deck JSON, edit/inspect/diff a presentation as JSON, extract slide content or media from a PowerPoint file, validate a lecturn.deck JSON, or map PowerPoint/DrawingML constructs into the Lecturn slide element model — even if they never say "lecturn.deck". Also use it when asked to CREATE a .pptx programmatically from data or an outline: authoring the deck JSON and converting is more reliable than emitting raw OOXML.
-version: 1.0.0
+description: Convert PowerPoint (.pptx) to and from the lecturn.deck/1 JSON slide schema, and author/validate that JSON, using the bundled stdlib-only Python converter and the bundled schema spec. Use this skill whenever the user wants to turn a .pptx into structured JSON (deck/slide/element tree), build a .pptx from a deck JSON, edit/inspect/diff a presentation as JSON, extract slide content or media from a PowerPoint file, validate a lecturn.deck JSON, or map PowerPoint/DrawingML constructs into the Lecturn slide element model — even if they never say "lecturn.deck". Also use it when asked to CREATE a .pptx programmatically from data or an outline: authoring the deck JSON and converting is more reliable than emitting raw OOXML. Do NOT use for designing HTML slide decks or branded proposal decks with no .pptx involved (use design-craft or customer-deck-builder).
 ---
 
 # Lecturn Deck — PPTX ⇄ JSON slide schema

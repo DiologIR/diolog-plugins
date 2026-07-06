@@ -6,6 +6,20 @@ Each item lists: the rule, what to grep for, the severity to assign if violated,
 
 ---
 
+## Contents
+
+- [1. Server Action security](#1-server-action-security)
+- [2. RSC vs Client Component boundary](#2-rsc-vs-client-component-boundary)
+- [3. Async Runtime APIs (Next.js 15+)](#3-async-runtime-apis-nextjs-15)
+- [4. Caching semantics (Next.js 15+)](#4-caching-semantics-nextjs-15)
+- [5. React 19 hook migration](#5-react-19-hook-migration)
+- [6. Hydration mismatch heuristics](#6-hydration-mismatch-heuristics)
+- [7. `next/image` and `next/link`](#7-nextimage-and-nextlink)
+- [8. Route Handler security (`route.ts`)](#8-route-handler-security-routets)
+- [9. Middleware / Proxy](#9-middleware-proxy)
+- [10. Cross-cutting Next.js conventions (low-priority — only flag in egregious cases)](#10-cross-cutting-nextjs-conventions-low-priority-only-flag-in-egregious-cases)
+- [Sources](#sources)
+
 ## 1. Server Action security
 
 The single highest-value review area in App Router projects. Server Actions (`'use server'` functions) are reachable as **direct POST endpoints**, not just from the UI that imports them. The Next.js docs explicitly state: *"Server Functions are reachable via direct POST requests, not just through your application's UI. Always verify authentication and authorization inside every Server Function."*

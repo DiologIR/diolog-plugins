@@ -1,5 +1,20 @@
 # **RESEARCH REPORT: Product Roadmap Formulation in Regulated B2B SaaS Contexts**
 
+## Contents
+
+- [**Executive Summary**](#executive-summary)
+- [**Translating Discovery Outputs into a Sequenced Roadmap**](#translating-discovery-outputs-into-a-sequenced-roadmap)
+- [**Reconciling Competing Prioritization Signals**](#reconciling-competing-prioritization-signals)
+- [**Prioritization Frameworks in Regulated SaaS Contexts**](#prioritization-frameworks-in-regulated-saas-contexts)
+- [**Structuring and Describing Roadmap Items**](#structuring-and-describing-roadmap-items)
+- [**Integrating Compliance as First-Class Roadmap Inputs**](#integrating-compliance-as-first-class-roadmap-inputs)
+- [**Roadmap Sequencing and Delivery Strategy**](#roadmap-sequencing-and-delivery-strategy)
+- [**"Now / Next / Later" Formats and Confidence Decay**](#now-next-later-formats-and-confidence-decay)
+- [---](#---)
+- [---](#---)
+- [---](#---)
+- [---](#---)
+
 ## **Executive Summary**
 
 * **Outcome-Oriented Roadmapping Supersedes Feature-Based Planning:** In dynamic B2B SaaS contexts, transitioning from traditional date-bound feature lists to outcome-based roadmaps ensures that engineering outputs are intrinsically linked to measurable business and user objectives. This approach mitigates the risk of operating as a "feature factory" and aligns product delivery with strategic corporate goals. *(Confidence: High)*  

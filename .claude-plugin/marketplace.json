@@ -21,7 +21,7 @@
     {
       "name": "discovery-sentinel",
       "description": "Analyze product discovery and customer feedback session documents using the Discovery Sentinel persona. Produces structured Feedback Classification Reports, Discovery Insight Briefs, and Prioritised Opportunity Assessments with confidence scoring, JTBD extraction, bias detection, and compliance flagging for regulated B2B SaaS.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -32,7 +32,7 @@
     {
       "name": "product-strategist",
       "description": "Generate validated, prioritized product feature concepts and outcome-based roadmaps for AI-assisted IR/compliance/governance SaaS. Supports feature ideation, roadmap construction, feature evaluation, data ingestion, and comparative prioritization using RICE-C/WSJF scoring, compliance gates, and OST methodology.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -54,7 +54,7 @@
     {
       "name": "code-review",
       "description": "High-signal code review for NestJS APIs and Next.js (App Router) + React 19 apps. Implements a modular router skill that delegates to framework-specific checklists, applies severity-tiered post-verification confidence gates, and runs a Chain-of-Verification pass before reporting findings \u2014 combining patterns from the everything-claude-code reviewer agents, awesome-copilot NestJS instructions, awesome-cursorrules Next.js 15 / React 19 rules, the Arbiter modular-prompt findings, and the official NestJS / Next.js / React docs.",
-      "version": "1.0.9",
+      "version": "1.0.10",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -98,7 +98,7 @@
     {
       "name": "create-persona",
       "description": "Generates dense, agent-ready persona definitions from a target role \u2014 identity kernel, responsibility matrix with classification tags ([CRITICAL] / [WORKFLOW] / [POWER-USER] / [GOLDEN-NUGGET]), decision frameworks, maturity model, selection matrix, capability heat map, dependency graph, metrics, constraints, and two interaction examples. Tuned to current Claude model behaviour (literalism, adaptive thinking, positive framing). Evidence base from 2025 persona research (EmoCharacter, LABE, PPA, CPER, Over-Specification Paradox) ships in references/playbook.md.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -120,7 +120,7 @@
     {
       "name": "diolog-tasks-pipeline",
       "description": "Three native skills that run the Diolog Tasks issue pipeline \u2014 triage, plan, and worker \u2014 entirely inside your interactive Claude Code session (no Agent SDK, so usage draws from your standard interactive allowance, not the separate Agent SDK credit). Formerly linear-issue-pipeline; now targets the diolog-tasks MCP (mcp.diolog.com.au). tasks-triage runs a technical + Specification Sentinel product review and posts a non-technical readiness comment; tasks-plan classifies a tier, investigates the codebase, writes docs/plans/{id}.md and comments the repo-relative path (no file upload); tasks-worker implements a planned issue in an isolated worktree via dynamic ultracode workflows (understand \u2192 implement \u2192 rebase \u2192 acceptance review \u2192 resolve), with no remote PR. The plan and worker fan out parallel subagents via the Workflow tool to speed up large investigations.",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -131,7 +131,7 @@
     {
       "name": "feature-spec-pipeline",
       "description": "Four native skills that run an issue-tracker-free, markdown-doc feature pipeline \u2014 /triage, /plan, /work, /gap-fix \u2014 entirely inside your interactive Claude Code session. /triage turns a feature idea (inline text or a notes file) into a versioned spec at docs/specs/spec-DIO-0001.md (id allocated from docs/feature-specs/LEDGER.md), running a codebase grounding pass plus a Specification Sentinel product/UX/compliance review and appending a non-technical readiness section. /plan classifies a tier, investigates the codebase, writes docs/plans/plan-DIO-0001.md and links it from the spec. /work implements the plan in an isolated worktree via dynamic ultracode workflows (understand \u2192 implement \u2192 rebase \u2192 acceptance review \u2192 resolve), appends a progress section to the spec, and leaves the branch local \u2014 no remote PR. /gap-fix runs after /work as the remediation step: it re-enters the work branch, ALWAYS re-audits the delivered code against the original spec (merging in any human/QA gaps you provide), and implements the fixes in code (file-disjoint fan-out + typecheck gates), looping audit\u2192fix until only optional Low items remain, then commits locally and appends a gap-fix progress note \u2014 no remote PR. The plan, work, and gap-fix skills fan out parallel subagents via the Workflow tool (in small batches to avoid throttling). A doc-driven sibling of diolog-tasks-pipeline that needs no Diolog Tasks MCP.",
-      "version": "1.5.2",
+      "version": "1.5.3",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -175,7 +175,7 @@
     {
       "name": "email-mockups",
       "description": "Turn a named Diolog feature (or several) into email-ready product-mockup graphics on a Figma canvas. Reads the feature's real context \u2014 docs/marketing/product-feature-guide.md + features-build/plain/NN-*.md + the rendered mock UI read in a browser via playwright-cli (the served web / customer / investor design-system hosts) \u2014 then designs and builds, via the design-craft skill, impression-not-replica mockups that lead with the feature's payoff (a full product-window app shot \u2014 the complete app shell in a clean window \u2014 for hero features, plus a product-surface vignette, soft panel + peeking device, collage/overlap, phone bezel, and a website frame for actual public sites) and make the product look genuinely smart (a real insight, an italic quote from the record, named source chips) as titled, spaced artboards in one self-contained HTML file using the live design tokens, and recreates that layout in Figma via whatever write-capable Figma MCP is connected. Each artboard also carries a brief non-technical marketing caption beneath it for IR teams and the agencies who serve them (no em-dashes), with an optional email-hero split format, and semantic emphasis via a soft wash and icon rather than AI-slop left-only borders. If no Figma MCP is present, the HTML file is the final deliverable.",
-      "version": "1.5.2",
+      "version": "1.5.3",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -208,7 +208,7 @@
     {
       "name": "mockup-fidelity",
       "description": "Validate that an implemented React or React Native UI faithfully reproduces a reference mockup (HTML+CSS, served prototype, Figma export, or another rendered component set), then update the code to close every gap \u2014 by measuring the rendered tree, never by eyeballing or reading source. Treats the mock as the source of truth, builds a COMPLETE screen/frame inventory (never silently drops a frame), extracts both sides to on-disk artifacts and generates the ledger from them, inverts the burden of proof (a visible difference is a defect until a citation proves it intentional), diffs structure-first then per-property computed styles, and produces a per-screen present/divergent/absent ledger plus a FUNCTIONAL-GAPS document for any newly-added UI that is only visual (missing backend, data wiring, endpoints). For React Native it measures the RENDERED tree \u2014 structural/accessibility extraction (axe describe-ui / Maestro hierarchy) plus resolved style props over the Metro CDP connection (rozenite / agent-cdp) \u2014 and forces every screen's measurement to disk as artifacts, so a 'match' verdict can never come from a screenshot, a source read, or reasoning (frontier vision models catch under half of fine-grained UI differences; an artifact-forcing gate plus a completeness-critic close that hole). For a React web target the comparison is symmetric DOM-to-DOM \u2014 reference and target are both read via getComputedStyle through one extractor at the same viewport, with the app chrome (sidebar/header/nav) in scope. Asks the user when unsure, on both a full-comparison and a per-screen basis. Generic and framework-agnostic \u2014 nothing app-specific.",
-      "version": "2.5.2",
+      "version": "2.5.3",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -299,7 +299,7 @@
     {
       "name": "customer-deck-builder",
       "description": "Build a branded, print-ready customer proposal / pitch deck from Diolog's 9-slide template system. Fills company-agnostic templates with a specific client's identity, contacts, pricing and numbers (prompting with multiple-choice questions for missing details), keeps the IR-proposal spine, and can design new slides into the same system via design-craft. Outputs a single self-contained web page with pan/zoom (trackpad + controls, fit-deck / fit-slide / 100%) that prints to a vertical, paged PDF at native 1920\u00d71080 slide size.",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -321,7 +321,7 @@
     {
       "name": "customer-business-case",
       "description": "Generate a single printable A4-page executive business case in Diolog's house style from a customer's proposal deck. Uses the /design-craft skill against a bundled single-page DESIGN.md and a templated version of the Alfabs business case, with all copy in the Diolog brand voice (create-diolog-business-case). Produces one dense, print-clean page (problem, solution, value, quantified outcome, investment, next step) on a fixed 794x1123 A4 canvas that prints to exactly one page.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -343,7 +343,7 @@
     {
       "name": "lecturn-deck",
       "description": "Convert PowerPoint (.pptx) \u21c4 the lecturn.deck/1 JSON slide schema, and author/validate that JSON, with a bundled normative spec and a stdlib-only Python two-way converter. Import a .pptx into an editable presentation \u2192 slides \u2192 positioned-element tree (a discriminated union: text, stat, chart, image, line, shape, table, group, widget, embed) over a fixed canvas \u2014 media extracted, inherited placeholder geometry resolved, every construct classified F0 native / F1 carried / F2 fallback / F3 flagged with no silent loss \u2014 or build a structurally valid .pptx back from a deck JSON (native tables/charts, embedded media, notes, verbatim re-emission of carried parts; native-only stat/widget/embed exported as an honest static projection). The XML parser is hardened for untrusted uploads (refuses DTD/entity for XXE/billion-laughs, caps decompression for zip bombs) without any third-party dependency. Bundles the full schema + PPTX crosswalk spec, a worked example deck, a specialist agent for convert-validate-verify loops, and the deckconv CLI (from-pptx / to-pptx / validate / inspect).",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"

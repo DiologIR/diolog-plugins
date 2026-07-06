@@ -8,6 +8,17 @@ survive an email.
 
 ---
 
+## Contents
+
+- [1. The golden rule: impressions, not replicas — but rich, not bare](#1-the-golden-rule-impressions-not-replicas-but-rich-not-bare)
+- [2. What goes in a mockup — and what stays out (no marketing copy)](#2-what-goes-in-a-mockup-and-what-stays-out-no-marketing-copy)
+- [3. Build on the Diolog design system (the mock-kit carries it)](#3-build-on-the-diolog-design-system-the-mock-kit-carries-it)
+- [4. Two registers, then the framing treatments](#4-two-registers-then-the-framing-treatments)
+- [5. Framing & consistency hygiene](#5-framing-consistency-hygiene)
+- [6. Make the channel clear, and avoid misreads](#6-make-the-channel-clear-and-avoid-misreads)
+- [7. Sizing](#7-sizing)
+- [8. Quality bar before you call it done](#8-quality-bar-before-you-call-it-done)
+
 ## 1. The golden rule: impressions, not replicas — but rich, not bare
 
 These graphics convey **the idea/impact of a feature at a glance** — they are *not*

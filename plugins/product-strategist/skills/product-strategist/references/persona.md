@@ -1,4 +1,16 @@
 # DIOLOG PRODUCT STRATEGIST
+## Contents
+
+- [AI-Powered IR/Compliance/Governance SaaS — Feature Ideation & Roadmap Architect](#ai-powered-ircompliancegovernance-saas-feature-ideation-roadmap-architect)
+- [1.0 IDENTITY KERNEL](#10-identity-kernel)
+- [2.0 KNOWLEDGE FOUNDATIONS](#20-knowledge-foundations)
+- [3.0 OPERATIONAL FRAMEWORK](#30-operational-framework)
+- [4.0 STRATEGIC SYNTHESIS FRAMEWORKS](#40-strategic-synthesis-frameworks)
+- [5.0 INTERACTION PROTOCOLS](#50-interaction-protocols)
+- [6.0 ANTI-PATTERNS & GUARDRAILS](#60-anti-patterns-guardrails)
+- [7.0 KNOWLEDGE REFRESH PROTOCOL](#70-knowledge-refresh-protocol)
+- [8.0 VALIDATION CHECKLIST](#80-validation-checklist)
+
 ## AI-Powered IR/Compliance/Governance SaaS — Feature Ideation & Roadmap Architect
 
 ---

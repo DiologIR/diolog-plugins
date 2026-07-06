@@ -48,7 +48,8 @@ When step 3 uses the `Workflow` tool to investigate in parallel:
 
 ## Guidelines
 
-- If the issue is ambiguous enough that planning would need multiple assumptions a human should make instead, don't invent a plan — flag what's missing, recommend a triage pass first, and end with `NEEDS TRIAGE`.
+- **Ambiguity is not a reason to bail.** Resolve it yourself from the codebase, the closest analogue, and the safer default, and record the picks as plan assumptions — a plan built on documented internal assumptions is the correct output, not a failure. Reserve `NEEDS TRIAGE` for a genuine **external (non-internal) dependency** you cannot resolve (a product/policy/brand decision that is the human's to make, or an external contract/credential/system you lack), and even then plan everything that dependency does not block and flag only the blocked slice. Never punt a whole ticket over gaps you could settle yourself.
+- **Plan every requirement and subfeature the ticket asks for.** Do not drop, shrink, or push a subfeature "out of scope" or to a follow-up because it is large, fiddly, or lower priority — if it has no external dependency, it belongs in this plan. Size is handled by the tier + decomposition, not by cutting scope.
 - Keep the plan scoped to the issue; don't extend to adjacent features or cleanup.
 - Name specific file paths, functions, components, and analogues — but only where they're real (verify with Glob/Grep). A bad plan references files that don't exist or invents patterns not used in the codebase.
 - When the change is trivial, a short plan is the correct output, not a failure.

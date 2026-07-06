@@ -6,6 +6,19 @@
 
 ---
 
+## Contents
+
+- [0. How to read this document](#0-how-to-read-this-document)
+- [1. Technical substrate (global, from `deck.css`)](#1-technical-substrate-global-from-deckcss)
+- [2. The invisible grid (measure once, reuse everywhere)](#2-the-invisible-grid-measure-once-reuse-everywhere)
+- [3. Shared chrome (build once, drop onto every content slide 02–09)](#3-shared-chrome-build-once-drop-onto-every-content-slide-0209)
+- [4. Common measurements — the cheat sheet](#4-common-measurements-the-cheat-sheet)
+- [5. Reusable component recipes](#5-reusable-component-recipes)
+- [6. Product-mock construction guide (slide 04)](#6-product-mock-construction-guide-slide-04)
+- [7. Per-slide blueprints](#7-per-slide-blueprints)
+- [8. Assets](#8-assets)
+- [9. Reproduction checklist & gotchas](#9-reproduction-checklist-gotchas)
+
 ## 0. How to read this document
 
 - **Coordinate system.** Every frame is a **1920 × 1080** box. Origin `(0,0)` is the **top-left corner**. All positions are `position:absolute` with `left`/`top` in **pixels** measured from that origin. There is **no responsive layout, no flexbox flow** — each element is placed by hand at an exact coordinate (a 1:1 mirror of a Figma export).

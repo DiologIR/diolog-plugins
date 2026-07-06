@@ -1,6 +1,6 @@
 {
   "name": "diolog-tasks-pipeline",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Three native skills that run the Diolog Tasks issue pipeline — triage, plan, and worker — entirely inside your interactive Claude Code session (no Agent SDK, so usage draws from your standard interactive allowance, not the separate Agent SDK credit). Formerly linear-issue-pipeline; now targets the diolog-tasks MCP (mcp.diolog.com.au). tasks-triage runs a technical + Specification Sentinel product review and posts a non-technical readiness comment; tasks-plan classifies a tier, investigates the codebase, writes docs/plans/{id}.md and comments the repo-relative path (no file upload); tasks-worker implements a planned issue in an isolated worktree via dynamic ultracode workflows (understand → implement → rebase → acceptance review → resolve), with no remote PR. The plan and worker fan out parallel subagents via the Workflow tool to speed up large investigations.",
   "author": {
     "name": "DiologIR",

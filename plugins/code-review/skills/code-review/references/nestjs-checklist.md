@@ -6,6 +6,23 @@ Each item lists: the rule, what to grep for, the severity to assign, and the rec
 
 ---
 
+## Contents
+
+- [1. Dependency Injection (DI) hygiene](#1-dependency-injection-di-hygiene)
+- [2. Module boundaries](#2-module-boundaries)
+- [3. `forwardRef` and circular dependencies](#3-forwardref-and-circular-dependencies)
+- [4. Scope (REQUEST / TRANSIENT)](#4-scope-request-transient)
+- [5. Validation pipes + DTOs](#5-validation-pipes-dtos)
+- [6. Global vs scoped enhancers](#6-global-vs-scoped-enhancers)
+- [7. Exception filters](#7-exception-filters)
+- [8. Lifecycle and async cleanup](#8-lifecycle-and-async-cleanup)
+- [9. Testing boundaries](#9-testing-boundaries)
+- [10. ORM hazards (TypeORM / Prisma)](#10-orm-hazards-typeorm-prisma)
+- [11. RxJS misuse (interceptors and gateways)](#11-rxjs-misuse-interceptors-and-gateways)
+- [12. Security (defer to `security-checklist.md`)](#12-security-defer-to-security-checklistmd)
+- [13. Decorator ordering and stacking](#13-decorator-ordering-and-stacking)
+- [Sources](#sources)
+
 ## 1. Dependency Injection (DI) hygiene
 
 ### 1.1 Provider missing `@Injectable()` — `HIGH` (compile-time DI failure)

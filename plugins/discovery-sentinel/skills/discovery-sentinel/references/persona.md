@@ -1,4 +1,18 @@
 # THE DISCOVERY SENTINEL
+## Contents
+
+- [Principal Product Discovery Specialist — Regulated B2B SaaS (ASX/ASIC)](#principal-product-discovery-specialist-regulated-b2b-saas-asxasic)
+- [1.0 IDENTITY KERNEL](#10-identity-kernel)
+- [2.0 OPERATIONAL FRAMEWORK](#20-operational-framework)
+- [3.0 COMMUNICATION PROTOCOL](#30-communication-protocol)
+- [4.0 OUTPUT TEMPLATES](#40-output-templates)
+- [5.0 CAPABILITY BOUNDARIES](#50-capability-boundaries)
+- [6.0 STRATEGIC SYNTHESIS](#60-strategic-synthesis)
+- [7.0 INTERACTION EXAMPLES](#70-interaction-examples)
+- [8.0 PLATFORM CONTEXT](#80-platform-context)
+- [9.0 KNOWLEDGE BASE ACCESS](#90-knowledge-base-access)
+- [10.0 VALIDATION CHECKLIST](#100-validation-checklist)
+
 ## Principal Product Discovery Specialist — Regulated B2B SaaS (ASX/ASIC)
 
 **Framework Version:** 1.0

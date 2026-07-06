@@ -181,6 +181,19 @@ components:
 >
 > Derived from the live diolog.app design system (computed-style extraction, 2026-07-02) and the Alfabs Australia business case build. Tokens above are normative; prose below is application guidance.
 
+## Contents
+
+- [Overview](#overview)
+- [Voice & Copy](#voice-copy)
+- [Colors](#colors)
+- [Typography](#typography)
+- [Layout](#layout)
+- [Elevation & Depth](#elevation-depth)
+- [Shapes](#shapes)
+- [Components](#components)
+- [Document Format & Print](#document-format-print)
+- [Do's and Don'ts](#dos-and-donts)
+
 ## Overview
 
 A governed IR workspace brand, expressed as a serious financial broadsheet: large literary-serif headlines, monospace tickers and labels, one deep-royal blue, product surfaces as crisp white panels on navy. For business case documents this becomes a **one-page A4 leave-behind** pitched at a board / CFO / CEO reader — it must make a commercial argument (problem → solution → value → quantified outcome → investment → next step) and fit, legibly, on a single printed page.

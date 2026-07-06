@@ -315,7 +315,7 @@ Specific failure modes to avoid:
 
 ## Reference material
 
-`references/playbook.md` contains the empirical evidence base for every protocol in this skill: the 2025 persona-engineering benchmarks (EmoCharacter, CharacterBox, LABE, PST, PPA, CPER), the Over-Specification Paradox and attention-budget depletion, Claude Opus 4.7 prompt-engineering deltas (literalism, effort calibration, thinking configuration), classification-tag taxonomy sources, and the systematic framework precedents (CLEAR, RACE, CREATE). Consult it when:
+`references/playbook.md` contains the empirical evidence base for every protocol in this skill: the 2025 persona-engineering benchmarks (EmoCharacter, CharacterBox, LABE, PST, PPA, CPER), the Over-Specification Paradox and attention-budget depletion, current-generation Claude prompt-engineering deltas (literalism, effort calibration, thinking configuration), classification-tag taxonomy sources, and the systematic framework precedents (CLEAR, RACE, CREATE). Consult it when:
 
 - The user asks *why* a rule exists (cite the underlying benchmark or failure mode)
 - You need to defend a recommendation against pushback ("why ask about level before generating?")
