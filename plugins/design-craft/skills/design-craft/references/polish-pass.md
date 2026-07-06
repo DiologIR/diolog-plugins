@@ -26,9 +26,9 @@ Instruct every agent explicitly: **report every issue found, including uncertain
 
 Run the full `accessibility-audit.md` review: contrast and color (WCAG AA minimums, color-only signaling, problematic combinations, pure white/black flags); semantic HTML and structure (headings, button vs div, labels, alt text, ARIA discipline); keyboard navigation and focus (reachability, tab order, visible focus, skip links); motion, forms, and miscellany (`prefers-reduced-motion`, flash limits, error specificity, hit-target size). Report findings as a categorized list.
 
-### Agent 2: AI slop check
+### Agent 2: AI slop check + interface copy
 
-Run the full `ai-slop-check.md` review: aggressive gradients; emoji-as-decoration; rounded corners with left-border accent (used as default); hand-drawn SVG illustrations; overused fonts as defaults (Inter, Roboto, Arial, Fraunces, bare system stacks); the editorial-warm house style as a silent default (cream background + serif display + terracotta accent, without a brand reason); pure white and pure black; random invented colors; random spacing values. Report findings.
+Run the full `ai-slop-check.md` review: aggressive gradients; emoji-as-decoration; rounded corners with left-border accent (used as default); hand-drawn SVG illustrations; overused fonts as defaults (Inter, Roboto, Arial, Fraunces, bare system stacks); the three AI-default looks as silent defaults (warm-editorial, dark + acid accent, broadsheet); pure white and pure black; random invented colors; random spacing values. Then review every visible string against SKILL.md ch.12 (interface copy): system-vocabulary leaking into labels, controls that don't name their action, an action's name mutating across its flow (button "Publish" → toast "Saved"), vague or apologetic errors, empty states with no next action, Title Case/sentence-case inconsistency. Report findings.
 
 ### Agent 3: Hierarchy and rhythm review
 

@@ -15,6 +15,7 @@ Confirm before building:
 - **Source content.** Is there a PRD, doc, or existing material? Read it before sketching.
 - **Speaker notes.** Off by default. Only add when explicitly requested.
 - **Brand / design system.** Always confirm. If none, run `frontend-aesthetic-direction.md` before drawing.
+- **Deck aesthetic axes.** Beyond tone, a deck direction commits on three axes worth naming: **scheme** (light paper / dark canvas), **formality** (boardroom ↔ zine), and **density** (airy manifesto ↔ data-heavy working deck). Vary deck-to-deck — a dark editorial canvas with one hot accent, a warm-paper serif deck, a cobalt-grid corporate deck, and a raw-grid brutalist deck are four different instruments, not one template re-skinned. If a local deck-template library exists (on this user's machine: `~/Dev/open-design/design-templates/html-ppt-*/`, 30+ named styles with example.html), skim 2–3 matching styles for direction — but build in this file's shell; never mix layout vocabularies across styles.
 
 If the user gave enough context to skip the question round (e.g. "make a 5-slide deck for engineering all-hands from this PRD"), proceed.
 

@@ -32,6 +32,8 @@ Answer ALL of these — an unanswered question is a decision the next agent will
 
 **VISUAL FOUNDATIONS:** Colors, type, spacing — and then the questions that actually distinguish brands: What do backgrounds do (images? full-bleed? illustration? repeating patterns/textures? gradients?)? Animation (which easing? fades? bounces? none?)? Hover states (opacity, darker, lighter?) and press states (color shift? shrink?)? Borders? Inner/outer shadow systems? Protection gradients vs capsules over imagery? Use of transparency and blur — when? The color vibe of imagery (warm? cool? b&w? grain?)? Corner radii? What does a card look like (shadow, rounding, border)? Answer every one; add anything else you observed.
 
+**USAGE RULES, not adjectives.** Wherever the system constrains something, write the constraint as an enforceable rule a reviewer can check mechanically: a frequency ("one accent moment per ~600vh"), a role ban ("mustard is never a CTA — it is jewelry"), a forbidden value ("pure white only as inverse text in the dark panel; pure black is forbidden — the darkest value is the ink token"). "Use sparingly" is a decision deferred to the next agent; a rule is a decision made.
+
 ## Phase 4: Foundation specimen cards
 
 Create many small HTML specimen files in `guidelines/` — target ~700×150px each, and **split at the sub-concept level**: separate cards for primary vs neutral vs semantic colors; display vs body vs mono type; spacing tokens vs spacing-in-use. A typical set is 12–20+ cards; err toward more small cards, not fewer dense ones — small specimens are scannable and diff-able. No titles or framing inside the card (name the file instead); just the swatches/specimens. Each card links the real `../styles.css` so it renders from live tokens — a specimen with hardcoded values silently drifts from the system it documents.
@@ -62,6 +64,7 @@ For each product, build 3–5 core screens in `ui_kits/<product>/` as high-fidel
 ## Phase 8: Finish — index, SKILL.md, verify
 
 - Add a short index to `readme.md`: a manifest of the root folder plus the list of components and UI kits.
+- **Emit a portable `DESIGN.md`** at the folder root in the 9-section library shape (Visual Theme & Atmosphere / Color / Typography / Spacing & Grid / Layout & Composition / Components / Motion & Interaction / Voice & Brand / Anti-patterns, opening with an H1 title + `> Category:` line) — a condensed, prose distillation of the readme that other design tools and DESIGN.md-driven agents can consume directly. The readme is the system's manual; the DESIGN.md is its passport.
 - **Write a `SKILL.md`** at the folder root so the system is itself an installable Agent Skill:
 
 ```

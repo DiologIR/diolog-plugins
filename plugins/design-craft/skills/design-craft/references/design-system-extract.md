@@ -45,6 +45,10 @@ Pull the shadow system. Typically 3–5 elevations (`shadow-sm` through `shadow-
 
 Z-index scale (modals, dropdowns, toasts, tooltips); animation tokens (duration `fast`/`normal`/`slow` and easing curves); breakpoints (if responsive); container widths (max-width values for content).
 
+### Signature moves (prose, not tokens)
+
+Tokens alone don't reproduce a brand — capture the 4–8 observations that actually distinguish it, each concrete enough to act on. The kind of thing to hunt for: a signature headline weight ("display runs at weight 300 — anti-convention, whispered authority"), tinted rather than gray shadows ("multi-layer `rgba(50,50,93,.25)` — elevation stays on-brand"), OpenType features (`"ss01"` stylistic sets, `"tnum"` for financial data), a deliberately conservative radius, a color that is never used for a role ("the yellow is jewelry, never a CTA"). These observations are what let a future agent produce on-brand work the tokens can't specify.
+
 ## Phase 3: Emit the tokens file
 
 Write a `tokens.css` (or matching format if the source uses a different language: `tokens.ts`, `tokens.json`, etc.). Structure:
@@ -78,6 +82,8 @@ Write a `tokens.css` (or matching format if the source uses a different language
 ```
 
 Adapt to the source language and naming convention. If the source uses Tailwind, emit a `tailwind.config.js` extension. If TypeScript, emit a `tokens.ts` with typed exports. Match the project's style.
+
+**Optional companion: a portable `DESIGN.md`.** When the user wants the system usable by other agents/tools (or a local design-system library exists to slot it into), also emit a prose `DESIGN.md` in the 9-section shape used by portable design-system libraries: **1 Visual Theme & Atmosphere** (including the signature moves from Phase 2) · **2 Color** (values + usage rules) · **3 Typography** · **4 Spacing & Grid** · **5 Layout & Composition** · **6 Components** · **7 Motion & Interaction** · **8 Voice & Brand** · **9 Anti-patterns**. Open with an H1 title and a `> Category: <group>` line. The tokens file is for CSS; the DESIGN.md is for the next agent's system prompt.
 
 ## Phase 4: Document findings
 

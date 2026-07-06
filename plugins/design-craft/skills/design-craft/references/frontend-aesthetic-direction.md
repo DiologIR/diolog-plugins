@@ -15,6 +15,8 @@ Before committing to a new direction, double-check that no existing context appl
 
 If any of these exist, **stop and use them** instead. Aesthetic direction is for true greenfield. If the user has a brand and forgot to attach it, ask for it before proceeding.
 
+Also check for a **local design-system library** (on this user's machine: `~/Dev/open-design/design-systems/` — 150+ portable `DESIGN.md` systems). Two uses here: a brief that names or clearly evokes a brand ("something like Linear", "Stripe-quality") gets the actual system as context rather than your memory of it; and when proposing the 4 directions below, a well-authored library system (atelier-zero, kami, a strong product system) can *be* one of the candidates, tokens and all. Skim before trusting — entries with generic default palettes are boilerplate, not direction.
+
 ## Phase 2: Discover the intent
 
 Ask the user (or confirm if they've stated):
@@ -98,6 +100,14 @@ Use `oklch()` to keep harmony if the palette is from scratch:
 ```
 
 **Subtly tone whites and blacks.** Pure `#FFFFFF` and `#000000` is harsh. Match the chosen tone (e.g. `#FAFAFA` warm-neutral, `#1A1A1A` near-black).
+
+**Write the accent budget as enforceable rules, not adjectives.** "Use sparingly" is unenforceable; a frequency, a role ban, and a forbidden value are checkable at review. The pattern (from magazine-grade systems):
+
+- *Frequency:* "one accent moment per viewport-and-a-half — if two CTAs are accent-filled, the section markers drop to muted ink."
+- *Role bans:* "the secondary accent is never a CTA — it is jewelry (a single ★, a highlighted stat ring, one annotation dot)."
+- *Forbidden values:* "pure white only as inverse text inside the dark panel, never on the paper ground; nothing darker than the committed ink."
+
+Two or three rules of this shape make the direction self-policing — a reviewer (or the swap test) can catch violations mechanically.
 
 ### Density
 

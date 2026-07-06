@@ -49,6 +49,8 @@ A provided design system is **binding**, not inspiration: build only from its to
 
 **When no brand exists, the subject is the context.** Pin down one concrete subject, its audience, and the page's single job (state your choice if the brief doesn't) — then mine the subject's own world for design language: its materials, instruments, artifacts, and vernacular are where distinctive choices come from. Also use anything you remember about this user's preferences, prior designs, or product as a hint before defaulting.
 
+**Check for a local design-system library before mocking anything.** A machine may carry a folder of portable `DESIGN.md` systems (on this user's machine: `~/Dev/open-design/design-systems/<slug>/` — 150+ systems with `DESIGN.md` + `tokens.css`, including 70+ real product brands like stripe/linear-app/vercel and hand-authored editorial systems like atelier-zero/kami). When the brief names a brand or wants an established look, read the matching system and treat it as binding context (§4 rules apply). Quality varies — the rich systems carry specific observations and token values; entries that read as generic boilerplate (default `#3B82F6` palettes, "modern, minimal") are *worse* than choosing your own direction — skim before trusting.
+
 ## 5. Content principles — no filler
 
 **Every element must earn its place.** One thousand no's for every yes. Filler is: placeholder/dummy content (lorem ipsum, made-up stats, dead "Learn more" buttons), unnecessary sections ("Why choose us?" when benefits are already covered), redundant elements (headline + subhead + paragraph all saying the same thing), decorative cruft (purposeless patterns, emoji-for-color, gradient overlays that don't improve the design), and data slop (numbers that don't support the message, over-dense charts).
@@ -134,6 +136,8 @@ Show fewer ideas, polished. One strong fully-realized design beats ten half-bake
 ## 19. Collaboration and delivery
 
 **Show work early and often** — surface the skeleton so the user catches misunderstandings while they're cheap. **Brief summaries** — caveats and next steps only; don't recap what they watched, don't claim success on unverified work. **Delegate verification** to a verifier subagent (the `Agent` tool) for thorough checks (render, layout, JS probing) after every substantive visual change. **Honest progress** — if you can't verify a behavior (no browser, no test data, an unreachable dependency), say so.
+
+**Iteration is surgical.** When the user asks to change one thing in an existing design, change that thing: don't redesign, reformat, or "improve" adjacent sections, and match the file's existing style even where you'd choose differently — every changed line should trace to the request. Clean up only orphans your own change created. If you notice an unrelated problem, mention it in the summary instead of silently fixing it. And keep the artifact code itself simple: no speculative abstractions, options, or flexibility beyond what the design needs — if 200 lines could be 50, rewrite before delivering.
 
 ## 20. IP and content boundaries
 
