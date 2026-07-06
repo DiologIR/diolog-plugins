@@ -24,7 +24,7 @@ Consent gate: build packages for the requester's own voice, or a person who has 
 
 ## Step 0 — Load the references
 
-Read, in order: `references/voice-extraction.md` (how to mine the corpus), `references/ai-writing-signs.md` (what the output must never do), `references/package-blueprint.md` (what you're building). Read `references/linkedin-post-craft.md` when you build the LinkedIn variant. Don't draft anything before these are in context; the templates and evidence rules in them are the spec, not suggestions.
+Read, in order: `references/voice-extraction.md` (how to mine the corpus), `references/ai-writing-signs.md` (what the output must never do), `references/package-blueprint.md` (what you're building). Read `references/linkedin-post-craft.md` when you build the LinkedIn variant, and `references/voice-replication-research.md` when the user asks why a rule exists or how much fidelity to expect (it's the empirical evidence base: stylometry, anchor saturation, the LLM style pull, drift, and why self-judged fidelity is uncalibrated). Don't draft anything before the first three are in context; the templates and evidence rules in them are the spec, not suggestions.
 
 ## Step 1 — Gather the inputs
 
@@ -39,7 +39,7 @@ Check what the conversation already gives you, then batch any missing questions 
 
 ## Step 2 — Extract the voice
 
-Follow `references/voice-extraction.md` end to end: the observation grid, the two-occurrence rule, provenance markers (`[Source: …]` / `[Inference]` / `[Uncertain]`), verbatim sample anchors, and the person-tells-vs-AI-tells distinction (their genuine habits win over the AI-signs defaults, with density guards noted). If the corpus is thin or a register is missing, run the gap interview — one batched message — before synthesising. Never fill a gap by inventing a trait or borrowing one of Luke's.
+Follow `references/voice-extraction.md` end to end: the word-count corpus grading, the observation grid (including the syntactic fingerprint — the subconscious layer the research shows carries the most authorship signal), the two-occurrence rule, provenance markers (`[Source: …]` / `[Inference]` / `[Uncertain]`), verbatim sample anchors (5–8, chosen for register diversity — anchoring saturates around five), and the person-tells-vs-AI-tells distinction (their genuine habits win over the AI-signs defaults, with density guards noted). Compute the numeric fingerprint with `python3 scripts/voice_lint.py --extract-fingerprint <corpus files…>`. If the corpus is thin or a register is missing, run the gap interview — one batched message — before synthesising. Never fill a gap by inventing a trait or borrowing one of Luke's.
 
 ## Step 3 — Build the package
 
@@ -67,6 +67,8 @@ Hand over: where the package lives, the file map, how to invoke it (skill trigge
 ## Constraints
 
 - **Never ship a rule without evidence.** Corpus quote, interview answer, or `ai-writing-signs.md` — those are the only three sources a rule may cite.
+- **Anchors are style ground truth, never fact sources.** Facts, anecdotes, and names inside the writing samples must never migrate into new drafts (style–content entanglement is a documented failure mode); every generated package states this rule.
+- **Traits are mechanical or they are nothing.** Encode every voice trait as a rule with levers or a quoted example; a bare adjective ("casual", "witty") invites the model's own priors instead of the person's.
 - **Never inherit the reference person's habits.** No em-dash ban, AU spelling, or softener lexicon unless *this* corpus shows it.
 - **Never weaken the universal AI bans.** A person's fondness for one tell (say, em dashes) downgrades that item to advisory with a density guard; it never deletes the check, and the cliché phrase list only ever grows.
 - **The package must stand alone.** Someone with no access to this skill gets everything they need inside it: references copied, lint runnable, examples worked.

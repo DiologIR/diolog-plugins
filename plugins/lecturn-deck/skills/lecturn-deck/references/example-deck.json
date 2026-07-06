@@ -1,0 +1,88 @@
+{
+  "schema": "lecturn.deck/1",
+  "id": "dck_test",
+  "title": "Converter Test Deck",
+  "canvas": { "w": 1280, "h": 720 },
+  "theme": {
+    "designMd": "---\nname: Test\n---\n# Test",
+    "tokens": {
+      "colors": { "accent1": "#1f3fa6", "text1": "#141414", "bg1": "#ffffff", "accent2": "#e8663d" },
+      "typography": { "heading": { "family": "Inter" }, "body": { "family": "Inter" } }
+    }
+  },
+  "slides": [
+    {
+      "id": "sld_1",
+      "name": "Cover",
+      "background": { "fill": { "type": "solid", "color": "bg1" } },
+      "speakerNotes": "Welcome the audience and set up the quarter.",
+      "elements": [
+        {
+          "id": "t1", "type": "text",
+          "layout": { "x": 96, "y": 220, "w": 900, "h": 120, "z": 1 },
+          "text": "Third Quarter Review", "size": 44, "font": "Inter",
+          "align": "left", "color": "text1", "weight": "bold", "componentRole": "title"
+        },
+        {
+          "id": "t2", "type": "text",
+          "layout": { "x": 96, "y": 350, "w": 700, "h": 60, "z": 2 },
+          "rich": { "paragraphs": [
+            { "align": "left", "runs": [
+              { "text": "Revenue ", "size": 20, "color": "#141414" },
+              { "text": "up 12%", "size": 20, "bold": true, "color": "accent2" }
+            ] }
+          ] }
+        },
+        {
+          "id": "sh1", "type": "shape", "shape": "round-rect",
+          "layout": { "x": 96, "y": 440, "w": 260, "h": 120, "z": 3 },
+          "fill": { "type": "solid", "color": "accent1" }, "radius": 12,
+          "text": "On track"
+        },
+        {
+          "id": "ln1", "type": "line", "variant": "line-arrow",
+          "layout": { "x": 400, "y": 500, "w": 300, "h": 0, "z": 4 },
+          "stroke": { "color": "accent1", "width": 3 }
+        }
+      ]
+    },
+    {
+      "id": "sld_2",
+      "name": "Data",
+      "elements": [
+        {
+          "id": "g1", "type": "group",
+          "layout": { "x": 80, "y": 80, "w": 520, "h": 200, "z": 1 }
+        },
+        {
+          "id": "st1", "type": "stat", "groupId": "g1",
+          "layout": { "x": 80, "y": 80, "w": 240, "h": 200, "z": 1 },
+          "value": "$4.2M", "label": "Revenue", "accent": "accent1"
+        },
+        {
+          "id": "st2", "type": "stat", "groupId": "g1",
+          "layout": { "x": 340, "y": 80, "w": 240, "h": 200, "z": 2 },
+          "value": "+12%", "label": "Growth", "accent": "accent2"
+        },
+        {
+          "id": "tb1", "type": "table",
+          "layout": { "x": 80, "y": 320, "w": 700, "h": 220, "z": 2 },
+          "headerRow": true,
+          "columns": [ { "w": 350 }, { "w": 350 } ],
+          "rows": [
+            [ "Metric", "Value" ],
+            [ "Revenue", "$4.2M" ],
+            [ { "text": "Merged header", "colSpan": 2 } ]
+          ]
+        },
+        {
+          "id": "ch1", "type": "chart", "chart": "column",
+          "layout": { "x": 820, "y": 80, "w": 380, "h": 300, "z": 3 },
+          "categories": ["Q1", "Q2", "Q3"],
+          "series": [ { "name": "Revenue", "values": [30, 42, 55] } ],
+          "options": { "legend": "bottom" }
+        }
+      ]
+    }
+  ]
+}

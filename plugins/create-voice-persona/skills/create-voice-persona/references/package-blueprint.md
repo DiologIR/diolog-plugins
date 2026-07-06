@@ -74,6 +74,15 @@ contraction habits — with [Source:] markers.]
 paragraphing, list style, capitalisation. Concrete enough to generate voice-lint.json
 mechanically. Include the AI-signs bans that apply to everyone plus this person's own.]
 
+## Syntactic fingerprint
+[The subconscious layer, stated as counter-rules to the LLM default: their
+sentence-length spread (quote a short one and a long one; "vary like this, not
+uniform mid-length"), active/passive habit, And/But/So openers, plain verbs vs
+nominalizations, participial appetite. The numeric version lives in
+voice-lint.json's fingerprint block; this section is the prose version drafts
+are written against. Anchors here are style ground truth, never fact sources —
+facts inside samples must never migrate into new drafts.]
+
 ## Habits from the wider corpus
 [Register-crossing habits worth naming: how they handle edge cases, examples,
 numbers, downsides, trade-offs. Only what's evidenced.]
@@ -102,8 +111,15 @@ destinations this variant covers].
 - **Cognitive model:** [how this register differs — selection/compression/expansion]
 
 ## 2. Register rules
-[6–10 bullets: the dials this variant moves and where they sit. Format conventions
-of the destination (from the research layer for LinkedIn). Each rule carries its why.]
+[Open with the variant's position on the four NNG tone dimensions — formal↔casual,
+serious↔funny, respectful↔irreverent, matter-of-fact↔enthusiastic — each expressed
+as the mechanical levers that produce it (contractions, lexical choices, sentence
+openers), never as bare adjectives. Then 6–10 bullets: the dials this variant moves
+and where they sit. Format conventions of the destination (from the research layer
+for LinkedIn). Each rule carries its why. For long-form variants (articles, book
+chapters), include the re-anchoring rule: persona adherence decays over long
+generations, so re-read the sample anchors before each major section and lint per
+section, not once at the end.]
 
 ## 3. Shapes that work
 [A small table of piece-shapes with skeletons, grounded in the person's corpus
@@ -153,9 +169,16 @@ Derive from the base voice's Mechanics section. Schema (consumed by `scripts/voi
   "spelling": "AU" | "US" | "none",
   "exclamations": "forbid" | "ration" | "allow",
   "emoji": "forbid" | "ration" | "allow",
-  "formats": { "<key>": { "max_chars": 0, "warn_words": 0, "min_words": 0, "info_chars": 0, "max_segment_words": 0, "note": "" } }
+  "formats": { "<key>": { "max_chars": 0, "warn_words": 0, "min_words": 0, "info_chars": 0, "max_segment_words": 0, "note": "" } },
+  "fingerprint": {
+    "mean_sentence_words": 0, "sd_sentence_words": 0, "contraction_per_100w": 0,
+    "comma_per_sentence": 0, "semicolon_per_1000w": 0, "nominalization_per_1000w": 0,
+    "mean_paragraph_sentences": 0
+  }
 }
 ```
+
+Generate the `fingerprint` block mechanically: `python3 scripts/voice_lint.py --extract-fingerprint <corpus files…>` prints it ready to paste. The lint then reports a draft's stylometric deviation from the corpus as advisories (never hard failures — the fingerprint flags drift toward the uniform LLM register; the human judges whether the drift matters for this piece).
 
 Format-spec keys are all optional per format: `max_chars` (warn above), `warn_words` (warn above), `min_words` (warn below; used for long-form), `info_chars` (info only; the X/Twitter budget), `max_segment_words` (spoken/brief registers), `note` (shown with the warning).
 

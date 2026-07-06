@@ -53,11 +53,13 @@ Extract the facts, figures, quotes, and specifics you'll actually use. Note what
 
 The base voice rules from `luke-voice.md` apply to every line of every format. The loaded persona file's register rules, structure templates, and decision frameworks apply on top. For LinkedIn/blog specifically, the structure and hook discipline in `linkedin-engagement.md` apply as before (hook that earns "see more" in ~140-200 chars; one genuine closing question; ~150-400 words feed / ~1,500-2,200 long-form; hashtags PascalCase; links in the first comment).
 
+For long-form work (blog articles, book chapters, long marketing pages): voice adherence measurably decays over long generations, so **re-read the sample anchors in `luke-voice.md` before drafting each major section**, and run the self-check + lint per section rather than once at the end. Drift shows up as evenly-sized sentences and -tion/-ment abstractions creeping in; the syntactic-fingerprint section in `luke-voice.md` is the antidote.
+
 Across all formats: confident on substance, modest in delivery; opinions stated then softened (except code-review blockers, which stay plain); dry wit only if it lands; British/Australian spelling; contractions throughout.
 
 ## Step 5 — Self-check, then lint
 
-First the **"would Luke send this?"** test from `luke-voice.md`: read the draft as someone who knows him; fix any line that's too polished, too keen, too corporate, or carries an AI tell. Then check the draft against the loaded persona's own constraints section (each persona file ends with one).
+First the **"would Luke send this?"** test from `luke-voice.md`: read the draft as someone who knows him; fix any line that's too polished, too keen, too corporate, or carries an AI tell. This pass catches defects — it does not certify fidelity (a model's own "sounds like him" judgment is empirically uncalibrated); fidelity rests on the anchors, the lint, and Luke's review. Then check the draft against the loaded persona's own constraints section (each persona file ends with one).
 
 Then run the deterministic guardrail on the body:
 

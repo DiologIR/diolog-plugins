@@ -13,6 +13,9 @@ Usage:
     python3 voice_lint.py --config voice-lint.json --format linkedin draft.md
     python3 voice_lint.py draft.md                # built-in defaults, no config
     cat draft.md | python3 voice_lint.py -
+    python3 voice_lint.py --extract-fingerprint corpus/*.md
+        # prints the stylometric "fingerprint" JSON block for voice-lint.json;
+        # the lint then flags drafts that drift from the corpus rhythm
 
 Exit code is non-zero on any hard failure (em dash where forbidden, banned
 phrase, chat leakage, markdown artifacts where the format renders none), so it
@@ -154,13 +157,97 @@ def line_hits(text, phrases):
     return hits
 
 
+# ---------------------------------------------------------- stylometrics
+# Deterministic fingerprint of the subconscious layer (sentence rhythm,
+# contractions, punctuation densities, nominalizations). Computed from the
+# corpus at persona-build time (--extract-fingerprint), compared against each
+# draft as ADVISORIES: LLM output drifts toward uniform mid-length sentences
+# and abstract nouns even when the surface style matches, and a model judging
+# its own fidelity is uncalibrated — these numbers are the calibrated check.
+
+NOMINALIZATION = re.compile(
+    r"\b\w{4,}(?:tion|tions|sion|sions|ment|ments|ness|ance|ence|ities|ity)\b", re.I)
+CONTRACTION = re.compile(r"\b\w+['’](?:t|s|re|ve|ll|d|m)\b", re.I)
+
+
+def split_sentences(text):
+    # strip code blocks, headings, list markers; keep prose
+    text = re.sub(r"```.*?```", " ", text, flags=re.S)
+    text = re.sub(r"^#{1,6} .*$", " ", text, flags=re.M)
+    text = re.sub(r"^\s*[-*•]\s+", "", text, flags=re.M)
+    parts = re.split(r"(?<=[.!?])\s+(?=[A-Z\"'“(])", text)
+    return [p.strip() for p in parts if len(re.findall(r"\b\w+\b", p)) >= 2]
+
+
+def fingerprint(text):
+    sents = split_sentences(text)
+    if not sents:
+        return None
+    lens = [len(re.findall(r"\b\w+\b", s)) for s in sents]
+    n_words = sum(lens)
+    mean = sum(lens) / len(lens)
+    sd = (sum((l - mean) ** 2 for l in lens) / len(lens)) ** 0.5
+    paras = [p for p in re.split(r"\n\s*\n", text) if split_sentences(p)]
+    para_sents = [len(split_sentences(p)) for p in paras]
+    return {
+        "mean_sentence_words": round(mean, 1),
+        "sd_sentence_words": round(sd, 1),
+        "contraction_per_100w": round(100 * len(CONTRACTION.findall(text)) / n_words, 2),
+        "comma_per_sentence": round(text.count(",") / len(sents), 2),
+        "semicolon_per_1000w": round(1000 * text.count(";") / n_words, 2),
+        "nominalization_per_1000w": round(1000 * len(NOMINALIZATION.findall(text)) / n_words, 1),
+        "mean_paragraph_sentences": round(sum(para_sents) / max(1, len(para_sents)), 1),
+    }
+
+
+def compare_fingerprint(draft_fp, target):
+    """Yield advisory strings where the draft deviates markedly from the corpus."""
+    checks = [
+        ("mean_sentence_words", 0.35, "average sentence length"),
+        ("sd_sentence_words", 0.40, "sentence-length variance (uniform rhythm is an LLM tell)"),
+        ("contraction_per_100w", 0.50, "contraction rate"),
+        ("comma_per_sentence", 0.50, "comma density"),
+        ("nominalization_per_1000w", 0.50, "nominalization rate (-tion/-ment/-ness abstractions)"),
+    ]
+    for key, tol, label in checks:
+        want = target.get(key)
+        got = draft_fp.get(key)
+        if want is None or got is None or want == 0:
+            continue
+        if abs(got - want) / want > tol:
+            direction = "above" if got > want else "below"
+            yield (f"{label}: draft {got} vs corpus {want} "
+                   f"({direction} the ±{int(tol*100)}% band)")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Lint a voice-persona draft.")
-    ap.add_argument("path", help="Path to the draft, or - for stdin")
+    ap.add_argument("path", nargs="+",
+                    help="Draft to lint (or - for stdin); with --extract-fingerprint, corpus files")
     ap.add_argument("--config", default=None, help="Path to voice-lint.json")
     ap.add_argument("--format", dest="fmt", default=None,
                     help="Format key (linkedin, blog, marketing, short, slack, email, review, brief)")
+    ap.add_argument("--extract-fingerprint", action="store_true",
+                    help="Compute the stylometric fingerprint of the given corpus files and print "
+                         "the JSON block to paste into voice-lint.json")
     args = ap.parse_args()
+
+    if args.extract_fingerprint:
+        corpus = "\n\n".join(read_text(p) for p in args.path)
+        fp = fingerprint(corpus)
+        if fp is None:
+            print("no prose found in corpus files"); sys.exit(1)
+        n_words = len(re.findall(r"\b\w+\b", corpus))
+        print(json.dumps({"fingerprint": fp}, indent=2))
+        note = ("stable" if n_words >= 2000 else
+                "usable but below the ~2,000-word stability threshold" if n_words >= 800 else
+                "thin — treat these numbers as rough")
+        print(f"// corpus: {n_words} words ({note})")
+        sys.exit(0)
+
+    if len(args.path) > 1:
+        print("lint takes one draft at a time"); sys.exit(2)
+    args.path = args.path[0]
 
     cfg = load_config(args.config)
     text = read_text(args.path)
@@ -269,6 +356,18 @@ def main():
     elif cfg["spelling"] == "US":
         for i, p, line in line_hits(text, AU_TELLS):
             print(f"warn  AU/UK spelling \"{p}\" (voice is US), line {i}")
+
+    # --- Stylometric fingerprint (advisory) ---
+    target_fp = cfg.get("fingerprint") or {}
+    if target_fp:
+        draft_fp = fingerprint(text)
+        if draft_fp:
+            devs = list(compare_fingerprint(draft_fp, target_fp))
+            if devs:
+                for d in devs:
+                    print(f"warn  fingerprint: {d}")
+            else:
+                print("ok    stylometric fingerprint within corpus bands")
 
     # --- Stats + format advisories ---
     n_words = len(re.findall(r"\b\w+\b", text))

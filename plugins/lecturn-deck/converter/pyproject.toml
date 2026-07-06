@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deckconv"
+version = "1.0.0"
+description = "Two-way converter between PowerPoint (.pptx) and the lecturn.deck/1 JSON slide schema — stdlib only, no third-party dependency"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "DiologIR", email = "luke@diolog.com.au" }]
+keywords = ["pptx", "powerpoint", "presentation", "ooxml", "json", "converter", "lecturn"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+deckconv = "deckconv.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+packages = ["deckconv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

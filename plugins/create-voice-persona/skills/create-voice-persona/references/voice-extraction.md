@@ -4,11 +4,13 @@ How to turn a person's raw writing samples into the base-voice file of their per
 
 ## 1. Corpus intake
 
-Ask for everything the person can give, then work with what arrives:
+Ask for everything the person can give, then work with what arrives. Grade the corpus in **words**, not documents — stylometric research puts the thresholds there (see `voice-replication-research.md`): basic patterns emerge at ~300–500 words, function-word and syntax distributions stabilize around ~2,000.
 
-- **Ideal corpus:** 10+ samples spanning at least three registers (e.g. LinkedIn posts AND work chat AND a doc or email), including some pre-2023 writing if it exists (guaranteed human, per the AI-signs guide's dating logic).
-- **Workable corpus:** 4–9 samples in one or two registers. Extract what's evidenced; mark register gaps `[Uncertain]` and interview the person to fill them (see §5).
-- **Thin corpus:** under ~4 samples. Say so plainly, extract only what repeats, and lean heavily on the interview. Do not pad the profile by inventing traits — a wrong voice profile is worse than a sparse one, because every piece the persona ever writes inherits the error.
+- **Ideal corpus:** 2,000+ words across 10+ samples spanning at least three registers (e.g. LinkedIn posts AND work chat AND a doc or email), including some pre-2023 writing if it exists (guaranteed human, per the AI-signs guide's dating logic).
+- **Workable corpus:** ~800–2,000 words in one or two registers. Extract what's evidenced; mark register gaps `[Uncertain]` and interview the person to fill them (see §5).
+- **Thin corpus:** under ~800 words. Say so plainly, extract only what repeats, and lean heavily on the interview. Do not pad the profile by inventing traits — a wrong voice profile is worse than a sparse one, because every piece the persona ever writes inherits the error.
+
+Registers are not equally hard: replication measurably succeeds on structured writing and fails hardest on **casual voice** (chat, social, short-form). Demand the most corpus evidence for exactly the registers that look most throwaway, and say in the delivery note which variants rest on thin evidence.
 
 Also collect **identity context**: who the person is, role, company, audience, topics they post about, and any self-declared rules ("I never use emojis", "I hate em dashes"). Self-declared rules count as evidence even with zero corpus occurrences.
 
@@ -20,6 +22,7 @@ Read every sample twice: once for what the person says, once for how. Fill this 
 
 | Dimension | What to look for |
 |---|---|
+| **Syntactic fingerprint** | The subconscious layer — the strongest authorship markers per the stylometry research: sentence-length spread (humans are spiky; note their short/long extremes, not just the average), active vs passive habits, clause complexity, how often sentences open with And/But/So, participial-clause and nominalization appetite (most people use far fewer "-tion/-ment/-ness" abstractions than an LLM defaults to) |
 | **Mechanics** | Punctuation habits (dash use, semicolons, ellipses, exclamation marks), spelling variety (AU/UK/US), capitalisation, paragraph length, list style, emoji use and where |
 | **Lexicon** | Openers and connectors they actually use, softeners on asks/critiques, hedges, plain-ownership phrasing, signature words/phrases, contraction density |
 | **Structure** | How they open (straight in? context first?), how they close (question? plain landing? sign-off?), how they sequence an argument, where examples land relative to claims |
@@ -37,7 +40,9 @@ Read every sample twice: once for what the person says, once for how. Fill this 
 
 ## 4. Sample anchors
 
-Select 5–8 verbatim quotes across registers and put them in the base-voice file under "pattern-match against these". Choose quotes that *demonstrate* the extracted rules (the softener in action, the actual dash habit, the way they close). These anchors are the highest-value part of the profile: models imitate examples better than they follow descriptions, and the anchors are also the reviewer's ground truth. Never edit the quotes, including their typos.
+Select 5–8 verbatim quotes across registers and put them in the base-voice file under "pattern-match against these". Choose quotes that *demonstrate* the extracted rules (the softener in action, the actual dash habit, the way they close). These anchors are the highest-value part of the profile: exemplars measurably beat descriptions for style transfer, and the effect saturates around five exemplars — so past that count, spend selections on **diversity** (different registers, moods, lengths), not more of the same. The anchors are also the reviewer's ground truth. Never edit the quotes, including their typos.
+
+**Anchors are style ground truth, never fact sources.** Models demonstrably leak exemplar *content* into new pieces (style–content entanglement); the generated package must state that facts, anecdotes, and names inside the anchors never migrate into new drafts.
 
 ## 5. The gap interview
 
@@ -58,7 +63,9 @@ The one-breath summary is worth real effort: one sentence a stranger could hold 
 Quality bar before moving on to variants:
 
 - Every rule evidenced or marked; zero rules copied from the reference package without corpus support.
-- Sample anchors present and verbatim.
+- Sample anchors present and verbatim; the anchors-are-not-facts rule stated.
 - The person's anti-patterns (never-does list) captured, not just their does-list.
+- The syntactic fingerprint captured — run `python3 scripts/voice_lint.py --extract-fingerprint <corpus files…>` to compute it mechanically (sentence-length spread, contraction rate, punctuation densities, nominalization rate) and paste the emitted block into `voice-lint.json`; describe the same habits in prose in the base voice.
+- Every trait encoded as a mechanical rule or a quoted example — an adjective on its own ("casual", "witty") is a null instruction that invites the model's own priors.
 - Mechanics section concrete enough to generate the `voice-lint.json` from it mechanically.
-- Read the profile back as the person would: if any line would make them say "I don't do that", fix it now — it's about to be multiplied across every variant.
+- Read the profile back as the person would: if any line would make them say "I don't do that", fix it now — it's about to be multiplied across every variant. Remember this read-back catches *defects*, not certifies fidelity: a model's own "sounds like them" judgment is empirically uncalibrated (see `voice-replication-research.md`), so fidelity rests on the anchors, the lint, and the person's review.

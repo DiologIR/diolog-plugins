@@ -1,0 +1,9 @@
+{
+  "name": "lecturn-deck",
+  "version": "1.0.0",
+  "description": "Convert PowerPoint (.pptx) ⇄ the lecturn.deck/1 JSON slide schema, and author/validate that JSON, with the bundled spec and a stdlib-only Python two-way converter. Import a .pptx to an editable deck/slide/element tree (media extracted, fidelity F0–F3 reported, no silent loss), or build a structurally valid .pptx from a deck JSON. Includes a specialist agent for multi-step convert-validate-verify loops.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
