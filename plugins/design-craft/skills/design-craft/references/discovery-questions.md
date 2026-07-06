@@ -70,7 +70,9 @@ These vary by the task. Examples:
 
 **For an interactive prototype:** what flow / what screens? hi-fi or mid-fi? device frame? goal state of the flow? sample data to fill the screens?
 
-**For a brand or aesthetic:** mood/tone in 3 adjectives? existing brands you admire (and what specifically)? anything explicitly off-limits? industry/context (B2B SaaS, consumer, editorial, government)?
+**For a brand or aesthetic:** mood/tone in 3 adjectives? existing brands you admire (and what specifically)? anything explicitly off-limits? industry/context (B2B SaaS, consumer, editorial, government)? how should it make the user *feel* (trust, delight, confidence, calm)?
+
+**For a mobile app screen:** which platform grammar (iOS / Material / both)? which user stage is this screen for (new / returning / power)? installable on a real phone or presentation-framed?
 
 Size the round to the ambiguity: a genuinely open brief may warrant ~10 questions; a half-specified one only 3–4. Never pad the round to hit a number — a question whose answer wouldn't change what you build is noise.
 

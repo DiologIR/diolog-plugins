@@ -2,7 +2,7 @@
 
 Run a comprehensive quality check before a design is shown to stakeholders or shipped. **A polished design and an unpolished design are the same idea executed at different levels of care — and the gap is what people actually see.**
 
-This skill is the umbrella for the four narrower review procedures. Use it as the final gate before delivery.
+This skill is the umbrella for the five narrower review procedures. Use it as the final gate before delivery.
 
 ## Phase 1: Confirm scope
 
@@ -10,9 +10,9 @@ Determine what to polish: (1) the HTML file the user just finished or asked abou
 
 If the design is clearly mid-flight (broken layout, missing sections, placeholder content the user is still iterating on), say so and ask whether they really want a polish pass now or after the structure is settled.
 
-## Phase 2: Launch four review agents in parallel
+## Phase 2: Launch five review agents in parallel
 
-Use the **`Agent`** tool to launch all four agents concurrently in a single message. Each agent runs the equivalent of one of the standalone review procedures, scoped to this file.
+Use the **`Agent`** tool to launch all five agents concurrently in a single message. Each agent runs the equivalent of one of the standalone review procedures, scoped to this file.
 
 Instruct every agent explicitly: **report every issue found, including uncertain and low-severity ones, with a confidence and severity estimate for each.** Coverage is the agent's job; filtering and prioritization happen in Phase 3. An agent that self-censors "minor" findings silently lowers recall.
 
@@ -38,15 +38,19 @@ Run the full `hierarchy-rhythm-review.md`: hierarchy (primary/secondary/tertiary
 
 Run the full `interaction-states-pass.md`: inventory of interactive elements; for each — default, hover, active, disabled, focus, loading; transitions (0.15–0.3s for state changes, longer for entry/exit, `prefers-reduced-motion` respected); feedback for actions (success/error confirmation, state visibility). Report findings.
 
+### Agent 5: Layout integrity and responsive
+
+Run the full `visual-verification.md` Phase 1 in a real browser (serve over HTTP): the viewport matrix (375 / 768 / 1280 / 1920 plus in-between widths), overflow (including the programmatic probe), overlap, text clipping, alignment drift, load stability (CLS/FOUT), z-order, media aspect ratios — and collect console errors on every load. Follow the Phase 2 screenshot playbook for evidence. Report findings with viewport + severity.
+
 ## Phase 3: Aggregate, deduplicate, prioritize
 
-Wait for all four agents. Aggregate findings into one list.
+Wait for all five agents. Aggregate findings into one list.
 
 **Deduplicate.** If two agents flagged the same issue (e.g. "focus ring removed" appears in both accessibility and interaction-states), merge into one entry.
 
 **Prioritize.** Group findings into:
 
-1. **Blockers** — accessibility failures (contrast under WCAG, missing keyboard support, removed focus rings, missing labels). These break the design for real users; fix all of them.
+1. **Blockers** — accessibility failures (contrast under WCAG, missing keyboard support, removed focus rings, missing labels) and layout breakage (overflow, overlap, shattered mobile layout). These break the design for real users; fix all of them.
 2. **Quality issues** — AI slop tropes, broken hierarchy, missing interaction states. These cheapen the design; fix all of them.
 3. **Polish recommendations** — subtler improvements (suggested color tone shift, spacing-scale tightening). Apply when in scope; flag when out of scope.
 
@@ -70,6 +74,8 @@ Fix every blocker and every quality issue directly. Apply polish recommendations
 - `Intl.DateTimeFormat` / `Intl.NumberFormat`, never hardcoded date/number formats
 - `translate="no"` on brand names and code tokens (prevents garbled auto-translation)
 - Explicit `width`/`height` on every `<img>` (prevents layout shift)
+- CSS specificity collisions — a generic `.section` rule silently overriding component padding/margins is a classic generated-CSS failure; keep selector depth consistent
+- z-index values from a tokenized scale (`--z-dropdown: 100 … --z-toast: 500`), never ad-hoc `z-index: 9999`
 - Virtualize lists over ~50 items
 - `spellcheck="false"` on emails, codes, usernames
 - Warn before navigation with unsaved changes (`beforeunload` or router guard)
@@ -77,6 +83,8 @@ Fix every blocker and every quality issue directly. Apply polish recommendations
 ## Phase 5: Re-verify
 
 After fixes, do a quick re-check on the high-risk areas: Did the contrast fixes maintain the visual style, or wash out a brand color? Did the focus-ring additions overlap with neighboring content? Did the hierarchy adjustments make the primary CTA actually feel primary? If anything looks off, fix it. If you're unsure, flag it for the user's review.
+
+**The last look is subtractive.** Before shipping, apply Chanel's rule: look once more and remove one accessory — the one element, effect, or decoration the design doesn't need. Review rounds accrete; this step is the counterweight. If you genuinely can't find anything to remove, ship.
 
 **Convergence.** Treat fix-then-re-review as rounds, up to 3. Ship when the re-review scores clear your quality bar **and** zero must-fixes remain open — both conditions, not either. Each round's findings report should be shorter than the last; a round that produces more text than the previous one is churning, not converging. If round 3 still doesn't clear the bar, ship the best round and say so honestly ("ships with two open polish items: …") rather than iterating forever or quietly relabeling the bar.
 

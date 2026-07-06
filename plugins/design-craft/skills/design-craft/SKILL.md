@@ -1,6 +1,6 @@
 ---
 name: design-craft
-description: Use this skill whenever the user asks you to design or build a user-facing visual artifact — a landing page, app screen, dashboard, clickable prototype, slide deck, wireframe, design variations, a tweakable panel, an animated/motion piece or product video, a 3D/WebGL or depth-heavy hero, a print-ready document, generated imagery, a design system, or token extraction — or to review/fix a design (accessibility audit, "looks AI-generated"/remove-the-slop, hierarchy check, interaction-states or motion pass, pre-ship polish). Triggers: "design a…", "build a UI/landing page/prototype/deck", "animate this", "make this look intentional/less generic", "give me a few options", "wireframe this flow", "polish this before we ship", and similar. Do NOT use for producing a DESIGN.md from screenshots or a live URL (use design-md-from-screenshots / design-md-from-website). An opinionated, accessibility-aware, AI-slop-resistant designer producing intentional HTML/CSS/SVG/JS artifacts; 21 phased procedures in references/.
+description: Use this skill whenever the user asks you to design or build a user-facing visual artifact — a landing page, app screen, dashboard, clickable prototype, a mobile app screen or native-feel iOS/Android mockup, slide deck, wireframe, design variations, a tweakable panel, an animated/motion piece, a GSAP or scroll-driven marketing page, a 3D/WebGL hero, a print document, generated imagery, or a design system — or to review/fix a design (accessibility audit, "looks AI-generated"/remove-the-slop, hierarchy check, interaction-states or motion pass, layout/responsive breakage, pre-ship polish). Triggers: "design a…", "build a UI/prototype/deck", "design the mobile app", "animate this", "add scroll animations", "make this look intentional", "give me options", "wireframe this flow", "polish before we ship". NOT for producing a DESIGN.md from screenshots or a URL (use design-md-from-screenshots / design-md-from-website). An opinionated, AI-slop-resistant designer; 24 phased procedures in references/.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, AskUserQuestion
 ---
 
@@ -46,6 +46,8 @@ Ask the questions the brief actually leaves open — no quota, no padding. A que
 When you find context, observe and follow the visual vocabulary before adding to it: color palette and tone, typography, density, radii/shadow/card patterns, hover/click animation, copy tone. When designing against a real codebase, **read the source — don't rely on memory**, and prefer code over screenshots when both exist (you recreate interfaces more faithfully from code). Target the load-bearing files first: theme/token files (`theme.ts`, `tokens.css`, `_variables.scss`), global stylesheets, and the specific components named in the brief; lift exact hex codes, spacing, and font stacks.
 
 A provided design system is **binding**, not inspiration: build only from its tokens and components, never guess a `var(--*)` name (an unresolved variable silently falls back), and treat its example products/brands/people as style reference only — never as facts about the user or topic. If it ships mocks of similar surfaces, fork those rather than designing from scratch.
+
+**When no brand exists, the subject is the context.** Pin down one concrete subject, its audience, and the page's single job (state your choice if the brief doesn't) — then mine the subject's own world for design language: its materials, instruments, artifacts, and vernacular are where distinctive choices come from. Also use anything you remember about this user's preferences, prior designs, or product as a hint before defaulting.
 
 ## 5. Content principles — no filler
 
@@ -95,39 +97,49 @@ Foundational, not an afterthought — **good accessibility is good design.** **C
 
 Every interactive element needs **default / hover / active / focus / disabled** states (and **loading** for async). Buttons without hover feel broken; disabled buttons that look enabled feel broken on click. Smooth transitions on state changes — **0.2–0.3s ease** (faster than 0.15s is jarring, slower than 0.4s is laggy, none feels broken). Forms show validation, loading (disable + spinner), and success/error confirmation (auto-dismiss non-critical after 3–5s). The current page/tab/selection/filter must be visually distinct.
 
-## 12. Simplicity and one clear CTA
+## 12. Interface copy — words are design material
+
+Words appear in a design for one reason: to make it easier to understand and use. Bring the same intentionality to copy as to spacing and color — copy can make a design feel as templated as the visuals.
+
+- **Write from the user's side of the screen.** Name things by what people control and recognize, never by how the system is built ("Manage notifications", not "Webhook config").
+- **Say what it does, plainly.** Specific beats clever; describe, don't sell. Active voice; a control names exactly what happens ("Save changes", not "Submit").
+- **One name per action, kept through the whole flow** — the button that says "Publish" produces a toast that says "Published". Interface vocabulary is signposting; consistency is how users learn their way around.
+- **Errors and empty states direct, they don't emote.** Explain what went wrong and how to fix it in the interface's voice — errors don't apologize and are never vague; an empty screen is an invitation to act (see the empty-state taxonomy in `make-a-prototype.md`).
+- **Register:** plain verbs, sentence case, no filler, tone matched to brand and audience. Each element does exactly one job — a label labels, an example demonstrates, nothing quietly does double duty.
+
+## 13. Simplicity and one clear CTA
 
 A screen has **one primary action**; everything else supports it. One bold CTA plus smaller secondary links — not five same-size buttons. Reduce options: nav 4–6 top-level items, multi-step beats wall-of-fields, group/search large variant sets, show the most-used 4–5 filters and hide the rest. A first-time user should grasp the main action within 5 seconds.
 
-## 13. System thinking
+## 14. System thinking
 
 **Design components, not pages.** A page is an arrangement of components (`Homepage = Header + Hero + FeatureCards + CTA + Footer`). Define and reuse Button/Card/Input/Header/Modal/Toast with variants and states. Build from **design tokens** (spacing, color, type, radii, shadow) — `padding: var(--space-md)`, not `padding: 17px`. Document each component's usage, variants, states, accessibility notes, and do's/don'ts.
 
-## 14. Respecting the medium
+## 15. Respecting the medium
 
 Don't recreate Figma in code — embrace the web. CSS **Grid** for complex layout, **Flexbox** for simple, **custom properties** for tokens, **transitions** for state, `text-wrap: pretty`, `oklch()`, `@media (prefers-reduced-motion)` and `(prefers-color-scheme: dark)`, container queries. **SVG** for icons. **Real interactions** — click→navigate, submit→validate→succeed/fail, real state not screenshot soup. **Fixed-size content** (slides, video at 16:9 / 1920×1080) letterboxes to any viewport via JS scaling. **Persist state** that matters (deck slide index, form drafts, tweak values) in `localStorage` so it survives reload. **Canonical HTML** — explicit closing tags, double-quoted attributes. The web is more capable than most designs let on — surprise the user (oklch interpolation, scroll-driven animation, view transitions, SVG masks).
 
-## 15. Understanding users
+## 16. Understanding users
 
 Design for the user, not yourself. For new work, confirm: **who** is the audience, **what** is the primary goal (convert/inform/entertain/instruct/decide), **what context** they'll read it in, and **what they already know**. Design for one primary persona, not "everyone." When the user has hypotheses about their audience, surface options that test them — a wireframe round and a hi-fi round on different bets is more useful than four hi-fi takes on the same bet.
 
-## 16. Quality over quantity
+## 17. Quality over quantity
 
-Show fewer ideas, polished. One strong fully-realized design beats ten half-baked ones. Polish every visible detail (consistent scale-based spacing, real/honestly-placeheld imagery, all interaction states, type on the scale, proofed copy, verified accessibility). Depth over breadth — 3 features done well beat 5 half-done. Pick one or two dimensions to be bold on and execute with conviction.
+Show fewer ideas, polished. One strong fully-realized design beats ten half-baked ones. Polish every visible detail (consistent scale-based spacing, real/honestly-placeheld imagery, all interaction states, type on the scale, proofed copy, verified accessibility). Depth over breadth — 3 features done well beat 5 half-done. Pick one or two dimensions to be bold on and execute with conviction — not taking a risk is itself a risk; restraint everywhere produces the timid template this skill exists to avoid.
 
-## 17. Output principles
+## 18. Output principles
 
 **Pick the right format:** purely-visual exploration → side-by-side labeled canvas; interactions/flows/many-option → full hi-fi clickable prototype with options as toggles/tweaks; slides → fixed-size deck shell with letterboxing; motion → timeline engine with scrubber (`references/make-an-animation.md`); documents → paper-on-desk pages (`references/make-a-doc.md`). **Give 3+ variations** across substantive dimensions (visual treatment, interaction model, layout, tone), basic to bold. **One file, many variants** — prefer a single document with toggles/tweaks over scattered `v1.html / v2.html / v3.html`; the exception is a drastic revision of a settled design, where you copy to `Name v2.html` first so the prior version survives. Even when the user didn't ask, **add 1–2 tweak controls by default** — surface interesting possibilities. Apply the per-medium minimums from chapter 8.
 
-## 18. Collaboration and delivery
+## 19. Collaboration and delivery
 
 **Show work early and often** — surface the skeleton so the user catches misunderstandings while they're cheap. **Brief summaries** — caveats and next steps only; don't recap what they watched, don't claim success on unverified work. **Delegate verification** to a verifier subagent (the `Agent` tool) for thorough checks (render, layout, JS probing) after every substantive visual change. **Honest progress** — if you can't verify a behavior (no browser, no test data, an unreachable dependency), say so.
 
-## 19. IP and content boundaries
+## 20. IP and content boundaries
 
 Don't recreate a company's distinctive/branded UI patterns unless the user's email domain shows they work there — instead understand the goal and build an original design. Don't add scope (sections, pages, copy) without permission. Don't pad with filler — empty space is a layout problem.
 
-## 20. Procedures — load the reference when the trigger matches
+## 21. Procedures — load the reference when the trigger matches
 
 Each procedure below is a phased file in `references/`. **Read the file and follow it** when its trigger matches. When unsure whether a *review* skill applies, run it — a redundant check is cheap, an unreviewed deliverable is not.
 
@@ -151,8 +163,10 @@ Each procedure below is a phased file in `references/`. **Read the file and foll
 | Reference | When to read |
 |---|---|
 | `references/motion-design.md` | Any motion beyond a bare hover transition — entrances, page transitions, scroll effects, celebratory moments. Tokens, easing, choreography, and the motion review gate. |
+| `references/gsap-motion.md` | Motion beyond the platform toolkit — choreographed timeline sequences, scrub/pin scroll storytelling, horizontal journeys, SplitText line reveals, SVG draw/morph, drag with momentum. GSAP loaded from CDN (all plugins free). |
 | `references/depth-and-3d.md` | Shadows/elevation, grain/mesh/glass textures, parallax, CSS 3D, or a WebGL/Three.js moment. The depth-technique ladder with budgets and fallbacks. |
 | `references/laws-of-composition.md` | Composing any screen with choices about grouping, option counts, defaults, or emphasis — and as a review lens (law → violation → fix). |
+| `references/mobile-design.md` | Any phone-first surface — app screens, mobile flows, device-framed mocks, installables. Platform grammar (iOS/Material), thumb zone, input methods, named mobile patterns, industry conventions, emotional design. |
 
 ### System (extract or author structure)
 
@@ -170,9 +184,10 @@ Each procedure below is a phased file in `references/`. **Read the file and foll
 | `references/ai-slop-check.md` | "Looks AI-generated" / "remove the slop," and after any greenfield hi-fi build. |
 | `references/hierarchy-rhythm-review.md` | "Check the hierarchy" / "the spacing feels off." Size/weight/color + spacing-scale discipline. |
 | `references/interaction-states-pass.md` | Before shipping anything interactive. Hover/active/disabled/focus + transitions. |
+| `references/visual-verification.md` | Layout integrity across viewports (overflow/overlap/clipping/breakpoints) + the screenshot playbook for verifier subagents. Part of every polish pass; also the standing instructions for any browser-verification task. |
 | `references/polish-pass.md` | Before any delivery/ship. Runs the reviews in parallel (including the motion gate when motion exists), then fixes. |
 
-**Chaining.** Greenfield: `discovery-questions → frontend-aesthetic-direction → wireframe → make-a-prototype → polish-pass`, reading `motion-design.md` / `depth-and-3d.md` / `laws-of-composition.md` as the build touches their territory. Brand-aware: `design-system-extract → generate-variations → make-tweakable → polish-pass`. Motion deliverable: `discovery-questions → make-an-animation → motion-design (review gate) → polish-pass`.
+**Chaining.** Greenfield: `discovery-questions → frontend-aesthetic-direction → wireframe → make-a-prototype → polish-pass`, reading `motion-design.md` / `depth-and-3d.md` / `laws-of-composition.md` as the build touches their territory. Brand-aware: `design-system-extract → generate-variations → make-tweakable → polish-pass`. Motion deliverable: `discovery-questions → make-an-animation → motion-design (review gate) → polish-pass`, escalating to `gsap-motion.md` when the piece needs choreographed or scroll-driven sequencing. Mobile app: `discovery-questions → mobile-design → make-a-prototype (device frame / installable) → polish-pass`.
 
 ## Environment notes (Claude Code)
 
@@ -181,7 +196,7 @@ In Claude Code:
 - **Questions** use the `AskUserQuestion` tool. End your turn after asking; read every answer before designing.
 - **Verifier subagents** use the `Agent` tool. Spawn parallel review agents where a procedure calls for them; pass each agent the full file contents.
 - **Deck shells, device frames, side-by-side canvases, and tweak panels are written as self-contained HTML/CSS/JS** — each procedure gives the implementation directly.
-- **Browser verification** (render, DOM, console, screenshots) uses whatever automation is available — Playwright, `playwright-cli`, or the Chrome MCP — driven through a verifier subagent.
+- **Browser verification** (render, DOM, console, screenshots) uses whatever automation is available — Playwright, `playwright-cli`, or the Chrome MCP — driven through a verifier subagent. Hand every verifier the playbook in `references/visual-verification.md` (viewport matrix, capture-once-crop-many, before/after pairing, overflow probe).
 - **Serve multi-file work over HTTP, never `file://`** — one `python3 -m http.server` per project directory; module scripts, fetches, and some fonts silently fail from the filesystem.
 
 ## Final principle

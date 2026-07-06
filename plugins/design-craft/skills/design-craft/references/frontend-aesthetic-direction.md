@@ -25,6 +25,8 @@ Ask the user (or confirm if they've stated):
 - **Reference designs they admire.** Specific brands, sites, or apps. Ask what specifically they admire — the type, the spacing, the color, the tone, the density?
 - **Off-limits.** What aesthetics or tropes does the user explicitly want to avoid?
 
+**Mine the subject before consulting the map.** Pin down one concrete subject, its audience, and the surface's single job (state your choice if the brief leaves it open). The subject's own world — its materials, instruments, artifacts, and vernacular — is where non-template choices come from: a coffee brand suggests crema tones and kraft textures; a synth plugin suggests panel silkscreen type and patch-cable color; a climbing gym suggests chalk, rope weaves, topo lines. Subject-mining tells you *which* family to pick and how to remix it; the range map alone produces family-generic output. Anything you remember about this user's prior designs or preferences counts as context too.
+
 Set three dials (1–10) from the brief and say them out loud — they calibrate everything downstream: **VARIANCE** (how far from category convention), **MOTION** (how much movement), **DENSITY** (how much per screen). A Linear-style dev tool reads ~5/3/2; a public-sector portal ~3/2/5; a festival site ~9/8/4. If the brief reads as an established design system (Material, Fluent, Carbon, Polaris, GOV.UK), **install the official package rather than hand-faking its CSS** — one system per project; aesthetics like glassmorphism or brutalism have no official package, so build them honestly and label approximations.
 
 If the user is unsure, propose **4 distinct visual directions**, each specified concretely — background hex / accent hex / display + body typeface, with a one-line rationale tied to the brief — and let them pick. Draw them from different rows of the range map below; the directions must not share a palette family (four takes on warm-cream is one direction, not four), and at least one must be deliberately off-distribution. Ship each direction as a complete drop-in `:root` block (5–6 color tokens + font stacks) plus 4–6 "posture" bullets (border weight, radius, accent budget, motion mode, what to avoid) — once chosen, that block is binding. (The `AskUserQuestion` tool's `preview` field is ideal here — show each direction as a small swatch/type sample so the user compares them side by side.)
@@ -48,6 +50,8 @@ Real variety is picked from a map, not hoped for. Each family names its tokens s
 
 These are starting points to remix, not costumes: pull one family's type with another's surface treatment when the brief supports it. Match implementation complexity to the vision — maximalism needs elaborate effects executed fully; minimalism needs restraint and precision. Half-committed is the only wrong dose.
 
+Two rows carry a warning: **Neo-grotesque product (dark neutral + one electric/acid accent)** and **Editorial/literary** are the looks current models reach for unprompted on dev-tool and creative briefs respectively — choosing them requires the same stated reason the warm-editorial combination does (see `ai-slop-check.md` §9's three-look family).
+
 ## Phase 3: Commit to the system — make it concrete
 
 Vocalize your decisions as a comment block at the top of the file the user can see. **Be specific.** Vague aesthetic statements ("modern and clean") produce generic designs.
@@ -61,6 +65,7 @@ Pick **specific** fonts (not "a sans-serif"):
 - **Headline font** — name, weight, size scale
 - **Body font** — name (often the same family), weight, size scale
 - **Mono font** (if needed for code) — name
+- **Utility face** (optional) — for captions, data tables, and metadata on data-heavy surfaces; often the mono doing double duty
 
 Avoid the overused defaults — Inter, Roboto, Arial, bare system stacks, and the silent serif-display defaults (Fraunces, Playfair Display, Georgia-as-display). Pick something with intent: a humanist sans (Söhne, Suisse), a modern serif (Tiempos, GT Sectra), an editorial classic (Tiempos Headline, Canela), a typewriter mono (JetBrains Mono, IBM Plex Mono), a geometric sans (Visby), depending on the mood.
 
@@ -147,6 +152,14 @@ Commit to one mode; mixed motion modes feel unintentional. Whatever the mode, sp
 
 Commit alongside the motion mode; implement per `depth-and-3d.md` (the technique ladder, budgets, and fallbacks). Texture is the cheapest "designed, not generated" signal — and the easiest to overdose.
 
+### Signature
+
+Name **the single element this design will be remembered by** — the one place the boldness budget is spent, derived from the subject (Phase 2), while everything around it stays quiet and disciplined. A signature is concrete ("the hero's headline set in the subject's stencil lettering, drawn on scroll"), not a vibe ("memorable typography"). This is the plan-time version of the 80/20 soul rule in `ai-slop-check.md` — commit to the memorable element before writing code rather than hoping one emerges and checking at review.
+
+## Phase 3.5: The swap test — a genericness gate
+
+Before documenting, run the counterfactual: imagine a neighboring brief — a different product in the same category — and ask whether your committed direction would fit it unchanged. Any axis that transfers untouched is a default, not a choice: revise that axis and say what you changed and why. (The anti-convergence rule above only works across sessions; the swap test works inside this one.)
+
 ## Phase 4: Document the direction in the file
 
 Write the chosen direction into the file as a visible block — both as a comment at the top of the source AND as a "design system summary" section in the rendered output. Like a junior designer showing their thinking to their manager.
@@ -163,6 +176,7 @@ Write the chosen direction into the file as a visible block — both as a commen
  * - Components: ghost buttons. Filled for primary CTA only.
  * - Imagery: real photography, full-bleed.
  * - Motion: quiet. 200ms ease transitions, no entrance animations.
+ * - Signature: full-bleed duotone hero photo with the headline knocked out of it.
  */
 ```
 

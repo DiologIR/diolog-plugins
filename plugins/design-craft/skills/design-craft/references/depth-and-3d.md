@@ -67,7 +67,7 @@ Glassmorphism is one blur away from slop. It works only when there is **somethin
   box-shadow: 0 8px 32px rgb(0 0 0 / .25), inset 0 1px 0 rgb(255 255 255 / .08); }
 ```
 
-Rules: the 1px light border and inset top highlight are what make it read as material rather than smudge; text on glass needs a contrast fallback (`@supports not (backdrop-filter: blur(1px))` → solid surface); maximum one glass layer stack — glass on glass on glass is unreadable; keep blurred areas small (backdrop-filter is expensive full-viewport).
+Rules: the 1px light border and inset top highlight are what make it read as material rather than smudge; text on glass needs a contrast fallback (`@supports not (backdrop-filter: blur(1px))` → solid surface); maximum one glass layer stack — glass on glass on glass is unreadable; keep blurred areas small (backdrop-filter is expensive full-viewport). Two rules from Apple's material system carry over: **glass cannot sample glass** — adjacent glass elements (a toolbar's buttons, a chip row) share one glass region rather than each blurring independently, or they render visibly inconsistent; and **prominence comes from tint opacity**, not from stacking a second blur — a more important glass surface gets a stronger background tint, same blur. System-material tints (light/dark-adaptive translucency) beat fixed rgba values when the page supports both themes.
 
 ## Phase 5: CSS 3D (rung 4)
 
@@ -94,6 +94,7 @@ Use CSS scroll-driven animations (see `motion-design.md` Phase 5) — no scroll-
 - **Parallax discipline:** 2–3 layers max, background moving 10–30% slower than content. Foreground parallax (elements crossing text) is almost always slop.
 - **Depth-of-field storytelling:** hero image scales 1.1 → 1 and un-blurs 4px → 0 across the first viewport (`animation-timeline: scroll()`), content rises over it — one move, big perceived production value.
 - **Sticky scenes:** a `position: sticky` stage that plays a state sequence while the section scrolls past (the Apple product-page grammar). One per page; announce progress for screen readers if the states carry content.
+- When a scene needs scrubbing, pinning with precise start/end control, or a horizontal journey, use GSAP ScrollTrigger per `gsap-motion.md` Phase 4 — same budgets (≤3 parallax layers, one pinned scene per page).
 
 ## Phase 7: Real-time 3D (rung 6) — WebGL/Three.js
 

@@ -11,6 +11,7 @@ These laws decide *composition* — what goes on the screen and in what arrangem
 
 - **Proximity** (Wertheimer, 1923). Nearness is the cheapest grouping signal — cheaper than borders or shared color.
   - Variable vertical rhythm: **8–12px within a group, 32–48px between groups.**
+  - The portable ratio: **between-group spacing ≥2× within-group spacing** — it scales with density where the absolute ranges don't.
   - Uniform spacing everywhere reads as *nothing* being grouped.
 - **Similarity** (Wertheimer, 1923). Equivalent affordances must share treatment.
   - Every list row, every secondary button, every destructive action: identical class set.
@@ -65,7 +66,7 @@ These laws decide *composition* — what goes on the screen and in what arrangem
 
 - **Fitts's Law + platform floors** (Fitts, 1954). Bigger and closer targets are faster to hit; spacing between adjacent hit zones matters as much as size.
   - Fitts alone doesn't set the minimum — apply the platform floor: **24×24 CSS px (WCAG 2.2 AA), 44×44pt (iOS HIG), 48×48dp (Material 3).**
-  - On mobile, put high-frequency controls in the natural thumb arc.
+  - On mobile, put high-frequency controls in the natural thumb arc — concretely, primary actions in the **bottom third** of the screen; top corners are the hardest reach (see `mobile-design.md`).
 - **Postel's Law** (RFC 760, 1980). Be liberal in what you accept, conservative in what you emit.
   - Accept input in whatever shape users give it: phone numbers with or without dashes, dates in mixed formats, percentages with or without `%`.
   - Normalize internally to a canonical form; emit **one consistent format** on output.
@@ -75,6 +76,7 @@ These laws decide *composition* — what goes on the screen and in what arrangem
 
 - **Jakob's Law** (Nielsen, 2000). Users spend most of their time on *other* products and expect yours to work the same.
   - Reuse category conventions — nav placement, cart icon, settings gear, primary CTA position — so zero cycles go to relearning grammar.
+  - Per-vertical conventions (finance = blue-family trust, sleep = low-contrast dark, e-commerce = photography-led) are tabulated in `mobile-design.md` Phase 6 — they apply beyond mobile.
   - When the brief names a reference product, **anchor on it explicitly** and inherit its interaction grammar.
   - Novelty must earn its keep against the convention's ROI; "innovate everywhere" is the opposite failure mode.
 - **Paradox of the Active User** (Carroll & Rosson, 1987). Users skip the manual and start doing, even when reading would be faster.

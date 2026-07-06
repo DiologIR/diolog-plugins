@@ -69,9 +69,11 @@ Use the platform before reaching for a library — these are what make current a
 - **View Transitions API:** `document.startViewTransition()` for page/state morphs; tag shared elements with `view-transition-name` for magic-move continuity. **It does NOT respect `prefers-reduced-motion` automatically — gate it yourself.**
 - **FLIP** for layout changes the platform can't yet morph (list reorders, grid → detail): measure First/Last, Invert with a transform, Play the transform to zero. Transform-only, so it's cheap.
 - **WAAPI** (`element.animate()`) when you need JS control with CSS-level performance — runs off the main thread, unlike rAF loops.
-- **Polish tricks:** ≤2px blur during a crossfade masks imperfect alignment; `clip-path: inset()` for reveals and tab-highlight slides; `translate` percentages are self-relative (how Sonner stacks toasts and Vaul nests drawers).
+- **Polish tricks:** ≤2px blur during a crossfade masks imperfect alignment; `clip-path: inset()` for reveals and tab-highlight slides; `translate` percentages are self-relative (how Sonner stacks toasts and Vaul nests drawers); a sticky header that hides on scroll-down and reveals on scroll-up returns the viewport to content without losing the nav (track scroll direction, toggle a transform class — never per-frame JS positioning).
 
-**Kinetic type** (heroes, decks, campaign pages only): animate words/lines, not letters, for readability (per-letter is a one-shot logo trick); split with spans, stagger 40–60ms; mask-reveal (overflow hidden line-boxes, text translates up into view) reads editorial; variable-font axis animation (weight/width on scroll or hover) is distinctive and cheap — one axis, subtle range.
+**When the platform toolkit runs out, escalate to GSAP** (`gsap-motion.md`): multi-step choreographed timelines with runtime control, scrub-and-pin scroll storytelling, horizontal scroll journeys, per-line text reveals (SplitText), SVG draw/morph, drag with momentum. All GSAP plugins are free and CDN-loadable; the budgets and the review gate in this file still govern.
+
+**Kinetic type** (heroes, decks, campaign pages only): animate words/lines, not letters, for readability (per-letter is a one-shot logo trick); split with spans, stagger 40–60ms; mask-reveal (overflow hidden line-boxes, text translates up into view) reads editorial; variable-font axis animation (weight/width on scroll or hover) is distinctive and cheap — one axis, subtle range. For production text splitting (font-load re-splits, built-in mask wrappers, aria handled), use GSAP SplitText per `gsap-motion.md` rather than hand-rolling spans.
 
 ## Phase 6: Gestures (when the prototype has them)
 

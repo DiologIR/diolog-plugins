@@ -4,26 +4,30 @@ A Claude Code plugin that turns Claude into an opinionated, accessibility-aware,
 
 ## What it does
 
-The skill carries a complete design philosophy in its `SKILL.md` and routes to **14 phased procedures** in `references/` when a task matches. It produces intentional design artifacts in plain HTML / CSS / SVG / JS — landing pages, app screens, dashboards, interactive prototypes, slide decks, wireframes, hi-fi variations, token files, and component inventories — and reviews/fixes designs against accessibility, hierarchy, interaction-state, and "does this look AI-generated" standards.
+The skill carries a complete design philosophy in its `SKILL.md` and routes to **24 phased procedures** in `references/` when a task matches. It produces intentional design artifacts in plain HTML / CSS / SVG / JS — landing pages, app screens, native-feel mobile mockups, dashboards, interactive prototypes, slide decks, wireframes, animated/motion pieces (including GSAP scroll storytelling), hi-fi variations, token files, and component inventories — and reviews/fixes designs against accessibility, hierarchy, interaction-state, layout-integrity, and "does this look AI-generated" standards.
 
 The philosophy explicitly rejects the generic-template defaults (aggressive gradients, emoji decoration, rounded-corner-with-left-border cards, Inter-everywhere typography, the cream/serif/terracotta editorial-warm house style) and replaces them with content discipline, purposeful aesthetics, a real visual hierarchy + spacing rhythm, committed typography and color systems, WCAG accessibility, complete interaction states, and system thinking (components + tokens over one-off pages).
 
 ## The procedures
 
 **Production — build something**
-`discovery-questions` · `frontend-aesthetic-direction` · `wireframe` · `make-a-deck` · `make-a-prototype` · `make-tweakable` · `generate-variations`
+`discovery-questions` · `frontend-aesthetic-direction` · `wireframe` · `make-a-deck` · `make-a-prototype` · `make-tweakable` · `generate-variations` · `make-an-animation` · `make-a-doc` · `generate-images`
 
-**System — extract structure**
-`design-system-extract` · `component-extract`
+**Craft — apply while building**
+`motion-design` · `gsap-motion` · `depth-and-3d` · `laws-of-composition` · `mobile-design`
+
+**System — extract or author structure**
+`design-system-extract` · `component-extract` · `design-system-author`
 
 **Review — audit and fix**
-`accessibility-audit` · `ai-slop-check` · `hierarchy-rhythm-review` · `interaction-states-pass` · `polish-pass`
+`accessibility-audit` · `ai-slop-check` · `hierarchy-rhythm-review` · `interaction-states-pass` · `visual-verification` · `polish-pass`
 
-Procedures chain. A typical greenfield flow: `discovery-questions → frontend-aesthetic-direction → wireframe → make-a-prototype → polish-pass`. A brand-aware flow: `design-system-extract → generate-variations → make-tweakable → polish-pass`.
+Procedures chain. A typical greenfield flow: `discovery-questions → frontend-aesthetic-direction → wireframe → make-a-prototype → polish-pass`. A brand-aware flow: `design-system-extract → generate-variations → make-tweakable → polish-pass`. A mobile-app flow: `discovery-questions → mobile-design → make-a-prototype → polish-pass`.
 
 ## What makes it different
 
-- **Anti-AI-slop by construction** — `ai-slop-check` detects and replaces the nine template tropes, and `frontend-aesthetic-direction` pre-empts the default-model look by committing to a stated direction before any hi-fi work.
+- **Anti-AI-slop by construction** — `ai-slop-check` detects and replaces the template tropes (including all three current AI-default looks: warm-editorial, dark + acid accent, broadsheet), and `frontend-aesthetic-direction` pre-empts the default-model look with subject-derived direction, a committed signature element, and a swap-test genericness gate before any hi-fi work.
+- **Native-feel mobile and real motion range** — `mobile-design` carries iOS/Material platform grammar, thumb-zone and input rules, per-industry conventions, and emotional-design mechanics; `gsap-motion` adds choreographed timelines, ScrollTrigger scroll storytelling, SplitText, and SVG draw/morph on top of the platform-first `motion-design` toolkit.
 - **Accessibility is the floor, not a feature** — WCAG AA contrast, semantic HTML, keyboard/focus, motion preferences, and form correctness are baked into both the philosophy and the `accessibility-audit` / `polish-pass` reviews.
 - **Rooted in real context** — hi-fi never starts from scratch; the skill reads the codebase/brand/tokens/screenshots and lifts exact values before adding to them.
 - **Coverage-first reviews** — review procedures fan out parallel verifier agents (via the `Agent` tool) that report *everything* with confidence/severity, then aggregation filters — so minor findings aren't silently suppressed.

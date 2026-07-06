@@ -76,6 +76,8 @@ render();
 
 Conventions on top of the engine: group each scene in a positioned container gated by its time window (`display: none` outside it); define scene times as named constants at the top (the edit lives in one place); model motion as `win(start, end, easing)` calls so retiming a scene is a two-number change. Under `prefers-reduced-motion`, render the final frame (`t = DURATION`) with the scrubber still usable — the timeline is content; autoplay is the courtesy you drop.
 
+**Alternative engine: a paused GSAP master timeline** (`gsap-motion.md` Phase 6) — labels, nested scene timelines, and real eases for free; the export bridge becomes `setTime: s => master.time(s, true)` and everything else here (scrubber, export, verifier stepping) works unchanged. Choose it when the piece is choreography-heavy (many overlapping tweens, SplitText, SVG morphs); keep the hand-rolled `t`-engine when the piece is camera-and-scenes simple. Either way, every visual must derive from the clock — no `setTimeout` side-channels, or exported frames desync.
+
 ## Phase 3: Score the pacing
 
 Scrub through at 0.25× increments and check: every beat lands ≥300ms after the previous motion settles; nothing important happens during a camera move (viewers can't read mid-pan); total duration is honest (product teasers 15–30s, walkthroughs 30–90s; past 2 minutes it's a video series, not an animation); the last frame is a designed end card that can hold indefinitely. Then delegate a verifier subagent to step `window.__animStage.setTime()` through the shot list's boundary times and screenshot each — mis-timed scenes show up as empty or overlapping frames.

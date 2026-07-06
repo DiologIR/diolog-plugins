@@ -10,7 +10,7 @@ Confirm before building:
 
 - **The flow.** What screens? Entry point? Goal state? Map it as a list.
 - **Fidelity.** Hi-fi (real visuals, real components, real feel) or mid-fi (wireframe-level, focused on flow not polish)?
-- **Device frame.** Desktop browser? iOS frame? Android frame? macOS window? (Phase 3 builds these directly.)
+- **Device frame.** Desktop browser? iOS frame? Android frame? macOS window? (Phase 3 builds these directly. For anything phone-framed, design the screens per `mobile-design.md` — platform grammar, thumb zone, mobile patterns.)
 - **Variations.** One flow or several to compare?
 - **Brand / design system.** Always confirm. If none, run `frontend-aesthetic-direction.md` first.
 - **Sample data.** What real-looking content fills the screens? Avoid Lorem ipsum.
@@ -109,7 +109,7 @@ If the prototype is a small slice, fake the async work with `setTimeout` to simu
 
 **Five states per data surface.** Every list, table, card, form, and panel that fetches or accepts data renders all five: **loading**, **empty**, **error**, **populated**, and **edge**. Shipping only the populated state is the single most reliable AI-design failure. Concretely:
 
-- **Empty is its own state with a job**, never a blank. First-use empty = headline + value sentence + primary CTA (it's the onboarding moment); no-results empty = echo the query and suggest alternatives; cleared empty = celebratory phrasing + next action. **Never collapse error into empty** — an error carries recovery information an empty doesn't.
+- **Empty is its own state with a job**, never a blank. First-use empty = headline + value sentence + primary CTA (it's the onboarding moment); no-results empty = echo the query and suggest alternatives; cleared empty = celebratory phrasing + next action; **pre-query search empty** = never a blank screen — recent searches, trending items, or suggestions. **Never collapse error into empty** — an error carries recovery information an empty doesn't.
 - **Error answers three questions in order:** what happened ("Your card was declined," not "Something went wrong"), why if knowable, what the user can do. Preserve user input across the failure — a form that clears on submit error forces re-entry.
 - **Edge = layout that doesn't break.** Test it: a table at 10,000 rows sorted and filtered; a card with a 200-char title and missing avatar; a form with all optional fields empty and required fields at max length; search with a single-char query and a 1,000+ result count; a detail view missing all optional metadata.
 
