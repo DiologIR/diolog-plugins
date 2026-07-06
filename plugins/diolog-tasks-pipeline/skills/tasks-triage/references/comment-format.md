@@ -4,9 +4,9 @@ The default is **state assumptions, don't ask questions**. Questions are reserve
 
 ## Non-technical language — a hard rule
 
-The author is a product person, not a developer. Every word posted to Linear must be understandable to someone who has never opened the codebase. Do your technical reasoning internally; translate before posting.
+The author is a product person, not a developer. Every word posted to Diolog Tasks must be understandable to someone who has never opened the codebase. Do your technical reasoning internally; translate before posting.
 
-**Bans — none of these may appear in a Linear comment:**
+**Bans — none of these may appear in a Tasks comment:**
 - File paths or filenames (`InboxEmptyState.tsx`, `apps/web/.../page.tsx`).
 - Code identifiers — component/function/variable/class/interface/hook/type names.
 - Library/package/framework names (jsPDF, papaparse, Chakra, Next.js, NestJS, MongoDB, Redis, GraphQL, Apollo, Mongoose, …).

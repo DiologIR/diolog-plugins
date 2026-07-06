@@ -1,0 +1,9 @@
+{
+  "name": "log-bugs-to-diolog-tasks",
+  "version": "2.0.0",
+  "description": "Create Diolog Tasks issues from a code-review markdown report. Each `### [SEVERITY] Title` finding becomes one issue with severity (Critical/High/Medium/Low) and type (Vulnerability/Bug) labels and Todo status. Formerly log-bugs-to-linear; now targets the diolog-tasks MCP. Preserves the reviewer's exact prose, file:line citations, fix recommendations, and confidence scores.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
