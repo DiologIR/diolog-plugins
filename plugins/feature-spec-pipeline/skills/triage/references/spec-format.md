@@ -1,6 +1,6 @@
 # Spec file format, id allocation, and triage section shapes
 
-This replaces the Linear issue + comment thread with three markdown locations in the **target repository**:
+This replaces a tracker (e.g. Diolog Tasks) issue + comment thread with three markdown locations in the **target repository**:
 
 - `docs/feature-specs/LEDGER.md` — the id registry (project code + counter + table).
 - `docs/specs/spec-<ID>.md` — one spec per feature (e.g. `docs/specs/spec-DIO-0001.md`).
@@ -10,7 +10,7 @@ This replaces the Linear issue + comment thread with three markdown locations in
 
 ## Status vocabulary (used in the spec header and the ledger)
 
-The status field is the pipeline state — the doc equivalent of a Linear issue status. Use exactly these values, in this order:
+The status field is the pipeline state — the doc equivalent of a tracker issue status. Use exactly these values, in this order:
 
 `Triage` → `Needs More Info` → `Ready for Plan` → `Ready for Work` → `In Progress` → `In Review`
 

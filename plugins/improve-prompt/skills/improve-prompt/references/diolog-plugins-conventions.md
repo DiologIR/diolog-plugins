@@ -14,7 +14,7 @@ Read this when improving a skill that lives in the diolog-plugins repo (or any r
 - **Deterministic gates**: voice/content skills run bundled Python lints (`voice_lint.py`) that hard-fail on em dashes and AI-cliché phrases — framed as "so 'I checked' actually means checked". Preserve and never soften these gates.
 - **Pipeline safety triad**: workflow skills cap fan-out at ≤4 concurrent agents, retry transient failures, prefer plain-text agent returns.
 - **Local-branch convention**: worker skills commit locally in `.worktrees/<ID>` on `ai/<id>`, never push or open PRs; stage only touched files, never `git add .`.
-- **De-Diolog'd twins**: some plugins exist in a Diolog-specific form (linear-issue-pipeline) and a generalized form (feature-spec-pipeline). Generic skills show Diolog as a worked example but instruct "for any target repo, substitute its load-bearing rules". Don't re-specialize a deliberately generalized skill.
+- **De-Diolog'd twins**: some plugins exist in a Diolog-specific form (diolog-tasks-pipeline, formerly linear-issue-pipeline) and a generalized form (feature-spec-pipeline). Generic skills show Diolog as a worked example but instruct "for any target repo, substitute its load-bearing rules". Don't re-specialize a deliberately generalized skill.
 
 ## Known weaknesses (targeted diagnostics)
 

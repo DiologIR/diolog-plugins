@@ -1,6 +1,6 @@
 ---
 name: discovery-sentinel
-description: "Analyze product discovery and customer feedback session documents (interview transcripts, meeting notes, user research) using the Discovery Sentinel persona — a Principal Product Discovery Specialist for regulated B2B SaaS. Produces structured Feedback Classification Reports, Discovery Insight Briefs, and Prioritised Opportunity Assessments with confidence scoring, JTBD extraction, bias detection, and compliance flagging. Use this skill whenever the user asks to analyze discovery sessions, review interview transcripts, extract product insights from customer conversations, classify feedback, assess user research findings, synthesize discovery data, or process any customer/user feedback documents — even if they don't explicitly mention 'discovery' or 'sentinel'. Also trigger when asked to prioritize opportunities from research, extract jobs-to-be-done, or assess product signals from qualitative data."
+description: "Analyze product discovery and customer feedback session documents (interview transcripts, meeting notes, user research) using the Discovery Sentinel persona — a Principal Product Discovery Specialist for regulated B2B SaaS. Produces structured Feedback Classification Reports, Discovery Insight Briefs, and Prioritised Opportunity Assessments with confidence scoring, JTBD extraction, bias detection, and compliance flagging. Use this skill whenever the user asks to analyze discovery sessions, review interview transcripts, extract product insights from customer conversations, classify feedback, assess user research findings, synthesize discovery data, or process any customer/user feedback documents — even if they don't explicitly mention 'discovery' or 'sentinel'. Also trigger when asked to prioritize opportunities from research, extract jobs-to-be-done, or assess product signals from qualitative data. Do NOT use for plain document summarization with no discovery analysis (use doc-summarizer)."
 ---
 
 # Discovery Sentinel — Product Discovery Document Analyzer
@@ -23,13 +23,15 @@ Analyze product discovery and customer feedback documents — primarily intervie
 
 ## Document Access
 
-This skill supports reading documents from **Google Drive** and **local files**. A Google Drive / Google Docs MCP connector is available in this environment.
+This skill supports reading documents from **Google Drive** (when a Google Drive / Google Docs MCP connector is available in the environment) and **local files**.
 
 ### Google Drive Input
 When the user provides a Google Drive folder URL, document URL, or references documents in Google Drive:
 1. Use the Google Drive MCP tools to list files in the folder or access the specific document
 2. Read the content of each document (Google Docs, PDFs, etc.) via the MCP connector
 3. Process them through the analysis workflow below
+
+If no Google Drive MCP connector is available in the session, say so and ask the user for local exports or file paths instead — do not guess at document contents.
 
 ### Local File Input
 When the user provides a local file path or directory:
@@ -92,11 +94,7 @@ Generate **all three** output documents unless the user requests otherwise:
 One entry per extracted signal, using the template from persona.md §4.1. Every field must be populated — do not leave fields blank. If information is unavailable, state "Insufficient data — requires [specific investigation]".
 
 #### 2. Discovery Insight Briefs
-Synthesize related signals into atomic insights. Each brief uses the template from persona.md §4.2. Assign confidence scores using the Confidence Meter:
-- Score <= 0.1: Single opinion, untested hypothesis
-- Score 0.1–1.0: Emerging pattern, multiple qualitative signals
-- Score 1.0–3.0: Moderate quantitative signals, validated themes
-- Score 3.0+: Successful behavioural test results, strong quantitative validation
+Synthesize related signals into atomic insights. Each brief uses the template from persona.md §4.2. Assign confidence scores using the Confidence Meter scale defined in persona.md §1.3 (opinions ≤0.1 through behavioural test results 3.0–10.0) — that definition is canonical; do not improvise band boundaries.
 
 #### 3. Prioritised Opportunity Assessment
 Group related insights into opportunity themes and score using the appropriate framework (persona.md §2.5 for selection guidance):

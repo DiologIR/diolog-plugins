@@ -1,6 +1,6 @@
 {
   "name": "create-luke-content",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Write any content in Luke Rhodes' authentic voice (Diolog CTO and co-founder), conditionally routed through the right persona variant for the content type: LinkedIn posts and long-form blog articles (engagement-optimised, with a Diolog graphic concept), marketing content (announcements, release notes, landing copy, campaign emails), code reviews (severity-calibrated candour), informal-but-professional Slack messages, short-form content (tweets, comments, bios), and ADHD-targetted / book-audience writing (the conversational brilliant-colleague register). One non-negotiable base voice (calm, direct, technically fluent, quietly witty, no em dashes, no AI clichés) synthesised from Luke's raw writing corpus, five persona deltas layered on top, and a deterministic voice-lint with per-format advisory checks. Formerly create-luke-article.",
   "author": {
     "name": "DiologIR",

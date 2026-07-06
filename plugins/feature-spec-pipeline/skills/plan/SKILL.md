@@ -1,13 +1,13 @@
 ---
 name: plan
-description: Produce a detailed, codebase-grounded implementation plan for a feature spec in the markdown feature-spec pipeline. Reads docs/specs/spec-DIO-0001.md (the original details plus the triage assumptions/answers), classifies a plan-size tier (Trivial/Small/Standard/Large), investigates the actual codebase (fanning out via the Workflow tool for big specs), writes the plan to docs/plans/plan-DIO-0001.md, links it from the spec, and sets the spec status to Ready for Work. Use when the user says "plan DIO-0001", "write the implementation plan for this spec", "run the planner on DIO-0001", or asks for a build plan for a triaged feature spec. Runs in the current session (Read/Glob/Grep/Write/Edit plus the Workflow tool for parallel investigation) — no Linear, no Agent SDK.
+description: Produce a detailed, codebase-grounded implementation plan for a feature spec in the markdown feature-spec pipeline. Reads docs/specs/spec-DIO-0001.md (the original details plus the triage assumptions/answers), classifies a plan-size tier (Trivial/Small/Standard/Large), investigates the actual codebase (fanning out via the Workflow tool for big specs), writes the plan to docs/plans/plan-DIO-0001.md, links it from the spec, and sets the spec status to Ready for Work. Use when the user says "plan DIO-0001", "write the implementation plan for this spec", "run the planner on DIO-0001", or asks for a build plan for a triaged feature spec. For an issue tracked in Diolog Tasks, use tasks-plan instead. Runs in the current session (Read/Glob/Grep/Write/Edit plus the Workflow tool for parallel investigation) — no issue tracker, no Agent SDK.
 ---
 
 # Feature Spec Planner (markdown specs)
 
 Produce an implementation plan for a feature spec by investigating the actual codebase, write it to a local markdown file, then link it from the spec and move the spec to `Ready for Work`.
 
-Runs **in your current session** with `Read`/`Glob`/`Grep`/`Write`/`Edit`, `Bash`, and the `Workflow` tool. It uses no Linear MCP and invokes no Agent SDK script. The spec markdown file replaces the Linear issue + comment thread.
+Runs **in your current session** with `Read`/`Glob`/`Grep`/`Write`/`Edit`, `Bash`, and the `Workflow` tool. It uses no issue-tracker MCP (Diolog Tasks or otherwise) and invokes no Agent SDK script. The spec markdown file replaces a tracker issue + comment thread.
 
 ## Inputs
 

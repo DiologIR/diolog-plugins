@@ -1,10 +1,10 @@
 # Marketing Docs Maintenance
 
-A Claude Code plugin that keeps the Diolog **marketing / feature documentation** in the `diolog-team-files` repo (`~/Dev/diolog-team-files/web`) current when a feature ships, a Linear ticket lands, or an area goes stale. It operationalises `docs/marketing/MAINTENANCE.md` (the canonical standards guide in the app repo); the published docs now live in `diolog-team-files/web`.
+A Claude Code plugin that keeps the Diolog **marketing / feature documentation** in the `diolog-team-files` repo (`~/Dev/diolog-team-files/web`) current when a feature ships, a Diolog Tasks ticket lands, or an area goes stale. It operationalises `docs/marketing/MAINTENANCE.md` (the canonical standards guide in the app repo); the published docs now live in `diolog-team-files/web`.
 
 ## What it does
 
-Given a feature change (usually a Linear ticket), it:
+Given a feature change (usually a Diolog Tasks ticket), it:
 
 1. **Reads what actually shipped** — the ticket description plus comments (especially implementation-complete comments), verified against the live app and source, following the source-of-truth hierarchy (live app > source > ticket comments > ticket description > the docs themselves).
 2. **Maps the change to one or more areas** (01–22: Auth, Dashboard, Chat, Inbox, Knowledge Base, Calendar, Disclosure, Perception, Sentiment, Social, Surveys, Workflows, Widgets, Portals, Settings, Profile, Help, Admin, Cross-cutting, AI Memory, Presentation Studio, Tasks/Quorum).
@@ -12,7 +12,7 @@ Given a feature change (usually a Linear ticket), it:
    - `existing-features-references/final/XX-*.md` and `existing-features-technical.md` §2.XX — **full technical detail** (component names, routes, GraphQL ops, exact copy, validation, states, permissions).
    - `existing-features-references/plain/XX-*.md` and `exhisting-features-marketing.md` §X — **zero technical detail** (plain English, second person, sentence-case headings).
    - backed by the `live/<area>.md` (browser-verified observations) and `raw/<area>.md` (source-derived) capture layers, which feed the numbered files.
-   - plus three auxiliary surfaces at the top level of `web/`: `outbound-contact-surfaces.md` (contact-input / outbound-delivery inventory), `ui-interaction-details.md` (micro-interaction / motion / layout / console reference), and `INCORPORATED.md` (the Linear-ticket reconciliation ledger — checked first, appended per ticket).
+   - plus three auxiliary surfaces at the top level of `web/`: `outbound-contact-surfaces.md` (contact-input / outbound-delivery inventory), `ui-interaction-details.md` (micro-interaction / motion / layout / console reference), and `INCORPORATED.md` (the Diolog Tasks ticket reconciliation ledger — checked first, appended per ticket).
 4. **Enforces the standards** — no register leaks (no code terms in plain files, no opinions in technical files), pair consistency (each assembled doc agrees with its per-area source; counts and names match across the technical/plain pair), and the supersede-don't-accumulate currency rule (replace outdated content, never append `UPDATE:` blocks).
 
 ## Why it works

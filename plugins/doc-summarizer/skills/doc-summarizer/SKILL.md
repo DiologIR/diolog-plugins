@@ -1,6 +1,6 @@
 ---
 name: doc-summarizer
-description: Transform a verbose source document — README, API docs, research paper, technical guide, library docs, whitepaper — into a maximally dense, semantically complete reference and write it to a `<source>.summary.md` file that another LLM (or a skimming human) can consume in a fraction of the tokens. Uses a triage-tag system (`[CRITICAL]`, `[WORKFLOW]`, `[POWER-USER]`, `[GOLDEN-NUGGET]`, `[DEPRECATED]`), contextual tip integration, solution-first problem framing, multi-tier feature capture, and a mandatory Strategic Synthesis footer (Maturity Model + Feature Selection Matrix + Workflow Progression Ladder). Use this skill whenever the user asks to "summarize", "compress", "distill", "condense", "cheat-sheet", or "extract the golden nuggets from" a technical document, API reference, research paper, README, or long piece of documentation — even if they don't use the word "summarize" explicitly. Also trigger when the user wants to prep a long doc for another AI's context window, reduce token cost of documentation, produce an `llms.txt`-style compressed reference, or get a dense briefing from one or more source files. Target compression is 60–80% while retaining 100% of semantically unique information.
+description: Transform a verbose source document — README, API docs, research paper, technical guide, library docs, whitepaper — into a maximally dense, semantically complete reference written to a `<source>.summary.md` file that another LLM (or a skimming human) can consume in a fraction of the tokens; target 60–80% compression retaining 100% of semantically unique information. Use this skill whenever the user asks to "summarize", "compress", "distill", "condense", "cheat-sheet", or "extract the golden nuggets from" a technical document, API reference, research paper, README, or long piece of documentation — even if they don't use the word "summarize" explicitly. Also trigger when the user wants to prep a long doc for another AI's context window, reduce token cost of documentation, produce an `llms.txt`-style compressed reference, or get a dense briefing from one or more source files. Do NOT use for narrative or conversational content (email threads, meeting transcripts, chat logs) or for summarizing source code itself.
 allowed-tools:
   - "Read"
   - "Write"
@@ -13,7 +13,7 @@ allowed-tools:
 <role>
 You are a documentation compression specialist. Your task is to transform verbose source documents into maximally dense, semantically complete reference materials for consumption by downstream AI systems. You produce outputs that function as both complete references and actionable briefings. You treat the downstream consumer as an expert AI — skip context-setting, prose introductions, and conversational framing.
 
-You are executed by Claude Opus 4.7. You read the source, compress it, and write the result to a Markdown file on disk. You do not dump the full summary inline in chat — you confirm the file path, the compression ratio, and a short highlights list.
+You read the source, compress it, and write the result to a Markdown file on disk. You do not dump the full summary inline in chat — you confirm the file path, the compression ratio, and a short highlights list.
 </role>
 
 ## When to activate this skill
@@ -54,7 +54,7 @@ Follow the rules in the blocks below. The examples at the end demonstrate the ta
 
 ---
 
-The blocks below are the core instruction set — rules, format, examples — preserved from the Opus 4.7–tuned source prompt.
+The blocks below are the core instruction set — rules, format, examples.
 
 <objectives>
 For every document you receive:
@@ -120,7 +120,7 @@ When the source describes a problem or error, emit:
 Do not summarize the problem without a solution.
 
 ## 10. Scope of every rule above
-Each rule applies to every qualifying item in the document, not only the first or most obvious one. Opus 4.7 will not silently generalize — assume the rule means what it says, across the whole output.
+Each rule applies to every qualifying item in the document, not only the first or most obvious one. Claude follows instructions literally and will not silently generalize — assume each rule means what it says, across the whole output.
 </compression_rules>
 
 <output_format>
@@ -193,7 +193,7 @@ These are targets, not hard limits. If the source has unusually high information
 </typical_compression_ratios>
 
 <chunking>
-Default: emit the entire compressed output as one file in a single pass. Claude Opus 4.7 supports 128K max output tokens and a 1M-token input context — chunking is not routinely required.
+Default: emit the entire compressed output as one file in a single pass. Current Claude models have large output budgets and context windows — chunking is not routinely required.
 
 Activate chunking only if the estimated compressed output exceeds 120K tokens. When chunking:
 

@@ -1,13 +1,13 @@
 ---
 name: triage
-description: Triage a feature idea into a versioned spec doc for the markdown feature-spec pipeline. Given a feature as inline text or a markdown/text file (or an existing spec id like DIO-0001 to re-triage), it allocates a project id from docs/feature-specs/LEDGER.md, writes docs/specs/spec-DIO-0001.md capturing the original details, runs a codebase grounding pass plus a Specification Sentinel product/UX/compliance review, then appends a short non-technical readiness section (UI & logic preview + Assumptions) or an Essential Questions section and sets the spec status. Use when the user says "triage this feature", "triage DIO-0001", "turn this into a spec", "is this ready to plan", or hands over a feature description or notes file that needs a readiness check before planning. Runs in the current session using Read/Glob/Grep/Write/Edit plus the Workflow tool for fan-out — no Linear, no Agent SDK.
+description: Triage a feature idea into a versioned spec doc for the markdown feature-spec pipeline. Given a feature as inline text or a markdown/text file (or an existing spec id like DIO-0001 to re-triage), it allocates a project id from docs/feature-specs/LEDGER.md, writes docs/specs/spec-DIO-0001.md capturing the original details, runs a codebase grounding pass plus a Specification Sentinel product/UX/compliance review, then appends a short non-technical readiness section (UI & logic preview + Assumptions) or an Essential Questions section and sets the spec status. Use when the user says "triage this feature", "triage DIO-0001", "turn this into a spec", "is this ready to plan", or hands over a feature description or notes file that needs a readiness check before planning. For an issue tracked in Diolog Tasks, use tasks-triage instead. Runs in the current session using Read/Glob/Grep/Write/Edit plus the Workflow tool for fan-out — no issue tracker, no Agent SDK.
 ---
 
 # Feature Triage (markdown specs)
 
 Triage a feature idea for implementation-readiness and record it as a versioned spec document. The output is a short, **non-technical** product review appended to a spec markdown file plus a status change — never an implementation spec (that's the `/plan` skill's job).
 
-This skill runs **in your current session** using `Read`/`Glob`/`Grep`/`Write`/`Edit` and the `Workflow` tool. It uses no Linear MCP and invokes no Agent SDK script — the spec markdown file is the single source of truth, replacing the Linear issue + comment thread.
+This skill runs **in your current session** using `Read`/`Glob`/`Grep`/`Write`/`Edit` and the `Workflow` tool. It uses no issue-tracker MCP (Diolog Tasks or otherwise) and invokes no Agent SDK script — the spec markdown file is the single source of truth, replacing a tracker issue + comment thread.
 
 ## Inputs
 

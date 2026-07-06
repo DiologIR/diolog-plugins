@@ -1,6 +1,6 @@
 {
   "name": "acceptance-e2e",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Turn any web feature's requirements into an acceptance-criteria-traceable Playwright e2e UI suite. From a requirements source (an issue/ticket, a spec or plan*.md, or a description) + the running app, it enumerates every acceptance criterion into a traceability matrix, grounds selectors against the live page, authors specs in the PROJECT'S OWN harness that assert content/render correctness (a chart actually draws, a figure is actually sourced) rather than mere element presence, runs them with isolation-safe disposable data, and fixes the tractable product bugs the suite surfaces. Project-agnostic: it discovers the repo's harness, auth, tenant/context model, run command, and base URL rather than assuming any one stack. Ships a portable e2e-playbook (selector traps, isolation, outcome-assertion patterns, recurring bug classes, the run-twice discipline) plus an optional Diolog-specific worked example.",
   "author": {
     "name": "DiologIR",

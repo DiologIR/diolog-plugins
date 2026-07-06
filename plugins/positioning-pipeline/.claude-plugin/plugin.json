@@ -1,6 +1,6 @@
 {
   "name": "positioning-pipeline",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "End-to-end product-positioning pipeline. From a company context it generates two Google Gemini Deep Research prompts (a positioning brief + a product-research-persona market brief), renders a copy-and-launch HTML with animated Gemini instructions (select Deep research from the + menu; Share & Export → Copy contents), then — once the research comes back — synthesises three framework-grounded positioning territories (Ries & Trout, April Dunford, Blue Ocean, David C. Baker) as Markdown plus a stylised interactive decision page.",
   "author": {
     "name": "DiologIR",

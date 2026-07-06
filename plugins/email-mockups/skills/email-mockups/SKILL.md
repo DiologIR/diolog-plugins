@@ -1,25 +1,20 @@
 ---
 name: email-mockups
 description: >-
-  Build email-ready product-mockup graphics for one or more named Diolog features
-  and place them on a Figma canvas, for product-update and marketing emails. Use
-  this whenever someone wants product mockups, representations, graphics, or
-  visuals of a feature for an email, newsletter, or product update — e.g. "create
-  email mockups for the question composer", "I need a product-update email graphic
-  for the disclosure consistency checker", "make a figma mockup of the smart inbox
+  Build email-ready product-mockup graphics for named Diolog features and place
+  them on a Figma canvas, for product-update and marketing emails. Use whenever
+  someone wants product mockups, representations, graphics, or visuals of a
+  feature for an email, newsletter, or product update — e.g. "create email
+  mockups for the question composer", "I need a product-update email graphic for
+  the disclosure consistency checker", "make a figma mockup of the smart inbox
   for the investor email", "mock up the new calendar feature for the companies
-  email", or any "visual / graphic / representation of <feature> for an email"
-  request — even if they don't say "mockup" or "Figma" explicitly. The skill reads
-  the feature's real context (docs/marketing/product-feature-guide.md,
-  features-build/plain, and the rendered mock UI read in a browser via playwright-cli
-  — the served web / customer / investor design-system hosts), builds
-  impression-not-replica graphics (a rich product-surface vignette by default, plus
-  soft panel + peeking device, collage/overlap, phone bezel, and a website frame only
-  when the feature is a public site) as titled, spaced artboards in one self-contained
-  HTML file — designed and built via the design-craft skill (engaged from planning
-  through build) on the live Diolog tokens — verifies the render, then recreates the
-  layout in Figma via whatever write-capable Figma MCP is connected. If no Figma MCP
-  is available, the HTML file is retained as the final deliverable.
+  email", or any "visual / graphic / representation of <feature> for an email" —
+  even if they don't say "mockup" or "Figma". Builds impression-not-replica
+  graphics from the feature's real docs and rendered mock UI, as titled artboards
+  in one self-contained HTML file (design-craft skill, live Diolog tokens), then
+  recreates them in Figma via any write-capable Figma MCP (or delivers the HTML
+  if none). Do NOT use for production email HTML/code or non-email UI design
+  (use design-craft).
 ---
 
 # Email mockups

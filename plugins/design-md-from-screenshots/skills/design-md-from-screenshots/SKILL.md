@@ -1,6 +1,6 @@
 ---
 name: design-md-from-screenshots
-description: Reverse-engineer a product's visual design system from one or more website/app screenshots and produce a single authoritative DESIGN.md — a semantic, token-based design spec (palette, typography, spacing, shape, motion, component inventory, voice, do/don't) that another AI (Stitch, Claude, v0, Cursor, etc.) can use to generate additional screens that unmistakably belong to the same product. Use this skill whenever the user attaches, pastes, or references a screenshot/mockup/Figma export of a website or app UI and asks to "document the design", "extract the design system", "create a DESIGN.md", "capture the style/vibe", "reverse-engineer the visual language", "audit the UI", "codify the brand", "describe the design tokens", or anything of that shape — even if they never say the words "DESIGN.md" explicitly. Also trigger when the user wants to seed a design-token file, style guide, or brand snapshot from visual evidence; when they want a downstream generator (v0, Stitch, Cursor, AI Elements) to match an existing site's look; or when they ask what "the vibe" or "the aesthetic" of a screenshot is for the purpose of reproducing it.
+description: Reverse-engineer a product's visual design system from website/app screenshots and produce a single authoritative DESIGN.md — a token-based design spec (palette, typography, spacing, shape, motion, components, voice, do/don't) for another AI (Stitch, Claude, v0, Cursor) to generate new screens that unmistakably belong to the same product. Use whenever the user attaches, pastes, or references a screenshot/mockup/Figma export of a UI and asks to "document the design", "extract the design system", "create a DESIGN.md", "capture the style/vibe", "reverse-engineer the visual language", "audit the UI", "codify the brand", or "describe the design tokens" — even if they never say "DESIGN.md". Also trigger to seed a design-token file, style guide, or brand snapshot, or when the user asks what a screenshot's "vibe" or "aesthetic" is so it can be reproduced. If a live URL is available, prefer design-md-from-website (it measures real computed styles); for slide decks, use presentation-design-md-from-screenshots.
 allowed-tools:
   - "Read"
   - "Write"
@@ -25,6 +25,8 @@ Do **not** activate for:
 - Implementing a specific component from a screenshot (that's a coding task, not a design-system synthesis).
 - Critiquing UX / accessibility without producing DESIGN.md (say so and answer directly).
 - Screenshots of code, dashboards of data, or non-UI imagery.
+- Slide decks / presentation exports — route to `presentation-design-md-from-screenshots`.
+- A live URL with no (or stale) screenshots — prefer `design-md-from-website`, which measures the real computed styles instead of estimating from pixels.
 
 ## Operator calibration
 

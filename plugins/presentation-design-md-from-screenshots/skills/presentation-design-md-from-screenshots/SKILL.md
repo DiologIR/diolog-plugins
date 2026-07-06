@@ -1,6 +1,6 @@
 ---
 name: presentation-design-md-from-screenshots
-description: Reverse-engineer a deck's visual design system from one or more slide screenshots and produce a single authoritative PRESENTATION_DESIGN.md — a semantic, token-based slide spec (canvas, palette, typography, slide archetypes, chart style, image treatment, iconography, motion, do/don't) that another AI (Stitch, Claude, v0, Gamma, Beautiful.ai, Keynote/PowerPoint co-pilots) can use to generate additional slides that unmistakably belong to the same deck. Use this skill whenever the user attaches, pastes, or references screenshots of slides / slide exports / PDF deck pages / Keynote / PowerPoint / Google Slides / Gamma / Pitch / Canva decks and asks to "document the slide design", "extract the deck style", "create a PRESENTATION_DESIGN.md", "match this deck's look", "reverse-engineer the slide system", or anything of that shape — even if they never say "PRESENTATION_DESIGN.md" explicitly. Also trigger when the user wants chart-style guidance, slide-layout rules, image-treatment conventions, or a deck style-guide distilled so a downstream generator can produce new slides on-brand. Output is hard-capped at 1,700 characters.
+description: Reverse-engineer a deck's visual design system from slide screenshots and produce a single authoritative PRESENTATION_DESIGN.md — a token-based slide spec (canvas, palette, typography, slide archetypes, chart style, image treatment, icons, motion, do/don't) for another AI (Gamma, Beautiful.ai, Pitch, Keynote/PowerPoint co-pilots, Claude, v0) to generate new slides that belong to the same deck. Use whenever the user attaches or references slide screenshots / PDF deck pages / Keynote / PowerPoint / Google Slides / Gamma / Pitch / Canva decks and asks to "document the slide design", "extract the deck style", "create a PRESENTATION_DESIGN.md", "match this deck's look", or "reverse-engineer the slide system" — even if they never say "PRESENTATION_DESIGN.md". Also trigger for chart-style guidance, slide-layout rules, image-treatment conventions, or a deck style guide for a downstream generator. Do NOT use for app/website UI screenshots (use design-md-from-screenshots). Output is hard-capped at 1,700 characters.
 allowed-tools:
   - "Read"
   - "Write"
@@ -114,6 +114,9 @@ Duotone (bg+accent) for people; product untreated · radius 8 contained, 0 full-
 ## Icons
 Lucide 1.5px · 24/32/48 · mono `fg`, accent only when selected.
 
+## Motion
+{{build/transition cues if observed, e.g. fade 150ms, sequential builds}}
+
 ## Do / Don't
 - Reserve accent for the one memorable element per slide.
 - ≤20 words per content slide; split don't shrink.
@@ -153,5 +156,5 @@ Unseen: transitions, builds, dark section, notes.
 - **Slides from multiple distinct decks:** Ask which deck is the source of truth before proceeding. Don't blend.
 - **Slides are from a template source (Gamma, Beautiful.ai, Canva) rather than a finished deck:** Still works — note this in the header so downstream tools know the evidence is template-level.
 - **User asks for a specific tool's output (Keynote theme file, PowerPoint .potx):** Keep PRESENTATION_DESIGN.md tool-agnostic; offer a separate follow-up translation as a secondary artefact.
-- **Output exceeds 1,700 characters after a trim pass:** Remove the self-critique comment, collapse `Motion`, then shorten archetype lines. Do not remove palette, type, charts, or images sections.
+- **Output still exceeds 1,700 characters after the trim order in step 4:** compress further — collapse `Open questions` to one line and cut `Do/Don't` to the three most load-bearing bullets. Never remove the palette, type, charts, or images sections.
 - **User wants the file pasted into chat as well:** Do both — paste *and* write, since the file is short.

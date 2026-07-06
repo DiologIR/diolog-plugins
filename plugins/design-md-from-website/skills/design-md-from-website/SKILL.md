@@ -2,20 +2,17 @@
 name: design-md-from-website
 description: >-
   Generate a spec-compliant DESIGN.md for any live website or company from its real
-  pages — the enhanced, browser-driven successor to /design-md and
-  /design-md-from-screenshots. Give it a URL and it uses playwright-cli (isolated
-  named sessions, ≤4 parallel probe agents, rate-limit backoff) to capture MEASURED
-  computed-CSS + HTML/layout + full-page screenshots of the key pages (home, about,
-  product/services, contact, and any investor hub/portal), then synthesises an
-  authoritative DESIGN.md in the official google-labs design.md format (YAML token
-  frontmatter + Overview/Colors/Typography/Layout/Elevation/Shapes/Components/Do's &
-  Don'ts + provenance labels + self-critique), and refines it into an intentional,
-  upgraded identity. Use this whenever the user wants a DESIGN.md, design system,
-  design tokens, style guide, brand snapshot, or to "capture the design / vibe /
-  visual language" of a website or company — even if they just paste a URL and say
-  "make me a design system for this", "extract the tokens from example.com", or
-  "document the brand of this site". Strongly prefer this over /design-md or
-  /design-md-from-screenshots whenever a live URL is available: it MEASURES real
+  pages — the browser-driven successor to design-md-from-screenshots. Give it a URL
+  and it uses playwright-cli to capture MEASURED computed-CSS + HTML/layout +
+  full-page screenshots of the key pages (home, about, product/services, contact,
+  any investor hub/portal), then synthesises an authoritative DESIGN.md in the
+  official google-labs design.md format with provenance labels, and refines it into
+  an intentional, upgraded identity. Use whenever the user wants a DESIGN.md, design
+  system, design tokens, style guide, or brand snapshot, or to "capture the design /
+  vibe / visual language" of a website or company — even if they just paste a URL
+  and say "make me a design system for this", "extract the tokens from example.com",
+  or "document the brand of this site". Strongly prefer this over
+  design-md-from-screenshots whenever a live URL is available: it MEASURES real
   computed styles instead of guessing hexes and fonts from a screenshot.
 ---
 
@@ -23,7 +20,7 @@ description: >-
 
 Produce a single authoritative `DESIGN.md` for a real website by **measuring** its
 design, not guessing it. This is the browser-driven, measure-first evolution of the
-`design-md` and `design-md-from-screenshots` skills, plus the method behind Diolog's
+`design-md-from-screenshots` skill, plus the method behind Diolog's
 admin DESIGN.md generator: probe the real pages with a headless browser, read the
 **computed CSS** (the authoritative hexes / fonts / radii / spacing), pair it with
 full-page screenshots for layout and vibe, synthesise a spec-compliant `DESIGN.md`,

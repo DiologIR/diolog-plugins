@@ -1,6 +1,6 @@
 ---
 name: marketing-docs-maintenance
-description: "Keep the Diolog marketing/feature documentation set in the diolog-team-files repo (~/Dev/diolog-team-files/web) current when a feature ships, a Linear ticket lands, or an area goes stale. Use this skill whenever the user asks to update, sync, refresh, or maintain the marketing docs / feature guide / product docs / feature documentation — e.g. 'update the marketing docs for DIO-1234', 'document this feature in the feature guide', 'the inbox docs are out of date', 'sync the product docs with what shipped', 'add this to the technical/marketing features doc', 'keep the feature documentation current' — or after implementing/changing a user-facing feature when the docs should follow. It updates the two assembled published docs — existing-features-technical.md (full technical detail) and exhisting-features-marketing.md (plain, non-technical) — plus the per-area detail files under existing-features-references/ (final/ and plain/ numbered per area 01-22, backed by the live/ and raw/ capture layers), and the auxiliary surfaces outbound-contact-surfaces.md (contact/delivery inventory), ui-interaction-details.md (micro-interaction/motion/console reference), and INCORPORATED.md (the Linear-ticket reconciliation ledger). Enforces the content standards (technical files carry component names / routes / GraphQL ops / exact copy and NO opinions; plain files carry zero technical terms, second person, sentence case, no em dashes, no emojis), the pair-consistency rule (each assembled doc must agree with its per-area source), the supersede-don't-accumulate currency rule, and the live-app > source > ticket source-of-truth hierarchy. The canonical standards guide is docs/marketing/MAINTENANCE.md in the Diolog app repo — this skill operationalises it, but the published docs now live in diolog-team-files/web (paths below), which supersedes the in-repo file locations MAINTENANCE.md lists. Trigger even if the user doesn't say 'marketing docs' explicitly; any 'reflect this shipped feature in the documentation' request for the Diolog feature docs qualifies."
+description: "Keep the Diolog marketing/feature documentation set in the diolog-team-files repo (~/Dev/diolog-team-files/web) current when a feature ships, a Diolog Tasks ticket lands, or an area goes stale. Use whenever the user asks to update, sync, refresh, or maintain the marketing docs / feature guide / product docs / feature documentation ('update the marketing docs for DIO-1234', 'document this feature in the feature guide', 'the inbox docs are out of date', 'sync the product docs with what shipped', 'add this to the technical/marketing features doc', 'keep the feature documentation current'), or after shipping a user-facing feature when the docs should follow. Updates existing-features-technical.md, exhisting-features-marketing.md, the per-area final/ and plain/ files and auxiliary surfaces, enforcing the register split, pair consistency and the live-app > source > ticket hierarchy. Trigger even if the user doesn't say 'marketing docs'; any 'reflect this shipped feature in the documentation' request qualifies."
 allowed-tools:
   - "Read"
   - "Write"
@@ -17,7 +17,7 @@ allowed-tools:
 # Marketing Docs Maintenance (Diolog)
 
 <role>
-You maintain the Diolog marketing/feature documentation in the **`diolog-team-files`** repo, under `~/Dev/diolog-team-files/web`. When a feature ships or a Linear ticket lands, you bring the docs back into agreement with what the app actually does — editing the right area files, at the right detail level, with zero leakage between the technical and plain-language registers. The docs are a **record that follows the code**, never a specification that leads it.
+You maintain the Diolog marketing/feature documentation in the **`diolog-team-files`** repo, under `~/Dev/diolog-team-files/web`. When a feature ships or a Diolog Tasks ticket lands, you bring the docs back into agreement with what the app actually does — editing the right area files, at the right detail level, with zero leakage between the technical and plain-language registers. The docs are a **record that follows the code**, never a specification that leads it.
 </role>
 
 > **Doc home:** `~/Dev/diolog-team-files/web` (the `diolog-team-files` git repo, `web/` directory). This is where the published docs live and where every edit lands. If the repo is cloned elsewhere on the machine, resolve it from there, but the canonical path is `~/Dev/diolog-team-files/web`.
@@ -62,7 +62,7 @@ Three further files at `~/Dev/diolog-team-files/web`. Not part of the per-area f
 |------|-----------|----------------|
 | `outbound-contact-surfaces.md` | Cross-cutting inventory of **every** surface where a user provides contact data (email addresses, CSVs, people picks) or triggers outbound delivery (email, push, in-app, SMS, link sharing), grouped by the surface that initiates the action, with the contact-input methods / delivery channels / options for each. Medium structured detail — uses field names for precision, no code. | Whenever a new contact-input or outbound-delivery surface is added, or an existing one's input methods / channels / options change. |
 | `ui-interaction-details.md` | Focused **technical** reference for micro-interactions, motion, layout conventions, empty states, and the staff AI-configuration console that are easy to miss in the per-area files. Records exact labels (in quotes), layout, dimensions, and motion; component names for orientation only. **Auxiliary** — where it overlaps a per-area file, that per-area file remains the source of truth. | When a documented micro-interaction / motion / layout convention / console UI changes, or a new one worth recording lands. |
-| `INCORPORATED.md` | Reconciliation **ledger** — a running record of which Linear issues have been folded into the doc set (Status · Disposition · Areas · notes). A maintenance aid only; **not** a product-detail surface. | Check it **first** on a maintenance pass to skip already-covered tickets; append a row for **every** ticket you process (including ones deliberately left out, with the reason). |
+| `INCORPORATED.md` | Reconciliation **ledger** — a running record of which Diolog Tasks issues have been folded into the doc set (Status · Disposition · Areas · notes). A maintenance aid only; **not** a product-detail surface. | Check it **first** on a maintenance pass to skip already-covered tickets; append a row for **every** ticket you process (including ones deliberately left out, with the reason). |
 
 ### Area map (01–22) — `final/` and `plain/` share this numbering
 
@@ -97,7 +97,7 @@ Three further files at `~/Dev/diolog-team-files/web`. Not part of the per-area f
 
 Establish what changed and which area(s) it touches. If unclear, ask.
 
-- **A Linear ticket** (the common case) — e.g. `DIO-4761`. Read it via the Linear MCP (load `mcp__linear__get_issue` and `mcp__linear__list_comments` through `ToolSearch`). Read the **description AND the comments**, especially any implementation-complete comment — that describes what actually shipped (which may differ from what was requested).
+- **A Diolog Tasks ticket** (the common case) — e.g. `DIO-4761`. Read it via the diolog-tasks MCP (load `mcp__diolog-tasks__get_issue` and `mcp__diolog-tasks__list_comments` through `ToolSearch`). Read the **description AND the comments**, especially any implementation-complete comment — that describes what actually shipped (which may differ from what was requested).
 - **A described feature change** with no ticket — work from the description + the live app + source.
 - **A "this area is stale" request** — re-derive the area from the live app and source and reconcile.
 
@@ -111,7 +111,7 @@ When sources conflict, trust in this order:
 
 1. **Live app** (what the browser actually shows) — ultimate authority.
 2. **Source code** (what the components render) — next authority.
-3. **Implementation-complete comments** on the Linear ticket — what was built.
+3. **Implementation-complete comments** on the Diolog Tasks ticket — what was built.
 4. **Ticket description** — what was requested (may differ from what shipped).
 5. **These docs** — a record, not a spec; they follow the code.
 
@@ -139,7 +139,7 @@ And update the auxiliary surfaces when they apply:
 
 7. `outbound-contact-surfaces.md` — **only** if a new outbound / sharing / contact surface was added or an existing one's input methods / channels / options changed.
 8. `ui-interaction-details.md` — **only** if a documented micro-interaction / motion / layout convention / console UI changed (or a new one worth recording landed).
-9. `INCORPORATED.md` — when working from a Linear ticket: check it **first** to skip already-covered tickets, and append a row for the ticket you processed (Status · Disposition · Areas · notes).
+9. `INCORPORATED.md` — when working from a Diolog Tasks ticket: check it **first** to skip already-covered tickets, and append a row for the ticket you processed (Status · Disposition · Areas · notes).
 
 Steps:
 1. Read the ticket (description + comments). Check `INCORPORATED.md` — skip if already reconciled.

@@ -2,22 +2,19 @@
 name: customer-deck-builder
 description: >-
   Build a branded, print-ready customer proposal / pitch deck from Diolog's
-  9-slide template system — a fixed 1920×1080 investor-grade deck (cover, brief,
-  summary, workspace, approach, value, governance, investment, next step) that
-  outputs a single self-contained web page with pan/zoom (trackpad + controls,
-  fit-deck / fit-slide / 100%) and prints to a vertical, paged PDF at native slide
-  size. Diolog is the fixed vendor; the client company, contacts, pricing and
+  9-slide template system — a fixed 1920×1080 investor-grade deck (cover through
+  next step) output as one self-contained web page that prints to a paged PDF.
+  Diolog is the fixed vendor; the client company, contacts, pricing and
   numbers are fillable. Use this skill whenever the user wants to create, generate,
   build, spin up, or template a proposal deck / pitch deck / customer deck /
   investor deck / sales deck / board deck for a specific company (e.g. "make a
   Diolog proposal deck for Acme", "turn the Alfabs deck into one for Northgate",
-  "new customer deck for a listed mining client", "build the pitch deck from the
-  template"), or to modify one (change the client, pricing, accent colour, copy),
-  add a new slide to it, or export/print it to PDF. Trigger even if they don't say
-  "template" or name the files — any request to produce a Diolog-style multi-slide
-  proposal/pitch deck for a customer belongs here. Do NOT use it for a single
-  marketing graphic, an email mockup, or a design-system doc — but DO reach for it
-  the moment the deliverable is a multi-slide customer deck.
+  "new customer deck for a listed mining client"), or to modify one (change the
+  client, pricing, accent colour, copy), add a new slide, or export it to PDF.
+  Trigger even if they don't say "template" — any Diolog-style multi-slide
+  proposal/pitch deck for a customer belongs here. Do NOT use for a single-page
+  A4 business case (use customer-business-case), a single marketing graphic, or
+  an email mockup.
 ---
 
 # Customer Deck Builder

@@ -4,10 +4,7 @@ description: >-
   Generate a single printable A4-page executive business case in Diolog's house
   style from a customer's proposal deck. One dense, elegant page (problem →
   solution → value → quantified outcome → investment → next step) pitched at a
-  board / CFO / CEO, on a fixed 794x1123 A4 canvas that prints to exactly one
-  page. Built with the /design-craft skill against the bundled single-page
-  DESIGN.md and a templated version of the original Alfabs business case, with all
-  copy in the Diolog brand voice. Use this skill whenever the user wants to
+  board / CFO / CEO reader. Use this skill whenever the user wants to
   create, generate, build, or write a business case, executive business case,
   one-page business case, investment case, ROI / value one-pager, board leave-
   behind, or "why buy this" summary for a specific customer (e.g. "make a business

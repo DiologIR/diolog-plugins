@@ -1,6 +1,6 @@
 {
   "name": "macosify",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Three macOS-native UI skills sharing one bundled knowledge corpus (the full macOS 26 'Tahoe'/Liquid Glass HIG library + a token-level DESIGN.md + the macOS 26 UI Extraction & Native Translation framework). `macosify` refits an existing UI to feel authentically AppKit-native on macOS 26, correcting iOS-derived looks (Mac Catalyst / 'Designed for iPad' on Apple Silicon) toward true native. `macos-ui-analyst` (the GlassReader persona) analyses a static macOS 26 screenshot into a structured Native Translation Report (AX-tree inventory + SwiftUI/AppKit mapping) and merges durable learnings into one accumulating knowledge file. `macos-storyboard` reads the entire corpus, then builds an interactive StyleX + Storybook storyboard of a specification's user flows — a reusable design system (tokens → elements → composites) with every screen rendered across happy / empty / loading / error / AI states, using the design-craft and frontend-design skills for bespoke, accessible direction.",
   "author": {
     "name": "DiologIR",

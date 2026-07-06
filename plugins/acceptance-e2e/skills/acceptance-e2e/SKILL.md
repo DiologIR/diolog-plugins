@@ -1,7 +1,7 @@
 ---
 name: acceptance-e2e
-description: Use this skill whenever the user wants end-to-end UI tests for a web feature derived from its requirements — e.g. "write e2e tests for TICKET-123", "create a Playwright test suite for the presentations page from the ticket and plan", "test the calendar feature at <url> against its acceptance criteria", "the chart element looks broken, are we testing for that", "add e2e coverage for this feature and run it", or any request that combines a requirements source (an issue/ticket, a spec or plan*.md, or a written description) with a live/local app and "create tests", "test coverage", "e2e", "acceptance tests", "verify the feature works". It turns a spec (the requirements + the running app) into an acceptance-criteria-traceable Playwright UI suite in the project's OWN e2e harness, runs it, and fixes the tractable product bugs it surfaces. The skill is project-agnostic: it discovers the repo's existing harness, auth, tenant/context model, run command, and base URL rather than assuming any one stack. Reach for it even when the user only names the issue or the URL and not "e2e" explicitly — if they want a feature verified against what it's supposed to do, this is the skill.
-tools: Read, Grep, Glob, Bash, Edit, Write, Agent, ToolSearch
+description: Use this skill whenever the user wants end-to-end UI tests for a web feature derived from its requirements — e.g. "write e2e tests for TICKET-123", "create a Playwright test suite for the presentations page from the ticket and plan", "test the calendar feature at <url> against its acceptance criteria", "the chart element looks broken, are we testing for that", "add e2e coverage for this feature and run it", or any request that combines a requirements source (an issue/ticket, a spec or plan*.md, or a written description) with a live/local app and "create tests", "test coverage", "e2e", "acceptance tests", "verify the feature works". Turns the requirements + the running app into an acceptance-criteria-traceable Playwright suite in the project's OWN e2e harness, runs it, and fixes the tractable bugs it surfaces. Project-agnostic: discovers the repo's harness, auth, run command, and base URL. Reach for it even when the user only names the issue or the URL and not "e2e" explicitly.
+allowed-tools: Read, Grep, Glob, Bash, Edit, Write, Agent, ToolSearch
 ---
 
 # Acceptance-criteria E2E tests
@@ -64,7 +64,7 @@ build/run/fix. Don't skip ahead to clicking around the UI — you'll write shall
 Before anything else, learn how *this* repo does e2e, so you extend it rather than
 impose a foreign shape:
 - **Requirements source:** how are requirements tracked here — an issue tracker
-  (Linear/Jira/GitHub issues, via its MCP or CLI), local `docs/specs` + `docs/plans`
+  (Diolog Tasks/Jira/GitHub issues, via its MCP or CLI), local `docs/specs` + `docs/plans`
   markdown, or just the description the user handed you? Identify it and pull it in
   full (Phase 1).
 - **The e2e harness:** find the existing test setup — the runner (Playwright/Cypress/…),

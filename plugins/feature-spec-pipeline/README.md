@@ -1,6 +1,6 @@
 # feature-spec-pipeline
 
-Four native Claude Code skills that run a **markdown-doc** feature pipeline — **triage → plan → work → gap-fix** — entirely inside your interactive session, with **no Linear** anywhere. A doc-driven sibling of [`linear-issue-pipeline`](../linear-issue-pipeline): instead of a Linear issue + comment thread, the single source of truth for each feature is a versioned spec markdown file in the repo.
+Four native Claude Code skills that run a **markdown-doc** feature pipeline — **triage → plan → work → gap-fix** — entirely inside your interactive session, with **no issue tracker** anywhere. A doc-driven sibling of [`diolog-tasks-pipeline`](../diolog-tasks-pipeline): instead of a Diolog Tasks issue + comment thread, the single source of truth for each feature is a versioned spec markdown file in the repo.
 
 | Skill | What it does |
 |-------|--------------|
@@ -9,17 +9,17 @@ Four native Claude Code skills that run a **markdown-doc** feature pipeline — 
 | **/work** | Implements the plan in an isolated git worktree via **dynamic ultracode workflows** (understand → implement → rebase onto the detected integration branch (`origin/staging`, else the repo default) → acceptance-review vs the spec → resolve every finding → finalize). Commits locally and appends a progress section to the spec; **no remote PR** — the branch stays local for human review. |
 | **/gap-fix** | The post-`/work` **remediation** step. Re-enters the branch/worktree `/work` produced, **always re-audits the delivered code against the original spec** (requirement completeness, correctness, guardrails, UI fidelity, security) — merging in any gaps you hand it (inline, a file, a `## Gaps` section, or a human/QA review) — and **implements the fixes in code** (file-disjoint fan-out + typecheck gates), looping audit→fix until only optional Low items remain. Commits locally and appends a gap-fix progress note to the spec; **no remote PR**. Reuses `/work`'s acceptance-review muscle as a standalone finisher — distinct from `spec-validation` (audit-only, no fixes). |
 
-## How it differs from linear-issue-pipeline
+## How it differs from diolog-tasks-pipeline
 
-Same review depth, Sentinel framework, plan tiers, and worker phases — but the I/O moves from Linear MCP to markdown files:
+Same review depth, Sentinel framework, plan tiers, and worker phases — but the I/O moves from the Diolog Tasks MCP to markdown files:
 
-| Linear pipeline | This pipeline |
+| Diolog Tasks pipeline | This pipeline |
 |---|---|
-| Linear issue (`DIO-1234`) | `docs/specs/spec-DIO-0001.md` (the spec) |
-| Linear comment thread | Triage / Plan / Progress sections appended to the spec |
+| Diolog Tasks issue (`DIO-1234`) | `docs/specs/spec-DIO-0001.md` (the spec) |
+| Diolog Tasks comment thread | Triage / Plan / Progress sections appended to the spec |
 | Issue status (Todo → Ready for AI → Developer Review) | `Status:` field in the spec header + ledger (`Triage` → `Needs More Info` → `Ready for Plan` → `Ready for Work` → `In Progress` → `In Review`) |
 | Human reply on a comment | Human edits the spec + re-runs `/triage` |
-| Linear MCP required | No MCP — pure Read/Write/Edit/Glob/Grep/Bash |
+| Diolog Tasks MCP required | No MCP — pure Read/Write/Edit/Glob/Grep/Bash |
 
 ## Id allocation
 
@@ -39,7 +39,7 @@ docs/
 
 - The **Workflow** (dynamic workflows / ultracode) capability available — research preview; `/plan` and `/work` use it to fan out parallel investigation. If unavailable, the skills still run, just without the parallel speed-up.
 - Run from the **target repository root** (the repo whose code is being triaged/planned/built), which provides `CLAUDE.md`, the `docs/` tree, the codebase, and an integration branch (`origin/staging`, else the repo default — detected, not hardcoded).
-- No Linear MCP needed.
+- No issue-tracker MCP needed.
 
 ## Usage
 

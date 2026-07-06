@@ -1,6 +1,6 @@
 ---
 name: create-diolog-business-case
-description: "Write a buyer-facing business case or ROI / justification document in Diolog's brand voice — an Australian investor-communication SaaS ('the workspace for everything investor-facing', tagline 'Disclosure, without doubt.'). Produces a structured, evidence-led document aimed at the economic buyer (CFO, Company Secretary, board): status-quo cost, what changes with Diolog, proof / security / compliance posture, measurable outcomes, and a clear next step. Precise, measured, risk-and-ROI framed, no em or en dashes, no AI clichés, Australian English, compliance confidence capped at 95%, no guaranteed outcomes. Use this skill whenever the user wants to draft, write, or generate a Diolog business case, ROI document, cost-justification, buyer/board justification, procurement or budget-approval document, internal champion's case, or 'the case for Diolog' for a specific prospect (or says 'write a business case for Diolog', 'draft an ROI doc for prospect X', 'make the buyer/board case', 'help our champion justify the spend', 'write the justification for the CFO'). Trigger even without the exact words 'business case' — a buyer-facing justification/ROI request for Diolog qualifies. For long-form articles/blog posts use create-diolog-article, for website/email marketing copy use create-diolog-marketing-copy, and for LinkedIn/social see the deployed diolog-linkedin-writer prompt."
+description: "Write a buyer-facing business case or ROI / justification document in Diolog's brand voice (Australian investor-communication SaaS) for the economic buyer (CFO, Company Secretary, board): status-quo cost, what changes, proof/security/compliance posture, measurable outcomes, next step. No fabricated numbers, no guaranteed outcomes; compliance confidence capped at 95%. Use whenever the user wants a Diolog business case, ROI document, cost-justification, buyer/board justification, procurement or budget-approval document, internal champion's case, or 'the case for Diolog' for a specific prospect ('write a business case for Diolog', 'draft an ROI doc for prospect X', 'make the buyer/board case', 'help our champion justify the spend', 'write the justification for the CFO'). Trigger even without the exact words 'business case'. For long-form articles use create-diolog-article; for website/email marketing copy use create-diolog-marketing-copy; for LinkedIn/social see the deployed diolog-linkedin-writer prompt."
 allowed-tools:
   - "Read"
   - "Write"
@@ -39,7 +39,7 @@ Read the full persona before drafting; it is authoritative:
 ${CLAUDE_PLUGIN_ROOT}/shared/diolog-brand-voice-writer-persona.md
 ```
 
-Note especially the messaging hierarchy (§4 — for this buyer, security/audit and one-platform consolidation climb the order), the product-truth model, the measured-confidence principle, and the §6 constraints. Everything below adds the business-case structure.
+Note especially the product-truth model, the measured-confidence principle, and the §6 constraints; for this buyer, security/audit and one-platform consolidation climb the messaging order. Everything below adds the business-case structure.
 
 ### Step 3 — Draft on the business-case structure
 

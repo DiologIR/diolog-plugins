@@ -1,7 +1,7 @@
 ---
 name: code-review
-description: Use this skill when the user asks for a code review, asks Claude to "review my changes / PR / diff", asks for a security or quality pass on code, or asks Claude to look at a recently modified NestJS API or Next.js (App Router) / React 19 change before commit or merge. Performs a high-signal multi-pass review with framework-specific checklists, parallel sharding for large diffs, and an independent verifier fan-out that suppresses hallucinated findings.
-tools: Read, Grep, Glob, Bash, Agent, Write
+description: Use this skill when the user asks for a code review, asks Claude to "review my changes / PR / diff", asks for a security or quality pass on code, or asks Claude to look at a recently modified NestJS API or Next.js (App Router) / React 19 change before commit or merge. Performs a high-signal multi-pass review with framework-specific checklists, parallel sharding for large diffs, and an independent verifier fan-out that suppresses hallucinated findings. Do NOT use to apply fixes or refactor — this skill is read-only on source and reports findings only.
+allowed-tools: Read, Grep, Glob, Bash, Agent, Write
 ---
 
 # Code Review (NestJS + Next.js)
@@ -35,7 +35,7 @@ If the user objects to artifacts living inside the repo at all, fall back to `${
 
 ### Migration note (skills ≤ 1.0.6)
 
-Prior versions wrote artifacts to `.code-review/<run-id>/`. Version 1.0.7 moved them to `.code-review/<run-id>/` at the project root so the permission allowlist (`Write(.code-review/**)`) is short and obvious. If your project's `.claude/settings.local.json` still grants `Write(.code-review/**)`, swap it for `Write(.code-review/**)` and delete the old `.code-review/` directory — no artifacts need to be preserved across versions.
+Prior versions wrote artifacts to `.claude/tmp/code-review/<run-id>/`. Version 1.0.7 moved them to `.code-review/<run-id>/` at the project root so the permission allowlist (`Write(.code-review/**)`) is short and obvious. If your project's `.claude/settings.local.json` still grants `Write(.claude/tmp/code-review/**)`, swap it for `Write(.code-review/**)` and delete the old `.claude/tmp/code-review/` directory — no artifacts need to be preserved across versions.
 
 ## Mandate
 

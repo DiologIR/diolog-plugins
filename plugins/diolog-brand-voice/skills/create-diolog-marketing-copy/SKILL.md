@@ -1,6 +1,6 @@
 ---
 name: create-diolog-marketing-copy
-description: "Write website marketing copy and marketing email content in Diolog's brand voice — an Australian investor-communication SaaS ('the workspace for everything investor-facing', tagline 'Disclosure, without doubt.'). Produces ready-to-ship, benefit-first, compliance-aware conversion copy: landing/product page heroes and sections, feature-to-'so what' bullets, twin CTAs, and nurture/product-update/campaign emails (subject + preview + body + one CTA). Precise, warm, plainly authoritative, no em or en dashes, no AI clichés, Australian English, compliance confidence capped at 95%. Use this skill whenever the user wants to draft, write, or generate Diolog website copy, landing-page copy, a page hero, product/feature marketing copy, a marketing or nurture email, an email sequence, ad or campaign copy, or any short-form brand conversion text (or says 'write the hero for the X page', 'draft Diolog landing copy for Y', 'write a marketing email about the Smart Inbox', 'give me the copy for the pricing/feature section', 'write a Diolog nurture sequence'). Trigger even without the word 'copy' — a request for Diolog marketing/website/email text qualifies. This is the marketing-text surface of the Diolog brand voice; for long-form articles/blog posts use create-diolog-article, for buyer ROI/justification docs use create-diolog-business-case, and for LinkedIn/social see the deployed diolog-linkedin-writer prompt."
+description: "Write website marketing copy and marketing email content in Diolog's brand voice (Australian investor-communication SaaS). Ready-to-ship, benefit-first, compliance-aware copy: heroes and page sections, feature-to-'so what' bullets, twin CTAs, and nurture/update/campaign emails (subject, preview, body, one CTA). Use whenever the user wants Diolog website copy, landing-page copy, a page hero, product/feature marketing copy, a marketing or nurture email, an email sequence, ad or campaign copy, or any short-form brand conversion text ('write the hero for the X page', 'draft Diolog landing copy for Y', 'write a marketing email about the Smart Inbox', 'give me the copy for the pricing/feature section', 'write a Diolog nurture sequence'). Trigger even without the word 'copy'; any Diolog marketing/website/email text request qualifies. For articles/blog posts use create-diolog-article; for buyer ROI/justification docs use create-diolog-business-case; for LinkedIn/social see the deployed diolog-linkedin-writer prompt."
 allowed-tools:
   - "Read"
   - "Write"
@@ -21,7 +21,7 @@ Two things make this different from generic marketing copy, and you must hold bo
 ## The inputs you need
 
 1. **Surface** — website/landing page (hero + sections), a single section/hero, or email (single or sequence). If unclear, ask once.
-2. **Audience** — which buyer/user: IR teams, company secretaries, advisory firms, or retail investors. This sets the emphasis (per the persona's messaging hierarchy and register map).
+2. **Audience** — which buyer/user: IR teams, company secretaries, advisory firms, or retail investors. This sets the emphasis (per the persona's register map and the messaging hierarchy in Step 3).
 3. **The offer / goal** — what this copy is selling or asking for (book a demo, start free, first free disclosure-consistency report, download the app, feature awareness).
 4. **Proof / source material** — any stats, customer facts, feature specifics. Every statistic you use must carry an inline `(Source, Year)` from here; if none is supplied, ask or lead on the outcome instead of inventing a number.
 
@@ -39,7 +39,7 @@ Read the full persona before drafting; it is authoritative:
 ${CLAUDE_PLUGIN_ROOT}/shared/diolog-brand-voice-writer-persona.md
 ```
 
-Pay attention to the voice principles, the messaging hierarchy (§4), the register map, the product-truth model (the four modules: Specialised Agents, Compliance Guardian, Smart Inbox, Chatter Monitoring), and the §6 constraints. Everything below only adds the marketing-surface structure.
+Pay attention to the voice principles, the register map (§3.2), the product-truth model (the four modules: Specialised Agents, Compliance Guardian, Smart Inbox, Chatter Monitoring), and the §6 constraints. Everything below only adds the marketing-surface structure.
 
 ### Step 3 — Draft, benefit-first
 
@@ -48,7 +48,7 @@ Pay attention to the voice principles, the messaging hierarchy (§4), the regist
 - **Sections** = a verb-led benefit heading + a "so what" (feature → outcome), with **bold lead-in bullets**. Pair every feature with why it matters to this reader.
 - **Proof chips** where they earn trust ("Grounded in your record", "Every figure verified", "Pre-cleared before sign-off").
 - **Twin CTAs** (e.g. "Book a demo" + "Get your first disclosure-consistency report free"), phrased as a problem-callback, never a bare "Sign up".
-- Order the messages by the persona's messaging hierarchy when space is tight (grounded-in-your-documents first, compliance-in-seconds second, one-platform third, multi-exchange fourth, security fifth, widgets/portal sixth).
+- Order the messages by this hierarchy when space is tight: grounded-in-your-documents first, compliance-in-seconds second, one-platform third, multi-exchange fourth, security fifth, widgets/portal sixth.
 
 **Email:**
 - **Subject** (specific, no clickbait, no hype) + **preview line** + **body** (one idea, short paragraphs) + **exactly one CTA** as a problem-callback.
