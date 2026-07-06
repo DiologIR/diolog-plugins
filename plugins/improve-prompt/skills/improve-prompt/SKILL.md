@@ -1,6 +1,6 @@
 ---
 name: improve-prompt
-description: "Review and improve any prompt artifact — task prompts, prompt templates, system prompts, agent/persona instructions, CLAUDE.md rule files, and Claude Code skills (SKILL.md) — grounded in the bundled Anthropic prompt-engineering docs and Karpathy coding-behaviour principles. Diagnoses against a structured rubric, then rewrites surgically with per-change rationale citing the principle behind it. Use whenever the user wants a prompt improved, reviewed, hardened, optimized, tightened, or modernized — 'improve this prompt', 'my agent hallucinates/leaks/drifts', 'review my system prompt', 'harden this against prompt injection', 'update this prompt for a newer model', 'make this skill trigger better', 'tighten up this SKILL.md' — even when they just paste a prompt and say 'make this better'. Do NOT use for creating a brand-new skill from scratch with evals (use skill-creator), writing content in a person's voice (use that person's content skill), or improving product code rather than prompts (use code-review)."
+description: "Review and improve any prompt artifact — task prompts, prompt templates, system prompts, agent/persona instructions, CLAUDE.md rule files, and Claude Code skills (SKILL.md) — grounded in the bundled Anthropic prompt-engineering docs and Karpathy principles + rule craft. Diagnoses against a structured rubric, then rewrites surgically with per-change rationale citing the principle behind it. Use whenever the user wants a prompt improved, reviewed, hardened, optimized, tightened, or modernized — 'improve this prompt', 'my agent hallucinates/leaks/drifts', 'review my system prompt', 'harden this against prompt injection', 'update this prompt for a newer model', 'make this skill trigger better', 'tighten up this SKILL.md' — even when they just paste a prompt and say 'make this better'. Do NOT use for creating a brand-new skill from scratch with evals (use skill-creator), writing content in a person's voice (use that person's content skill), or improving product code rather than prompts (use code-review)."
 allowed-tools:
   - "Read"
   - "Write"
@@ -59,6 +59,7 @@ Read `references/anthropic/claude-prompting-best-practices.md` for every job —
 | Artifact is a support/chat agent | `anthropic/use-cases/customer-support-chat.md` |
 | Artifact is a summarizer over documents | `anthropic/use-cases/legal-summarization.md` |
 | Artifact drives coding/agentic behaviour | `karpathy/karpathy-guidelines.md` (+ `karpathy-examples.md` for worked before/afters) |
+| Artifact contains behavioural rules of any kind, or the rewrite will add/reshape rules | `karpathy/karpathy-prompt-craft.md` — the guidelines dissected as a *model of rule-writing* (anatomy, self-tests, tradeoff clauses, working-if signals) plus the reusable hardening block |
 | Artifact is a Claude Code skill | `skill-authoring-checklist.md` |
 | Skill lives in the diolog-plugins repo (or follows its style) | `diolog-plugins-conventions.md` |
 
@@ -102,9 +103,13 @@ Run the artifact through this rubric. Record only real findings — a check that
 15. *Scope discipline.* Does it constrain the model to surgical changes and minimum viable solutions, or does it invite gold-plating ("make it robust", "handle all cases")?
 16. *Verifiable success criteria.* "Make it work" is not a goal; "the new test reproducing the bug passes, the suite stays green" is. Imperative task → declarative goal + verification loop.
 
+**Rule craft** (Karpathy-as-form — applies to ANY artifact that states rules; checklist in `karpathy/karpathy-prompt-craft.md` §4)
+
+17. *Rules written as checkable behaviours.* Adjectival rules ("be thorough", "high quality") the model can't verify against its own output fail; each should be an observable behaviour, and rule clusters should end in a self-test ("every changed line traces to the request"). Costly rule-sets need a tradeoff/judgment clause so trivial cases escape full rigor; system prompts and rule files benefit from "working if" success signals; rule text duplicated across surfaces (skill + CLAUDE.md + agent prompt) needs one canonical copy.
+
 **Staleness** (prompts written for older models)
 
-17. *Dead patterns.* Prefilled-assistant format forcing (unsupported on Claude 4.6+ — migrate to structured outputs or direct instruction); `budget_tokens` thinking (→ effort + adaptive thinking); "CRITICAL: you MUST use this tool" aggression written to fix old undertriggering (now causes overtriggering — dial back to "Use this tool when…"); scaffolded interim-progress hacks the current models handle natively.
+18. *Dead patterns.* Prefilled-assistant format forcing (unsupported on Claude 4.6+ — migrate to structured outputs or direct instruction); `budget_tokens` thinking (→ effort + adaptive thinking); "CRITICAL: you MUST use this tool" aggression written to fix old undertriggering (now causes overtriggering — dial back to "Use this tool when…"); scaffolded interim-progress hacks the current models handle natively.
 
 **Skills only:** also run the full checklist in `references/skill-authoring-checklist.md` — trigger-description quality (pushy, WHAT+WHEN, NOT-clause), progressive disclosure (body <~500 lines, routed references), imperative voice, scripts for deterministic work, version hygiene.
 
@@ -116,6 +121,7 @@ Fix what you diagnosed. Nothing else.
 - Prefer the smallest edit that resolves the finding; restructure only when structure itself was the finding.
 - When you remove something, be sure it's dead weight and not a scar from a past failure — if a strange rule looks deliberate, keep it and flag it as a question instead.
 - When you tighten, keep the why: compress wording, never the motivation clauses that make rules generalize.
+- **When you write or reshape rules, use the karpathy form** (`karpathy/karpathy-prompt-craft.md` §1): name → bold one-line directive → checkable behaviour bullets → self-test; add a tradeoff clause to costly rule-sets and "working if" signals to rule files. For agent/coding artifacts missing behaviour-under-ambiguity discipline, prefer merging the proven hardening block (§3) over authoring a bespoke rewording — and if the same rules ship on multiple surfaces, keep one canonical text and wrap per surface (§2), noting which copies must stay in sync.
 - For skills: apply changes in place with Edit, bump `version` in the plugin's `plugin.json`, and sync the plugin's entry in the marketplace manifest if one exists (this repo: `.claude-plugin/marketplace.json`).
 - For pasted prompts with no file: output the full rewritten prompt in a single copy-ready code block.
 
@@ -156,7 +162,7 @@ Findings-table severity ordering: most severe first. If there are no findings ab
 - `references/anthropic/prompting-tools.md` — templates/variables and how Anthropic's own prompt improver restructures prompts (its 4-step pattern is a useful rewrite recipe).
 - `references/anthropic/reduce-hallucinations.md`, `increase-consistency.md`, `mitigate-jailbreaks.md`, `reduce-prompt-leak.md`, `reduce-latency.md` — targeted guardrail techniques.
 - `references/anthropic/use-cases/` — four production worked examples: `content-moderation.md`, `customer-support-chat.md`, `ticket-routing.md`, `legal-summarization.md`.
-- `references/karpathy/karpathy-guidelines.md` — the four principles (Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution); `karpathy-examples.md` — before/after examples of each.
+- `references/karpathy/karpathy-guidelines.md` — the four principles (Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution), verbatim; it is both content to merge into agent prompts and itself an exemplar of rule-writing. `karpathy-examples.md` — before/after examples of each principle. `karpathy-prompt-craft.md` — the guidelines dissected as prompt *craft*: the seven reusable moves (tradeoff clause, principle anatomy, checkable behaviours, self-tests, imperative→verifiable transforms, ownership-scoped cleanup, working-if signals), the cross-surface reuse pattern (one canonical text wrapped per surface), the mergeable hardening block, and the Step 2 rule-craft checklist.
 - `references/skill-authoring-checklist.md` — everything specific to improving Claude Code skills.
 - `references/diolog-plugins-conventions.md` — house idioms, known weaknesses, and exemplar skills for the diolog-plugins repo specifically.
 

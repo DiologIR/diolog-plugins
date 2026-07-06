@@ -331,8 +331,8 @@
     },
     {
       "name": "improve-prompt",
-      "description": "Review and rewrite prompts, system prompts, agent instructions, CLAUDE.md files, and Claude Code skills against Anthropic's prompt-engineering guidance and the Karpathy coding-behaviour principles. Diagnoses the artifact with a structured rubric (clarity, examples, XML structure, output format, hallucination guards, consistency, guardrails, token weight, and \u2014 for skills \u2014 trigger description quality and progressive disclosure), then delivers a surgical rewrite with per-change rationale. Bundles the full Anthropic prompting docs (best practices, Opus 4.8 guide, guardrail guides, four production use-case guides) and Karpathy guidelines as reference material it reads on demand.",
-      "version": "1.0.2",
+      "description": "Review and rewrite prompts, system prompts, agent instructions, CLAUDE.md files, and Claude Code skills against Anthropic's prompt-engineering guidance and the Karpathy coding-behaviour principles. Diagnoses the artifact with a structured rubric (clarity, examples, XML structure, output format, hallucination guards, consistency, guardrails, token weight, rule craft, and \u2014 for skills \u2014 trigger description quality and progressive disclosure), then delivers a surgical rewrite with per-change rationale. Bundles the full Anthropic prompting docs (best practices, Opus 4.8 guide, guardrail guides, four production use-case guides) and the Karpathy material three ways: the guidelines verbatim, worked before/after examples, and a prompt-craft dissection (karpathy-prompt-craft.md) that treats the guidelines as a model of rule-writing \u2014 principle anatomy (name, bold directive, checkable behaviour bullets, self-test), tradeoff clauses, imperative-to-verifiable transforms, ownership-scoped cleanup, working-if success signals, a cross-surface reuse pattern (one canonical rule text wrapped per surface), and a mergeable hardening block \u2014 which the skill applies to every prompt it improves.",
+      "version": "1.1.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"

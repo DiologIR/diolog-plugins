@@ -7,14 +7,14 @@ Review and rewrite prompts, system prompts, agent instructions, CLAUDE.md files,
 Give it any prompt artifact (pasted text, a file path, or the name of a skill in a plugins repo) and it:
 
 1. **Classifies** the artifact and its deployment context (model, latency/cost sensitivity, adversarial exposure, output-format requirements).
-2. **Diagnoses** it against a structured rubric — clarity, motivation/why, examples, XML structure, role, output format, hallucination guards, consistency, guardrails, token weight; plus skill-specific checks (trigger-description quality, progressive disclosure, imperative voice, explain-why over ALL-CAPS MUSTs).
+2. **Diagnoses** it against a structured rubric — clarity, motivation/why, examples, XML structure, role, output format, hallucination guards, consistency, guardrails, token weight, rule craft (checkable behaviours, self-tests, tradeoff clauses, "working if" signals); plus skill-specific checks (trigger-description quality, progressive disclosure, imperative voice, explain-why over ALL-CAPS MUSTs).
 3. **Rewrites** it surgically — preserving intent, variables, and voice; changing only what a diagnosed finding justifies.
 4. **Reports** every change with the principle behind it, so improvements are auditable rather than vibes.
 
 ## Grounding material (bundled in `references/`)
 
 - **Anthropic docs**: Claude prompting best practices, Prompting Claude Opus 4.8, Console prompting tools, and the guardrail guides (reduce hallucinations, increase consistency, mitigate jailbreaks & prompt injections, reduce prompt leak, reduce latency), plus four production use-case guides (content moderation, customer support, ticket routing, legal summarization) as worked examples. Snapshotted July 2026 from platform.claude.com.
-- **Karpathy guidelines**: the four principles (Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution) and their worked examples, from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT).
+- **Karpathy material**, from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT), bundled three ways: the four principles verbatim (Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution), their worked before/after examples, and `karpathy-prompt-craft.md` — a dissection of the guidelines as a *model of how to write rules* (principle anatomy, checkable behaviours, self-tests, tradeoff clauses, imperative→verifiable transforms, "working if" signals, one-canonical-text cross-surface reuse) plus a mergeable hardening block for agent/coding prompts. The skill applies these craft moves to every prompt it rewrites, not just coding ones.
 
 ## Usage
 
