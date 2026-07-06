@@ -12,7 +12,7 @@ Resolve each expected artifact **inside the project** (Glob; exclude `.worktrees
 | Specs dir | `docs/specs/` | Create empty dir |
 | Plans dir | `docs/plans/` | Create empty dir |
 | Briefs dir | `docs/features-to-triage/` | Create empty dir |
-| Mocks | `design/mocks/html/` | Create empty dir; note the survey will have no design-refresh lane |
+| Mocks | `design/mocks/html/` | Create empty dir; note the survey will have no design-refresh lane. Mockless features lose nothing downstream — ship-feature's design stage authors each feature's full UI (surfaces, states, interactions, flows, modals) in the design system regardless |
 | Deep research | `docs/deep-research/` | Create empty dir; note runs proceed without research context |
 | Design language | `DESIGN*.md` at project root | Ask the user for one (or point at design-md-from-website / design-md-from-screenshots skills); UI stages degrade without it |
 | Best practices | `docs/CODING_PRACTICES.md` + `docs/NEW_PROJECT_BEST_PRACTICES.md` | See §2 |
