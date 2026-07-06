@@ -1,0 +1,9 @@
+{
+  "name": "research-to-roadmap",
+  "version": "1.1.1",
+  "description": "Recursive deep-research pipeline with two tracks. Track R (product roadmap): grounds in the product's existing surface, authors strategic + high-volume-ideation + ~10 drill-down Gemini Deep Research prompts (exclusion blocks, analysis lenses, epistemic bounding), then synthesises the returned reports — via verdict ledgers, an evidence hierarchy, gates-track sequencing, and red-team discipline — into wave-based roadmaps with stable numbered, triage-ready feature entries. Track G (general): takes ANY topic, thought, or idea → one initial research prompt (via deep-research-prompt-creator) → pause for the user's Gemini run → 5–10 drill-down prompts from the returned report → pause → synthesis into a decision-ready document.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "skill_name": "research-to-roadmap",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to figure out what Diolog should build next. Read the feature docs in ~/Dev/diolog-team-files/web/ and create a deep research prompt that will help identify what product features and roadmap we should be building.",
+      "expected_output": "A single Gemini Deep Research prompt (competitive/market archetype) in a fenced code block containing: an existing-surface exclusion block built from the actual feature docs, an internal-docs-win-conflicts constraint, a concretely named competitor set, analysis lenses (differentiation over parity, team-size feasibility, two-sided leverage, regulatory catalysts), epistemic bounding tags, inline citation protocol, a repeated core directive, plus Operator Notes covering the Plan Review pause and adversarial audit.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Here's the feature ideation research that came back from Gemini: ~/Downloads/ideation-report.md. Use it to create 10 more deep research prompt md files that drill into the themes.",
+      "expected_output": "~10 md files (one per prompt) plus an INDEX.md. Each file: header note (question, source theme, archetype), self-contained fenced prompt with the full skeleton and delta-only exclusion block, run-specific operator notes. Prompts derived mechanically from theme clusters, whitespace findings, knowledge gaps, and a pricing/packaging prompt. Archetypes vary correctly (competitive for build/skip, technical for feasibility/data, regulatory with status tags for legal). INDEX has run order, cross-run reconciliation warnings, and after-each-run instructions.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "The deep research reports are all back in ~/Downloads/research-reports/ (10 md files). Read them all (no agents) and use them along with the existing roadmap at ~/Dev/diolog-team-files/product-roadmap-2026-2027.md to document a far more ambitious roadmap given AI has reduced implementation effort so much. Be comprehensive and detailed to help with creation of un-triaged feature specs.",
+      "expected_output": "Reads every report in full without sub-agents, builds a verdict ledger, then writes one wave-based roadmap md: strategic reframe with quantified evidence, wave-at-a-glance table, pillars opening with research verdicts, numbered stable feature IDs (F-xx) each triage-ready (mechanism, evidence with numbers, dependencies, gates, spec notes, differentiating/table-stakes), a wave-1 gates track for external dependencies, deprioritised table with rationale, risks including unverified-claim flags, immediate actions naming the first triage batch. Every research verdict lands somewhere; delivered via SendUserFile.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I've been thinking about whether we should offer a white-labelled version of our investor app to share registries as a channel play. Can you set up proper deep research on this idea?",
+      "expected_output": "Track G: frames the decision with at most 1-3 batched questions (or states its reading if concrete), then produces ONE initial deep-research prompt via deep-research-prompt-creator conventions (fitting archetype, epistemic bounding, repeated core directive) saved as deep-research-prompts/00-initial-*.md, and ends the turn with explicit pause instructions: run it in Gemini Deep Research, pause at Plan Review to check named branches, return with the report for the 5-10 drill-down prompts. Does NOT attempt the research itself via web search.",
+      "files": []
+    }
+  ]
+}
