@@ -1,6 +1,6 @@
 ---
 name: create-amy-content
-description: "Write any content in Amy Benson's authentic voice (Diolog Founder & CEO), routed through the right persona variant: LinkedIn posts and thought leadership (IR, AI-in-IR, startup life), sales/partnership outreach email (cold intros, follow-ups, objection handling, declines), Diolog investor updates, Slack/chat messages, short-form (comments, replies, bios), and speaking notes (panels, podcasts, pitches). Always sounds like Amy: warm first, sharp underneath, direct questions, low-pressure asks, no em dashes, AU spelling; grounded in supplied context, never invention; deterministic voice-lint + fingerprint gate. Use whenever the user wants to draft, write, or ghostwrite ANY content in Amy's voice (or 'my voice' / 'as me' when the user is Amy): 'write a LinkedIn post as Amy', 'draft Amy's outreach email to this IR lead', 'reply to this thread as Amy', 'draft the investor update', 'prep Amy's panel notes'. Do NOT use for Luke's voice (create-luke-content) or Diolog company voice (diolog-brand-voice)."
+description: "Write any content in Amy Benson's authentic voice (Diolog Founder & CEO), routed through the right persona variant: LinkedIn posts, long-form articles/blog posts, marketing content (announcements, launch/landing copy, campaign emails, release notes), sales/partnership outreach email, Diolog investor updates, Slack/chat, short-form, and speaking notes (panels, podcasts, pitches). Always sounds like Amy: warm first, sharp underneath, low-pressure asks, no em dashes, AU spelling; grounded in supplied context, never invention; deterministic voice-lint + fingerprint gate. Use whenever the user wants to draft or ghostwrite ANY content in Amy's voice (or 'my voice' / 'as me' when the user is Amy): 'write a LinkedIn post as Amy', 'draft Amy's outreach email', 'write the launch copy as Amy', 'a blog post in Amy's voice', 'reply to this thread as Amy', 'draft the investor update', 'prep Amy's panel notes'. Do NOT use for Luke's voice (create-luke-content) or standalone Diolog company voice (diolog-brand-voice)."
 allowed-tools:
   - "Read"
   - "Write"
@@ -22,6 +22,8 @@ Load **`references/amy-voice.md` (always, the base layer) plus the one matching 
 | Content type | Signals in the request | Load | Lint format |
 |---|---|---|---|
 | **LinkedIn post** | "LinkedIn post", thought leadership, IR/AI commentary, startup-life reflection, event takeaways | `references/personas/linkedin-post.md` | `linkedin` |
+| **Long-form article / blog** | blog post, LinkedIn article, guest column, founder essay (anything past ~600 words with a title) | `references/personas/long-form-article.md` | `blog` |
+| **Marketing content** | product announcement, launch copy, landing/website copy, campaign email, release notes, one-pager | `references/personas/marketing-content.md` | `marketing` |
 | **Outreach / sales email** | cold outreach, intro, partnership email, demo follow-up, proposal recap, objection reply, decline | `references/personas/outreach-email.md` | `email` |
 | **Investor update** | "investor update", "investor newsletter", update to Diolog's investors | `references/personas/investor-update.md` | `update` |
 | **Slack / chat** | "Slack message", "reply to this thread", DM, WhatsApp, quick internal note | `references/personas/chat-informal.md` | `slack` |
@@ -35,7 +37,8 @@ Routing rules: pick by **destination**, not length. A request spanning types is 
 Check what the conversation already gives you; batch any missing questions once. Required by type:
 
 - **All types:** topic/subject and any source material (a thread, notes, a report, a meeting summary). The source is factual ground truth; read it fully.
-- **LinkedIn + investor update (public):** Amy's **stance or the update's substance** is non-negotiable - a topic without her angle produces generic mush; hold until you have it. Do not invent Amy's opinions, numbers, or milestones.
+- **LinkedIn + article + investor update (public):** Amy's **stance or the piece's substance** is non-negotiable - a topic without her angle produces generic mush; hold until you have it. Do not invent Amy's opinions, numbers, or milestones.
+- **Marketing:** the feature/product facts (what it does, what's true today) and the audience (IR / CoSec / advisory / investor - her site shifts register per audience on the same truths). Product claims must be current: re-verify module names and claims against the live site or supplied material.
 - **Outreach email:** who it's to (role, company type), the relationship state (cold / met / mid-deal / said no), and what the next step should be.
 - **Chat:** who it's to and what outcome the message needs.
 - **Speaking notes:** the event, audience, and the 2–3 points Amy wants to land.

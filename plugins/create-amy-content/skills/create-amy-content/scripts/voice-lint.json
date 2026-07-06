@@ -18,17 +18,50 @@
     "moreover",
     "additionally,"
   ],
-  "ai_vocab_extra": ["synergies", "stakeholder alignment"],
+  "ai_vocab_extra": [
+    "synergies",
+    "stakeholder alignment"
+  ],
   "spelling": "AU",
   "exclamations": "allow",
   "emoji": "ration",
   "formats": {
-    "linkedin": { "max_chars": 3000, "warn_words": 520, "note": "Amy's posts run 200-500 words of substantive commentary" },
-    "email": { "warn_words": 350, "note": "cold outreach ~60-90 words; consultative follow-ups can run long but past ~350 split into an attachment or call" },
-    "update": { "min_words": 250, "warn_words": 900, "note": "investor updates are structured and substantial; past ~900 words move detail to appendices" },
-    "slack": { "warn_words": 160, "note": "long DMs are fine when bulleted; past ~160 words consider a doc or call" },
-    "short": { "warn_words": 90, "info_chars": 280, "note": "comments and quick replies: one idea" },
-    "brief": { "max_segment_words": 400, "note": "speaking notes: one breath-sized beat per segment" }
+    "linkedin": {
+      "max_chars": 3000,
+      "warn_words": 520,
+      "note": "Amy's posts run 200-500 words of substantive commentary"
+    },
+    "email": {
+      "warn_words": 350,
+      "note": "cold outreach ~60-90 words; consultative follow-ups can run long but past ~350 split into an attachment or call"
+    },
+    "update": {
+      "min_words": 250,
+      "warn_words": 900,
+      "note": "investor updates are structured and substantial; past ~900 words move detail to appendices"
+    },
+    "slack": {
+      "warn_words": 160,
+      "note": "long DMs are fine when bulleted; past ~160 words consider a doc or call"
+    },
+    "short": {
+      "warn_words": 90,
+      "info_chars": 280,
+      "note": "comments and quick replies: one idea"
+    },
+    "brief": {
+      "max_segment_words": 400,
+      "note": "speaking notes: one breath-sized beat per segment"
+    },
+    "blog": {
+      "min_words": 600,
+      "warn_words": 1800,
+      "note": "Amy's evidenced range tops out ~1,500 words; past that drift risk climbs"
+    },
+    "marketing": {
+      "warn_words": 450,
+      "note": "announcement/landing copy sells one job; past ~450 words split the piece"
+    }
   },
   "fingerprint": {
     "mean_sentence_words": 21.3,
