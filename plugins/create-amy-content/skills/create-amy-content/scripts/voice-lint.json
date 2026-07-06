@@ -1,0 +1,42 @@
+{
+  "person": "Amy Benson (metadata only; the script doesn't read it)",
+  "em_dash": "forbid",
+  "banned_phrases": [
+    "let's face it",
+    "market whiplash",
+    "geopolitical disruption",
+    "underscores the importance",
+    "in the ever-changing world",
+    "game changing",
+    "exciting news!",
+    "i'm thrilled to announce",
+    "thrilled to share"
+  ],
+  "advisory_phrases": [
+    "; ",
+    "furthermore",
+    "moreover",
+    "additionally,"
+  ],
+  "ai_vocab_extra": ["synergies", "stakeholder alignment"],
+  "spelling": "AU",
+  "exclamations": "allow",
+  "emoji": "ration",
+  "formats": {
+    "linkedin": { "max_chars": 3000, "warn_words": 520, "note": "Amy's posts run 200-500 words of substantive commentary" },
+    "email": { "warn_words": 350, "note": "cold outreach ~60-90 words; consultative follow-ups can run long but past ~350 split into an attachment or call" },
+    "update": { "min_words": 250, "warn_words": 900, "note": "investor updates are structured and substantial; past ~900 words move detail to appendices" },
+    "slack": { "warn_words": 160, "note": "long DMs are fine when bulleted; past ~160 words consider a doc or call" },
+    "short": { "warn_words": 90, "info_chars": 280, "note": "comments and quick replies: one idea" },
+    "brief": { "max_segment_words": 400, "note": "speaking notes: one breath-sized beat per segment" }
+  },
+  "fingerprint": {
+    "mean_sentence_words": 21.3,
+    "sd_sentence_words": 17.1,
+    "contraction_per_100w": 2.05,
+    "comma_per_sentence": 1.03,
+    "semicolon_per_1000w": 0.43,
+    "nominalization_per_1000w": 31.2,
+    "mean_paragraph_sentences": 2.0
+  }
+}
