@@ -32,6 +32,7 @@ For each lens, only raise findings that require a *human product decision*. Attr
 
 **Engineering Readiness** (product-decision layer only — leave code-level details to the planner)
 - For any write to tenant-scoped data: is the tenant boundary explicit at the *product* level (e.g. "pins are per-user per-company, not cross-company")?
+- For repeatable long-running or generative actions: what is the *re-run* story — running the same action twice (concurrently, or again later) deduplicates, queues, versions, or replaces? A "create"-shaped feature with no stated re-run/concurrency semantics silently defaults to duplicates and last-writer-wins races — flag it.
 - For schema/behaviour-altering changes: is there a rollout plan (flag? progressive rollout? kill switch?)?
 - For irreversible operations: is a rollback story named?
 
@@ -39,6 +40,8 @@ For each lens, only raise findings that require a *human product decision*. Attr
 - How do errors surface to the user and to support/ops?
 - Is there a dry-run/preview mode for destructive or customer-visible actions?
 - What does "healthy" look like — any metric/SLO/signal?
+- For features that accumulate unbounded records (event logs, job queues, generated artifacts, run history): what is the retention story (TTL, cap, cleanup) — or is "grows forever" an explicitly accepted decision?
+- For metered work (AI/model calls, sandbox/compute minutes, per-call billing): is any spend or concurrency ceiling named, and is per-run cost *measured* (an instrumented number, not an assumption)? A feature whose own rationale cites cost as a risk must not ship with cost unmeasured.
 
 **Governance** (S2+ only — skip for S0/S1)
 - Immutable audit trails where MNPI-adjacent?

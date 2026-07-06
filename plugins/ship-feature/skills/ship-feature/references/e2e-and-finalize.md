@@ -33,7 +33,9 @@ Verify each by **actually checking**, not by recalling that an earlier phase "pa
 - [ ] **All build gates green, actually run now:** the repo's own validate / codegen / typecheck / lint commands (e.g. `pnpm validate:all`, `pnpm validate:graphql`, `pnpm typecheck`, `pnpm lint`), scoped sensibly, in the worktree. A gate you couldn't run is a **blocker**, not an implied pass.
 - [ ] **No unresolved Critical / High / Medium** findings from `/work`'s acceptance review or `/gap-fix` — only optional, documented Low items may remain.
 - [ ] **e2e green twice**, covering every flow/action/menu, with surfaced bugs fixed.
-- [ ] **Reachability + clause tables** on the spec show every capability wired and every clause satisfied (no `✗`, no unresolved `partial`).
+- [ ] **Reachability + clause tables** on the spec show every capability wired and every clause satisfied (no `✗`, no unresolved `partial`) — including a row per **contract arm/kind/variant** the branch ships (a kind with no in-product producer is unwired).
+- [ ] **Plan ACs reconciled:** every `- [ ]` box under the plan's `## Acceptance Criteria` is either ticked (verified in this run) or explicitly named in the spec's progress notes as a blocker / documented deferral — an unticked, unmentioned AC box is a blocker.
+- [ ] **No undisclosed drops:** the spec's progress notes carry a "Dropped or changed vs spec/plan" disclosure accounting for every spec/plan-promised mechanism that didn't ship (or "none").
 - [ ] **One branch:** all parent + deferred + child work is on `ai/<id>`; no stray child worktree/branch remains.
 
 If **any** box is unchecked or unverifiable → **STOP before the merge.** Append a blocker note to the spec, leave the branch local (exactly where `/work` would leave it), and report precisely what blocks the merge. This is a correct, safe outcome — a stopped run beats a broken push.
@@ -62,9 +64,10 @@ Work in the worktree `WT = .worktrees/<ID>`; `INT` is the integration branch you
 ### Record the outcome
 - Set the spec header `Status: Done` (Merged), refresh `Last updated`, and add a one-line merge note (the merge commit sha + date + `INT`). Do the same on child specs.
 - Update the ledger row(s) to `Done`.
+- **Commit the docs to the integration branch:** after the merge, commit `spec-<ID>.md`, `plan-<ID>.md`, the ledger, and any evidence docs (scorecards, eval records) on `<INT-local>` in the **main working tree**, riding the same push as the merge. A merged feature whose spec/plan exist only as untracked local files has no durable record — the pipeline's issue tracker must survive the machine. (They still never ride the *feature* branch — this commit happens on the integration branch, post-merge.)
 - Report: what merged, onto which branch, the commit sha, the e2e pass counts + AC coverage, findings resolved, gates run, and the worktrees/branches removed.
-
-Remember the docs (`spec`/`plan`/`LEDGER`) live in the **main working tree** and are **not** committed onto the feature branch — they don't ride the merge; only the code (including the design-system mock UI carried in Phase 1) does.
 
 ## If you stopped instead of merging
 That's a first-class outcome, not a failure. Leave the branch committed + rebased in its worktree (the same state `/work`/`/gap-fix` leave), keep the spec at `In Review`, and hand the human a precise blocker list. They can fix + re-enter at the failed phase, or merge manually. Never push to clear a blocker.
+
+**If a human merges the branch themselves while gates remain open** (e.g. via a PR, accepting the risk you reported): when you later update the spec to `Done (Merged)`, carry the still-open gates forward as an explicit, dated **"Open follow-ups at merge"** list in the spec (the unmet ACs, un-run gates, deferred verifications) — never let the `Done` header silently absorb them. The human accepted the risk; the record must still name it.
