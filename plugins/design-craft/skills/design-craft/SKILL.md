@@ -1,7 +1,7 @@
 ---
 name: design-craft
-description: Use this skill whenever the user asks you to design or build a user-facing visual artifact — a landing page, marketing page, app screen, dashboard, interactive/clickable prototype, slide deck or pitch, wireframe, hi-fi design variations, a "make it tweakable" panel, a design-token/style extraction, or a component inventory — or to review/fix a design (accessibility audit, "this looks AI-generated"/remove-the-slop, hierarchy or spacing check, interaction-states pass, or a pre-ship polish pass). Triggers include "design a…", "build a UI/landing page/prototype/deck", "make this look intentional/less generic", "give me a few design options", "extract the design tokens", "wireframe this flow", "polish this before we ship", and similar. The skill makes Claude an opinionated, accessibility-aware, AI-slop-resistant designer that produces intentional HTML/CSS/SVG/JS artifacts and roots every choice in real context. It carries the full design philosophy here and routes to 14 phased procedures in references/.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent
+description: Use this skill whenever the user asks you to design or build a user-facing visual artifact — a landing page, app screen, dashboard, clickable prototype, slide deck, wireframe, design variations, a tweakable panel, an animated/motion piece or product video, a 3D/WebGL or depth-heavy hero, a print-ready document, generated imagery, a design system, or token extraction — or to review/fix a design (accessibility audit, "looks AI-generated"/remove-the-slop, hierarchy check, interaction-states or motion pass, pre-ship polish). Triggers: "design a…", "build a UI/landing page/prototype/deck", "animate this", "make this look intentional/less generic", "give me a few options", "wireframe this flow", "polish this before we ship", and similar. Do NOT use for producing a DESIGN.md from screenshots or a live URL (use design-md-from-screenshots / design-md-from-website). An opinionated, accessibility-aware, AI-slop-resistant designer producing intentional HTML/CSS/SVG/JS artifacts; 21 phased procedures in references/.
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, AskUserQuestion
 ---
 
 # Design Craft
@@ -43,7 +43,9 @@ Ask the questions the brief actually leaves open — no quota, no padding. A que
 
 **Hi-fi designs do not start from scratch — they are rooted in existing context.** Before drawing, acquire a design system / UI kit, brand assets, an existing codebase, or screenshots of existing UI. If you can't find context, **ask for it** — don't invent a brand out of thin air (unless explicitly asked, then use `references/frontend-aesthetic-direction.md`).
 
-When you find context, observe and follow the visual vocabulary before adding to it: color palette and tone, typography, density, radii/shadow/card patterns, hover/click animation, copy tone. When designing against a real codebase, **read the source — don't rely on memory.** Open the theme file, the tokens, the component; lift exact hex codes, spacing, and font stacks.
+When you find context, observe and follow the visual vocabulary before adding to it: color palette and tone, typography, density, radii/shadow/card patterns, hover/click animation, copy tone. When designing against a real codebase, **read the source — don't rely on memory**, and prefer code over screenshots when both exist (you recreate interfaces more faithfully from code). Target the load-bearing files first: theme/token files (`theme.ts`, `tokens.css`, `_variables.scss`), global stylesheets, and the specific components named in the brief; lift exact hex codes, spacing, and font stacks.
+
+A provided design system is **binding**, not inspiration: build only from its tokens and components, never guess a `var(--*)` name (an unresolved variable silently falls back), and treat its example products/brands/people as style reference only — never as facts about the user or topic. If it ships mocks of similar surfaces, fork those rather than designing from scratch.
 
 ## 5. Content principles — no filler
 
@@ -58,7 +60,7 @@ Every design choice has a reason. Lead with the right move; the trailing clause 
 - **Gradients → default to flat color.** If you need one: two stops, low contrast, same hue family. *Avoid* rainbow / neon-on-neon / 3+ color gradients.
 - **Emoji → only when the brand uses them or the emoji is functional** (status/category marker tied to real meaning). *Avoid* 🚀/📈/✅ sprinkled for color. No emoji beats performative emoji.
 - **Cards → separate with subtle shadow, a thin all-around border, or background contrast.** Reserve `border-left: 4px solid` for real semantic emphasis. *Avoid* `border-radius: 12px; border-left: 4px solid` as the default card — it reads "default SaaS template."
-- **Imagery → real photography, professional illustration, established icon libraries (Feather, Material, Phosphor, Heroicons), or honest placeholders.** *Avoid* hand-drawn SVG of people/scenes/abstract concepts. A placeholder shows intent; a weak illustration shows you didn't have the asset.
+- **Imagery → real photography, professional illustration, established icon libraries (Feather, Material, Phosphor, Heroicons), generated imagery via `references/generate-images.md` when a backend exists, or honest placeholders.** *Avoid* hand-drawn SVG of people/scenes/abstract concepts. A placeholder shows intent; a weak illustration shows you didn't have the asset. The honest placeholder recipe: `background: repeating-linear-gradient(45deg, #E5E5E5, #E5E5E5 10px, #F5F5F5 10px, #F5F5F5 20px)` with a centered monospace label naming the asset and its dimensions ("product shot 1200×800").
 - **Type → pick fonts with intent**, matched to brand or medium. *Avoid* Inter, Roboto, Arial, Fraunces, and bare system stacks as silent defaults.
 - **Color → subtly toned whites and blacks** (e.g. `#FAFAFA` bg, `#1A1A1A` text). *Avoid* pure `#FFFFFF` on `#000000` — harsh and unfinished.
 - **Aesthetic direction → chosen, never defaulted.** The warm-editorial look (cream `#F4F1EA`-family backgrounds, serif display like Georgia/Playfair, italic word-accents, terracotta/amber palette) suits editorial/hospitality/portfolio briefs *as a deliberate, stated choice*. *Avoid* reaching for it silently — especially on dashboards, dev tools, fintech, healthcare, or enterprise. It is the current default-template look, exactly as purple gradients were before it.
@@ -79,11 +81,11 @@ Commit to a tone (warm / cool / neutral) and limit the palette to **3–5 colors
 
 ## 8. Typography system
 
-1–2 font families max. Define a type scale and stick to it (`12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 48`). Pair fonts with contrast. Readable fonts for body (sans or serif — never script/display for paragraphs). Avoid all-caps for large blocks. Use `text-wrap: pretty` to avoid widows/orphans. **Per-medium minimums (delivery requirements, not suggestions):** 1920×1080 slides — body ≥24px, ideally 32px+; print ≥12pt; mobile body ≥16px; hit targets ≥44×44px; desktop 14–16px body.
+1–2 font families max. Define a type scale and stick to it (`12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 48`). Pair fonts with contrast. Readable fonts for body (sans or serif — never script/display for paragraphs). Avoid all-caps for large blocks. **Track deliberately:** ALL-CAPS labels need `letter-spacing: 0.06–0.1em`; display type ≥48px needs −0.02 to −0.03em; body stays at 0 — untracked caps and untracked display are the two most reliable AI-slop tells (full table in `references/hierarchy-rhythm-review.md`). Use `text-wrap: pretty` to avoid widows/orphans. **Per-medium minimums (delivery requirements, not suggestions):** 1920×1080 slides — body ≥24px, ideally 32px+; print ≥12pt; mobile body ≥16px; hit targets ≥44×44px; desktop 14–16px body.
 
 ## 9. Color system
 
-Define a palette and use it everywhere — brand (`--primary` + dark/light + `--accent`), semantic (`--success #10B981`, `--warning #F59E0B`, `--error #DC2626`, `--info #3B82F6`), and a 10-step neutral scale. Subtly tone whites/blacks. **Don't rely on color alone to communicate state** — pair with icon, text, or position (8% of men are colorblind; grayscale/high-contrast modes need a second signal). Avoid red+green, blue+yellow at similar brightness, light gray on white, colored text on similar-lightness backgrounds.
+Define a palette and use it everywhere — brand (`--primary` + dark/light + `--accent`), semantic (`--success #10B981`, `--warning #F59E0B`, `--error #DC2626`, `--info #3B82F6`), and a 10-step neutral scale. Subtly tone whites/blacks. **Budget by pixels:** neutrals carry 70–90% of the screen, the accent 5–10% — and the accent appears in **at most ~2 places per screen** (links and focus rings count; demote links to foreground+underline when a CTA shares the view). One accent, one grey temperature, held across the whole product. **Don't rely on color alone to communicate state** — pair with icon, text, or position (8% of men are colorblind; grayscale/high-contrast modes need a second signal). Avoid red+green, blue+yellow at similar brightness, light gray on white, colored text on similar-lightness backgrounds.
 
 ## 10. Accessibility and inclusivity
 
@@ -107,7 +109,7 @@ Don't recreate Figma in code — embrace the web. CSS **Grid** for complex layou
 
 ## 15. Understanding users
 
-Design for the user, not yourself. For new work, confirm: **who** is the audience, **what** is the primary goal (convert/inform/entertain/instruct/decide), **what context** they'll read it in, and **what they already know**. Design for one primary persona, not "everyone." When the user has hypotheses about their audience, surface options that test them.
+Design for the user, not yourself. For new work, confirm: **who** is the audience, **what** is the primary goal (convert/inform/entertain/instruct/decide), **what context** they'll read it in, and **what they already know**. Design for one primary persona, not "everyone." When the user has hypotheses about their audience, surface options that test them — a wireframe round and a hi-fi round on different bets is more useful than four hi-fi takes on the same bet.
 
 ## 16. Quality over quantity
 
@@ -115,7 +117,7 @@ Show fewer ideas, polished. One strong fully-realized design beats ten half-bake
 
 ## 17. Output principles
 
-**Pick the right format:** purely-visual exploration → side-by-side labeled canvas; interactions/flows/many-option → full hi-fi clickable prototype with options as toggles/tweaks; slides → fixed-size deck shell with letterboxing; motion → timeline engine with scrubber. **Give 3+ variations** across substantive dimensions (visual treatment, interaction model, layout, tone), basic to bold. **One file, many variants** — prefer a single document with toggles/tweaks over scattered `v1.html / v2.html / v3.html`. Apply the per-medium minimums from chapter 8.
+**Pick the right format:** purely-visual exploration → side-by-side labeled canvas; interactions/flows/many-option → full hi-fi clickable prototype with options as toggles/tweaks; slides → fixed-size deck shell with letterboxing; motion → timeline engine with scrubber (`references/make-an-animation.md`); documents → paper-on-desk pages (`references/make-a-doc.md`). **Give 3+ variations** across substantive dimensions (visual treatment, interaction model, layout, tone), basic to bold. **One file, many variants** — prefer a single document with toggles/tweaks over scattered `v1.html / v2.html / v3.html`; the exception is a drastic revision of a settled design, where you copy to `Name v2.html` first so the prior version survives. Even when the user didn't ask, **add 1–2 tweak controls by default** — surface interesting possibilities. Apply the per-medium minimums from chapter 8.
 
 ## 18. Collaboration and delivery
 
@@ -140,13 +142,25 @@ Each procedure below is a phased file in `references/`. **Read the file and foll
 | `references/make-a-prototype.md` | Anything clickable or interactive. Real state, navigation, validation, loading, feedback. |
 | `references/make-tweakable.md` | "Let me play with it" / "make this adjustable." Self-contained floating tweak panel, persisted to `localStorage`. |
 | `references/generate-variations.md` | Options / alternatives on hi-fi work. 3+ distinct variations across substantive axes, in one file. |
+| `references/make-an-animation.md` | Animated video / motion piece / product walkthrough / kinetic type / "animate this story." Timeline engine with scrubber; exports to `.mp4`. |
+| `references/make-a-doc.md` | Report / one-pager / letter / print or PDF deliverable. Paper-on-desk pages with print-perfect CSS. |
+| `references/generate-images.md` | The design needs raster imagery (hero art, scenes, textures, characters) and an image-generation backend exists — or the user asks to generate images. |
 
-### System (extract structure)
+### Craft (apply while building)
+
+| Reference | When to read |
+|---|---|
+| `references/motion-design.md` | Any motion beyond a bare hover transition — entrances, page transitions, scroll effects, celebratory moments. Tokens, easing, choreography, and the motion review gate. |
+| `references/depth-and-3d.md` | Shadows/elevation, grain/mesh/glass textures, parallax, CSS 3D, or a WebGL/Three.js moment. The depth-technique ladder with budgets and fallbacks. |
+| `references/laws-of-composition.md` | Composing any screen with choices about grouping, option counts, defaults, or emphasis — and as a review lens (law → violation → fix). |
+
+### System (extract or author structure)
 
 | Procedure | Trigger |
 |---|---|
 | `references/design-system-extract.md` | "Extract tokens" / "give me a tokens file" from a brand, codebase, or screenshots. |
 | `references/component-extract.md` | "Identify reusable parts" / "build a component library." Emits a component inventory. |
+| `references/design-system-author.md` | "Create a design system / UI kit" as a deliverable in its own right. Authors a reusable tokens+components folder with specimen cards and a readme; extraction's sibling. |
 
 ### Review (audit and fix)
 
@@ -156,9 +170,9 @@ Each procedure below is a phased file in `references/`. **Read the file and foll
 | `references/ai-slop-check.md` | "Looks AI-generated" / "remove the slop," and after any greenfield hi-fi build. |
 | `references/hierarchy-rhythm-review.md` | "Check the hierarchy" / "the spacing feels off." Size/weight/color + spacing-scale discipline. |
 | `references/interaction-states-pass.md` | Before shipping anything interactive. Hover/active/disabled/focus + transitions. |
-| `references/polish-pass.md` | Before any delivery/ship. Runs the four reviews in parallel, then fixes. |
+| `references/polish-pass.md` | Before any delivery/ship. Runs the reviews in parallel (including the motion gate when motion exists), then fixes. |
 
-**Chaining.** Greenfield: `discovery-questions → frontend-aesthetic-direction → wireframe → make-a-prototype → polish-pass`. Brand-aware: `design-system-extract → generate-variations → make-tweakable → polish-pass`.
+**Chaining.** Greenfield: `discovery-questions → frontend-aesthetic-direction → wireframe → make-a-prototype → polish-pass`, reading `motion-design.md` / `depth-and-3d.md` / `laws-of-composition.md` as the build touches their territory. Brand-aware: `design-system-extract → generate-variations → make-tweakable → polish-pass`. Motion deliverable: `discovery-questions → make-an-animation → motion-design (review gate) → polish-pass`.
 
 ## Environment notes (Claude Code)
 
@@ -168,6 +182,7 @@ In Claude Code:
 - **Verifier subagents** use the `Agent` tool. Spawn parallel review agents where a procedure calls for them; pass each agent the full file contents.
 - **Deck shells, device frames, side-by-side canvases, and tweak panels are written as self-contained HTML/CSS/JS** — each procedure gives the implementation directly.
 - **Browser verification** (render, DOM, console, screenshots) uses whatever automation is available — Playwright, `playwright-cli`, or the Chrome MCP — driven through a verifier subagent.
+- **Serve multi-file work over HTTP, never `file://`** — one `python3 -m http.server` per project directory; module scripts, fetches, and some fonts silently fail from the filesystem.
 
 ## Final principle
 

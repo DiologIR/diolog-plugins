@@ -10,7 +10,7 @@
     {
       "name": "positioning-pipeline",
       "description": "End-to-end product-positioning pipeline. From a company context it generates two Google Gemini Deep Research prompts (a positioning brief + a product-research-persona market brief), renders a copy-and-launch HTML with animated Gemini instructions (select Deep research from the + menu; Share & Export \u2192 Copy contents), then \u2014 once the research comes back \u2014 synthesises three framework-grounded positioning territories (Ries & Trout, April Dunford, Blue Ocean, David C. Baker) as Markdown plus a stylised interactive decision page.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -20,8 +20,8 @@
     },
     {
       "name": "discovery-sentinel",
-      "description": "Analyze product discovery and customer feedback documents using the Discovery Sentinel persona. Produces Feedback Classification Reports, Discovery Insight Briefs, and Prioritised Opportunity Assessments.",
-      "version": "1.0.0",
+      "description": "Analyze product discovery and customer feedback session documents using the Discovery Sentinel persona. Produces structured Feedback Classification Reports, Discovery Insight Briefs, and Prioritised Opportunity Assessments with confidence scoring, JTBD extraction, bias detection, and compliance flagging for regulated B2B SaaS.",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -31,8 +31,8 @@
     },
     {
       "name": "product-strategist",
-      "description": "Generate validated, prioritized product feature concepts and outcome-based roadmaps for AI-assisted IR/compliance/governance SaaS. Supports feature ideation, roadmap construction, feature evaluation, data ingestion, and comparative prioritization.",
-      "version": "1.0.0",
+      "description": "Generate validated, prioritized product feature concepts and outcome-based roadmaps for AI-assisted IR/compliance/governance SaaS. Supports feature ideation, roadmap construction, feature evaluation, data ingestion, and comparative prioritization using RICE-C/WSJF scoring, compliance gates, and OST methodology.",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -42,8 +42,8 @@
     },
     {
       "name": "deep-research-prompt-creator",
-      "description": "Turns a vague research need into a single copy-paste-ready Google Gemini 3.1 Pro Deep Research prompt \u2014 with pseudo-XML scaffolding, archetype-specific overrides (technical / competitive / regulatory / academic / forecasting), epistemic bounding tags, inline citation protocol, and wrap-around Operator Notes (Plan Review, decomposition, adversarial audit).",
-      "version": "1.0.0",
+      "description": "Turns a vague research need into a single copy-paste-ready Google Gemini 3.1 Pro Deep Research prompt \u2014 with pseudo-XML scaffolding, archetype-specific overrides (technical / competitive / regulatory / academic / forecasting), epistemic bounding tags, inline citation protocol, and wrap-around Operator Notes (Plan Review, decomposition, adversarial audit) that empirically matter as much as the prompt itself.",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -53,8 +53,8 @@
     },
     {
       "name": "code-review",
-      "description": "High-signal code review for NestJS APIs and Next.js (App Router) + React 19 apps. Modular router skill that delegates to framework-specific checklists (NestJS, Next.js, TypeScript, OWASP security), enforces a >85% confidence threshold, and runs a Chain-of-Verification pass to suppress hallucinated findings. Reports in a fixed CRITICAL/HIGH/MEDIUM/LOW taxonomy with file:line, exact quote, and fix snippet. Read-only \u2014 reports findings, does not modify code.",
-      "version": "1.0.8",
+      "description": "High-signal code review for NestJS APIs and Next.js (App Router) + React 19 apps. Implements a modular router skill that delegates to framework-specific checklists, applies severity-tiered post-verification confidence gates, and runs a Chain-of-Verification pass before reporting findings \u2014 combining patterns from the everything-claude-code reviewer agents, awesome-copilot NestJS instructions, awesome-cursorrules Next.js 15 / React 19 rules, the Arbiter modular-prompt findings, and the official NestJS / Next.js / React docs.",
+      "version": "1.0.9",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -65,7 +65,7 @@
     {
       "name": "design-md-from-screenshots",
       "description": "Reverse-engineer a product's visual design system from one or more website/app screenshots and produce a single authoritative DESIGN.md \u2014 a framework-agnostic, token-based spec (palette, typography, spacing, shape, motion, component inventory, voice, do/don't) with per-token provenance marks, so another AI (Stitch, Claude, v0, Cursor, AI Elements) can generate new screens that unmistakably belong to the same product.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -75,8 +75,8 @@
     },
     {
       "name": "doc-summarizer",
-      "description": "Compress a verbose source document \u2014 README, API docs, research paper, technical guide, library docs \u2014 into a maximally dense, semantically complete Markdown reference (written to a `<source>.summary.md` file) that another LLM or a skimming human can consume in a fraction of the tokens. Uses a triage-tag system ([CRITICAL]/[WORKFLOW]/[POWER-USER]/[GOLDEN-NUGGET]/[DEPRECATED]), contextually integrated tips, solution-first problem framing, multi-tier feature capture, and a mandatory Strategic Synthesis footer (Maturity Model + Feature Selection Matrix + Workflow Progression Ladder). Target compression 60\u201380% while retaining 100% of semantically unique information. Tuned for Claude Opus 4.7.",
-      "version": "1.0.0",
+      "description": "Compress a verbose source document \u2014 README, API docs, research paper, technical guide, library docs \u2014 into a maximally dense, semantically complete Markdown reference (written to a `<source>.summary.md` file) that another LLM or a skimming human can consume in a fraction of the tokens. Uses a triage-tag system ([CRITICAL]/[WORKFLOW]/[POWER-USER]/[GOLDEN-NUGGET]/[DEPRECATED]), contextually integrated tips, solution-first problem framing, multi-tier feature capture, and a mandatory Strategic Synthesis footer (Maturity Model + Feature Selection Matrix + Workflow Progression Ladder). Target compression 60\u201380% while retaining 100% of semantically unique information.",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -87,7 +87,7 @@
     {
       "name": "presentation-design-md-from-screenshots",
       "description": "Reverse-engineer a slide deck's visual design system from one or more slide screenshots and produce a single authoritative PRESENTATION_DESIGN.md \u2014 a tool-agnostic, token-based spec (canvas, palette, typography, slide archetypes, chart style, image treatment, iconography, motion, do/don't) hard-capped at 1,700 characters so another AI (Gamma, Beautiful.ai, Pitch, Keynote/PowerPoint co-pilots, Stitch, v0, Claude, Cursor) can generate new slides that unmistakably belong to the same deck. Sibling to design-md-from-screenshots but tuned for slides: fixed 16:9 canvas, slide archetypes, chart data-ink discipline, image treatment conventions, and on-slide positional grammar.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -97,8 +97,8 @@
     },
     {
       "name": "create-persona",
-      "description": "Generates dense, agent-ready persona definitions from a target role \u2014 identity kernel, responsibility matrix with classification tags ([CRITICAL] / [WORKFLOW] / [POWER-USER] / [GOLDEN-NUGGET]), decision frameworks, maturity model, selection matrix, capability heat map, dependency graph, metrics, constraints, and two interaction examples. Tuned for Claude Opus 4.7 (literalism, adaptive thinking, positive framing). Evidence base from 2025 persona research (EmoCharacter, LABE, PPA, CPER, Over-Specification Paradox) ships in references/playbook.md.",
-      "version": "1.0.0",
+      "description": "Generates dense, agent-ready persona definitions from a target role \u2014 identity kernel, responsibility matrix with classification tags ([CRITICAL] / [WORKFLOW] / [POWER-USER] / [GOLDEN-NUGGET]), decision frameworks, maturity model, selection matrix, capability heat map, dependency graph, metrics, constraints, and two interaction examples. Tuned to current Claude model behaviour (literalism, adaptive thinking, positive framing). Evidence base from 2025 persona research (EmoCharacter, LABE, PPA, CPER, Over-Specification Paradox) ships in references/playbook.md.",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -107,31 +107,31 @@
       "category": "productivity"
     },
     {
-      "name": "log-bugs-to-linear",
-      "description": "Create Linear issues in the Diolog workspace from a code-review markdown report. Each `### [SEVERITY] Title` finding becomes one issue with severity (Critical/High/Medium/Low) and type (Vulnerability/Bug) labels and Todo status. Preserves the reviewer's exact prose, file:line citations, fix recommendations, and confidence scores. Triggers on phrases like 'log these to Linear', 'create Linear issues for each finding', 'import this code review into Linear', or any prompt that points at a markdown file with `[CRITICAL]`/`[HIGH]`/`[MEDIUM]`/`[LOW]` severity-tagged sections.",
-      "version": "1.0.0",
+      "name": "log-bugs-to-diolog-tasks",
+      "description": "Create Diolog Tasks issues from a code-review markdown report. Each `### [SEVERITY] Title` finding becomes one issue with severity (Critical/High/Medium/Low) and type (Vulnerability/Bug) labels and Todo status. Formerly log-bugs-to-linear; now targets the diolog-tasks MCP. Preserves the reviewer's exact prose, file:line citations, fix recommendations, and confidence scores.",
+      "version": "2.0.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
       },
-      "source": "./plugins/log-bugs-to-linear",
+      "source": "./plugins/log-bugs-to-diolog-tasks",
       "category": "development"
     },
     {
-      "name": "linear-issue-pipeline",
-      "description": "Three native skills that run the Diolog Linear issue pipeline \u2014 triage, plan, and worker \u2014 entirely inside your interactive Claude Code session (no Agent SDK, so usage draws from your standard interactive allowance, not the separate Agent SDK credit). linear-triage runs a technical + Specification Sentinel product review and posts a non-technical readiness comment; linear-plan classifies a tier, investigates the codebase, writes docs/plans/{id}.md and comments the repo-relative path (no file upload); linear-worker implements a planned issue in an isolated worktree via dynamic ultracode workflows (understand \u2192 implement \u2192 rebase \u2192 acceptance review \u2192 resolve), with no remote PR. The plan and worker fan out parallel subagents via the Workflow tool (in small batches to avoid throttling) to speed up large investigations. The worker verifies each phase against the plan + ticket before advancing (not just at the end) and runs all phases through to completion.",
-      "version": "1.0.3",
+      "name": "diolog-tasks-pipeline",
+      "description": "Three native skills that run the Diolog Tasks issue pipeline \u2014 triage, plan, and worker \u2014 entirely inside your interactive Claude Code session (no Agent SDK, so usage draws from your standard interactive allowance, not the separate Agent SDK credit). Formerly linear-issue-pipeline; now targets the diolog-tasks MCP (mcp.diolog.com.au). tasks-triage runs a technical + Specification Sentinel product review and posts a non-technical readiness comment; tasks-plan classifies a tier, investigates the codebase, writes docs/plans/{id}.md and comments the repo-relative path (no file upload); tasks-worker implements a planned issue in an isolated worktree via dynamic ultracode workflows (understand \u2192 implement \u2192 rebase \u2192 acceptance review \u2192 resolve), with no remote PR. The plan and worker fan out parallel subagents via the Workflow tool to speed up large investigations.",
+      "version": "2.0.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
       },
-      "source": "./plugins/linear-issue-pipeline",
+      "source": "./plugins/diolog-tasks-pipeline",
       "category": "development"
     },
     {
       "name": "feature-spec-pipeline",
-      "description": "Four native skills that run a Linear-free, markdown-doc feature pipeline \u2014 /triage, /plan, /work, /gap-fix \u2014 entirely inside your interactive Claude Code session. /triage turns a feature idea (inline text or a notes file) into a versioned spec at docs/specs/spec-DIO-0001.md (id allocated from docs/feature-specs/LEDGER.md), running a codebase grounding pass plus a Specification Sentinel product/UX/compliance review and appending a non-technical readiness section. /plan classifies a tier, investigates the codebase, writes docs/plans/plan-DIO-0001.md and links it from the spec. /work implements the plan in an isolated worktree via dynamic ultracode workflows (understand, implement, rebase, acceptance review, resolve), appends a progress section to the spec, and leaves the branch local \u2014 no remote PR. /gap-fix runs after /work as the remediation step: it re-enters the work branch, always re-audits the delivered code against the original spec (merging in any human/QA gaps you provide), and implements the fixes in code (file-disjoint fan-out + typecheck gates), looping audit-fix until only optional Low items remain, then commits locally and appends a gap-fix progress note \u2014 no remote PR. A doc-driven sibling of linear-issue-pipeline that needs no Linear MCP.",
-      "version": "1.5.1",
+      "description": "Four native skills that run an issue-tracker-free, markdown-doc feature pipeline \u2014 /triage, /plan, /work, /gap-fix \u2014 entirely inside your interactive Claude Code session. /triage turns a feature idea (inline text or a notes file) into a versioned spec at docs/specs/spec-DIO-0001.md (id allocated from docs/feature-specs/LEDGER.md), running a codebase grounding pass plus a Specification Sentinel product/UX/compliance review and appending a non-technical readiness section. /plan classifies a tier, investigates the codebase, writes docs/plans/plan-DIO-0001.md and links it from the spec. /work implements the plan in an isolated worktree via dynamic ultracode workflows (understand \u2192 implement \u2192 rebase \u2192 acceptance review \u2192 resolve), appends a progress section to the spec, and leaves the branch local \u2014 no remote PR. /gap-fix runs after /work as the remediation step: it re-enters the work branch, ALWAYS re-audits the delivered code against the original spec (merging in any human/QA gaps you provide), and implements the fixes in code (file-disjoint fan-out + typecheck gates), looping audit\u2192fix until only optional Low items remain, then commits locally and appends a gap-fix progress note \u2014 no remote PR. The plan, work, and gap-fix skills fan out parallel subagents via the Workflow tool (in small batches to avoid throttling). A doc-driven sibling of diolog-tasks-pipeline that needs no Diolog Tasks MCP.",
+      "version": "1.5.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -141,8 +141,8 @@
     },
     {
       "name": "marketing-docs-maintenance",
-      "description": "Keep the Diolog marketing/feature documentation set in the diolog-team-files repo (~/Dev/diolog-team-files/web) current when a feature ships or a Linear ticket lands. Updates the two assembled published docs \u2014 existing-features-technical.md (full technical detail) and exhisting-features-marketing.md (plain, non-technical) \u2014 plus the per-area detail under existing-features-references/ (final/ + plain/ numbered per area 01-22, backed by the live/ and raw/ capture layers), and the auxiliary surfaces outbound-contact-surfaces.md, ui-interaction-details.md, and INCORPORATED.md (reconciliation ledger). Enforces the content standards (technical files carry component names, routes, GraphQL ops and exact copy with no opinions; plain files carry zero technical terms, second person, sentence case, no em dashes, no emojis), pair consistency (each assembled doc agrees with its per-area source), the supersede-don't-accumulate currency rule, and the live-app > source > ticket source-of-truth hierarchy. Operationalises docs/marketing/MAINTENANCE.md (the canonical standards guide in the app repo), with the published docs now living in diolog-team-files/web.",
-      "version": "1.2.0",
+      "description": "Keep the Diolog marketing/feature documentation set in the diolog-team-files repo (~/Dev/diolog-team-files/web) current when a feature ships or a Diolog Tasks ticket lands. Updates the two assembled published docs \u2014 existing-features-technical.md (full technical detail) and exhisting-features-marketing.md (plain, non-technical) \u2014 plus the per-area detail under existing-features-references/ (final/ + plain/ numbered per area 01-22, backed by the live/ and raw/ capture layers), and the auxiliary surfaces outbound-contact-surfaces.md, ui-interaction-details.md, and INCORPORATED.md (reconciliation ledger). Enforces the content standards (technical files carry component names, routes, GraphQL ops and exact copy with no opinions; plain files carry zero technical terms, second person, sentence case, no em dashes, no emojis), pair consistency (each assembled doc agrees with its per-area source), the supersede-don't-accumulate currency rule, and the live-app > source > ticket source-of-truth hierarchy. Operationalises docs/marketing/MAINTENANCE.md (the canonical standards guide in the app repo), with the published docs now living in diolog-team-files/web.",
+      "version": "1.2.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -152,8 +152,8 @@
     },
     {
       "name": "spec-validation",
-      "description": "Validate whether a specification, build plan, or Definition of Done is GENUINELY implemented in a large codebase \u2014 not just rendered, schema-valid, and passing tests. Classifies every claimed-done data field as REAL (a producer computes it from the filesystem / git / discovery / AI / a live API), AUTHORED (read from persisted state but only ever written by a UI round-trip or a seed \u2014 nothing computes it), or MOCK (only ever a fallback constant), each with file:line evidence. Fans the work out across parallel investigators, adversarially verifies the highest-impact findings before reporting, and writes a ranked, date-stamped living gap report that doubles as the resolution backlog. Built to catch demo-data-dressed-as-done and to re-validate after a prior '100% complete' claim \u2014 the core insight being that renders + schema-valid + tests-pass never proves a real producer exists.",
-      "version": "1.0.0",
+      "description": "Validate whether a specification, build plan, or Definition of Done is GENUINELY implemented in a large codebase \u2014 not just rendered, schema-valid, and passing tests. Classifies every claimed-done data field as REAL (a producer computes it from the filesystem / git / discovery / AI / a live API), AUTHORED (read from persisted state but only ever written by a UI round-trip or a seed \u2014 nothing computes it), or MOCK (only ever a fallback constant), each with file:line evidence. Fans the work out across parallel investigators, adversarially verifies the highest-impact findings before reporting, and writes a ranked, date-stamped living gap report that doubles as the resolution backlog. Built to catch demo-data-dressed-as-done and to re-validate after a prior '100% complete' claim \u2014 the core insight being that renders + schema-valid + tests-pass never proves a real producer exists. Audit-only: it changes no product code \u2014 the gap-fix skill (feature-spec-pipeline) is the fixer.",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -163,8 +163,8 @@
     },
     {
       "name": "design-craft",
-      "description": "Turn Claude into an opinionated, accessibility-aware, AI-slop-resistant design collaborator that produces intentional design artifacts in plain HTML/CSS/SVG/JS \u2014 landing pages, app screens, dashboards, interactive prototypes, slide decks, wireframes, hi-fi variations, design-token files, and component inventories. A router skill carries the full design philosophy (content discipline, purposeful aesthetics that reject AI-template tropes, visual hierarchy and rhythm, typography and color systems, WCAG accessibility, interaction states, system thinking) and routes to 14 phased procedures: discovery-questions, frontend-aesthetic-direction, wireframe, make-a-deck, make-a-prototype, make-tweakable, generate-variations, design-system-extract, component-extract, accessibility-audit, ai-slop-check, hierarchy-rhythm-review, interaction-states-pass, and polish-pass. Built for Claude Code: AskUserQuestion kickoff rounds, Agent-tool verifier fan-out, and self-contained deck-scaling / device-frame / tweak-panel code that runs as standalone files with no external dependencies.",
-      "version": "1.0.0",
+      "description": "Turn Claude into an opinionated, accessibility-aware, AI-slop-resistant design collaborator that produces intentional design artifacts in HTML/CSS/SVG/JS \u2014 landing pages, interactive prototypes, slide decks, wireframes, hi-fi variations, design-token extractions, and component inventories. The SKILL.md carries a full design philosophy (content discipline, purposeful aesthetics that reject AI-template tropes, visual hierarchy and rhythm, typography and color systems, WCAG accessibility, interaction states, system thinking, respecting the medium) and routes to 14 phased procedures: discovery-questions, frontend-aesthetic-direction, wireframe, make-a-deck, make-a-prototype, make-tweakable, generate-variations, design-system-extract, component-extract, accessibility-audit, ai-slop-check, hierarchy-rhythm-review, interaction-states-pass, and polish-pass. Built for Claude Code: AskUserQuestion for kickoff rounds, the Agent tool for parallel verifier fan-out, and self-contained deck-scaling / device-frame / tweak-panel code that runs as standalone files with no external dependencies. v1.1 adds expert motion design (UI motion tokens/choreography + a timeline animation medium with mp4 export), a depth/3D technique ladder (elevation, grain/mesh/glass, CSS 3D, WebGL), an aesthetic range map with named families, laws-of-composition, print-perfect documents, image generation, design-system authoring, and heavily enriched slop/typography/state-coverage/polish checklists synthesized from open-design, baoyu-design, and the upstream Claude design system prompt.",
+      "version": "1.1.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -174,8 +174,8 @@
     },
     {
       "name": "email-mockups",
-      "description": "Turn a named Diolog feature (or several) into email-ready product-mockup graphics on a Figma canvas, for product-update / marketing emails. Reads the feature's real context \u2014 docs/marketing/product-feature-guide.md + features-build/plain/NN-*.md + the rendered mock UI read in a browser via playwright-cli (the served web / customer / investor design-system hosts) \u2014 then designs and builds, via the design-craft skill, impression-not-replica mockups that lead with the feature's payoff (a full product-window app shot \u2014 the complete app shell in a clean window \u2014 for hero features, plus a product-surface vignette, soft panel + peeking device, collage/overlap, phone bezel, and a website frame for actual public sites) and make the product look genuinely smart (a real insight, an italic quote from the record, named source chips) as titled, spaced artboards in one self-contained HTML file using the live Diolog design tokens, verifies the render in a browser, and recreates the layout in Figma via whatever write-capable Figma MCP is connected (deleting the HTML only after a successful build). Each artboard also carries a brief non-technical marketing caption beneath it for IR teams and the agencies who serve them (no em-dashes), with an optional email-hero split format, and semantic emphasis via a soft wash and icon rather than AI-slop left-only borders; large sets fan out parallel builders against one master brief and pass a deterministic verification lint. If no Figma MCP is available, the HTML file is retained as the final deliverable.",
-      "version": "1.5.1",
+      "description": "Turn a named Diolog feature (or several) into email-ready product-mockup graphics on a Figma canvas. Reads the feature's real context \u2014 docs/marketing/product-feature-guide.md + features-build/plain/NN-*.md + the rendered mock UI read in a browser via playwright-cli (the served web / customer / investor design-system hosts) \u2014 then designs and builds, via the design-craft skill, impression-not-replica mockups that lead with the feature's payoff (a full product-window app shot \u2014 the complete app shell in a clean window \u2014 for hero features, plus a product-surface vignette, soft panel + peeking device, collage/overlap, phone bezel, and a website frame for actual public sites) and make the product look genuinely smart (a real insight, an italic quote from the record, named source chips) as titled, spaced artboards in one self-contained HTML file using the live design tokens, and recreates that layout in Figma via whatever write-capable Figma MCP is connected. Each artboard also carries a brief non-technical marketing caption beneath it for IR teams and the agencies who serve them (no em-dashes), with an optional email-hero split format, and semantic emphasis via a soft wash and icon rather than AI-slop left-only borders. If no Figma MCP is present, the HTML file is the final deliverable.",
+      "version": "1.5.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -186,7 +186,7 @@
     {
       "name": "macosify",
       "description": "Three macOS-native UI skills sharing one bundled knowledge corpus (the full macOS 26 'Tahoe'/Liquid Glass HIG library + a token-level DESIGN.md + the macOS 26 UI Extraction & Native Translation framework). `macosify` refits an existing UI to feel authentically AppKit-native on macOS 26, correcting iOS-derived looks (Mac Catalyst / 'Designed for iPad' on Apple Silicon) toward true native. `macos-ui-analyst` (the GlassReader persona) analyses a static macOS 26 screenshot into a structured Native Translation Report (AX-tree inventory + SwiftUI/AppKit mapping) and merges durable learnings into one accumulating knowledge file. `macos-storyboard` reads the entire corpus, then builds an interactive StyleX + Storybook storyboard of a specification's user flows \u2014 a reusable design system (tokens \u2192 elements \u2192 composites) with every screen rendered across happy / empty / loading / error / AI states, using the design-craft and frontend-design skills for bespoke, accessible direction.",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -196,8 +196,8 @@
     },
     {
       "name": "create-storyboard",
-      "description": "Build an interactive UI storyboard as a StyleX + Storybook project from a product specification and a user-supplied DESIGN.md. The DESIGN.md (the product's own brand/design system) drives the look \u2014 NOT locked to a macOS aesthetic, so the storyboard renders in whatever visual identity the brand specifies. It reads a bundled HIG library purely as the interaction, behaviour, structure, and accessibility backbone (layout, master\u2013detail/list/table grammar, modality, feedback, focus/keyboard, motion, empty/loading/error/status, writing), uses the design-craft and frontend-design skills for distinctive, accessible, AI-slop-resistant direction, derives the user flows + screens, builds a reusable StyleX design system (tokens \u2192 elements \u2192 composites) from the DESIGN.md, and implements every screen as Storybook stories across the happy / empty / loading / error / AI states at production fidelity, plus an MDX flow-overview that sequences the screens into journeys. A brand-driven sibling of macosify's macos-storyboard skill (which is locked to a macOS-native look).",
-      "version": "0.2.4",
+      "description": "Build an interactive UI storyboard as a StyleX + Storybook project from a product specification and a user-supplied DESIGN.md. The DESIGN.md (the product's own brand/design system) drives the look \u2014 this skill is NOT locked to a macOS aesthetic and renders in whatever visual identity the brand specifies. It reads a bundled HIG library purely as the interaction, behaviour, structure, and accessibility backbone (layout, master\u2013detail/list/table grammar, modality, feedback, focus/keyboard, motion, empty/loading/error/status, writing), applies the design-craft and frontend-design skills for distinctive, accessible, AI-slop-resistant direction, derives the user flows + screens, builds a reusable StyleX design system (tokens \u2192 elements \u2192 composites) from the DESIGN.md, and implements every screen as Storybook stories across the happy / empty / loading / error / AI states at production fidelity, plus an MDX flow-overview that sequences the screens into journeys. A brand-driven sibling of macosify's macos-storyboard skill (which is locked to a macOS-native look).",
+      "version": "0.2.5",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -207,8 +207,8 @@
     },
     {
       "name": "mockup-fidelity",
-      "description": "Validate that an implemented React or React Native UI faithfully reproduces a reference mockup (HTML+CSS, served prototype, Figma export, or another rendered component set), then update the code to close every gap \u2014 by measuring, never eyeballing. Treats the mock as the source of truth and asks (full-comparison and per-screen) before removing working functionality; builds a complete screen/frame inventory and never silently drops a frame; renders both sides; inverts the burden of proof (a visible difference is a defect until a citation proves it intentional); diffs structure first then per-property computed styles; produces a per-screen present/divergent/absent ledger AND a functional-gaps document for newly-added UI that is only visual. For React Native it measures the RENDERED tree \u2014 structural/accessibility extraction (axe describe-ui / Maestro hierarchy) plus resolved style props over the Metro CDP connection (rozenite / agent-cdp) \u2014 and forces every screen's measurement to disk as artifacts, so a 'match' verdict can never come from a screenshot, a source read, or reasoning (frontier vision models catch under half of fine-grained UI differences); navigation is deep-link-first (xcrun simctl openurl) because a Maestro tap carries a ~15-20s XCUITest startup tax. For a React web target the comparison is symmetric DOM-to-DOM \u2014 reference and target are both read via getComputedStyle through one extractor at the same viewport, with the app chrome (sidebar/header/nav) in scope. Generic and framework-agnostic. Merges and replaces ui-fidelity-audit + mockup-align. Adds a mechanical STRUCTURE/LAYOUT differ (structure-diff.mjs \u2014 grid/flex/missing-node/order, the class a per-property style diff is blind to), a CONTENT/data differ (content-diff.mjs), a zero-dep visual pixel-overlay (overlay.mjs), a decorative-subtree HTML-to-React converter (capture-subtree.js + to-stylex.mjs \u2014 embed pixel-exact or StyleX skeleton with token mapping), a per-section parallel fan-out workflow, and a Storybook visual-regression pattern.",
-      "version": "2.5.1",
+      "description": "Validate that an implemented React or React Native UI faithfully reproduces a reference mockup (HTML+CSS, served prototype, Figma export, or another rendered component set), then update the code to close every gap \u2014 by measuring the rendered tree, never by eyeballing or reading source. Treats the mock as the source of truth, builds a COMPLETE screen/frame inventory (never silently drops a frame), extracts both sides to on-disk artifacts and generates the ledger from them, inverts the burden of proof (a visible difference is a defect until a citation proves it intentional), diffs structure-first then per-property computed styles, and produces a per-screen present/divergent/absent ledger plus a FUNCTIONAL-GAPS document for any newly-added UI that is only visual (missing backend, data wiring, endpoints). For React Native it measures the RENDERED tree \u2014 structural/accessibility extraction (axe describe-ui / Maestro hierarchy) plus resolved style props over the Metro CDP connection (rozenite / agent-cdp) \u2014 and forces every screen's measurement to disk as artifacts, so a 'match' verdict can never come from a screenshot, a source read, or reasoning (frontier vision models catch under half of fine-grained UI differences; an artifact-forcing gate plus a completeness-critic close that hole). For a React web target the comparison is symmetric DOM-to-DOM \u2014 reference and target are both read via getComputedStyle through one extractor at the same viewport, with the app chrome (sidebar/header/nav) in scope. Asks the user when unsure, on both a full-comparison and a per-screen basis. Generic and framework-agnostic \u2014 nothing app-specific.",
+      "version": "2.5.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -221,8 +221,8 @@
     },
     {
       "name": "create-luke-content",
-      "description": "Write any content in Luke Rhodes' authentic voice (Diolog CTO and co-founder), conditionally routed through the right persona variant for the content type: LinkedIn posts and long-form blog articles (engagement-optimised, with a Diolog graphic concept), marketing content (announcements, release notes, landing copy, campaign emails), code reviews (severity-calibrated candour: softened preferences, plain blockers, always a concrete path), informal-but-professional Slack messages (context, ask, a genuine out), short-form content (tweets, LinkedIn comments, bios), and ADHD-targetted / book-audience writing (the conversational brilliant-colleague register: hooks, short segments, concrete-first, strategic repetition, one try-today action). One non-negotiable base voice (calm, direct, technically fluent, quietly witty, no em dashes, no AI cliches) synthesised from Luke's raw writing corpus (LinkedIn posts, work messages, a shipped product announcement, an SOW, a technical explainer, discovery notes), five persona deltas layered on top, and a deterministic voice-lint that hard-fails on em dashes and AI-tell phrases in every format with per-format advisory checks. Formerly create-luke-article (v1 was LinkedIn/blog only).",
-      "version": "2.0.0",
+      "description": "Write any content in Luke Rhodes' authentic voice (Diolog CTO and co-founder), conditionally routed through the right persona variant for the content type: LinkedIn posts and long-form blog articles (engagement-optimised, with a Diolog graphic concept), marketing content (announcements, release notes, landing copy, campaign emails), code reviews (severity-calibrated candour), informal-but-professional Slack messages, short-form content (tweets, comments, bios), and ADHD-targetted / book-audience writing (the conversational brilliant-colleague register). One non-negotiable base voice (calm, direct, technically fluent, quietly witty, no em dashes, no AI clich\u00e9s) synthesised from Luke's raw writing corpus, five persona deltas layered on top, and a deterministic voice-lint with per-format advisory checks. Formerly create-luke-article.",
+      "version": "2.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -243,8 +243,8 @@
     },
     {
       "name": "acceptance-e2e",
-      "description": "Turn any web feature's requirements into an acceptance-criteria-traceable Playwright e2e UI suite. From a requirements source (an issue/ticket, a spec or plan*.md, or a description) + the running app, it enumerates every acceptance criterion into a traceability matrix, grounds selectors against the live page, authors specs in the PROJECT'S OWN harness that assert content/render correctness (a chart actually draws, a figure is actually sourced) rather than mere element presence, runs them with isolation-safe disposable data, and fixes the tractable product bugs the suite surfaces. Project-agnostic: it discovers the repo's harness, auth, tenant/context model, run command, and base URL rather than assuming any one stack. Ships a portable e2e-playbook plus an optional Diolog-specific worked example.",
-      "version": "1.2.0",
+      "description": "Turn any web feature's requirements into an acceptance-criteria-traceable Playwright e2e UI suite. From a requirements source (an issue/ticket, a spec or plan*.md, or a description) + the running app, it enumerates every acceptance criterion into a traceability matrix, grounds selectors against the live page, authors specs in the PROJECT'S OWN harness that assert content/render correctness (a chart actually draws, a figure is actually sourced) rather than mere element presence, runs them with isolation-safe disposable data, and fixes the tractable product bugs the suite surfaces. Project-agnostic: it discovers the repo's harness, auth, tenant/context model, run command, and base URL rather than assuming any one stack. Ships a portable e2e-playbook (selector traps, isolation, outcome-assertion patterns, recurring bug classes, the run-twice discipline) plus an optional Diolog-specific worked example.",
+      "version": "1.2.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -254,8 +254,8 @@
     },
     {
       "name": "diolog-brand-voice",
-      "description": "Three skills that write publish-ready, on-brand content in Diolog's brand voice (Australian investor-communication SaaS; 'the workspace for everything investor-facing'; tagline 'Disclosure, without doubt.'), all driven by one bundled brand-voice persona and gated by one deterministic voice-lint. create-diolog-article writes long-form articles / blog posts / thought-leadership across the investor-education, IR-best-practice, thought-leadership and announcement registers. create-diolog-marketing-copy writes website marketing copy and marketing emails (benefit-first heroes, feature-to-'so what' bullets, problem-callback CTAs). create-diolog-business-case writes buyer-facing ROI / justification documents for the CFO / Company Secretary / board (status-quo cost, what changes, proof/security/compliance posture, measurable outcomes, next step). Every skill hard-encodes the house rules: no em or en dashes (spaced hyphen only), Australian English, sentence-case headings (except product feature names), every statistic carries an inline (Source, Year) with zero fabrication, compliance confidence capped at 95%, no financial advice or guaranteed outcomes, the Diolog narrative arc, correct register selection, and critique the old way of IR never the reader. The fuller brand counterpart to the deployed diolog-content-writer / diolog-linkedin-writer prompts; personal-voice LinkedIn posts remain with create-luke-content.",
-      "version": "1.0.1",
+      "description": "Three skills that write publish-ready, on-brand content in Diolog's brand voice (Australian investor-communication SaaS; 'the workspace for everything investor-facing'; tagline 'Disclosure, without doubt.'), all driven by one bundled brand-voice persona and gated by one deterministic voice-lint. create-diolog-article writes long-form articles / blog posts / thought-leadership across the investor-education, IR-best-practice, thought-leadership and announcement registers. create-diolog-marketing-copy writes website marketing copy and marketing emails (benefit-first heroes, feature-to-'so what' bullets, problem-callback CTAs, subject/preview/body emails). create-diolog-business-case writes buyer-facing ROI / justification documents for the CFO / Company Secretary / board (status-quo cost -> what changes -> proof/security/compliance posture -> measurable outcomes -> next step). Every skill hard-encodes the house rules: no em or en dashes (spaced hyphen only), Australian English, sentence-case headings (except product feature names), every statistic carries an inline (Source, Year) with zero fabrication, compliance confidence capped at 95%, no financial advice or guaranteed outcomes, the Diolog narrative arc, correct register selection, and critique the old way of IR never the reader. The deterministic diolog_voice_lint.py hard-fails on em/en dashes and banned/AI-tell phrases and advises on American spellings, over-claim/guarantee language and citation coverage. The fuller brand counterpart to the deployed diolog-content-writer / diolog-linkedin-writer generation prompts; personal-voice LinkedIn posts remain with create-luke-content.",
+      "version": "1.0.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -265,8 +265,8 @@
     },
     {
       "name": "ship-feature",
-      "description": "End-to-end feature delivery conductor for your product. Takes ONE feature (inline description or a markdown file) and drives it from a bare idea to merged, tested, production code by orchestrating the existing skills in a single in-session flow: design-craft (represent the whole feature UI in the design-system elements/composites/mock-pages, grounded in the repo's design system \u2014 e.g. apps/web-design-system \u2014 plus an optional DESIGN.md design-language spec when provided or present, and any provided HTML/CSS/JS mock) \u2192 triage (spec) \u2192 plan \u2192 work (isolated worktree) \u2192 a deferred-work loop (re-work, or child triage+plan+work for extra phases, all on the SAME branch) \u2192 gap-fix \u2192 acceptance-e2e (a comprehensive Playwright suite over every user flow/action/menu, run against the feature branch locally and fixed) \u2192 finalize (commit \u2192 rebase \u2192 merge into the integration branch \u2192 push \u2192 clean up worktree(s)). Stays in-session to keep the accumulated feature context across every stage and leans on the on-disk spec/plan/mock artifacts as durable, resumable memory; one feature = one branch = one worktree, with the merge behind a fail-closed pre-merge gate. Builds on the design-craft, feature-spec-pipeline, and acceptance-e2e plugins.",
-      "version": "1.0.1",
+      "description": "End-to-end feature delivery conductor for your product. Takes ONE feature (inline description or a markdown file) and drives it from a bare idea to merged, tested, production code by orchestrating the existing skills in a single in-session flow: design-craft (represent the whole feature UI in the design-system elements/composites/mock-pages, grounded in the repo's design system \u2014 e.g. apps/web-design-system \u2014 plus an optional DESIGN.md design-language spec when provided or present, and any provided HTML/CSS/JS mock) \u2192 triage (\u2192 docs/specs/spec-DIO-XXXX.md) \u2192 plan (\u2192 docs/plans/plan-DIO-XXXX.md) \u2192 work (implement in an isolated worktree) \u2192 a deferred-work loop (re-work, or child triage+plan+work for extra phases, all on the SAME branch) \u2192 gap-fix (close remaining spec gaps in code) \u2192 acceptance-e2e (a comprehensive Playwright suite over every user flow/action/interaction/menu, run against the feature branch locally and fixed) \u2192 finalize (commit \u2192 rebase \u2192 merge into the integration branch \u2192 push \u2192 clean up worktree(s)). The conductor stays in-session so it keeps the accumulated feature context across every stage and leans on the on-disk spec/plan/mock artifacts as durable, resumable memory; parallelism lives inside each sub-skill's own Workflow fan-out. One feature = one branch = one worktree; the merge is behind a fail-closed pre-merge gate. Builds on the design-craft, feature-spec-pipeline (triage/plan/work/gap-fix), and acceptance-e2e plugins.",
+      "version": "1.0.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -277,7 +277,7 @@
     {
       "name": "ship-fleet",
       "description": "Backlog-wide feature-delivery orchestrator. Surveys ALL remaining feature work in a product repo \u2014 LEDGER.md, docs/specs/spec-*.md, docs/plans/plan-*.md, untriaged briefs in docs/features-to-triage/, refined HTML mocks in design/mocks/html, deep research in docs/deep-research/ \u2014 reconciles any in-progress worktrees, then writes ORCHESTRATOR.md (a combined plan + ledger for everything left) and orchestrator-hierarchy.html (a visual dependency hierarchy) BEFORE any execution. It then drives the backlog to done by running the ship-feature skill per feature: dependency-ordered, up to 8 concurrent Opus runner agents, with mechanical plan-scoped coding optionally delegated to the Cursor CLI (composer-2.5) and verified/fixed by Opus, while the orchestrating session itself stays on the session model. Includes a preflight that checks the project's directory/file conventions (offering to clone diolog-team-files for CODING_PRACTICES.md / NEW_PROJECT_BEST_PRACTICES.md, gather stray feature briefs into docs/features-to-triage/, and validate the monolith layout against NEW_PROJECT_BEST_PRACTICES.md). Builds on the ship-feature plugin (and through it design-craft, feature-spec-pipeline, acceptance-e2e).",
-      "version": "1.1.3",
+      "version": "1.1.4",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -288,7 +288,7 @@
     {
       "name": "customer-deck-builder",
       "description": "Build a branded, print-ready customer proposal / pitch deck from Diolog's 9-slide template system. Fills company-agnostic templates with a specific client's identity, contacts, pricing and numbers (prompting with multiple-choice questions for missing details), keeps the IR-proposal spine, and can design new slides into the same system via design-craft. Outputs a single self-contained web page with pan/zoom (trackpad + controls, fit-deck / fit-slide / 100%) that prints to a vertical, paged PDF at native 1920\u00d71080 slide size.",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -299,7 +299,7 @@
     {
       "name": "design-md-from-website",
       "description": "Generate a spec-compliant DESIGN.md for any live website from its real pages \u2014 the browser-driven, measure-first successor to design-md-from-screenshots. Given a URL it uses playwright-cli (isolated named sessions, parallel probe agents with rate-limit backoff, full-page screenshots + getComputedStyle-by-role measured tokens + a colour census) to MEASURE the design of the key pages (home, about, product/services, contact, and any investor hub/portal) instead of guessing hexes and fonts from a screenshot, then synthesises an authoritative DESIGN.md in the official google-labs design.md format (YAML token frontmatter + Overview/Colors/Typography/Layout/Elevation/Shapes/Components/Do's & Don'ts + per-token provenance + self-critique) and refines it into an intentional, upgraded identity.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -310,7 +310,7 @@
     {
       "name": "customer-business-case",
       "description": "Generate a single printable A4-page executive business case in Diolog's house style from a customer's proposal deck. Uses the /design-craft skill against a bundled single-page DESIGN.md and a templated version of the Alfabs business case, with all copy in the Diolog brand voice (create-diolog-business-case). Produces one dense, print-clean page (problem, solution, value, quantified outcome, investment, next step) on a fixed 794x1123 A4 canvas that prints to exactly one page.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -321,7 +321,7 @@
     {
       "name": "improve-prompt",
       "description": "Review and rewrite prompts, system prompts, agent instructions, CLAUDE.md files, and Claude Code skills against Anthropic's prompt-engineering guidance and the Karpathy coding-behaviour principles. Diagnoses the artifact with a structured rubric (clarity, examples, XML structure, output format, hallucination guards, consistency, guardrails, token weight, and \u2014 for skills \u2014 trigger description quality and progressive disclosure), then delivers a surgical rewrite with per-change rationale. Bundles the full Anthropic prompting docs (best practices, Opus 4.8 guide, guardrail guides, four production use-case guides) and Karpathy guidelines as reference material it reads on demand.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"

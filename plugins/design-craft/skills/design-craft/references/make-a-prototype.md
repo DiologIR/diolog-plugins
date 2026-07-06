@@ -17,6 +17,8 @@ Confirm before building:
 
 ## Phase 2: Map screens and state
 
+Don't add a title screen or intro card to the prototype itself — it's a tool, not a presentation. Center it in the viewport (or fill it with sensible margins) and open on the flow's first real screen.
+
 Before building, write down the flow and drop it into the file as a comment block at the top:
 
 ```
@@ -62,6 +64,36 @@ When the user wants a device frame, build it directly — a fixed-size shell wit
 
 Adapt the frame to the target: a **browser window** (chrome bar with traffic-light dots + a fake URL field), a **macOS window** (title bar + traffic lights), an **Android** frame (squarer corners, status bar), or no frame for a full desktop layout. The frame stays fixed; the prototype lives inside it. Keep frames lightweight — they set context, they aren't the deliverable.
 
+### Installable mobile prototypes (opened on a real phone)
+
+When the user will open the prototype on their phone — and especially pin it to the home screen — build it install-ready by default. Always include these head tags (without them the prototype won't install cleanly):
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="<short title>">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+```
+
+Ship an `icon.png` (512×512, square, no edge transparency — iOS masks it to a rounded square itself): a single bold glyph or monogram on a solid background that still reads at 60×60; no photos, tiny type, or muddy gradients. On phone widths the app fills the viewport edge-to-edge, reserving notch/home-bar room via `padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom)` — the status-bar area should feel intentional (matching background or a gradient that tucks under the notch). On desktop (`@media (min-width: 700px)`), inset `#app` into a phone-sized rectangle — `width: 390px; height: 844px; border-radius: 44px; overflow: hidden` plus a soft shadow — so the designer sees "a phone on the desk" while iterating.
+
+**No fake chrome on installables.** In a *presentation* frame (the painted phone above, shown inside a page) a drawn notch is fine — it sets context. In an *installable* prototype, never paint an iOS status bar ("9:41 · battery · wifi") or a fake keyboard: the real status bar and keyboard render on top of your layout, so painted ones double up and look childish. Leave that space alone and let `env(safe-area-inset-*)` reserve the room.
+
+### Multi-file React prototypes (when a single file won't hold)
+
+Beyond a small single-screen mock, split a React/Babel prototype into an HTML entry plus `.jsx` files loaded via `<script type="text/babel" src="…">` in dependency order (data/helpers → icons → presentational components → app entry). Use pinned CDN tags with integrity hashes — never unpinned `react@18`:
+
+```html
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+```
+
+Split by **coupling, not line count**: extract the self-contained parts (data, icons, presentational components); keep the stateful core (App + palette/modals/selection) in one file — it will be the largest, and that's correct. **One state owner:** lift shared state into App and pass props down; separate Babel scripts don't share scope, so to share components export them with `Object.assign(window, { Terminal, Line, … })` at the end of each file — and never scatter `useState` across files trying to sync it. **Never write `const styles = {}`** in more than zero files — global style-object name collisions break the page; prefer one `<style>` block with CSS custom properties and `className`, reserving inline `style={{}}` for dynamic values. Theming then becomes one attribute flip: tokens on `:root`, overrides under `[data-theme="dark"]`.
+
 ## Phase 4: Wire up interactions
 
 A real prototype has **every interaction wired**, not just the happy path:
@@ -75,6 +107,14 @@ A real prototype has **every interaction wired**, not just the happy path:
 
 If the prototype is a small slice, fake the async work with `setTimeout` to simulate latency. Don't skip the loading state because the work is fake — the loading state is part of what the prototype is testing.
 
+**Five states per data surface.** Every list, table, card, form, and panel that fetches or accepts data renders all five: **loading**, **empty**, **error**, **populated**, and **edge**. Shipping only the populated state is the single most reliable AI-design failure. Concretely:
+
+- **Empty is its own state with a job**, never a blank. First-use empty = headline + value sentence + primary CTA (it's the onboarding moment); no-results empty = echo the query and suggest alternatives; cleared empty = celebratory phrasing + next action. **Never collapse error into empty** — an error carries recovery information an empty doesn't.
+- **Error answers three questions in order:** what happened ("Your card was declined," not "Something went wrong"), why if knowable, what the user can do. Preserve user input across the failure — a form that clears on submit error forces re-entry.
+- **Edge = layout that doesn't break.** Test it: a table at 10,000 rows sorted and filtered; a card with a 200-char title and missing avatar; a form with all optional fields empty and required fields at max length; search with a single-char query and a 1,000+ result count; a detail view missing all optional metadata.
+
+**Match the loading indicator to expected duration**, not to what's easiest: under 300ms show nothing (users perceive no delay); 300ms–2s a subtle skeleton or spinner; 2–10s a skeleton matched to the layout or a labelled spinner ("Loading payments…"); 10–30s a determinate progress bar with cancel; at 60s stop animating and show an error with retry. Never leave a spinner running indefinitely — start a timeout on every request. **Retry has timing rules too:** first retry fires immediately on click; then exponential backoff (2s, 4s, 8s); after 3 failures swap "Retry" for "Contact support" plus a copyable error ID — the user has done their job, the system now needs a human.
+
 ## Phase 5: Wire up sub-state
 
 Many real flows have meaningful sub-state — selection (which item is selected in a list), filter/sort (how the data is arranged), modal/dropdown (open or closed), form (values, errors, dirty/pristine). Make these reactive: click a filter chip → list re-renders; open a modal → focus moves to it and Escape closes it.
@@ -85,7 +125,11 @@ Some state should survive a page reload — **current screen** (store in `localS
 
 ## Phase 7: Verify
 
+**Serve over HTTP, never `file://`.** Start one local server for the project (`python3 -m http.server 4311`) and load `http://localhost:4311/…` for every preview, screenshot, and user handoff. Multi-file prototypes silently fail on `file://` — the browser blocks the cross-origin `.jsx` loads and you get a blank page with no obvious error — and routing single files through the same served URL keeps previews consistent.
+
 Walk the full flow in a browser: every CTA leads somewhere; every form validates; every error is clear and recoverable; every async action shows feedback; every state change is visible; keyboard navigation works (Tab through, Enter to submit, Escape to close modals); focus is visible. Dispatch a verifier subagent (the `Agent` tool) for the thorough pass. If you can't verify a behavior, say so explicitly in the summary rather than claiming success.
+
+Two browser-automation gotchas for the verifier (harness quirks, not bugs in your code): synthetic clicks don't reach React 18's delegated `onClick` (`createRoot` delegates from the root container) — fire the handler via in-page JS instead: find the node, read its `__reactProps$*` key, and call `el[propKey].onClick({stopPropagation(){},preventDefault(){}})`. And test keyboard shortcuts by dispatching on window: `window.dispatchEvent(new KeyboardEvent('keydown',{key:'k',metaKey:true,bubbles:true}))` — global keydown listeners fire fine that way.
 
 ## Phase 8: Variations (if requested)
 

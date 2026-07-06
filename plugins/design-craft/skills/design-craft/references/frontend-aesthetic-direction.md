@@ -25,7 +25,28 @@ Ask the user (or confirm if they've stated):
 - **Reference designs they admire.** Specific brands, sites, or apps. Ask what specifically they admire — the type, the spacing, the color, the tone, the density?
 - **Off-limits.** What aesthetics or tropes does the user explicitly want to avoid?
 
-If the user is unsure, propose **4 distinct visual directions**, each specified concretely — background hex / accent hex / display + body typeface, with a one-line rationale tied to the brief — and let them pick. The directions must not share a palette family: four takes on warm-cream is one direction, not four. Make at least one deliberately off-distribution. (The `AskUserQuestion` tool's `preview` field is ideal here — show each direction as a small swatch/type sample so the user compares them side by side.)
+Set three dials (1–10) from the brief and say them out loud — they calibrate everything downstream: **VARIANCE** (how far from category convention), **MOTION** (how much movement), **DENSITY** (how much per screen). A Linear-style dev tool reads ~5/3/2; a public-sector portal ~3/2/5; a festival site ~9/8/4. If the brief reads as an established design system (Material, Fluent, Carbon, Polaris, GOV.UK), **install the official package rather than hand-faking its CSS** — one system per project; aesthetics like glassmorphism or brutalism have no official package, so build them honestly and label approximations.
+
+If the user is unsure, propose **4 distinct visual directions**, each specified concretely — background hex / accent hex / display + body typeface, with a one-line rationale tied to the brief — and let them pick. Draw them from different rows of the range map below; the directions must not share a palette family (four takes on warm-cream is one direction, not four), and at least one must be deliberately off-distribution. Ship each direction as a complete drop-in `:root` block (5–6 color tokens + font stacks) plus 4–6 "posture" bullets (border weight, radius, accent budget, motion mode, what to avoid) — once chosen, that block is binding. (The `AskUserQuestion` tool's `preview` field is ideal here — show each direction as a small swatch/type sample so the user compares them side by side.)
+
+### The range map — named aesthetic families
+
+Real variety is picked from a map, not hoped for. Each family names its tokens so a direction is buildable, not a vibe. **Never converge on the same family across consecutive projects or variation rounds** — repetition across generations is how a house style calcifies into a template.
+
+| Family | Type | Color & surface | Signature moves |
+|---|---|---|---|
+| **Swiss / International** | One grotesk (Helvetica Now, Suisse), tight scale | Near-white, near-black, ONE red or blue | Hard grid, exposed structure, no radius, no shadow |
+| **Editorial / literary** | Modern serif display + humanist sans | Toned paper, ink, one warm accent | Drop caps, pull quotes, column rhythm, generous leading |
+| **Brutalist / raw** | Mono or grotesk, oversized | Unmixed primaries or b/w, visible borders | Default-looking controls, hard shadows (4px offset, no blur), marquees |
+| **Neo-grotesque product** (Linear/Vercel) | Inter-class sans but tracked and weighted deliberately | Dark or light neutral ramp, one electric accent | Subtle borders, glass panels, glow accents, dense-calm layouts |
+| **Luxury / fashion** | High-contrast serif (Canela, Didot-class), airy caps | Cream/black or monochrome + metallic restraint | Huge whitespace, small centered nav, full-bleed photography |
+| **Playful / toy** | Rounded sans (Nunito-class), chunky weights | Saturated pastels, 2–3 hues | Pill everything, springy motion, sticker shadows |
+| **Terminal / hacker** | Mono everywhere | Black/green or black/amber, scanline grain | Box-drawing chars, blinking cursor, log aesthetics |
+| **Retro-futurist / Y2K** | Extended/condensed pairings, chrome effects | Gradients earned: chrome, iridescent mesh | Outlines, starbursts, pixel dither, marquee energy |
+| **Organic / soft** | Low-contrast humanist faces | Earth tones, blurred mesh backgrounds | Blob masks, grain, hand-feel spacing irregularity |
+| **Industrial / utilitarian** | DIN/Univers-class, all-caps labels | Concrete neutrals, safety-orange accent | Rulers, specs, stencils, exposed metadata (ISO-style) |
+
+These are starting points to remix, not costumes: pull one family's type with another's surface treatment when the brief supports it. Match implementation complexity to the vision — maximalism needs elaborate effects executed fully; minimalism needs restraint and precision. Half-committed is the only wrong dose.
 
 ## Phase 3: Commit to the system — make it concrete
 
@@ -55,7 +76,7 @@ Pick a tone:
 - **Cool** — gray, slate, ice, blue
 - **Neutral** — concrete, charcoal, off-white
 
-**The warm-editorial combination (cream background + serif display + terracotta/amber accent) is the current default-model look.** Choose it only when the brief is genuinely editorial, hospitality, or portfolio — and say so explicitly in the direction block. If the direction drifts there without a stated reason, pick again.
+**The warm-editorial combination (cream background + serif display + terracotta/amber accent) is the current default-model look.** Choose it only when the brief is genuinely editorial, hospitality, or portfolio — and say so explicitly in the direction block. If the direction drifts there without a stated reason, pick again. Its successor default is already visible: **beige/cream + brass/clay/oxblood + espresso** appears unprompted on every cookware/wellness/artisan brief. When a brief pulls that way, deliberately rotate: cold luxury (silver/chrome/smoke), deep forest + bone + amber, black-and-tan, cobalt + cream, terracotta + slate, or monochrome + one saturated pop.
 
 Then pick:
 
@@ -115,7 +136,16 @@ Avoid hand-drawn SVG illustrations.
 - **Expressive** — entrance animations, scroll-driven reveals, view transitions
 - **Playful** — overshoots, springs, micro-interactions on hover
 
-Commit to one mode. Mixed motion modes feel unintentional.
+Commit to one mode; mixed motion modes feel unintentional. Whatever the mode, spend the budget in one place: **a single well-orchestrated page load with staggered reveals creates more delight than scattered micro-interactions.** Implement per `motion-design.md` (tokens, easing curves, choreography).
+
+### Depth and texture
+
+- **Flat** — borders and background contrast only
+- **Elevated** — a tokenized shadow/elevation system
+- **Textured** — grain, mesh gradients, glass, image treatments
+- **Dimensional** — CSS 3D moments or a WebGL centerpiece
+
+Commit alongside the motion mode; implement per `depth-and-3d.md` (the technique ladder, budgets, and fallbacks). Texture is the cheapest "designed, not generated" signal — and the easiest to overdose.
 
 ## Phase 4: Document the direction in the file
 

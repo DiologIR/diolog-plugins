@@ -18,6 +18,8 @@ Confirm with the user — or propose and check — which aspects to expose. Comm
 
 Resist exposing every possible knob. **Keep the tweak surface small** — 3–8 controls is a healthy range. The point is a few meaningful axes to explore, not to recreate Figma. If the user didn't ask for tweaks but the design has obvious axes of variation, add 1–2 by default to surface interesting possibilities.
 
+**Lead with expressive, multi-variable knobs — the kind a design tool couldn't give.** One control that moves several tokens at once is worth more than five pixel-pushers: a *minimalism slider* (strips ornament, collapses the palette, opens up whitespace), a *time-of-day slider* (morphs the palette dawn → dusk → night), a *brutalism toggle*, an *era slider* (1998 → flat → glass). These are the reason to tweak in code rather than in Figma. A border-radius or spacing slider is fine as the third control, never the first. Every knob must still be implementable as keys in the defaults object plus a control — skip anything that needs new assets or network calls. Knobs always tweak the **user's design content**, never the panel, frame, or scaffolding around it.
+
 ## Phase 2: Design the tweak panel
 
 The panel lives **inside the page**, as a floating element — typically bottom-right, semi-transparent, with a subtle border and a small toggle button. Title it **"Tweaks."** Each control should be the right type for its value:

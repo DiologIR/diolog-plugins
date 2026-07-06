@@ -16,6 +16,12 @@ Use the **`Agent`** tool to launch all four agents concurrently in a single mess
 
 Instruct every agent explicitly: **report every issue found, including uncertain and low-severity ones, with a confidence and severity estimate for each.** Coverage is the agent's job; filtering and prioritization happen in Phase 3. An agent that self-censors "minor" findings silently lowers recall.
 
+**Jury rules** — these keep the panel honest instead of theatrical:
+
+- **Strict non-overlapping scopes.** Each reviewer scores only its own axis; a reviewer commenting outside its lane duplicates another's work and inflates agreement.
+- **Every reviewer declares at least one must-fix per non-final round.** A reviewer with zero must-fixes on round 1 isn't reviewing, it's rubber-stamping.
+- **Unanimity is a smell.** If all reviewers agree on every axis, the critique was too shallow — require at least two reviewers to genuinely diverge somewhere, and interrogate the disagreement; that's where the real judgment call lives.
+
 ### Agent 1: Accessibility audit
 
 Run the full `accessibility-audit.md` review: contrast and color (WCAG AA minimums, color-only signaling, problematic combinations, pure white/black flags); semantic HTML and structure (headings, button vs div, labels, alt text, ARIA discipline); keyboard navigation and focus (reachability, tab order, visible focus, skip links); motion, forms, and miscellany (`prefers-reduced-motion`, flash limits, error specificity, hit-target size). Report findings as a categorized list.
@@ -48,9 +54,31 @@ Wait for all four agents. Aggregate findings into one list.
 
 Fix every blocker and every quality issue directly. Apply polish recommendations when they don't conflict with the user's stated direction. For ambiguous fixes (e.g. "the design uses Inter but the user hasn't given a brand font preference"), pick a defensible default and note the choice in the summary so the user can override. For findings that are clearly false positives or outside scope (e.g. "the third-party embed has low contrast"), note them and skip.
 
+**Engineering micro-details — sweep these while fixing.** They're cheap, and their absence is what separates "designed" from "generated":
+
+- `…` not `...`; curly quotes `"` `"` not straight; loading labels end with `…` ("Saving…")
+- Non-breaking spaces inside units and shortcuts: `10&nbsp;MB`, `⌘&nbsp;K`, brand names
+- `font-variant-numeric: tabular-nums` on number columns and comparisons (digits align)
+- `text-wrap: balance` on headings (kills widows)
+- `min-width: 0` on flex children that must truncate (flex refuses to shrink text otherwise)
+- URL reflects state — filters, tabs, pagination in query params, so refresh and share work
+- Destructive actions get a confirmation or an undo window — never immediate
+- `overscroll-behavior: contain` in modals/drawers (stops background scroll bleed)
+- `touch-action: manipulation` on tappables (kills the double-tap zoom delay)
+- `env(safe-area-inset-*)` on full-bleed mobile layouts
+- `color-scheme` on `<html>` and a matching `<meta name="theme-color">` for dark themes
+- `Intl.DateTimeFormat` / `Intl.NumberFormat`, never hardcoded date/number formats
+- `translate="no"` on brand names and code tokens (prevents garbled auto-translation)
+- Explicit `width`/`height` on every `<img>` (prevents layout shift)
+- Virtualize lists over ~50 items
+- `spellcheck="false"` on emails, codes, usernames
+- Warn before navigation with unsaved changes (`beforeunload` or router guard)
+
 ## Phase 5: Re-verify
 
 After fixes, do a quick re-check on the high-risk areas: Did the contrast fixes maintain the visual style, or wash out a brand color? Did the focus-ring additions overlap with neighboring content? Did the hierarchy adjustments make the primary CTA actually feel primary? If anything looks off, fix it. If you're unsure, flag it for the user's review.
+
+**Convergence.** Treat fix-then-re-review as rounds, up to 3. Ship when the re-review scores clear your quality bar **and** zero must-fixes remain open — both conditions, not either. Each round's findings report should be shorter than the last; a round that produces more text than the previous one is churning, not converging. If round 3 still doesn't clear the bar, ship the best round and say so honestly ("ships with two open polish items: …") rather than iterating forever or quietly relabeling the bar.
 
 ## Phase 6: Final summary
 

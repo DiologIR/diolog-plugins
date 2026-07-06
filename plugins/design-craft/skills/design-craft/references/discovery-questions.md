@@ -74,6 +74,10 @@ These vary by the task. Examples:
 
 Size the round to the ambiguity: a genuinely open brief may warrant ~10 questions; a half-specified one only 3–4. Never pad the round to hit a number — a question whose answer wouldn't change what you build is noise.
 
+### Special case: "surprise me / show me something cool"
+
+When the user explicitly opens the door to anything (never as a default), do NOT start building. Ask ONE single-select question offering 4–5 enticing, concrete directions — e.g. "A generative art piece / A playable mini-game / A slick product concept / An interactive data visualization" — plus a **"Decide for me"** option (then pick the direction *you* can execute most impressively) and a freeform "anything you're into — a theme, a hobby, a vibe?". Then build the most polished, visually striking version you can: **favor motion, interactivity, and craft over breadth** (`motion-design.md` and `depth-and-3d.md` are your ammunition).
+
 ## Phase 4: Format the question round (AskUserQuestion)
 
 In Claude Code, use the **`AskUserQuestion`** tool to render the round as structured choices instead of a wall of free text. It accepts 1–4 questions per call (2–4 options each, with "Other" added automatically), so a larger round becomes one or two `AskUserQuestion` calls grouped by theme (e.g. one call for context + variations, one for audience + tone).
@@ -96,6 +100,7 @@ If a question is genuinely open-ended (a freeform description, a pasted referenc
 
 Once the user has answered:
 
+- Declare a one-line **Design Read** so your interpretation is on the table: "Reading this as: ⟨page kind⟩ for ⟨audience⟩, with a ⟨vibe⟩ visual language, leaning toward ⟨system/aesthetic family⟩."
 - Briefly recap the choices that will most affect the design ("OK — landing page, B2B audience, formal tone, three variations on different visual treatments, single CTA, no novel ideas")
 - Note any answers that surprised you or that you'd push back on (gently — the user is the manager)
 - Then proceed to the appropriate building procedure (`make-a-deck`, `make-a-prototype`, `wireframe`, etc.) and execute autonomously. This round was your chance to ask — don't come back with follow-up questions for minor decisions; make them and list them in your summary.

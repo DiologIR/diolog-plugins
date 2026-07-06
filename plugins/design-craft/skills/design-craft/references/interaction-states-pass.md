@@ -64,6 +64,16 @@ For every action, the result should be visible: **form submission success** (toa
 
 Flag silent successes ("user submitted, page does nothing visible") and silent failures ("user submitted, nothing happened, no error shown") — both feel broken. For state visibility: the current page or tab in navigation is visually distinct; selected items in a list are visually distinct; active filters or sorts are visually distinct.
 
+### Form validation discipline
+
+- **Timing: first blur after edit, then per-keystroke.** Run the field's constraint when the user blurs after editing — never on focus or first keystroke ("why are you telling me my email is wrong, I haven't finished typing it"). Once a field is invalid, switch to re-validating on every `input` event so the error clears the instant the value becomes valid — don't make the user blur again to dismiss it.
+- **Style via `:user-invalid`, never `:invalid`.** `:invalid` matches required-but-empty fields on page load — red borders before the user touched anything is the loudest "validation added without testing" tell. `:user-invalid` matches only after the user has blurred with bad input or submitted.
+- **On submit, an error summary at the top.** A heading-led container ("2 problems") with anchor links to each invalid field and `tabindex="-1"`; render it into the DOM, then move focus to it with `.focus()`. **No `role="alert"` on the summary** — a moved-focus target plus an alert role double-announces. Reserve `role="alert"` for inline per-field errors that appear without focus moving.
+- **Specific, adaptive error messages.** "Phone number is too short" beats "Provide a valid phone number" — the validator already knows which subrule fired; surfacing it cuts re-submit attempts. Ship 4–7 distinct messages for each complex high-traffic field (email, phone, card, postal code). And **preserve user input across the failure** — wiping fields on an unrelated error is a direct abandonment cause.
+- **Numeric fields:** `type="text" inputmode="numeric" pattern="[0-9]*"` for ZIPs, OTPs, and card numbers — never `type="number"`, which adds spinners, strips leading zeros, and applies locale-decimal handling.
+- **Respect the user's tools.** No email-confirm fields (validate the one field; retype-to-catch-typos fails WCAG redundant-entry); never block paste, especially on password and verification-code fields; support password managers.
+- **API correctness:** clear a custom error with `setCustomValidity('')` — `null` does not clear it. Submit programmatically with `form.requestSubmit()`, which honors validation; `form.submit()` silently skips it.
+
 ## Phase 5: Apply fixes
 
 For each missing state or feedback element, add it. Use the design system's tokens for colors and timings. If the design system doesn't define something, use sensible defaults:

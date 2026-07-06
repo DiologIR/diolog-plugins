@@ -18,11 +18,15 @@ Confirm:
 Common variation dimensions — pick 2–4 to vary across:
 
 - **Visual treatment** — color tone (warm / cool / neutral), density, shadow style, border radius, type weight
+- **Aesthetic family** — pull directions from different rows of the range map in `frontend-aesthetic-direction.md` (Swiss vs editorial vs neo-grotesque product vs brutalist…)
 - **Layout** — centered vs asymmetric, single-column vs multi-column, full-bleed vs inset, grid-heavy vs flowing
 - **Interaction model** — single page vs multi-step, modal vs inline, hover-revealed vs always-visible
+- **Motion & depth** — quiet vs one orchestrated entrance vs scroll-driven; flat vs textured vs dimensional (`motion-design.md`, `depth-and-3d.md`)
 - **Information hierarchy** — what's elevated, what's secondary
 - **Tone** — minimal / formal / playful / expressive / editorial
 - **Component style** — filled vs ghost buttons, cards with shadows vs flat, rounded vs sharp
+
+Within a chosen brand, variations **remix the brand's own visual DNA**: play with scale, fills, texture, visual rhythm, layering, novel layouts, and type treatments built from the same tokens. The goal isn't the one perfect option — it's atomic variations the user can mix and match.
 
 For each variation, write down which axis (or axes) you're flexing. This makes the comparison legible to the user.
 
