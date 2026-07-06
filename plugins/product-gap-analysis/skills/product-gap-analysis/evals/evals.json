@@ -1,0 +1,24 @@
+{
+  "skill_name": "product-gap-analysis",
+  "notes": "WARNING: each with-skill run of evals 1-2 is a full multi-agent repo audit (7 background agents, ~1M+ tokens, 30-90 min against a large repo). Run deliberately, not casually. Eval 3 is the cheap adaptation test.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Utilise docs/reference/Feature Specifications.md, docs/reference/motif-overview.md, the LEDGER and ORCHESTRATOR.md and all plan/spec files in docs/plans and docs/specs, plus the md files in features-to-triage, to gather an understanding of where the project stands and what's left to be implemented or tested. You can use the implemented UI pages in the design system too. I'm looking for a comprehensive list of gaps, incomplete or untested features, missing features, missing user flows or areas of the app that just don't make common sense or lack some kind of inter-feature UI/communication for the product to feel like it's in a v1.0 state. No stone should be left unturned. Start by writing a comprehensive MD file report of the research/analysis, with the intent of subsequently creating rough feature/gap-fix files in the features-to-triage directory. (Run in /Users/lukerhodes/Dev/motif-studio)",
+      "expected_output": "A date-stamped report in docs/research/ following the seven-strata skeleton: executive summary leading with a cross-cutting truth; coherence gaps with file:line evidence ranked by contradiction-with-positioning; a genuinely-unbuilt table verified against git (short — most ledger 'open' rows are stale); deferred tails by subsystem with cross-cutting substrates; security/legal release gates + OFF-by-default workers; test-coverage zero-lists; docs drift; live defects separated from gaps; a P0/P1/P2 proposed-briefs table. Produced via parallel background agents, not inline reading; contradictions reconciled and recorded in the appendix.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I want to understand where dAIolog actually stands versus what we say it does. Go through the docs (existing-features.md, feature-roadmap.md, the marketing feature guides, the specs dir, the e2e test catalogue), the Linear-driven workflow, and the actual apps code, and give me a comprehensive gap report — what's incomplete, what's untested, what's claimed but not real, what user flows are missing or incoherent. Write it up as a report doc we can turn into tickets. (Run in /Users/lukerhodes/Dev/dAIolog)",
+      "expected_output": "The skill adapts to the ticket-driven convention: no ledger/orchestrator → git+tracker/roadmap status lens; catalogue lens over existing-features.md + marketing guides; deferral mining over specs/closed work + TODO sweep; coherence oracle from marketing/README claims. Report follows the skeleton with goal derived and stated; proposed work items are ticket-shaped, not brief-shaped. No agent is prompted at files that don't exist.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Before you run anything big: this repo is a small CLI library (no web UI, no spec pipeline, just a README, a src/ dir and some tests). I want a gap analysis against what the README promises. What's your plan — which research lenses would you run and why?",
+      "expected_output": "The plan drops the wiring/shell lenses and the ledger/briefs lenses per the adaptation table, proposes a merged small-repo plan (~2-3 agents or inline): README-claims-vs-exported-API coherence, deferral/TODO mining, test coverage; goal = the README's promises; states that git cross-checking still applies and that no agent gets nonexistent territory.",
+      "files": []
+    }
+  ]
+}

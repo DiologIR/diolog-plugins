@@ -1,0 +1,9 @@
+{
+  "name": "product-gap-analysis",
+  "version": "1.2.0",
+  "description": "Whole-product gap analysis for any project against any stated goal (v1.0, GA, a roadmap horizon, or the product's own stated intent) — 'where does this project stand and what's left?'. Surveys everything the repo has — status ledgers/orchestrator logs OR issue-tracker state, specs' deferral sections, untriaged briefs or roadmap docs, reference catalogues, the live app code, navigation/wiring, and the test inventory — via up to 7 parallel research agents (status-map, catalogue-currency, deferral-mining, backlog-classification, wiring-audit, test-coverage, product-coherence), adapting the lens plan to whatever artifact classes exist. Cross-checks every status claim against git (ledgers lie; git is authoritative), reconciles contradictions with a fixed authority order, and synthesizes one comprehensive evidence-cited gap report stratified into seven layers (coherence gaps ranked by contradiction-with-the-product's-own-claims, genuinely-unbuilt features, deferred tails + shared substrates, security/legal release gates + dark-by-default workers, test debt, docs drift, live defects) ending in a prioritized P0/P1/P2 proposed-work-items table that seeds the repo's pipeline (briefs or tickets). Read-only: writes one report, never product code. Built for reliable execution by Opus-class models — explicit agent prompt templates, epistemic laws, and a fixed report skeleton.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
