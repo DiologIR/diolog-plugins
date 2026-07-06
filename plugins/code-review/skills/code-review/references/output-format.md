@@ -2,6 +2,8 @@
 
 This file defines the **only** valid finding format and the **only** valid verdict line. Deviation from this format makes the report unparseable for downstream tooling and breaks the developer's ability to triage at speed.
 
+**Prepush mode** uses its own leaner output contract and verdict set (`PUSH` / `PUSH WITH CARE` / `DO NOT PUSH`) — defined in `prepush.md`, not here. The finding schema below still applies to prepush blockers; the header, stats line, verdict table, and report-file rules below do not.
+
 The taxonomy is adapted from `bobmatnyc/ai-code-review` (HIGH/MEDIUM/LOW severity enum + structured finding schema), extended with a CRITICAL tier from the everything-claude-code reviewer agents for security-blocking issues.
 
 ---
@@ -133,17 +135,18 @@ Base: <baseRef>  •  Head: <headRef>  •  Files changed: <count>  •  CI: <PA
 
 For local reviews, omit the PR title block but always emit the next line.
 
-### Verification stats line (always emit)
+### Run-settings + verification stats lines (always emit)
 
-After any PR header, before the first finding, emit a single line summarizing the Find/Verify pass:
+After any PR header, before the first finding, emit two lines summarizing the run configuration and the Find/Verify pass:
 
 ```
-Find: <total> candidates · Verify: <X> confirmed · <Y> refuted · <Z> needs-info
+Mode: <review|prepush> · Depth: <quick|standard|deep> · Areas: <list|all> · Lenses: <list|defaults>
+Find: <total> candidates · Suppressed: <s> (prior runs) · Verify: <X> confirmed · <Y> refuted · <Z> needs-info
 ```
 
-For very small reviews where Phase 2.5 (Sharding) was skipped and Phase 4 (Verifier fan-out) ran in single-context mode, still emit this line — `<total>` is the candidate count from Find, and the verify counts come from running the gates in the orchestrator context.
+Omit the `Suppressed` segment when zero. For very small reviews where Phase 2.5 (Sharding) was skipped and Phase 4 ran in single-context mode (including all `quick` runs), still emit both lines — `<total>` is the candidate count from Find, and the verify counts come from running the gates in the orchestrator context. At `quick` depth, if the report cap dropped findings, add `· <n> below-cap findings omitted` to the stats line.
 
-When Stage-2 (build/lint/test) was run — required for `fileCount ≥ 30` OR `locDelta ≥ 2000`, optional otherwise — append a second line:
+When Stage-2 (build/lint/test) was run — always at `deep` depth; at `standard` required for `fileCount ≥ 30` OR `locDelta ≥ 2000` and optional below; never at `quick`/prepush — append a second line:
 
 ```
 Build: <PASS|FAIL>  ·  Lint: <PASS|FAIL>  ·  Tests: <PASS|FAIL>
@@ -155,9 +158,9 @@ Pre-existing CI breakage unrelated to the diff is suffixed `(pre-existing)` rath
 
 ---
 
-## Report output location (required)
+## Report output location (standard/deep depth only)
 
-Phase 6 must write the report to a file, not only emit it inline. Exactly one file is written per run. Destination precedence:
+At `standard` and `deep` depth, Phase 6 must write the report to a file, not only emit it inline. At `quick` depth (and in prepush mode) the report is inline-only — end by offering to write a file; never write one unasked. Exactly one file is written per run. Destination precedence:
 
 1. **User-specified path** — if the invocation names a file or directory, write there. A directory-only path gets `code-review-<base>-vs-<head>.md` appended.
 2. **PR mode default** — `${CLAUDE_PROJECT_DIR}/code-review-PR-<number>.md`.

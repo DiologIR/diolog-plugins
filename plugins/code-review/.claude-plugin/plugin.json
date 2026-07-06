@@ -1,7 +1,7 @@
 {
   "name": "code-review",
-  "version": "1.0.10",
-  "description": "High-signal code review for NestJS APIs and Next.js (App Router) + React 19 apps. Implements a modular router skill that delegates to framework-specific checklists, applies severity-tiered post-verification confidence gates, and runs a Chain-of-Verification pass before reporting findings — combining patterns from the everything-claude-code reviewer agents, awesome-copilot NestJS instructions, awesome-cursorrules Next.js 15 / React 19 rules, the Arbiter modular-prompt findings, and the official NestJS / Next.js / React docs.",
+  "version": "1.1.1",
+  "description": "High-signal code review for NestJS, Next.js (App Router)/React 19, frontend HTML/CSS/React, and React Native. Depth levels (quick/standard/deep) scale token cost; area targeting (frontend, nest, next, mobile, paths) and focus lenses (bugs, security, perf, tests, components, a11y, dead-code, debt, deps, dx) scope each run; a token-light prepush gate scans the outgoing diff. Modular checklist routing, mitigating-controls auto-discovery, parallel sharding for large diffs, independent batched Sonnet verifier fan-out with five gates (API existence, versions, mitigation-elsewhere, proportionality, reachability), and cross-run learned suppressions. Quality lenses adapted from shadcn's improve skill (MIT); noise-reduction patterns from 2025-26 AppSec research (Corgea, Aikido, ZeroPath).",
   "author": {
     "name": "DiologIR",
     "email": "luke@diolog.com.au"

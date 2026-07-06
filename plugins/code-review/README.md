@@ -1,29 +1,38 @@
 # code-review
 
-A Claude Code skill for **high-signal code review** of NestJS APIs and Next.js (App Router) + React 19 applications.
+A Claude Code skill for **high-signal code review** across NestJS APIs, Next.js (App Router) + React 19, frontend HTML/CSS/React, and React Native mobile code — with selectable depth, area targeting, focus lenses, and a token-light pre-push gate.
 
 Built by synthesizing patterns from:
 
 - **everything-claude-code** (`affaan-m`) — the >80% confidence threshold, "silent on trivia" suppression, multi-pass review loop, and reviewer-as-read-only-tool architecture.
+- **`improve`** (shadcn, MIT) — the quality-lens audit taxonomy (performance, test coverage, dead code, tech debt, dependencies, DX), secrets-handling and prompt-injection hard rules. Reframed here as review findings — no executor, no plan files.
 - **awesome-copilot** (`github`) — the canonical NestJS instructions file.
-- **awesome-cursorrules** (`PatrickJS`) — the Next.js 15 + React 19 + Vercel AI cursor rule, plus the typescript-nestjs-best-practices rule.
-- **bobmatnyc/ai-code-review** — the standardized severity taxonomy (HIGH / MEDIUM / LOW) and JSON-shaped finding schema.
+- **awesome-cursorrules** (`PatrickJS`) — the Next.js 15 + React 19 + Vercel AI cursor rule, plus typescript-nestjs-best-practices.
+- **bobmatnyc/ai-code-review** — the severity taxonomy and JSON-shaped finding schema.
 - **Arbiter** (Mason, 2026) — the empirical case for modular flat prompts over monoliths.
-- **Official docs** — NestJS, Next.js, React 19.
+- **2025–26 AppSec industry research** — mitigating-controls auto-discovery and learned suppressions (Corgea), reachability analysis (Aikido), multi-stage validation before alerting (ZeroPath), and the AI-generated-code risk profile (disproportionate CSRF/SSRF/headers omissions).
+- **Official docs** — NestJS, Next.js, React 19, React Native.
 
 ## What it does
 
-When invoked, the skill:
+1. **Parses the invocation** — mode (`review`/`prepush`), depth (`quick`/`standard`/`deep`), areas (frontend, next, nest, mobile, or paths), lenses (bugs, security, perf, tests, components, a11y, dead-code, debt, deps, dx).
+2. **Gathers context** — diff + whole files, plus a **mitigating-controls map** (global validation pipes, auth guards, middleware, CSRF/headers config) so candidates a global control already covers are never raised.
+3. **Routes** — loads only the checklists matching the diff's file paths and the lens selection.
+4. **Finds** — walks checklists plus a cross-file source→sink flow pass; shards across parallel agents when the diff is large (thresholds scale with depth).
+5. **Verifies** — independent Sonnet verifier fan-out (batched per file at `standard`), five gates: API existence, version compatibility, mitigation-elsewhere, proportionality, reachability. `quick` self-verifies inline with zero agents.
+6. **Learns** — durable refutations (by-design / globally-mitigated) persist to `.code-review/suppressions.jsonl`, so repeat runs on the same branch stop re-litigating settled findings.
+7. **Reports** — CRITICAL/HIGH/MEDIUM/LOW findings with file:line, quote, fix snippet, verdict (BLOCK / WARNING / APPROVE / LGTM).
 
-1. **Gathers context** — runs `git diff --staged && git diff` (or fetches the PR via `gh pr view --json files,...` if a PR ref is given), reads modified files, and traces critical imports with `Grep`/`Glob`.
-2. **Routes** — inspects modified file paths to identify which framework checklists apply (NestJS, Next.js, TypeScript-only, security-only) and loads only those reference files into context. This avoids the "interference patterns" documented in the Arbiter paper.
-3. **Reviews** — works through the loaded checklists, scoring each candidate finding against an explicit >85% confidence threshold. Skips formatting / naming / style nits (assumed handled by ESLint/Prettier).
-4. **Verifies** — runs a Chain-of-Verification pass: `Grep`s the codebase to confirm any function/utility/import the review suggests actually exists. Discards hallucinated suggestions.
-5. **Reports** — emits findings in a strict severity taxonomy (CRITICAL / HIGH / MEDIUM / LOW) with file:line, exact quote, fix snippet, and a final verdict (BLOCK / WARNING / APPROVE / LGTM).
+## Modes & cost control
 
-## When the skill triggers
-
-The skill description is calibrated to fire when the user asks for a code review, asks "review my changes", asks to look at a PR, asks for a security/quality/architecture pass on diff'd code, or asks to verify a NestJS / Next.js change. It will NOT fire for general "explain this code" questions.
+| Invocation | What you get |
+| --- | --- |
+| `quick review of my changes` | Single-context, no subagents, no artifacts, inline-only report. Cheapest. |
+| `review my changes` (standard) | Sharding ≥30 files, batched Sonnet verifiers, report file. |
+| `deep review` | Sharding ≥15 files, all quality lenses on, solo verifiers for CRITICALs, tsc gate. |
+| `pre-push check` / `can I push this?` | Blocker scan of unpushed commits only: secrets, debug leftovers, accidental files, broken contracts, auth regressions, destructive migrations. Verdict: PUSH / PUSH WITH CARE / DO NOT PUSH. |
+| `quick security review of the frontend` | Areas × lenses compose — one focused run instead of a full pass. |
+| `dead-code pass on apps/mobile` | An explicit area+lens request sweeps that area, not just the diff. |
 
 ## Files
 
@@ -33,25 +42,21 @@ plugins/code-review/
 ├── README.md
 ├── LICENSE
 └── skills/code-review/
-    ├── SKILL.md                          # Router + main reviewer prompt
+    ├── SKILL.md                          # Invocation grammar, mandate, depth-scaled pipeline
     └── references/
-        ├── process.md                    # Multi-pass pipeline (Context → Analysis → Verification → Output)
-        ├── output-format.md              # Severity taxonomy + finding schema
-        ├── verification-loop.md          # Stage-2 grounding (build/types/tests + grep-existence checks)
-        ├── nextjs-checklist.md           # App Router, Server Actions, RSC boundary, async APIs, caching, hydration, route handlers, proxy
-        ├── nestjs-checklist.md           # DI, modules, forwardRef, scope, pipes/guards/interceptors, validation, lifecycle, testing
-        ├── typescript-checklist.md       # Strict mode, exhaustiveness checks, never type, unknown vs any, return types at boundaries
-        └── security-checklist.md         # OWASP-aligned: secrets, IDOR, injection, authn/authz, rate limiting
+        ├── process.md                    # Full pipeline: context → routing → sharding → verify → report
+        ├── output-format.md              # Severity taxonomy + finding schema + verdicts
+        ├── verification-loop.md          # Stage-2 grounding (build/types/tests)
+        ├── prepush.md                    # Pre-push gate: outgoing-diff blocker scan
+        ├── quality-lenses.md             # perf / tests / dead-code / debt / deps / dx (from improve, MIT)
+        ├── nextjs-checklist.md           # App Router, Server Actions, RSC boundary, caching, hydration
+        ├── nestjs-checklist.md           # DI, modules, scopes, pipes/guards/interceptors, validation
+        ├── frontend-web-checklist.md     # Component quality, hooks, a11y, CSS/layout, forms
+        ├── react-native-checklist.md     # Lists/virtualization, navigation lifecycle, platform divergence, native config
+        ├── typescript-checklist.md       # Strict mode, exhaustiveness, unknown vs any, boundary types
+        ├── security-checklist.md         # OWASP-aligned: secrets, IDOR, injection, authn/authz
+        └── logic-bugs-checklist.md       # Data integrity, multi-tenancy, LLM-output validation, idempotency
 ```
-
-## Recommended runtime
-
-This skill is tuned for **Claude Opus 4.7** with **adaptive thinking** and **`effort: "xhigh"`** (or `"high"` for routine reviews). Background:
-
-- Opus 4.7 follows "only report high-confidence" / "only report high-severity" instructions more strictly than Opus 4.6, which can suppress real bugs if the prompt structure puts the confidence filter in the analysis phase. This skill puts coverage in **Phase 3 (Analysis)** and the confidence threshold in **Phase 4 (Verification)** — see Anthropic's [code review harness guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#code-review-harnesses) for why.
-- Opus 4.7's improved bug-finding (~11pp better recall on Anthropic's internal evals) is preserved by this two-stage pattern.
-- Effort settings: `xhigh` is best for thorough reviews of non-trivial diffs; `high` is the minimum for intelligence-sensitive reviews; `medium` only for very small diffs (1–2 files, < 50 LOC); `low` is not recommended for code review.
-- Earlier Opus and Sonnet generations also work — the structure is portable — but Opus 4.7 + xhigh is the calibration target.
 
 ## Install
 
@@ -62,15 +67,12 @@ This skill is tuned for **Claude Opus 4.7** with **adaptive thinking** and **`ef
 
 ## Use
 
-Just ask Claude:
-
-- "Review the staged changes"
-- "Code review this PR: <url>"
-- "Run a security review on the API changes"
-- "Look at the Server Action I just added"
-
-The skill auto-triggers and returns findings inline.
+- "Review the staged changes" — standard depth, auto-routed.
+- "Quick review of this diff" — cheapest full review.
+- "Deep review of the PR, security and perf" — thorough, lens-focused.
+- "Component quality pass on the frontend" — area + lens.
+- "Can I push this?" — prepush gate.
 
 ## License
 
-MIT
+MIT. `quality-lenses.md` adapts the audit playbook from shadcn's `improve` skill (MIT).

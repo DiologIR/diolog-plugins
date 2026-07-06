@@ -1,6 +1,6 @@
 # Verification Loop (Independent Verifier Fan-Out)
 
-This file defines what every verifier agent does when invoked by Phase 4 of the pipeline. Each candidate finding from Phase 3 (Find) gets its own verifier — a fresh agent context with no memory of why the candidate was raised. The verifier's job is to **actively refute** the finding; confirmation is what's left when refutation fails.
+This file defines what every verification does when invoked by Phase 4 of the pipeline. At `standard`/`deep` depth, candidates go to fresh-context verifier agents (batched ≤4 per file at `standard`; solo per CRITICAL at `deep` — see `process.md` → Phase 4 for dispatch mechanics). At `quick` depth the orchestrator applies the same gates itself, inline. Either way, the job is to **actively refute** the finding; confirmation is what's left when refutation fails.
 
 The procedure is adapted from the everything-claude-code `verification-loop` skill and the Chain-of-Verification (CoV) pattern, restructured around two corrections that emerged from real review postmortems:
 
@@ -11,7 +11,7 @@ The procedure is adapted from the everything-claude-code `verification-loop` ski
 
 ## What the verifier does
 
-The verifier receives one candidate (a single JSON line from `candidates.jsonl`) and runs gates 1–4 in order. The first gate that fails determines the verdict; if all four pass, the verdict is `confirmed`.
+The verifier receives 1–4 candidates from `candidates.jsonl` (all citing the same file, when batched) plus the orchestrator's **mitigating-controls map** from Phase 1, and runs gates 1–5 in order per candidate. The first gate that fails determines the verdict; if all five pass, the verdict is `confirmed`.
 
 ### Gate 1 — API existence
 
@@ -57,9 +57,9 @@ Read package.json   # find the framework's version range
 
 If the version doesn't match, refute or downgrade `final_confidence`.
 
-### Gate 3 — Out-of-hunk satisfaction
+### Gate 3 — Mitigation elsewhere (out-of-hunk / global controls)
 
-If the candidate's `claim` is "X is missing", **read the entire file** at `<file>`, not just the cited lines. The thing the finder thought was missing is frequently:
+If the candidate's `claim` is "X is missing", **read the entire file** at `<file>`, not just the cited lines, and **check the mitigating-controls map** the orchestrator supplied — a global pipe, guard, or middleware satisfies the requirement repo-wide. The thing the finder thought was missing is frequently:
 
 - Already imported at the top of the file.
 - Already declared 30 lines above the cited range.
@@ -93,6 +93,17 @@ These options combine: you can both downgrade `final_severity` and write a `fix_
 
 Do **not** refute on Gate 4 alone — the underlying issue may still be real. Refute only when one of Gates 1–3 fails.
 
+### Gate 5 — Reachability
+
+Confirm the flawed code is actually reachable before letting severity stand:
+
+- The function/method has callers (`Grep` for the symbol).
+- The route/handler is registered (module registration, `app/` file convention, navigation config).
+- The component is rendered somewhere.
+- The export has importers.
+
+A real flaw in unreachable code is not a runtime risk — downgrade `final_severity` to LOW and note "unreachable — dead code" in `evidence` (the dead code itself may warrant a `dead-code` lens finding). Do not refute on Gate 5 alone; downgrade. Be careful with framework-magic reachability: Next.js `page.tsx`/`route.ts`, NestJS lifecycle hooks, RN screens registered by navigators, and cron/queue consumers are reachable without direct callers.
+
 ---
 
 ## Active refutation, not passive confirmation
@@ -113,7 +124,7 @@ Confirmation is the answer when you have actively looked for the refutation and 
 
 **Reply discipline.** Skip throat-clearing — no "Let me read…", "Now I'll check…", "The finding looks…" between tool calls. Go straight to the next tool. Do **not** restate the candidate's claim or recap what you found before printing the JSON. The JSON is the artifact, not your prose. The `evidence` field is the one place full sentences belong (1–3, citing `file:line`); the orchestrator surfaces it verbatim in the report, so terseness there hurts the human reader. Compress narration, not the JSON.
 
-The verifier's final reply must contain exactly one JSON line, on its own line, in this shape:
+The verifier's final reply must contain exactly one JSON line **per candidate, in input order** (valid NDJSON when batched), in this shape:
 
 ```json
 {
@@ -123,11 +134,14 @@ The verifier's final reply must contain exactly one JSON line, on its own line, 
   "final_severity": "CRITICAL|HIGH|MEDIUM|LOW",
   "final_confidence": <0-100>,
   "fix_verified": <true|false>,
+  "refutation_class": "by-design|globally-mitigated|one-off|null",
   "fix_rewritten": "<optional — smaller/corrected fix when Gate 4 rewrote it, otherwise omit>"
 }
 ```
 
 `fix_rewritten` is OPTIONAL — omit the key entirely when the original `fix` is fine. When present, Phase 6 (Report) uses it instead of the candidate's original `fix`. `fix_verified` now indicates whether the original OR the rewritten fix is accurate, which for a confirmed finding is always true.
+
+`refutation_class` is `null` unless `status` is `refuted`: `by-design` (intentional, documented convention), `globally-mitigated` (a repo-wide control covers it — typically a Gate 3 map hit), or `one-off` (wrong line, misread code, hallucinated fix). The orchestrator persists `by-design`/`globally-mitigated` refutations to `.code-review/suppressions.jsonl` so future runs skip them; `one-off` refutations are never persisted.
 
 Use `needs-info` only when confirmation/refutation depends on knowledge outside the repo (e.g. "depends on Resend's per-account rate limit"). Do not use it as a hedge for "I'm not sure" — the next-best alternative is `confirmed` with low `final_confidence`, which Phase 5 will filter appropriately.
 
@@ -137,10 +151,11 @@ Use `needs-info` only when confirmation/refutation depends on knowledge outside 
 
 ## Stage-2 build/test gate
 
-Stage-2 runs after Phase 5 (Gate 0) and before Phase 6 (Report). It exists to ground findings in whether the branch actually builds. It is:
+Stage-2 runs after Phase 5 (Gate 0) and before Phase 6 (Report). It exists to ground findings in whether the branch actually builds. Depth policy:
 
-- **Required for large diffs** — `fileCount ≥ 30` OR `locDelta ≥ 2000`.
-- **Optional for small diffs** — the type-checker's wall-clock cost dwarfs the per-finding signal when only a handful of files changed.
+- **`deep`** — always run.
+- **`standard`** — required for large diffs (`fileCount ≥ 30` OR `locDelta ≥ 2000`); optional below that — the type-checker's wall-clock cost dwarfs the per-finding signal when only a handful of files changed.
+- **`quick` / prepush** — never (prepush may run a sub-30s `tsc` per its own rules in `prepush.md`).
 - **Always skipped** for doc-only diffs (`.md` / `.mdx` / `.txt` with no source changes).
 
 The orchestrator, not per-verifier, runs this once against the diff's head commit.
@@ -172,7 +187,7 @@ If failures are pre-existing breakage on `main` unrelated to the diff: do NOT ad
 
 ## Anti-patterns in verification
 
-- **Verifying by re-asking the same model.** Each verifier must run as a *separate* `Agent` call — not in the orchestrator's working memory. The whole reason verification works is the fresh context.
+- **Verifying by re-asking the same model** (at `standard`/`deep`). Each verifier must run as a *separate* `Agent` call — not in the orchestrator's working memory. The whole reason verification works is the fresh context. (`quick` depth accepts inline self-verification as an explicit cost trade-off — the discipline there is running every gate honestly, not skipping to "confirmed".)
 - **Skipping verification for "obvious" findings.** The most common hallucinations are about things that *seem* obvious. Verify everything.
 - **Reporting the verification process to the user.** The user does not need to see "verifier 7 ran gate 3 and found…" — only the final, surviving findings (plus the one-line verification stats header).
 - **Padding the verdict with verification metadata.** The verdict is one of four lines. Stop there.
