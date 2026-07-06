@@ -27,7 +27,17 @@ Not delegating *stages* to subagents does **not** mean the run is single-threade
 
 That parallelism is safe and desirable, and it does **not** cost you context, for one reason: **those leaf agents re-read the persisted artifacts from disk** — the spec (which carries the verbatim feature description + every triage answer), the plan, the design-system mock UI — so each re-acquires the exact grounding it needs and returns a synthesized result. The wide, token-heavy reads happen in the leaves; the high-level thread stays with you. Let the stages fan out as they're written to; don't add your own agent layer on top of them.
 
-Cost note: heavy fan-out on the strongest model burns the interactive allowance fast. The sub-skills already say to route read/review subagents to a cheaper model where the Workflow tool allows a per-agent override, and reserve the strongest model for implementation and fixes — hold them to that.
+Cost note — route the lanes, not everything strong. Heavy fan-out on the strongest model burns the interactive allowance fast, and the pipeline's back-loaded verification (Phase D/E, adversarial verify, completeness critic, e2e green-twice, the fail-closed merge) makes mid-pipeline downgrades safe. Single-feature runs use the same lane table as the fleet (ship-fleet's `references/scheduling-and-concurrency.md` carries the propagation mechanics):
+
+| Lane | Model |
+|---|---|
+| Leaf readers (triage grounding, plan investigation, work Phase A) + gate-runner subagents | haiku |
+| Evidence lenses (UI fidelity, clause table, reachability) · adversarial finding-verifiers · e2e Phases 0–4 · design-craft leaf verifiers + page assembly from existing composites · Sentinel verdict + Assumptions (with the triage gate) · plan synthesis Trivial/Small | sonnet |
+| Mechanical work Phase B/E slices meeting the delegation criteria | cheap-executor CLI lanes (composer-2.5 / glm-5.2-high) — ship-fleet's `references/cursor-composer.md` |
+| Plan synthesis, Standard tier | opus (or glm-5.2-high + the plan skill's mandatory review gate) |
+| Plan synthesis Large · work Phase A synthesis · Phase C rebase conflicts · completeness critic · security/guardrails/client-asserted-identity lenses · gap-fix audit over cheap-lane code · e2e Phase 5 judgment + Phase 6 fixes · design aesthetic direction + new composites · merge/finalize/conflict resolution · the Phase 4b deferred-loop classification (small-remainder vs child-spec) | opus — never downgrade |
+
+Two invariants bind every lane: **REVIEWER ≥ WRITER** — for every artifact the strongest reviewer is at least as strong as the strongest model that wrote it — and **wire-level model verification** (a first-action self-check for the lane's model + a transcript grep; launch parameters have been observed not to stick), plus the per-lane revert-rate kill-switch from `cursor-composer.md`. The cheap-executor lanes are optimizations with an **Opus fallback**: any lane failure (binary/key missing, wrong model on the wire, repeated errors, kill-switch tripped) routes the work back to Opus — never to another cheap lane, never silently skipped.
 
 ## 3. The pipeline's memory is on disk, not just in the transcript
 

@@ -30,10 +30,16 @@ This skill runs **in your current session** using `Read`/`Glob`/`Grep`/`Write`/`
 5. **Run the Specification Sentinel review.** Classify a strictness tier (S0–S3), run the five-lens scan, the architectural red-flag scan, and assign severities. Default to **stating assumptions, not asking questions**. See `references/sentinel-review.md` for the full framework.
 
 6. **Decide the outcome and append the triage section to the spec.** See `references/spec-format.md` for the exact section shapes, the non-technical language rules, and worked examples.
-   - **Ready** (every non-essential gap can be reasonably defaulted): append a "Ready for Implementation Plan" triage section (Sentinel verdict + **UI & logic preview** + Assumptions block when any defaults were picked). Set `Status: Ready for Plan` in the spec header and in the ledger row.
+   - **Ready** (every non-essential gap can be reasonably defaulted): append a "Ready for Implementation Plan" triage section (Sentinel verdict + **UI & logic preview** + Assumptions block when any defaults were picked). In a full-auto run, pass the **Assumptions review gate** (below) first; then set `Status: Ready for Plan` in the spec header and in the ledger row.
    - **Needs improvement** (≥1 essential gap per §4 of the framework, or any uncovered S3 gap, or a genuine contradiction only the author can resolve): append an Essential Questions triage section (+ Assumptions block for the non-essential gaps). Set `Status: Needs More Info` in the spec header and ledger row.
    - On **re-triage**, append a **new dated** triage section (don't overwrite prior ones); open it with a short "Resolved:" note summarizing what the human's answers settled, then the current verdict.
    - In **dry-run**, report the verdict and the section you would append; make no file changes.
+
+## Assumptions review gate (full-auto runs)
+
+In a full-auto pipeline run — no human will read the spec between triage and `/plan` — the Assumptions block is a trusted first output: a wrong default doesn't get caught, it gets **built**. So before the status flips to `Ready for Plan`, run one strong-model one-shot review of the Assumptions block (a fresh reviewer — not the agent that wrote the assumptions) answering, per assumption: would this default **surprise the owner**? Does it **reverse a locked or documented decision** (check the spec, the ledger, and the repo's own decision records — CLAUDE.md, plans of record)? Does it **deserve to be an Essential Question** instead — is it really an external dependency wearing a default? Any failure converts that assumption into an Essential Question (→ `Needs More Info`, per step 6) or fixes the default, before the flip. When a human reviews specs before planning, the gate is optional — the human *is* the gate. This gate reviews the defaults; it never re-asks questions a human already answered (those stay authoritative).
+
+**Model note:** the Sentinel verdict + Assumptions synthesis may run on a mid-tier model (sonnet) *because* this gate stands behind it — but **S2/S3 (governance-adjacent) features stay on the strong model end-to-end**: verdict, Assumptions, and the gate itself.
 
 ## Workflow fan-out limits (avoid throttling)
 

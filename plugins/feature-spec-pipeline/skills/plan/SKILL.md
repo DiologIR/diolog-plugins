@@ -23,7 +23,13 @@ Runs **in your current session** with `Read`/`Glob`/`Grep`/`Write`/`Edit`, `Bash
 
 4. **Write the plan file.** Use `Write` to save it at `docs/plans/plan-<ID>.md` (uppercase id, e.g. `docs/plans/plan-DIO-0001.md`) in the **target repository** (the same repo the worker will run against). Start with the shared header, then the tier's template. Follow `references/plan-tiers.md` for the exact templates, quality criteria, and the anti-over-engineering rules (a 10-line diff gets a ~30-line plan, not a 260-line one).
 
-5. **Link the plan from the spec and bump status** (skip in dry-run). Append a short pointer section to `docs/specs/spec-<ID>.md`:
+5. **Plan review gate — before the status flips (Standard and Large tiers; skip for Trivial/Small).** The plan is the pipeline's highest-leverage trusted-first-output artifact — everything downstream amplifies it — so it gets its own gate, run after the file is written and before step 6:
+   - **Mechanical path check (a script/grep, not a model).** Every file path the plan references must exist: extract the backtick-quoted paths from `plan-<ID>.md` and check each (`ls` / `git ls-files`), exempting only paths the plan explicitly marks *to be created*. A referenced-but-missing path means the plan was grounded in assumption, not code — re-investigate and fix it.
+   - **Strong-model one-shot review.** One reviewer — the strongest model, regardless of what synthesized the plan — reads the spec + plan cold and answers: Is every Acceptance Criterion *testable* (a checkable outcome, not a vibe)? Do the ACs cover **every spec clause, including every triage assumption**? Was any spec requirement or subfeature dropped or silently shrunk? Is every referenced analogue *real* — the named files actually do what the plan claims?
+
+   Findings → fix the plan (and re-run the failed check) before flipping status. The gate costs one read; a plan defect costs the whole downstream pipeline.
+
+6. **Link the plan from the spec and bump status** (skip in dry-run). Append a short pointer section to `docs/specs/spec-<ID>.md`:
 
    ```markdown
    ## Plan — <YYYY-MM-DD>
@@ -33,7 +39,7 @@ Runs **in your current session** with `Read`/`Glob`/`Grep`/`Write`/`Edit`, `Bash
 
    Then set the spec header `Status: Ready for Work` (and `Last updated`), and update the ledger row's Status to `Ready for Work`. Skip the status change only if the spec is already at `Ready for Work` or further downstream (`In Progress`, `In Review`) — never downgrade. The plan file lives in the repo with the code and is read from there; don't copy its contents into the spec — link by path so the two never drift.
 
-6. Print a short summary (tier + the plan path + the spec id). In dry-run, say the file was written locally and no spec/ledger updates were made.
+7. Print a short summary (tier + the plan path + the gate outcome + the spec id). In dry-run, say the file was written locally and no spec/ledger updates were made.
 
 ## Workflow fan-out limits (avoid throttling)
 
@@ -49,3 +55,4 @@ When step 3 uses the `Workflow` tool to investigate in parallel:
 - Keep the plan scoped to the spec; don't extend to adjacent features or cleanup.
 - Name specific file paths, functions, components, and analogues — but only where they're real (verify with Glob/Grep). A bad plan references files that don't exist or invents patterns not used in the codebase.
 - When the change is trivial, a short plan is the correct output, not a failure.
+- **Model routing by tier (REVIEWER ≥ WRITER).** Trivial/Small synthesis may run on a cheaper model (sonnet). Standard synthesis runs on the strongest model (opus) — or on glm-5.2-high via the zero CLI, in which case the step-5 gate is doubly mandatory. Large synthesis never downgrades. Whatever wrote the plan, the gate's reviewer must be at least as strong as the strongest model that wrote it.

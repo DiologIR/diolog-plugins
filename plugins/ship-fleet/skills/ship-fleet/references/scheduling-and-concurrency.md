@@ -87,11 +87,24 @@ faster than Opus-at-high, and nothing in the launch result tells you it happened
      `grep -o '"model":"[^"]*"' <transcript> | head -1`. A one-off probe agent is NOT sufficient evidence —
      in the field a foreground probe returned opus while the real background runners ran on the session model.
 
-4. **Pin routing downward.** The runner itself spawns subagents (ship-feature fans out constantly), and
-   those inherit the **session** model unless pinned. Every runner prompt must carry — and instruct the
-   runner to propagate into every prompt that itself spawns agents:
-   "pass `model:'opus'` on every Agent tool call and `{model:'opus', effort:'high'}` on every Workflow
-   `agent()` call."
+4. **Propagate the routing table downward — don't pin everything to Opus.** The runner itself spawns
+   subagents (ship-feature fans out constantly), and those inherit the **session** model unless routed.
+   Every runner prompt must carry — and instruct the runner to propagate into every prompt that itself
+   spawns agents — the lane table (SKILL.md §"Model routing"): leaf readers + gate-runners → `haiku`;
+   evidence lenses, adversarial finding-verifiers, e2e Phases 0–4, design leaf verifiers + page assembly,
+   Sentinel verdict + Assumptions, Trivial/Small plan synthesis → `sonnet`; mechanical Phase B/E slices
+   meeting the delegation criteria → the cheap-executor CLI lanes (`cursor-composer.md`); everything on
+   the never-downgrade list (Large plan synthesis, work Phase A synthesis, Phase C conflicts, the
+   completeness critic, security/guardrails/client-asserted-identity lenses, gap-fix audit over
+   cheap-lane code, e2e Phase 5 judgment + Phase 6 fixes, aesthetic direction + new composites,
+   merge/finalize) → `opus`. Two invariants ride the table: **REVIEWER ≥ WRITER** — for every artifact
+   the strongest reviewer is at least as strong as the strongest model that wrote it — and **per-lane
+   wire verification**: each routed agent's prompt opens with the rule-3 self-check adapted to *its*
+   lane's model, and you spot-grep `"model":"…"` from routed transcripts exactly as for runners (a
+   downgrade that silently lands on the session model at xhigh is the expensive failure; an upgrade
+   that silently lands on haiku is the corrupting one). The cheap-executor lanes are optimizations
+   with an **Opus fallback** (`cursor-composer.md` §"Fallback") — a lane failure routes the work back
+   to Opus, never to another cheap lane, never silently skipped.
 
 5. **On a mid-run model/effort correction**: stop the runners (their killed state is recoverable), append
    each one's last-known progress to its prompt as a RESUME note (the on-disk worktree/spec/scratchpad
@@ -110,9 +123,21 @@ ship-feature skill (Skill tool: "ship-feature:ship-feature") on it, from the rep
 
 FIRST ACTION — model self-check: your system prompt states the model powering you. If it is
 NOT claude-opus-4-8, reply immediately with exactly "WRONG-MODEL: <that id>" and stop.
-MODEL ROUTING: pass model:'opus' on every Agent tool call and {model:'opus', effort:'high'}
-on every Workflow agent() call; propagate this instruction into every prompt that itself
-spawns agents.
+MODEL ROUTING — you run on Opus at high effort; route the agents YOU spawn per lane, and
+propagate this whole block into every prompt that itself spawns agents:
+  · leaf readers + typecheck/lint gate-runners → model:'haiku'
+  · evidence lenses (UI fidelity / clause table / reachability), adversarial finding-verifiers,
+    e2e Phases 0–4, design leaf verifiers + page assembly, Sentinel verdict + Assumptions,
+    Trivial/Small plan synthesis → model:'sonnet'
+  · everything else — work Phase A synthesis, Phase C conflicts, security/guardrails/
+    client-asserted-identity lenses, the completeness critic, Standard/Large plan synthesis,
+    e2e Phase 5 judgment + Phase 6 fixes, new composites/aesthetic direction, finalize →
+    model:'opus' (Workflow agent() calls add effort:'high').
+  REVIEWER ≥ WRITER always: never review an artifact with a weaker model than wrote it.
+  Give every routed agent a first-action self-check for ITS lane's model. Mechanical
+  Phase B/E slices may go to the cheap-executor CLI lanes ONLY per cursor-composer.md
+  (delegation criteria + Opus verify-fix loop + per-lane kill-switch); any cheap-lane
+  failure falls back to Opus — never to another cheap lane, never skipped.
 
 Feature: ⟨ID · title⟩
 Sources — read all that exist, in full, before starting:
@@ -122,6 +147,11 @@ Best practices: docs/CODING_PRACTICES.md and docs/NEW_PROJECT_BEST_PRACTICES.md 
 Deep research: ⟨matched docs/deep-research/ files, or "none matched"⟩ — when present, read the
   ENTIRE document before design/plan decisions, and pass it to ship-feature as context.
 Mock input: ⟨design/mocks/html/… or "none"⟩ — hand to ship-feature's design stage as the mock.
+  "none" changes NOTHING about the design stage's coverage bar: ship-feature Phase 1 must
+  still represent the feature's ENTIRE UI — every surface, state, user interaction, user
+  flow, and popup/modal/menu — in the design system via design-craft, authoring the
+  reference from the brief/spec + the existing design system and adding new
+  elements/composites as needed. A mock is a hint, never a prerequisite.
 Resume state: ⟨"fresh" | "resume in .worktrees/ID on ai/id — do NOT create a new worktree"⟩
 
 Rules that override ship-feature's defaults:
@@ -136,8 +166,8 @@ Rules that override ship-feature's defaults:
   incoming branch — discard copies the branch subsumes, fold newer ones onto the branch
   first; never stash-pop blindly over a live runner's work.
 - Propagate the context contract: every subagent you or ship-feature spawns gets the same
-  source/design/practices/research paths above. ⟨+ composer lane block when enabled — see
-  cursor-composer.md⟩
+  source/design/practices/research paths above. ⟨+ cheap-executor lane block when enabled —
+  see cursor-composer.md⟩
 - LEDGER.md writes (child-spec triage) only under the ledger lock rule: ⟨rule⟩.
 - Keep design-system changes feature-scoped; do not edit shared tokens/base elements —
   if a shared change seems required, report it instead of making it.

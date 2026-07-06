@@ -14,8 +14,9 @@ preflight        check/repair the repo's pipeline conventions (with the user)
   → artifacts    write ORCHESTRATOR.md + orchestrator-hierarchy.html   ← BEFORE any execution
   → pre-triage   serially triage untriaged briefs (LEDGER id allocation is a shared write)
   → fleet        dependency-ordered ship-feature runs, ≤8 slots, Opus runners,
-                 optional Cursor composer-2.5 coding lane, serialized merges,
-                 ledger updated after every event
+                 lane-routed subagents + optional cheap-executor coding lanes
+                 (composer-2.5 / glm-5.2), serialized merges, ledger updated
+                 after every event
 ```
 
 Everything is **discovered inside the project — never hardcode absolute paths**. The conventional layout (the common case, e.g. a repo set up like motif-studio):
@@ -34,7 +35,7 @@ Everything is **discovered inside the project — never hardcode absolute paths*
 
 ## Operating discipline
 
-- **You stay in-session, on the session model.** The orchestrating context (you) holds the whole map. Runner agents get Opus at `effort: 'high'` — launched ONLY through the verified single-agent-Workflow lane in `references/scheduling-and-concurrency.md` ("Launching runners — verified model routing"), never as direct background Agent calls, whose model override has been observed not to stick and whose effort defaults to xhigh. The optional coding lane gets Cursor `composer-2.5`. Never hand the *orchestration itself* to a subagent.
+- **You stay in-session, on the session model.** The orchestrating context (you) holds the whole map. Runner agents get Opus at `effort: 'high'` — launched ONLY through the verified single-agent-Workflow lane in `references/scheduling-and-concurrency.md` ("Launching runners — verified model routing"), never as direct background Agent calls, whose model override has been observed not to stick and whose effort defaults to xhigh. Below the runner top level, subagents route per the lane table in "Model routing" (runners propagate it downward); the optional cheap-executor coding lanes are Cursor `composer-2.5` and `glm-5.2` via the zero CLI. Never hand the *orchestration itself* to a subagent.
 - **`ORCHESTRATOR.md` is the memory, not the transcript.** Update it after every state change (run started, run landed, merge done, item blocked, new deferred child discovered). A fresh session must be able to resume the whole fleet from that file alone. If your context is compacted, re-read `ORCHESTRATOR.md`, the root DESIGN md, and the ledger before doing anything else.
 - **Plan before execution.** `ORCHESTRATOR.md` and `orchestrator-hierarchy.html` are written, shown to the user, and committed **before** the first fleet slot starts.
 - **Dependencies rule the schedule.** An item never starts before the items it depends on have **merged** (not merely finished). Distinguish *internal* dependencies (on other queued items — these order the DAG) from *external* ones (a person, credential, or third-party service — these flag the item and skip it, they never stall the rest of the fleet).
@@ -93,7 +94,7 @@ Triage every untriaged item **serially, before the fleet fans out** (invoke the 
 
 Up to **8 slots**. Fill a slot with the highest-value ready item (all internal deps merged); when a slot frees, refill immediately — don't barrier on whole waves when the DAG allows overlap. The Workflow-based slot scheduler (a ready-queue + `Promise.race` refill loop) is sketched in `references/scheduling-and-concurrency.md`.
 
-**Each slot = one runner agent (Opus at high effort, via the verified workflow lane — see the scheduling reference; verify the model on the wire from each runner's transcript, don't trust the launch parameters)** whose prompt tells it to invoke the `ship-feature` skill on its item and hand back a structured report. The runner prompt template (verbatim base, in the scheduling reference) always includes a first-action model self-check and the pin-Opus-downward routing instruction, plus:
+**Each slot = one runner agent (Opus at high effort, via the verified workflow lane — see the scheduling reference; verify the model on the wire from each runner's transcript, don't trust the launch parameters)** whose prompt tells it to invoke the `ship-feature` skill on its item and hand back a structured report. The runner prompt template (verbatim base, in the scheduling reference) always includes a first-action model self-check and the lane-routing propagation block, plus:
 
 - The item: its brief/spec/plan paths, resume state (existing worktree/branch if any), and the matched mock path as `ship-feature`'s mock input.
 - **The context contract** (below) — including the instruction that when relevant deep research exists for the feature, the agent must read the **entire** deep-research document, not skim it.
@@ -106,24 +107,32 @@ At the end: every item merged / parked-with-reason, `ORCHESTRATOR.md` statuses f
 
 ## Model routing
 
-| Role | Model | Why |
+The pipeline's verification is back-loaded (work Phase D/E, adversarial verify, completeness critic, double-dry loop, e2e green-twice, fail-closed merge), which makes mid-pipeline downgrades safe — so runners **propagate the lane table below** into everything they spawn instead of pinning everything to Opus. The runner *top level* stays Opus-at-high via the verified workflow lane, unchanged.
+
+| Role / lane | Model | Why |
 |---|---|---|
 | Orchestrator (this session) | the session model | Holds the map; makes judgment calls; cheap per-token share |
-| Fleet runners + everything `ship-feature` spawns | **Opus** (`{model: 'opus', effort: 'high'}` via the workflow lane; self-check + transcript-verified; runners pin `model:'opus'` on everything they spawn) | The heavy build/verify reasoning — subagents otherwise inherit the session model |
-| Mechanical plan-scoped coding (optional lane) | **Cursor CLI `composer-2.5`** | Much cheaper per token than Opus; Opus verifies + fixes |
+| Fleet runners (top level) | **Opus** (`{model: 'opus', effort: 'high'}` via the workflow lane; self-check + transcript-verified) | The per-feature conductor judgment |
+| Leaf readers + gate-runners (survey leaves, triage grounding, work Phase A readers, typecheck/lint gate subagents) | **Haiku** | Read-and-report work; the stronger synthesis/review above catches misses |
+| Evidence lenses (work Phase D UI-fidelity / clause-table / reachability), adversarial finding-verifiers, e2e Phases 0–4, design-craft leaf verifiers + page assembly from existing composites, triage Sentinel verdict + Assumptions (with the assumptions gate), plan synthesis Trivial/Small | **Sonnet** | Structured, oracle-checked work under a stronger reviewer. Sonnet ≈ 80% of Opus cost per task (it spends more tokens) — pick it for adequacy, not savings |
+| Mechanical work Phase B/E implementation slices meeting the delegation criteria | **composer-2.5** (Cursor CLI, ~$0.12/task) or **glm-5.2 high** (zero CLI, ~$0.35/task) | The genuinely cheap lanes — always under the Opus verify-fix loop + per-lane kill-switch |
+| Plan synthesis, Standard tier | **Opus** (or glm-5.2-high + the plan skill's mandatory plan-review gate) | The plan is the pipeline's highest-leverage trusted-first-output artifact |
+| Plan synthesis Large · work Phase A build-spec/checklist synthesis · Phase C rebase conflicts · completeness critic · security/guardrails/client-asserted-identity lenses · gap-fix audit over cheap-lane code · e2e Phase 5 stabilization judgment + Phase 6 product fixes · design-craft aesthetic direction + new composites · merge/finalize/conflict resolution · deferred-loop B-vs-C classification · fleet DAG/arbitration | **Opus — never downgrade** | Trusted-first-output or judgment work; a miss here amplifies downstream |
 
-The composer lane is an *optimization, never a requirement*: use it only where it plausibly saves Opus tokens net of verification (well-specified, file-scoped edits the plan already decided). Rules, delegation criteria, the verify-fix loop, and graceful fallback when `cursor-agent` isn't installed are in `references/cursor-composer.md`. If in doubt, Opus writes the code.
+Three invariants bind every lane: (1) **REVIEWER ≥ WRITER** — for every artifact the strongest reviewer is at least as strong as the strongest model that wrote it; (2) every downgraded lane carries the **per-lane revert-rate kill-switch** (`references/cursor-composer.md` §"Accounting honesty"); (3) every routed lane reuses the **wire-level model verification** — first-action self-check + transcript grep — because launch parameters have been observed not to stick (scheduling reference, rules 3–4).
+
+The cheap-executor lanes are an *optimization with an Opus fallback, never a requirement or a dependency*: use one only where it plausibly saves Opus tokens net of verification (well-specified, file-scoped edits the plan already decided), and on ANY lane failure — binary missing, key/gateway error, wrong model on the wire, repeated CLI errors, kill-switch tripped — the work routes back to Opus, never to the other cheap lane, never silently skipped. Rules, delegation criteria, exact invocations, the verify-fix loop, and the fallback rule are in `references/cursor-composer.md`. If in doubt, Opus writes the code.
 
 ## The context contract (every agent, every lane)
 
-Every agent that touches a feature — Opus runners, every subagent `ship-feature` fans out, and every `composer-2.5` invocation — must be given, by path, and told to read:
+Every agent that touches a feature — Opus runners, every subagent `ship-feature` fans out (whatever its lane), and every cheap-executor (`composer-2.5` / `glm-5.2`) invocation — must be given, by path, and told to read:
 
 1. The feature's **brief** (its `docs/features-to-triage/*.md` file, when it has one) and **`docs/specs/spec-<ID>.md`** and **`docs/plans/plan-<ID>.md`** (as they come to exist).
 2. The **root DESIGN md** — the design language authority for anything UI.
 3. **`docs/CODING_PRACTICES.md`** and **`docs/NEW_PROJECT_BEST_PRACTICES.md`** — the engineering rules.
 4. The item's matched **deep-research doc(s)** from `docs/deep-research/` — read **in full**, start to finish; they exist precisely to inform this feature's decisions.
 
-**Compaction rule (bake it into every prompt):** after any context compaction/summarization, re-read the brief, `spec-<ID>.md`, `plan-<ID>.md`, and the root DESIGN md before continuing — the on-disk artifacts are the memory, not the conversation. This matters doubly for `composer-2.5`, whose 200k window compacts far sooner than Opus's; every composer prompt carries the re-read instruction explicitly.
+**Compaction rule (bake it into every prompt):** after any context compaction/summarization, re-read the brief, `spec-<ID>.md`, `plan-<ID>.md`, and the root DESIGN md before continuing — the on-disk artifacts are the memory, not the conversation. This matters doubly for the cheap executors (`composer-2.5` / `glm-5.2`), whose ~200k windows compact far sooner than Opus's; every executor prompt carries the re-read instruction explicitly.
 
 ## Resuming
 

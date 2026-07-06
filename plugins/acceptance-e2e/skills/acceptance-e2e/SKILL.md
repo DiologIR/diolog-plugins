@@ -167,6 +167,23 @@ hold, not that the asserts were watered down. **Run the full suite TWICE** — f
 (optimistic-id timing, parallel-load 5xx, leftover state) only surface on the second
 run, and green-twice also proves isolation.
 
+**Assertion-strength gate (after green-twice).** Stabilization is exactly where a
+suite quietly goes hollow — each individual reframe is defensible, and the sum stops
+proving anything. So once the suite is green twice, run one strong-model pass that
+reads the FINAL suite (and its diff against the first authored version) and answers,
+per test: does it assert the AC's promised **outcome** — data rendered, state
+changed, effect delivered — or mere element presence/chrome? And **was any assertion
+weakened during stabilization?** Every weakening requires a written justification in
+the run report (what changed, why the original signal was environment-fragile, what
+still proves the AC); a hollow assertion is strengthened and the suite re-run to
+green-twice. A suite that's green because it asserts chrome is decoration, not
+coverage.
+
+**Model routing:** Phases 0–4 (discovery, the AC matrix, live grounding, spec
+authoring) may run on a cheaper model; the Phase 5 stabilization judgment —
+including this gate — and Phase 6 product-bug fixes stay on the strongest model.
+The gate's reviewer must be at least as strong as whatever authored the specs.
+
 ### 6. Catch bugs — and fix the tractable ones
 
 When a content/AC assertion fails on a **real defect**, that is the suite doing its
