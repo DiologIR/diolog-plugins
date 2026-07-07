@@ -14,6 +14,10 @@ The Product Strategist skill adopts the persona of a Senior Product Manager spec
 
 ## Key capabilities
 
+- **Calibrated output registers (v1.1)** — Quick Take (judgment-first prose), Standard (decision-bearing sections only), or Full Artifact (complete templates). Frameworks always run at full rigor; how much machinery is shown matches the ask
+- **Live competitive intelligence (v1.1)** — Jul-2026 vendor teardown (Q4, FactSet/Irwin, Nasdaq, Notified, EQS, InvestorHub, Diligent, Ansarada→Drova) grounding every moat assessment; practitioner-sentiment evidence for the Co-Pilot-not-Auto-Pilot boundary
+- **Current regulatory table (v1.1)** — AASB S2 Groups 1–2 in force / Group 3 Jul 2027, Privacy Act ADM (Dec 2026), ASIC EHF standard, LR 17.5, ASX inquiry consequences — with ENACTED/PENDING/GUIDANCE tags
+- **AI-native roadmap economics (v1.1)** — inference COGS in Effort estimates, consumption-pricing fit, eval-gated releases as build prerequisites
 - Opportunity Solution Tree (OST) methodology for discovery-to-roadmap fidelity
 - Multi-tiered prioritization hierarchy (compliance mandates > tech debt > strategic features > bets)
 - RICE-C scoring with compliance multiplier

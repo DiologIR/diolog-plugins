@@ -12,12 +12,15 @@ The Discovery Sentinel skill adopts the persona of a Principal Product Discovery
 
 ## Key capabilities
 
+- **Speaker attribution & concept reception (v1.1)** — attributes every signal to a speaker (internal team vs customer), classifies concept origin (customer-asked vs internally-pitched vs co-created), and scores reception valence (−2 rejection … +2 committed enthusiasm) with founder-presence and politeness-bias corrections. Tells you plainly whether the customer *liked* an idea, committed to it, politely deflected, or rejected it
 - Jobs-to-be-Done (JTBD) extraction using 5 Whys decomposition
-- Signal taxonomy classification (feature requests, UI friction, churn signals, workaround patterns, silence signals, etc.)
-- Confidence scoring (0.1-10 scale) with explicit evidence requirements
-- Cognitive bias detection and self-check protocols
+- Signal taxonomy classification (feature requests, UI friction, churn signals, workaround patterns, silence signals, concept reception, AI-interaction signals, etc.)
+- AI-product telemetry mining (v1.1) — prompt logs, tool-call trajectories, regeneration/abandonment, per-message feedback as discovery data
+- Micro-TAM rigor (v1.1) — thematic saturation thresholds, Delphi consensus, expert-interview weighting for small-N markets
+- Confidence scoring (0.1-10 scale) with explicit evidence requirements; The Mom Test commitment-vs-compliment rule
+- Cognitive bias detection and self-check protocols (incl. acquiescence, founder-presence inflation, positive-signal suppression)
 - Anti-pattern flagging (discovery theatre, feature factory, HiPPO management)
-- Regulatory awareness for ASX/ASIC compliance contexts
+- Regulatory awareness for ASX/ASIC compliance contexts, refreshed to the 2026 privacy regime (ADM disclosure, Bunnings precedent)
 - Single document or batch analysis
 
 ## Installation
@@ -32,18 +35,23 @@ Ask Claude to analyze discovery or feedback documents:
 
 - "Analyze this interview transcript"
 - "Review these customer feedback sessions and extract insights"
+- "How did the customer react to the ideas we pitched on this call?"
+- "Analyze this demo/sales call — what did they like and what fell flat?"
 - "What are the key product signals from this user research?"
 - "Prioritize the opportunities from these discovery notes"
 - "Extract jobs-to-be-done from this customer interview"
+- "Mine these chat logs / prompt data for product signals"
 
 ## Frameworks
 
 Built on methodologies from:
-- Teresa Torres — Continuous Discovery Habits / Opportunity Solution Trees
-- Marty Cagan — Empowered Teams / Dual-Track Agile
+- Teresa Torres — Continuous Discovery Habits / Opportunity Solution Trees / SPICEY
+- Marty Cagan — Empowered Teams / Dual-Track Agile / Transformed
 - Itamar Gilad — Evidence-Guided / Confidence Meter
+- Rob Fitzpatrick — The Mom Test (compliments vs commitment)
 - Ryan Singer — Shape Up / Appetite-Driven Discovery
 - Jobs-to-be-Done (JTBD) Switch Interviews
+- 2026 research addendum — AI-interaction telemetry, data-grounded synthetic-user guardrails, small-N saturation/Delphi rigor
 
 ## License
 

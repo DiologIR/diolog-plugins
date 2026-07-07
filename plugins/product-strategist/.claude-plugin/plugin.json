@@ -1,6 +1,6 @@
 {
   "name": "product-strategist",
-  "version": "1.0.2",
+  "version": "1.1.1",
   "description": "Generate validated, prioritized product feature concepts and outcome-based roadmaps for AI-assisted IR/compliance/governance SaaS. Supports feature ideation, roadmap construction, feature evaluation, data ingestion, and comparative prioritization using RICE-C/WSJF scoring, compliance gates, and OST methodology.",
   "author": {
     "name": "DiologIR",

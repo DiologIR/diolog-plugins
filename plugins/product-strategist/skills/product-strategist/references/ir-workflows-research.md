@@ -1,5 +1,17 @@
 # **Research Report: Investor Relations Professional Workflows and AI-Assisted Feature Discovery**
 
+## Contents
+
+- [Executive Summary](#executive-summary)
+- [IR Annual Cycle Map](#ir-annual-cycle-map) — 4 phases: reporting seasons, roadshows/targeting, AGM, continuous disclosure
+- [Detailed Findings](#detailed-findings) — JTBD (consensus aggregation, investor targeting, executive prep), segmentation by market cap, friction/pain points, tool ecosystem & integration gaps, AI adoption, automation readiness, compliance constraints
+- [Task Taxonomy](#task-taxonomy) — 12 tasks × pain/frequency/automation readiness/compliance sensitivity
+- [Evidence Table](#evidence-table)
+- [Knowledge Gaps](#knowledge-gaps)
+- [Recommended Next Steps](#recommended-next-steps)
+
+> Regulatory dates in this file are as of April 2026 — `competitive-landscape-2026.md` §5 supersedes them wherever they conflict.
+
 ## **Executive Summary**
 
 The following summary outlines the critical findings regarding Investor Relations (IR) workflows, technology adoption, and automation opportunities within the context of the Australian Securities Exchange (ASX) and global corporate benchmarking. These findings are designed to inform the strategic roadmap of an AI-assisted SaaS platform targeting ASX-listed entities.
