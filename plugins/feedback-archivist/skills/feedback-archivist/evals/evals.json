@@ -1,0 +1,23 @@
+{
+  "skill_name": "feedback-archivist",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've got a folder ~/Downloads/customer-research with a Slack workspace export (has a users.json), a pile of Google-Drive 'Notes by Gemini' .docx meeting notes from our sales calls, and a few ICP/persona docs. Can you turn all of it into one clean, organized markdown archive I can hand to discovery-sentinel? Same meetings show up as both notes and transcripts and it's a mess.",
+      "expected_output": "A customer-feedback/ archive: meetings converted to verbatim markdown, organized into buyer-segment folders, named YYYY-MM-DD-person-company.md, deduped (notes/transcript pairs consolidated to one file each), a slack/ digest mined for product feedback (bots dropped), research docs in research-and-personas/, and an INDEX.md with who's-who + per-segment tables. Left uncommitted.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Organize these Gemini meeting-note .docx files (in ./discovery-dump/) by customer segment and dedupe them. They're all calls between our CEO and various IR agencies / listed companies. Keep the transcripts verbatim but strip the auto-generated Gemini summaries where there's a real transcript.",
+      "expected_output": "docx converted verbatim via pandoc, classified into segments by attendee email domain, deduped, one file per meeting, Gemini Summary/Details removed only where a transcript exists (kept where summary-only), INDEX built. Verbatim bodies preserved.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Mine this Slack export (~/slack-export/, has product/, the-feed/, and meeting-summaries/ channels + users.json) for product feedback and meeting summaries, and build me a deduped feedback digest. Drop the bot noise and anything from our engineers — I only want customer/product signal. Resolve the @mentions to real names.",
+      "expected_output": "Per-channel verbatim digests in slack/, authors resolved from users.json, bots + internal-engineering authors + test/chatter dropped, product-feedback + meeting-summary posts kept (esp. Google Drive links), chronological with @mentions resolved. Meeting recaps that duplicate a transcript pointer-linked to canonical files.",
+      "files": []
+    }
+  ]
+}

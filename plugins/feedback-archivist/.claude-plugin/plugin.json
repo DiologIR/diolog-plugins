@@ -1,0 +1,9 @@
+{
+  "name": "feedback-archivist",
+  "version": "1.0.0",
+  "description": "Turn messy, multi-source customer-discovery/feedback dumps (Slack exports, Google-Drive \"Notes by Gemini\" .docx meeting notes, segment-foldered research/ICPs/personas, AI-Studio JSON repos, screenshot evidence, audio/video) into ONE clean, deduplicated, verbatim Markdown archive organised by buyer segment with an INDEX — the pre-step that feeds discovery-sentinel and product-strategist. Converts docx/pdf/txt via pandoc, classifies meetings by attendee email domain + source folder, dedupes identical content + notes/transcript pairs + Slack recaps, mines Slack for product feedback (dropping bots/internal-eng/test noise), strips Google/Gemini auto-summaries only where a transcript exists, and builds a who's-who INDEX with provenance and probable dates.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
