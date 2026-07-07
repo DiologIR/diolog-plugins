@@ -40,11 +40,17 @@ Report every detection, including uncertain or low-severity ones, with a confide
 
 …used as the *default* card or container style across the design. This combination is so overused it reads as "default SaaS template." Keep the left border only if it's purposeful (a callout, an alert, a status indicator) and used for that meaning specifically, or it's coming from an existing design system you're matching.
 
+**Three more card tells, all bans as defaults:**
+
+- **The ghost card** — `border: 1px solid` *plus* a soft wide shadow (blur ≥16px) on the same element as decoration. Pick **one elevation language per card** — border, *or* a defined shadow at ≤8px blur, *or* a background shift — stacking two or three of them on one element is the same failure at higher volume.
+- **Over-rounding** — `border-radius` ≥24px on cards, sections, or inputs. Cards top out at 12–16px; full-pill is for tags and buttons only.
+- **Nested cards** — a bordered/shadowed card inside another card is always wrong; flatten the inner one to plain content or a background tint. More broadly, cards are the lazy answer: reach for them only when they're genuinely the best affordance, not as the default way to group anything.
+
 ### 4. Imagery — real, licensed, or honest placeholder
 
 **Default, in order of preference:** real photography (Unsplash, brand assets); professional illustration (icon library or commissioned); honest placeholder — striped background with monospace label like `product shot (1200×800)`. A placeholder is better than a bad illustration — it signals "asset needed" without pretending to be the real thing.
 
-**Detect & replace:** custom SVG illustrations of people, scenes, abstract concepts not drawn by a skilled illustrator; "AI-style" character illustrations (giant heads, flat-color blobs, identical posing); decorative SVG that's clearly placeholder-quality but presented as final.
+**Detect & replace:** custom SVG illustrations of people, scenes, abstract concepts not drawn by a skilled illustrator; "AI-style" character illustrations (giant heads, flat-color blobs, identical posing); decorative SVG that's clearly placeholder-quality but presented as final. Code-level tells for the "sketchy SVG" variant: class names like `*-sketch`, `doodle`, `wavy`; `feTurbulence`/`feDisplacementMap` "paper grain" filters; 5–30-path crude scenes depicting a tangible subject. If the scene can't be rendered with real assets, ship *no* illustration — never sketchy SVG as a fallback.
 
 ### 5. Type — fonts chosen with intent
 
@@ -60,11 +66,13 @@ Report every detection, including uncertain or low-severity ones, with a confide
 
 **Detect & replace:** exact `#FFFFFF` background paired with exact `#000000` text. The combination is harsh, cold, and reads as unfinished.
 
+**Two readability tells in the same family:** muted-gray body or placeholder text on a tinted near-white background — the single most common AI readability failure; secondary text still needs 4.5:1, "muted" is a role, not a license. And gray text sitting on a *colored* background always looks washed out — use a darker shade of the background's own hue, or the text color at reduced opacity, never a neutral gray.
+
 ### 7. Color values — trace to a token or harmonious palette
 
 **Default:** every color value should trace to a design token, brand variable, or `oklch()`-derived harmonious palette. If creating a palette from scratch, use `oklch()` to keep lightness and chroma consistent across hues.
 
-**Detect & consolidate:** color values that don't trace anywhere. Five different blues across the file (`#0066CC`, `#0077DD`, `#3498DB`, `#3B82F6`, `#5B8DEF`) is a smell — colors were invented inline. More than ~12 raw hex values outside `:root` means tokens weren't honoured — consolidate into custom properties. And treat the default Tailwind indigo family as an automatic fail when used as the accent: `#6366F1`, `#4F46E5`, `#4338CA`, `#3730A3`, `#8B5CF6`, `#7C3AED`, `#A855F7`. Indigo is the textbook AI tell; replace with the committed accent.
+**Detect & consolidate:** color values that don't trace anywhere. Five different blues across the file (`#0066CC`, `#0077DD`, `#3498DB`, `#3B82F6`, `#5B8DEF`) is a smell — colors were invented inline. More than ~12 raw hex values outside `:root` means tokens weren't honoured — consolidate into custom properties. **Weight near-misses as *more* severe than far-misses:** a value within ~5% of an existing token (a blue 3% off the brand blue, a gray almost matching the system neutral) is worse than a clearly different color — perception is non-linear (Bujack et al. 2022) and "almost right" registers as *more* wrong than "obviously different." Snap near-misses to the token; only clearly-different values get to argue they're deliberate. And treat the default Tailwind indigo family as an automatic fail when used as the accent: `#6366F1`, `#4F46E5`, `#4338CA`, `#3730A3`, `#8B5CF6`, `#7C3AED`, `#A855F7`. Indigo is the textbook AI tell; replace with the committed accent.
 
 ### 8. Spacing — snap to a 4px or 8px scale
 
@@ -78,11 +86,15 @@ Report every detection, including uncertain or low-severity ones, with a confide
 
 **Detect & question** the combination, absent a brand reason: cream / warm off-white page backgrounds in the `#F4F1EA` family; serif display faces as silent defaults (Georgia, Playfair Display, Fraunces); italic word-accents in headlines; terracotta / amber accent palette.
 
+**Detect cream by value and by name, not just by hex family.** The whole warm-neutral band — OKLCH lightness 0.84–0.97, chroma <0.06, hue 40–100 — reads as cream/sand/paper regardless of what it's called, and the token names are tells in themselves: `--paper`, `--cream`, `--sand`, `--bone`, `--linen`, `--parchment`, `--ivory`, `--wheat`. "Warm, traditional, editorial" in a brief does **not** translate to a warm-tinted near-white body background — that's the reflex. Warmth is carried by the accent, the typography, and the imagery; the body background is either a true off-white (chroma ~0, or tinted 0.005–0.015 toward the *brand's own hue*), a saturated brand color, or a darker mid-tone that's clearly the brand's.
+
 Any one of these can be a deliberate choice. All of them together — especially on a dashboard, dev tool, fintech, healthcare, or enterprise surface — is the default-template look, today's equivalent of the purple gradient. Replace with the committed direction, or flag for the user if no direction exists.
 
 **Its successor default: the premium-consumer palette.** For premium-consumer briefs (cookware, wellness, artisan goods, DTC home) the model now defaults to warm beige/cream backgrounds + brass/clay/oxblood accents + espresso near-black text. That palette on every premium brief makes the brand invisible. Acceptable only when the brief names those colors or the identity is genuinely vintage-craft. Otherwise rotate to a different family: **Cold Luxury** (silver-grey + chrome + smoke), **Forest** (deep green + bone + amber), **Black-and-Tan** (true off-black + warm tan, no beige), **Cobalt + Cream**, **Terracotta + Slate**, or **monochrome + one saturated pop**. Never ship the beige+brass family twice in a row.
 
 **The other two AI-default looks — detect them the same way.** Current AI output clusters around three looks, and warm-editorial is only the first: **(2) near-black background with a single acid-green or vermilion accent** — the default for every dev-tool/startup/AI brief (the range map's "neo-grotesque product" family used without a stated reason); and **(3) the broadsheet** — hairline rules, zero border-radius, dense newspaper columns, oversized serif masthead. All three are legitimate *for some briefs*; all three are defaults rather than choices when they appear regardless of subject. **The brief's own words always win** — including when it explicitly asks for one of these looks; the rule is only: don't spend a *free* axis on a default.
+
+**The second-order reflex check.** Avoiding the first default and landing on the *predictable alternative* is the same trap one tier deeper: "fintech but not navy → terminal-dark", "AI tool but not SaaS-cream → editorial-typographic". If someone could guess the chosen family from the category *plus* the anti-references alone, it's still a reflex — rework until neither the first-order nor the second-order guess is obvious.
 
 ### 10. Hero — one moment, max 4 text elements
 
@@ -108,13 +120,15 @@ Any one of these can be a deliberate choice. All of them together — especially
 
 **Detect & remove**, all banned as defaults: fake product UI built from `<div>` rectangles (fake dashboards, task lists, terminals — use a real screenshot, a generated image, or nothing); version labels as hero eyebrows (`V0.6`, `BETA`, `EARLY ACCESS`) and version footers on marketing pages (`v1.4.2 · last sync 4s ago`); section-number eyebrows (`001 · Capabilities`, `00 / INDEX`) — eyebrows name topics, they don't enumerate; decorative colored status dots on nav items, list rows, and badges (a dot only when it conveys real live state, max one per section); locale/time/weather strips ("Lisbon 14:23 · 18°C") unless the brief is genuinely about place; scroll cues ("Scroll to explore", animated mouse icons — the user knows what scrolling is); photo-credit-style captions as decoration (`Plate 03 · House archive`) — credit only real photographers; poetic section labels ("Field notes", "On our desks") — use plain functional labels or none; generic step labels ("Step 1 / Step 2 / Phase 01") — the verb is the label ("Install", "Configure", "Ship"); the middle-dot rationed to max 1 per metadata line, never the universal separator.
 
+**Decorative-CSS tells, same treatment:** **gradient text** (`background-clip: text` over a gradient) — decorative, never meaningful; use a solid color and emphasize with weight or size. **Glow-for-emphasis** (neon box-shadows, colored outer glows on buttons/cards/headings) — shadows exist for elevation, never for attention; emphasis borrowed from a glow is emphasis the hierarchy failed to earn, so fix the hierarchy. **Decorative grid-line backgrounds** (two-axis `linear-gradient(... 1px, transparent 1px)` + `background-size` overlays) — legitimate only when the surface genuinely is a canvas, map, blueprint, or measurement tool. **`repeating-linear-gradient` stripe backgrounds** on `body::before` or sections — pure generated decoration. **Image zoom-on-hover** (`transform: scale/rotate` on an `<img>` via `:hover` or a parent `group-hover`) — the image isn't the action target and the motion adds no information; if a card needs hover feedback, animate its background, border, or shadow, never the image.
+
 ### 14. Sample data — kill the Jane Doe effect
 
 **Default:** believable, specific, slightly messy data. Locale-appropriate realistic names (never "John Doe" / "Sarah Chan"), photo-style avatars (never the SVG egg or a user icon), organic numbers (`47.2%`, `+1 (312) 847-1928` — never `99.99%`, `50%`, `1234567`), contextual brand names that sound real (never Acme, Nexus, SmartFlow, Cloudly), concrete verbs (never Elevate, Seamless, Unleash, Revolutionize, Next-Gen). Testimonial quotes are ≤3 lines — a landing-page quote is a snippet, not the review — with real attribution: name + role (+ company), never "— Sarah".
 
 ### 15. Theme lock — one theme per page
 
-**Default:** pick light, dark, or `prefers-color-scheme` at the page level and lock it. Background tints within the theme family are fine; a light warm-paper section sandwiched mid-scroll into a dark page reads as walking into a different website. One deliberate full theme-switch device is allowed only when the brief calls for it. If the page supports both modes, **test both before shipping** — half-themed dark mode is worse than none.
+**Default:** pick light, dark, or `prefers-color-scheme` at the page level and lock it. Background tints within the theme family are fine; a light warm-paper section sandwiched mid-scroll into a dark page reads as walking into a different website. One deliberate full theme-switch device is allowed only when the brief calls for it. If the page supports both modes, **test both before shipping** — half-themed dark mode is worse than none. And a dark theme is *designed*, not inverted: desaturated/lighter tonal variants of the palette, softer text contrast (near-white on near-black, never pure-on-pure), shadows rethought as borders or glows, and font weight eased slightly (light-on-dark renders optically heavier — a 400 body may want ~350, or letting the system's antialiasing decide) — with contrast checked separately from light mode.
 
 ## Phase 3: Fix and summarize
 

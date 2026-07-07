@@ -18,6 +18,8 @@ Walk the design and inventory every interactive element:
 - **Navigation items** — tabs, sidebar links, breadcrumbs
 - **Custom widgets** — dropdowns, accordions, modals, popovers
 
+Two structural checks while inventorying overlays: a dropdown/menu rendered with `position: absolute` inside an `overflow: hidden`/`auto` container **will be clipped** — use the popover API, `position: fixed`, or a portal to escape the container. And a modal scrim needs to actually isolate the foreground: typically 40–60% black — a weak scrim leaves the background visually competing with the dialog.
+
 For each element, verify the full state set in Phase 2.
 
 ## Phase 2: Per-element state verification
@@ -26,7 +28,7 @@ For each interactive element, check all six aspects below. Flag everything you f
 
 ### 1. Default (resting) state
 
-The element looks clearly interactive at rest: buttons have background fill, border, or both — distinct from body text; links are obviously links (color + underline, or a clear visual treatment); form inputs have visible borders or fills. Flag elements that look like static text and only reveal interactivity on hover — some users will never hover (touch devices, keyboard users).
+The element looks clearly interactive at rest: buttons have background fill, border, or both — distinct from body text; links are obviously links (color + underline, or a clear visual treatment); form inputs have visible borders or fills. **Every clickable element gets `cursor: pointer`** (web) — clickable cards, rows, and custom widgets are the usual omissions; `<div onclick>` with a default cursor reads as static content. Flag elements that look like static text and only reveal interactivity on hover — some users will never hover (touch devices, keyboard users).
 
 ### 2. Hover state
 
@@ -83,6 +85,7 @@ For each missing state or feedback element, add it. Use the design system's toke
 - Disabled: opacity 0.6 + `cursor: not-allowed`
 - Focus: `outline: 2px solid var(--color-primary); outline-offset: 2px`
 - Transition: `0.2s ease`
+- Clickable anything: `cursor: pointer` + `touch-action: manipulation`
 
 For elements where the right state isn't obvious (e.g. a toggle button — what's the active vs inactive vs hover-on-active state?), make a judgment call and note it in the summary.
 

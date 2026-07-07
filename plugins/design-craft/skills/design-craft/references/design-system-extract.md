@@ -23,7 +23,9 @@ Walk through each category. For each, capture concrete values from the source �
 
 Pull: **brand primary** (and dark/light variants if defined), **brand accent** (and variants), **semantic colors** (success, warning, error, info, and their light backgrounds where defined), **neutral scale** (typically 9–11 steps from near-white to near-black, with a consistent tone — warm / cool / neutral), **surface colors** (background, foreground, card, overlay, border).
 
-For each color, record: the hex (or oklch) value, its name in the source, and its intended usage (where the source documents it). Flag inconsistencies — multiple slightly-different blues, neutrals on different tones — as a finding. Don't silently merge them; the inconsistency itself is information.
+For each color, record: the hex (or oklch) value, its name in the source, and its intended usage (where the source documents it). Flag inconsistencies — multiple slightly-different blues, neutrals on different tones — as a finding, and rank **near-misses highest**: a value within ~5% of another candidate token is almost certainly drift from it (and perceptually reads as "almost right, therefore wrong" — color perception is non-linear), where a clearly distinct value may be a real second color. Don't silently merge either kind; the inconsistency itself is information — but recommend snapping near-misses in the report.
+
+**Contrast is part of the token contract, not a later audit.** For every text-role token, compute its ratio against the backgrounds it's declared for and record it — a token ladder should pass WCAG AA *by construction*. The systemic traps to flag: "subtle"/"tertiary" mid-gray text tokens in the `#6b7380` neighborhood (fail 4.5:1 on light backgrounds most of the time), font-size tokens below 12px, and opacity-based muting (compute the *effective* color). When a brand color fails on its declared background, emit an AA-compliant variant in the same color family as the working token and keep the original as a `-display` token reserved for text-free surfaces.
 
 ### Typography
 

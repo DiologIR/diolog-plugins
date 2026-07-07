@@ -65,6 +65,7 @@ papers swirling. Camera slightly low. Empty upper-left third for headline.
 ## Phase 6: Verify every image
 
 - **View each generated file** with the Read tool — actually look at it. Check: the subject is right, the style matches the shared block, every required string rendered correctly.
+- **Uncanny-valley check on anything depicting people or creatures.** Viewers reject almost-right humans pre-verbally, before they can say why. Look specifically at: faces (asymmetry, dead eyes, misplaced features), hands (finger count, joint angles), teeth, and skin texture that's too smooth or too waxy. A stylized illustration that's clearly not aiming at realism is safe; a photorealistic face that's 95% right is worse than either — regenerate with a more stylized prompt or crop the problem out of frame.
 - **Confirm it loads in the artifact** — open the embedding HTML and verify no broken-image icon. A wrong relative path fails silently until someone looks.
 - **Wrong text → regenerate, never paint over.** If a label came out wrong, tighten the prompt file (quote the exact string more explicitly, reduce competing text) and regenerate. Don't patch the bitmap with overlaid HTML text or image edits — the seam always shows, and the prompt file stops being the record of the image.
 - **Edit the prompt file, then regenerate from it** — never invoke with an ad-hoc tweaked prompt that the file doesn't contain, or the record and the image diverge.

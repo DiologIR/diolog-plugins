@@ -73,11 +73,22 @@ Avoid the overused defaults — Inter, Roboto, Arial, bare system stacks, and th
 
 If the user might not have access to a paid foundry, suggest the closest free alternative (e.g. "Inter is overused, but Söhne is paid — try Söhne for production, or Albert Sans / Geist as free alternatives").
 
-Commit to a type scale (sizes, weights, line heights). 1–2 families maximum.
+Commit to a type scale (sizes, weights, line heights). 1–2 families maximum. **When pairing two faces, pair on a contrast axis** — serif + sans, geometric + humanist, display + text — or use one family in multiple weights. Never pair similar-but-not-identical faces (two geometric sans, two humanist sans): the near-match reads as a mistake, not a choice.
 
 ### Color
 
-Pick a tone:
+**First pick a strategy — the commitment axis** (how much of the surface color carries):
+
+- **Restrained** — tinted neutrals + one accent ≤10% of pixels. The product-UI default.
+- **Committed** — one saturated color carries 30–60% of the surface. Identity-driven pages.
+- **Full palette** — 3–4 named color roles, each used deliberately. Campaigns, data-viz.
+- **Drenched** — the surface *is* the color. Heroes and campaign pages.
+
+Choosing Restrained is fine; *defaulting* to it unexamined is how timid, evenly-distributed palettes happen. State the strategy in the direction block.
+
+**Theme (dark vs light) is never a default.** Not dark "because tools look cool dark," not light "to be safe." Before choosing, write one sentence of physical scene: who uses this, where, under what ambient light, in what mood. If the sentence doesn't force the answer, it isn't concrete enough — add detail until it does.
+
+Then pick a tone:
 
 - **Warm** — cream, beige, gold, terracotta, rust
 - **Cool** — gray, slate, ice, blue
@@ -169,6 +180,8 @@ Name **the single element this design will be remembered by** — the one place 
 ## Phase 3.5: The swap test — a genericness gate
 
 Before documenting, run the counterfactual: imagine a neighboring brief — a different product in the same category — and ask whether your committed direction would fit it unchanged. Any axis that transfers untouched is a default, not a choice: revise that axis and say what you changed and why. (The anti-convergence rule above only works across sessions; the swap test works inside this one.)
+
+Then run it **one tier deeper**: could someone guess your chosen family from the category *plus your anti-references* alone? "Fintech, but not navy-and-gold → terminal dark" and "AI workflow tool, but not SaaS-cream → editorial-typographic" are second-order reflexes — the predictable alternative is still a reflex. Rework until neither the first-order nor the second-order guess lands.
 
 ## Phase 4: Document the direction in the file
 

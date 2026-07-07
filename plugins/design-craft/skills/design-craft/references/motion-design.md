@@ -6,7 +6,7 @@ Give interfaces motion that carries meaning — and review motion that doesn't. 
 
 ## Phase 1: Decide what earns motion
 
-Animate only when the user moves through **space, time, or state**: navigation, container morphs, progress, gesture follow-through, appearing/disappearing content. Never animate to teach, to decorate, or to signal "premium" — research (Tversky 2002 meta-analysis) shows animation doesn't even beat static images for explaining things.
+Animate only when the user moves through **space, time, or state**: navigation, container morphs, progress, gesture follow-through, appearing/disappearing content. The articulation test: every transition should communicate a specific spatial relationship or continuity — "same thing, going deeper", "data arrived", "same items, new order", "something appeared". If you can't say what a transition communicates, cut it. Never animate to teach, to decorate, or to signal "premium" — research (Tversky 2002 meta-analysis) shows animation doesn't even beat static images for explaining things.
 
 Budget by frequency of the action:
 
@@ -55,8 +55,9 @@ Springs (Framer Motion, WAAPI spring approximations) when motion should feel phy
 
 ## Phase 4: Choreography
 
-- **Stagger** small groups (30–80ms per item, ≤6–8 items). Stagger is seasoning: a whole page staggering item-by-item blocks the user; a hero's headline → subhead → CTA cascade guides the eye. Never let stagger delay interactivity.
-- **Direction tells a story.** Enter from where the thing conceptually comes from (drawer from its edge, toast from the corner it lives in, next-step content from the direction of travel). Random directions break the spatial model.
+- **Stagger** small groups (30–80ms per item, ≤6–8 items). Stagger is seasoning: a whole page staggering item-by-item blocks the user; a hero's headline → subhead → CTA cascade guides the eye. Never let stagger delay interactivity. The AI tell here is the *uniform reflex* — one identical fade-up entrance applied to every section — not motion itself; each reveal should fit what it reveals, and suppressing the reflex is never a reason to ship a page with no motion at all.
+- **Reveal-safety: never gate content visibility on a class-triggered transition.** Reveal animations must enhance an already-visible default (`opacity: 1` without JS; the animation class *adds* the entrance). Transitions pause in hidden tabs and headless renderers — gate visibility on them and the section ships blank in screenshots, prerenders, and background tabs.
+- **Direction tells a story.** Enter from where the thing conceptually comes from (drawer from its edge, toast from the corner it lives in, next-step content from the direction of travel). Random directions break the spatial model. **Directional slides are reserved for hierarchical navigation** (list → detail, forward/back) **and ordered sequences** (prev/next photo, pagination — next slides from the right, previous from the left). Lateral moves between siblings (tab to tab, unordered views) get a crossfade or nothing — a directional slide there falsely implies spatial depth that doesn't exist.
 - **Accordion/expand:** animate `grid-template-rows: 0fr → 1fr` (content wrapper `min-height: 0; overflow: hidden`) — smooth height without measuring.
 - **Keep exiting elements mounted** and toggle a class/attribute; React unmounts skip exit transitions. CSS `transition-behavior: allow-discrete` + `@starting-style` give JS-free entry/exit for `display: none` toggles.
 - **Interruptibility is non-negotiable** for anything rapidly triggered (toasts, toggles, hover cards): CSS transitions retarget mid-flight; CSS keyframes restart from zero. Use transitions or springs, not keyframes, for interruptible motion.
@@ -66,7 +67,7 @@ Springs (Framer Motion, WAAPI spring approximations) when motion should feel phy
 Use the platform before reaching for a library — these are what make current agency work feel current:
 
 - **Scroll-driven animations (CSS):** `animation-timeline: view()` / `scroll()` for reveals, parallax, progress bars — zero JS, compositor-run. Reveal pattern: `animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 60%;`. Reserve for marketing/editorial surfaces; product UI scrolls quietly.
-- **View Transitions API:** `document.startViewTransition()` for page/state morphs; tag shared elements with `view-transition-name` for magic-move continuity. **It does NOT respect `prefers-reduced-motion` automatically — gate it yourself.**
+- **View Transitions API:** `document.startViewTransition()` for page/state morphs; tag shared elements with `view-transition-name` for magic-move continuity. **It does NOT respect `prefers-reduced-motion` automatically — gate it yourself.** Shared-element morphs run longer than UI motion (300–500ms — the eye is tracking one object across space). Text morph gotcha: snapshots are rasters, so a morph between text at different sizes (`h3` → `h1`) scales the old snapshot up and ghosts — hide the old snapshot (`::view-transition-old { display: none }`) and show the new text at full resolution instead of crossfading the pair.
 - **FLIP** for layout changes the platform can't yet morph (list reorders, grid → detail): measure First/Last, Invert with a transform, Play the transform to zero. Transform-only, so it's cheap.
 - **WAAPI** (`element.animate()`) when you need JS control with CSS-level performance — runs off the main thread, unlike rAF loops.
 - **Polish tricks:** ≤2px blur during a crossfade masks imperfect alignment; `clip-path: inset()` for reveals and tab-highlight slides; `translate` percentages are self-relative (how Sonner stacks toasts and Vaul nests drawers); a sticky header that hides on scroll-down and reveals on scroll-up returns the viewport to content without losing the nav (track scroll direction, toggle a transform class — never per-frame JS positioning).
@@ -81,15 +82,16 @@ Dismiss on **velocity** (|distance|/ms > ~0.11), not distance thresholds — a f
 
 ## Phase 7: Performance and accessibility
 
-- Animate **`transform` and `opacity` only**; `filter`/`clip-path` sparingly. Never animate layout properties (width/height/top/margin) outside the grid-rows trick; never `transition: all`.
+- Animate **`transform` and `opacity` first**; blur, `backdrop-filter`, `clip-path`, mask, and shadow/glow are part of the premium-motion palette *when they materially improve the effect and hold 60fps* — verify on a real device, and never as a default. Never animate layout properties (width/height/top/margin) outside the grid-rows trick; never `transition: all`.
 - Framer Motion's `x`/`y`/`scale` shorthands are not hardware-accelerated — animate the full `transform` string when it matters. Don't drive many children's transforms from one parent CSS variable (style-recalc storm).
 - `will-change` only on elements about to animate; remove after.
+- **Audit the motion posture of any imported component.** Library components (animation kits, hero effects, particle backgrounds) ship embedded motion defaults their API hides: cursor-reactive effects, auto-looping animations, scroll-driven behavior that ignores `prefers-reduced-motion`. At integration, read the component's source and check each of those explicitly — a component that fails the guardrails gets fixed or excluded, not shipped because it looked good in the demo.
 - Loops: carousels stop after 3–5 cycles; skeleton shimmer only while loading; reward animations play once; any motion >5s needs a pause control (WCAG 2.2.2); nothing flashes >3×/sec; cancel ambient motion on route change.
 - **`prefers-reduced-motion` means fewer and gentler, not zero:** keep opacity/color crossfades, drop movement/scale/parallax, and jump timeline pieces to their end state. Deck builds apply instantly but click-gating stays (reveal order is content). Gate hover-triggered motion behind `@media (hover: hover) and (pointer: fine)`.
 
 ## Phase 8: Review procedure (run on any motion-bearing deliverable)
 
-Flag on sight, in this order of severity: `transition: all` · animation on keyboard-initiated actions · `ease-in` on UI · `scale(0)` entrances · center-origin popovers · keyframes on interruptible elements (toasts/toggles) · layout-property animation · >300ms UI motion without justification · ungated hover motion · looping decoration · View Transitions without reduced-motion handling.
+Flag on sight, in this order of severity: content visibility gated on a class-triggered transition (reveal-safety — ships blank sections) · `transition: all` · animation on keyboard-initiated actions · `ease-in` on UI · `scale(0)` entrances · center-origin popovers · keyframes on interruptible elements (toasts/toggles) · layout-property animation · image `transform` on hover (incl. parent `group-hover`) · >300ms UI motion without justification · ungated hover motion · looping decoration · the uniform section-reveal reflex (identical entrance on every section) · View Transitions without reduced-motion handling.
 
 Fix with the remedial hierarchy — cheapest lever first: **1 delete the animation → 2 reduce duration/distance → 3 fix easing → 4 fix origin/physicality → 5 make it interruptible → 6 move it to transform/opacity → 7 asymmetric timing → 8 polish (blur, stagger) → 9 a11y and cohesion (tokens)**. Report findings as a Before / After / Why table and end with a verdict: ship, or the specific items that block.
 

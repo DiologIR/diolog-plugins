@@ -1,6 +1,8 @@
 # Visual Verification: Layout Integrity and the Screenshot Playbook
 
-The procedure for *seeing* a design the way a user will — structural layout checks across viewports, plus the screenshot discipline that makes verifier subagents fast and their evidence trustworthy. Use it two ways: as the **fifth review axis** in `polish-pass.md` (layout integrity & responsive), and as the **standing playbook** handed to any verifier subagent checking rendered output.
+The procedure for *seeing* a design the way a user will — structural layout checks across viewports, plus the screenshot discipline that makes verifier subagents fast and their evidence trustworthy. Use it three ways: as the **fifth review axis** in `polish-pass.md` (layout integrity & responsive), as the **standing playbook** handed to any verifier subagent checking rendered output, and as the **per-unit micro-check** inside `unit-critique-gate.md` — after each unit drafts, load just that unit at 375px and 1280px, run the overflow probe, and collect console errors, rather than saving all layout verification for the end.
+
+**When no browser automation exists** in the environment (a headless sandbox, no Playwright/Chrome), degrade honestly: run the static checks you can — the lint script, the overflow-prone patterns (missing `min-width: 0`, absent `max-width`, fixed widths in fluid containers), explicit image dimensions — and state in your summary that rendered verification did not happen. Never imply a page was seen.
 
 **The other reviews judge the design; this one checks whether it survives contact with a browser.** Broken overflow, overlapping elements, and a layout that shatters at 375px are invisible in source and fatal on screen — and they're the failure class that hierarchy/slop/a11y reviews aren't looking for.
 

@@ -92,6 +92,8 @@ Beyond a small single-screen mock, split a React/Babel prototype into an HTML en
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 ```
 
+**JSX text gotcha:** unicode escapes (`’`-style) render *literally* in JSX text content — the user sees the escape sequence on screen. Paste real UTF-8 characters (’ “ ” …) into the source, or wrap in an expression (`Don{'’'}t`); escapes only work inside JS string literals and data arrays (full typography rules: `typesetting.md`).
+
 Split by **coupling, not line count**: extract the self-contained parts (data, icons, presentational components); keep the stateful core (App + palette/modals/selection) in one file — it will be the largest, and that's correct. **One state owner:** lift shared state into App and pass props down; separate Babel scripts don't share scope, so to share components export them with `Object.assign(window, { Terminal, Line, … })` at the end of each file — and never scatter `useState` across files trying to sync it. **Never write `const styles = {}`** in more than zero files — global style-object name collisions break the page; prefer one `<style>` block with CSS custom properties and `className`, reserving inline `style={{}}` for dynamic values. Theming then becomes one attribute flip: tokens on `:root`, overrides under `[data-theme="dark"]`.
 
 ## Phase 4: Wire up interactions
@@ -117,7 +119,7 @@ If the prototype is a small slice, fake the async work with `setTimeout` to simu
 
 ## Phase 5: Wire up sub-state
 
-Many real flows have meaningful sub-state — selection (which item is selected in a list), filter/sort (how the data is arranged), modal/dropdown (open or closed), form (values, errors, dirty/pristine). Make these reactive: click a filter chip → list re-renders; open a modal → focus moves to it and Escape closes it.
+Many real flows have meaningful sub-state — selection (which item is selected in a list), filter/sort (how the data is arranged), modal/dropdown (open or closed), form (values, errors, dirty/pristine). Make these reactive: click a filter chip → list re-renders; open a modal → focus moves to it and Escape closes it. Two overlay gotchas: a dropdown positioned `absolute` inside an `overflow: hidden`/`auto` ancestor gets clipped — use the popover API, `position: fixed`, or a portal; and give modals a real scrim (40–60% black) plus `overscroll-behavior: contain` so the background neither competes nor scrolls.
 
 ## Phase 6: Persist what matters
 
