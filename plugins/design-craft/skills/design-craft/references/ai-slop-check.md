@@ -102,13 +102,13 @@ Any one of these can be a deliberate choice. All of them together — especially
 
 **Detect the template hero:** a big number with a small label, a supporting-stats row, and a gradient accent is the stock AI answer for SaaS heroes — keep it only if a metric genuinely *is* the product's thesis.
 
-**Detect & remove** extra hero tenants: tiny taglines below CTAs, trust micro-strips, pricing teasers, feature bullet lists, social-proof avatar rows — all move to their own sections below. Logo walls live under the hero, never inside it.
+**Detect & remove** extra hero tenants: tiny taglines below CTAs, trust micro-strips, pricing teasers, feature bullet lists, social-proof avatar rows — all move to their own sections below. Logo walls live under the hero, never inside it — built from real SVG marks (Simple Icons CDN, `https://cdn.simpleicons.org/{slug}/{hex}`, for known brands; a simple inline-SVG monogram for invented ones — styled text wordmarks in a row read as placeholder), logos only: no category labels under each mark (`Stripe · payments` tells the user nothing they don't know), and legible in both themes.
 
 ### 11. Layout rhythm — vary the section families
 
 **Default:** a page of 8 sections uses at least 4 different layout families; density alternates (one tight section, one breathing one).
 
-**Detect & fix:** the same layout family (3-column cards, split text-image, full-width quote) appearing more than once per page; more than 2 consecutive zigzag (image-left/image-right alternating) sections — break the third with a full-width or vertical-stack section; **eyebrows over every section header** — ration to max 1 eyebrow per 3 sections (hero counts), and when in doubt drop it: the headline alone is enough; bento grids with filler — a bento has exactly as many cells as you have content for (3 items → 3 cells; an empty tile means the grid shape is wrong, reshape it).
+**Detect & fix:** the same layout family (3-column cards, split text-image, full-width quote) appearing more than once per page; more than 2 consecutive zigzag (image-left/image-right alternating) sections — break the third with a full-width or vertical-stack section; **eyebrows over every section header** — ration to max 1 eyebrow per 3 sections (hero counts), and when in doubt drop it: the headline alone is enough; bento grids with filler — a bento has exactly as many cells as you have content for (3 items → 3 cells; an empty tile means the grid shape is wrong, reshape it); and the all-text bento — every cell white-on-white typography — reads as the boring default even when the rest of the page is good: give 2–3 cells real visual variation (an image, a tinted background, a pattern).
 
 ### 12. CTAs and nav — one label per intent
 
@@ -134,7 +134,7 @@ Any one of these can be a deliberate choice. All of them together — especially
 
 Apply fixes directly. For decisions where multiple options are reasonable (e.g. which non-Inter font to use), pick the most defensible default and note the choice in your summary so the user can override.
 
-**Copy self-audit before ship.** Re-read every visible string — headlines, eyebrows, buttons, captions, alt text, footer. Flag and rewrite anything grammatically broken, with unclear referents, or that reads like an LLM trying to sound thoughtful (forced metaphors, mock-poetic micro-meta, fake-craftsman humility). If unsure whether a string makes sense, replace it with a plain functional sentence — AI-cute copy is worse than boring copy.
+**Copy self-audit before ship.** Re-read every visible string — headlines, eyebrows, buttons, captions, alt text, footer. Flag and rewrite anything grammatically broken, with unclear referents, or that reads like an LLM trying to sound thoughtful (forced metaphors, mock-poetic micro-meta, fake-craftsman humility, dash-heavy sentence rhythm — the typesetting rules govern which dash character to use, not how often to reach for one). If unsure whether a string makes sense, replace it with a plain functional sentence — AI-cute copy is worse than boring copy.
 
 **The 80/20 soul rule.** Slop removal isn't the same as soul. Aim for ~80% proven patterns + ~20% distinctive choice: one bold visual move, voice in the microcopy ("Start tracking" beats "Get started"), one memorable micro-interaction, one detail only someone who used the product would add. The screenshot test: if someone outside the project can look at a screenshot and say which product it is, the design has soul; if not, you shipped a template.
 

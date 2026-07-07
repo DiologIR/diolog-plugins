@@ -13,6 +13,8 @@ Condensed verification passes. Run the matching list before calling any build/mo
 - [ ] Real content tested: longest name, 0 items, 100 items, missing image
 - [ ] Reversible actions have undo, not confirmation; destructive actions have proportional friction with named consequences
 - [ ] Copy passes ux-writing rules: outcome-verb buttons, no jargon, front-loaded meaning, correct typography
+- [ ] No dead ends anywhere the user can land: not-found/error routes are designed (a 404 that names the problem and offers search/home/key paths — the raw system page is a wayfinding failure), and every page offers a way onward
+- [ ] Legally required links present and findable (privacy, terms; cookie consent where the jurisdiction demands it) — routinely forgotten in mocks, and a compliance issue, not a preference, in regulated contexts
 
 ## Flow
 

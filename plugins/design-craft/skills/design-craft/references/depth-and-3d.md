@@ -32,6 +32,7 @@ Define 3–4 elevation levels as tokens and map every surface to one — ad-hoc 
 - **One light source.** All shadows fall the same direction (usually below). An inset highlight (`inset 0 1px 0 rgb(255 255 255 / .1)`) on dark surfaces sells the same light source.
 - **Dark themes elevate with lightness, not shadow:** each level's surface gets ~4–6% lighter; shadows barely register on dark.
 - Depth cues that cost nothing: overlap (badge over card edge, image breaking its container), scale, and blur-behind — the eye reads them as z-axis without a single shadow.
+- **The nested enclosure (double bezel)** for one hero card or media frame: an outer shell (faint tinted background, hairline border, 6–8px padding, large radius) holding an inner core with its own surface, a 1px inset top highlight, and a **concentric radius — inner = outer − padding** (mismatched corners break the machined-hardware read). One per screen; a page of double-bezels is a page of none.
 
 ## Phase 3: Texture and mesh gradients (rung 2)
 
