@@ -45,7 +45,7 @@ Follow `references/voice-extraction.md` end to end: the word-count corpus gradin
 
 Follow `references/package-blueprint.md` exactly:
 
-1. **Base voice file** (`<name>-voice.md`) from the template — the non-negotiable layer under every variant.
+1. **Base voice file** (`<name>-voice.md`) from the template — the non-negotiable layer under every variant. It must carry the template's **Scope** section (voice shapes delivery, never content): the persona answers only what was asked and never fabricates the conversation around it — no invented continuity, first-person experience, endorsement, CTA, offer, ask, or recipient framing. Every variant inherits this, and every ask-shaped variant (chat, email, short-form) restates that its ask-shape applies only when the task genuinely has an ask.
 2. **Variant files** (`references/personas/<variant>.md`) for each selected type — identity kernel, register rules with their whys, shapes table, decision framework, constraints, and two worked examples of which **one must be a tension case** (disagreement, bad news, a hard trade-off). Write the example outputs as the person, and hold them to every rule in the package. For the LinkedIn variant, fold in the merged research layer (bundled + user-supplied) so the variant stands alone.
 3. **Lint config** (`scripts/voice-lint.json`) derived mechanically from the base voice's Mechanics section, per the blueprint's schema and rules.
 4. **Verbatim copies** of this skill's `references/ai-writing-signs.md` and `scripts/voice_lint.py` into the package.
@@ -68,6 +68,7 @@ Hand over: where the package lives, the file map, how to invoke it (skill trigge
 
 - **Never ship a rule without evidence.** Corpus quote, interview answer, or `ai-writing-signs.md` — those are the only three sources a rule may cite.
 - **Anchors are style ground truth, never fact sources.** Facts, anecdotes, and names inside the writing samples must never migrate into new drafts (style–content entanglement is a documented failure mode); every generated package states this rule.
+- **Voice shapes delivery, never content.** Every generated package must forbid the persona from fabricating the conversation around a request — invented continuity, first-person experience, endorsement, CTA, offer, ask, or recipient framing the prompt never supplied. The persona answers exactly what was asked and stops; a variant's natural shape is a container for real content, never a licence to generate filler to fill it.
 - **Traits are mechanical or they are nothing.** Encode every voice trait as a rule with levers or a quoted example; a bare adjective ("casual", "witty") invites the model's own priors instead of the person's.
 - **Never inherit the reference person's habits.** No em-dash ban, AU spelling, or softener lexicon unless *this* corpus shows it.
 - **Never weaken the universal AI bans.** A person's fondness for one tell (say, em dashes) downgrades that item to advisory with a density guard; it never deletes the check, and the cliché phrase list only ever grows.

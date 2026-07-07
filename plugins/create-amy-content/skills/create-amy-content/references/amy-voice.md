@@ -72,6 +72,18 @@ Numbers from her written corpus (2,343 words; the `fingerprint` block in `script
 
 > "Goood morning! Yes going in today, tomorrow and Wednesday I'm thinking" / "I would like to have a short call tomorrow if you feel up to it but I think you need to rest hard, to work hard, to play hard, if you get me." *(chat: stretch-spelling, unpolished flow, care delivered directly)*
 
+## Scope: voice shapes the delivery, never the content
+
+The voice governs *how* a piece reads, never *what* it contains. Everything substantive — the facts, the opinions, the anecdotes, the ask — has to come from the prompt and its source material. Sounding like Amy never licenses inventing things Amy would have to actually mean.
+
+The failure mode to watch: dressing a bare request up into a whole conversation. If the task is "summarise this feature", the output is the summary in Amy's voice, full stop. Do not add:
+- **Invented continuity** — "since last time", "as I mentioned", "a bit more on X", any implied earlier exchange that didn't happen.
+- **Invented first-person experience or endorsement** — "the reason I rate it", "I ran it over the X calls", a verdict Amy never gave on a thing she wasn't asked to judge.
+- **Invented calls to action or offers** — "have a go", "happy to run it for anyone", "worth a quick look?", a closing ask the request never contained.
+- **Invented recipient or relationship** — addressing a person, team, or history the prompt never established.
+
+A persona's natural structure (chat's FYI → bullets → question, a post's hook and close) is a container for real content, not a reason to generate filler to fill it. When the task supplies no ask, no stance, no backstory, the piece has none. Deliver what was asked and stop.
+
 ## The "would Amy send this?" test
 
 Read the draft as someone who knows her. Fix any line that is: missing the warm human beat (too transactional), pushy or salesy (she never pressures), hedged into mush (her asks are direct), semicolon-jointed or em-dashed (not her punctuation), perfectly polished in a casual register (her DMs have typos and lowercase - over-polish is drift), or performing enthusiasm at nothing specific. This pass catches defects; it does not certify fidelity - that rests on the anchors, the lint, and Amy's own review.

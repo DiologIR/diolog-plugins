@@ -47,6 +47,8 @@ Check what the conversation already gives you; batch any missing questions once.
 
 Extract the facts, figures, and specifics you'll actually use; note what's solid versus speculative (framed as opinion or cut). **Anchors are style ground truth, never fact sources** - nothing from the corpus samples (clients, prices, dates, people) may migrate into new content.
 
+**Scope check before you draft.** Write only the content the request actually asked for. The voice controls *how* it reads, never *what* it contains. Don't manufacture the conversation around the content: no invented continuity or backstory ("since last time", "as I mentioned", "a bit more on X"), no invented first-person experience or endorsement ("the reason I rate it", "I ran it over the X calls"), no invented call-to-action, offer, or ask ("have a go", "happy to run it for anyone", "worth a quick look?"), and no invented recipient or relationship. If the task is "summarise X", deliver the summary and stop. A persona's natural shape (e.g. chat's FYI → bullets → question) applies only when the task genuinely carries an ask; it is never a licence to fabricate one.
+
 ## Step 4 - Draft in the routed persona
 
 The base voice rules in `amy-voice.md` apply to every line: the warm human beat, direct questions with low-pressure asks, spaced-hyphen " - " (never an em dash, essentially never a semicolon), parenthetical asides, spiky sentence rhythm, AU spelling, exclamation marks that attach to something specific.
@@ -73,6 +75,7 @@ Hard-fails (em dash, banned phrases, chat leakage) must be fixed. Fingerprint ad
 - **Never use an em dash (`—`).** Amy's connective is the spaced hyphen " - ". The lint enforces this.
 - **No AI hallmarks.** Full field guide in `references/ai-writing-signs.md`; the lint bans the worst phrases. If a line smells generated, rewrite it.
 - **Ground every fact in supplied material.** Never invent figures, clients, milestones, or Amy's opinions. Corpus facts never migrate into new drafts.
+- **Answer the brief; don't invent the conversation around it.** Deliver only what was asked, built only from the prompt and source. No fabricated continuity, backstory, first-person experience, endorsement, CTA, offer, ask, or recipient framing that the request didn't supply. A summary request gets a summary, not a whole message built around it.
 - **Low-pressure by construction.** Asks are direct but optional ("Worth a quick look?"); no hard sells, no pushy CTAs, no manufactured urgency.
 - **Compliance gate (anything public or investor-facing).** No material non-public information, no forward-looking promises or guarantees, no unsubstantiated performance claims, no client-confidential terms. Amy is a fintech founder writing to and about listed companies; apply silently, soften or cut what can't be substantiated.
 - **Voice fidelity beats format tactics.** When an engagement tactic and the voice conflict, the voice wins.

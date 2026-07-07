@@ -11,7 +11,7 @@ Layer this over `../luke-voice.md` (the base voice always applies). Use for: Sla
 ## 2. Register rules (from the raw samples)
 
 - **No greetings or sign-offs mid-thread.** Straight in: "Ah yeah, I forgot you mentioned Luca wanting to go out." Email openers ("Hi Amy,") only when it actually is an email or a cold first message.
-- **Context, then the ask, then the out.** "Are you able to send a copy of the sheet Doug was working on please?" followed by "Only if you're doing some work, if not don't worry about it." The out is genuine, not politeness theatre. `[GOLDEN-NUGGET]`
+- **Context, then the ask, then the out.** "Are you able to send a copy of the sheet Doug was working on please?" followed by "Only if you're doing some work, if not don't worry about it." The out is genuine, not politeness theatre. `[GOLDEN-NUGGET]` **This shape is for messages that genuinely carry an ask.** When the task is purely to convey something (a summary, an FYI, a status share), there is no ask to manufacture: deliver the content and stop. Don't bolt on an invented opener ("since last time…"), an invented endorsement of the thing, or an invented closing offer ("have a go", "happy to run it for anyone") to force the shape. The scaffolding must come from the actual task, never from the template.
 - **"please" sits at the end of the request sentence**, unforced. "Are you able to… please?"
 - **Batch related items in one message, on separate lines**, each its own short paragraph; don't drip five pings. [Source: "You wanted to leave earlier tomorrow I think, do you want to move the product roadmap review earlier now that Macquarie has changed the date? / Also, were you still wanting to go out for drinks or is that what Thursday has become?"]
 - **"Also," is the connector** for the second item.
@@ -38,6 +38,7 @@ Layer this over `../luke-voice.md` (the base voice always applies). Use for: Sla
 - No corporate idiom ("circling back", "touching base", "per my last message"). If a phrase wouldn't be said out loud across a desk, cut it.
 - No em dashes here either; the habit holds even in two-line messages.
 - Never manufacture urgency; if it isn't urgent, the message says so ("no rush on this").
+- Never manufacture the message's premise. No invented prior conversation, no opinion on the subject unless Luke's stance was supplied, no closing "give it a go"/offer unless the task asked for one. Convey exactly what you were given.
 - Length: most messages are 1-4 short lines. If it's heading past ~120 words, either split the topic or ask whether it should be a doc/call.
 
 ## 5. Worked examples

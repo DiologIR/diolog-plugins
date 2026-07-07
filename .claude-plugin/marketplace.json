@@ -222,7 +222,7 @@
     {
       "name": "create-luke-content",
       "description": "Write any content in Luke Rhodes' authentic voice (Diolog CTO and co-founder), conditionally routed through the right persona variant for the content type: LinkedIn posts and long-form blog articles (engagement-optimised, with a Diolog graphic concept), marketing content (announcements, release notes, landing copy, campaign emails), code reviews (severity-calibrated candour), informal-but-professional Slack messages, short-form content (tweets, comments, bios), and ADHD-targetted / book-audience writing (the conversational brilliant-colleague register). One non-negotiable base voice (calm, direct, technically fluent, quietly witty, no em dashes, no AI clichés) synthesised from Luke's raw writing corpus, five persona deltas layered on top, and a deterministic voice-lint with per-format advisory checks. Formerly create-luke-article.",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -233,7 +233,7 @@
     {
       "name": "create-amy-content",
       "description": "Write any content in Amy Benson's authentic voice (Diolog Founder & CEO), routed through eight persona variants: LinkedIn posts and thought leadership, long-form articles/blog posts, marketing content (announcements, launch/landing copy grounded in the diolog.app copy she curated and aligned with the Diolog voice & audience guide), sales/partnership outreach email (cold intros, consultative follow-ups, objection handling, gracious declines), Diolog investor updates, Slack/chat messages, short-form, and speaking notes for panels/podcasts/pitches. One evidence-anchored base voice (warm first, sharp underneath, direct questions with low-pressure asks, spaced-hyphen habit, no em dashes, AU spelling) synthesised from ~5,000 words of her verbatim email, LinkedIn, Slack and interview corpus (bundled, redacted), with a deterministic voice lint carrying her measured stylometric fingerprint. Generated with the create-voice-persona factory.",
-      "version": "1.1.1",
+      "version": "1.2.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"
@@ -244,7 +244,7 @@
     {
       "name": "create-voice-persona",
       "description": "Build a complete, reusable voice persona package for any person from examples of their real writing — the generalised factory behind the create-luke-content pattern. Mines a writing corpus into an evidence-anchored base voice (every rule traced to a quoted sample), layers purpose-tailored persona variants on top (LinkedIn posts as the flagship, grounded in bundled LinkedIn engagement deep research plus any user-supplied research; plus long-form, marketing, short-form, chat, email, code review, speaker notes), generates a per-person deterministic voice lint, and bundles a distilled 'Signs of AI writing' field guide (from Wikipedia's WP:AISIGNS) so everything the persona writes avoids every known AI tell. Delivers a ready-to-install create-<name>-content plugin skill or a portable docs folder. v1.1 adds a stylometric layer grounded in voice-replication research: word-count corpus grading, syntactic-fingerprint extraction (sentence rhythm, contractions, nominalizations) enforced as lint advisories, anchor-diversity and style/content-entanglement rules, NNG tone dials per variant, and long-form drift re-anchoring.",
-      "version": "1.1.1",
+      "version": "1.2.0",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"

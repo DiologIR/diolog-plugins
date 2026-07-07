@@ -83,6 +83,21 @@ voice-lint.json's fingerprint block; this section is the prose version drafts
 are written against. Anchors here are style ground truth, never fact sources —
 facts inside samples must never migrate into new drafts.]
 
+## Scope: voice shapes the delivery, never the content
+[VERBATIM in every package, adapted only for the person's name and personas' natural
+shapes. The voice governs *how* a piece reads, never *what* it contains — facts,
+opinions, anecdotes, and asks come only from the prompt and its source material.
+State the failure mode plainly: don't dress a bare request up into a whole
+conversation. If the task is "summarise X", the output is the summary in <Name>'s
+voice and nothing more. Forbid, as a bulleted list: invented continuity ("since last
+time", "as I mentioned", any implied earlier exchange that didn't happen); invented
+first-person experience or endorsement (a verdict the person never gave on a thing
+they weren't asked to judge); invented calls to action, offers, or asks (a closing
+line the request never contained); invented recipient or relationship. Close with:
+a persona's natural structure is a container for real content, not a reason to
+generate filler to fill it — when the task supplies no ask, no stance, no backstory,
+the piece has none.]
+
 ## Habits from the wider corpus
 [Register-crossing habits worth naming: how they handle edge cases, examples,
 numbers, downsides, trade-offs. Only what's evidenced.]
@@ -131,7 +146,14 @@ E.g. "is this worth posting at all", "reply vs own post", "how hard to push back
 
 ## 5. Constraints
 [The variant's own bans and budgets, on top of the base voice. Include the lint
-format key and any compliance gate the person's context requires.]
+format key and any compliance gate the person's context requires. Always include
+the scope guard: never manufacture the piece's premise — no invented prior
+conversation, no opinion on the subject unless the person's stance was supplied,
+no closing ask/offer/CTA unless the task called for one; convey exactly what you
+were given. For any register whose natural shape carries an ask (chat, email,
+short-form, outreach), state explicitly that the ask-shape applies only when the
+task genuinely has an ask — a pure FYI/summary/status share ends when the content
+ends, with no bolted-on question or offer to satisfy the template.]
 
 ## 6. Worked examples
 [Exactly 2, in <example> tags with <scenario> and <output>: one ordinary case, one
@@ -149,11 +171,11 @@ Mirror the create-luke-content router, substituting this person's facts:
 - Frontmatter `name: create-<name>-content`; a pushy `description` listing every built variant and the person's signature voice traits, with "use whenever the target author is <Name> (or 'my voice' / 'as me' when the user is <Name>)".
 - **Step 1 — Route**: table mapping request signals → variant file → lint format key. Always load the base voice; load only the matching variant.
 - **Step 2 — Gather inputs**: topic + source material for all types; stance mandatory for public pieces ("a topic without a stance produces generic mush; hold until you have it — do not invent <Name>'s opinion"); destination-specific needs per variant.
-- **Step 3 — Absorb the source**: facts vs speculation; the stance is the spine, facts are the evidence.
+- **Step 3 — Absorb the source**: facts vs speculation; the stance is the spine, facts are the evidence. Include the **scope check**: write only what was asked, grounded only in the prompt and source; the voice controls *how* it reads, never *what* it contains; no invented continuity, first-person experience, endorsement, CTA, offer, ask, or recipient framing; a summary request gets a summary and stops, and a persona's natural shape applies only when the task genuinely carries an ask.
 - **Step 4 — Draft** in the routed variant; base voice applies to every line.
 - **Step 5 — Self-check then lint**: the "would <Name> send this?" test, the variant's constraints, then `python3 scripts/voice_lint.py --config scripts/voice-lint.json --format <key> draft.md`; fix and re-run until clean.
 - **Step 6 — Deliver**: the content + a 2–4 line note (variant routed, stance written to, anything kept as opinion, lint result).
-- **Constraints (all formats)** section restating the hard rules, the grounding rule, and any compliance gate.
+- **Constraints (all formats)** section restating the hard rules, the grounding rule, the scope rule ("answer the brief; don't invent the conversation around it" — no fabricated continuity, backstory, experience, endorsement, CTA, offer, ask, or recipient framing the request didn't supply), and any compliance gate.
 
 ## Generating `voice-lint.json`
 
@@ -193,6 +215,7 @@ Rules for generating it:
 ## Package self-check (before delivery)
 
 - Every rule in every file traces to this person's corpus/interview or to `ai-writing-signs.md` — nothing inherited from Luke's package without evidence.
+- The base voice carries the **Scope** section, the router's Step 3 + Constraints restate the scope rule, and every ask-shaped variant guards its ask-shape — so the persona can't fabricate continuity, experience, endorsements, or CTAs the request never supplied. Sanity-check it: a "summarise X" request through any variant should yield only the summary, with no invented opener, verdict, or closing offer.
 - Zero placeholders anywhere; every template slot filled with real content.
 - Each variant has its tension example, and every worked-example output passes the lint and the AI-signs drafting checklist.
 - `ai-writing-signs.md` and `voice_lint.py` copied verbatim; `voice-lint.json` valid JSON (run the lint once against a sample anchor to prove the toolchain works — a sample anchor failing the lint means the config contradicts the corpus: reconcile before shipping).
