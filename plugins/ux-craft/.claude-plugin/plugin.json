@@ -1,0 +1,9 @@
+{
+  "name": "ux-craft",
+  "version": "1.1.0",
+  "description": "Book-grounded UX engine for implementing, mocking, and reviewing web and mobile UIs, layouts, and user flows, plus marketing and transactional emails. Operationalizes the UX canon — Krug (self-evidence, trunk test), Norman (affordances/signifiers/feedback), Garrett's five planes, Cooper's goal-directed design, Nielsen's heuristics, Wroblewski's mobile-first, Yablonski's Laws of UX, Weinschenk's behavioral science, Fogg/Cialdini/Eyal persuasion with a hard ethics gate, Tidwell patterns, Lidwell principles, Refactoring UI hierarchy tactics, Lean UX mock-to-learn — as three modes (Build / Review / Advise) over eight references: psychology-laws (research-cited mechanisms), review-playbook (multi-lens pass with severity honesty, intentional-vs-accidental deviation handling, evidence-format findings with pasteable fixes, and prompt-injection guards for reviewed content), flows-and-forms (GDS one-thing-per-page, validation timing, state machines, undo vs confirmation, wayfinding), mobile-ux (touch targets, thumb zones, iOS/Material platform grammar, RN notes), email-ux (two-second triage contract, client rendering constraints, transactional patterns, CAN-SPAM/GDPR compliance floor), ux-writing (microcopy patterns, tone matrix, Butterick typography), ai-product-ux (AI inputs/wayfinding/governors/trust/tuners with friction-to-risk calibration and prompt-injection-aware retrieval rules), and per-surface pre-ship checklists incl. WCAG 2.2 quick pass and an AI-feature gate. The UX brain to design-craft's visual hands: it owns whether the thing works for humans; design-craft owns whether it looks intentional.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
