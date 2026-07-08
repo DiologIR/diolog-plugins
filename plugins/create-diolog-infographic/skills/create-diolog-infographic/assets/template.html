@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- TITLE: set to the finding, in sentence case -->
+<title>Diolog infographic</title>
+<!-- Inline the three brand fonts here: paste assets/fonts.css contents, or run
+     scripts/inline-fonts.py --inject <thisfile>. A webfont <link> is CSP-blocked and unreliable. -->
+<style>/*__FONTS__*/</style>
+<style>
+  :root{
+    --canvas:#FFFFFF; --wash:#F5F7FB; --soft:#F1F4F9;
+    --navy:#0A1733; --navy-deep:#050B1F;
+    --fg:#0F1A2E; --fg2:#3D4A66; --muted:#5E6A82; --faint:#9CA0AC;
+    --on-dark:#E8EEF8; --on-dark-muted:#9AA8C4;
+    --accent:#1F3FA6; --accent-deep:#142A78; --accent-soft:#E6EEF9; --accent-bright:#6E8EF5;
+    --hair:rgba(15,26,46,.10); --hair-strong:rgba(15,26,46,.18); --hair-dark:rgba(255,255,255,.12);
+    --ok:#1F8A5B; --ok-dot:#22C55E; --warn:#A56A11; --danger:#C2362A;
+    --serif:"Newsreader",ui-serif,Georgia,serif;
+    --sans:"Inter",-apple-system,system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#DCE1EA;color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding:26px 12px;line-height:1.5}
+  .num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .eyebrow{font-family:var(--mono);font-size:10.5px;font-weight:400;letter-spacing:.18em;text-transform:uppercase}
+
+  .page{width:210mm;min-height:297mm;margin:0 auto;background:var(--canvas);position:relative;
+        box-shadow:0 6px 40px rgba(10,23,51,.22);display:flex;flex-direction:column;overflow:hidden}
+
+  /* masthead */
+  .mast{display:flex;align-items:center;justify-content:space-between;padding:11mm 15mm 8px}
+  .lock{display:flex;align-items:center;gap:9px}
+  .lock svg{width:22px;height:auto;display:block}
+  .lock .wm{font-family:var(--serif);font-size:23px;font-weight:400;letter-spacing:-.02em;color:var(--fg);line-height:1}
+  .mast .meta{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:right;line-height:1.6}
+  .mast .meta b{color:var(--muted);font-weight:400}
+
+  /* ticker */
+  .ticker{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);margin:0 15mm;padding:8px 0;display:flex;gap:22px;overflow:hidden;white-space:nowrap}
+  .ticker span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);flex:0 0 auto}
+  .ticker span b{color:var(--accent);font-weight:500}
+  .ticker .sep{color:var(--faint)}
+
+  /* headline */
+  .head{padding:16px 15mm 0}
+  .head .eyebrow{color:var(--accent);letter-spacing:.2em}
+  .head h1{font-family:var(--serif);font-weight:400;font-size:42px;line-height:1.03;letter-spacing:-.028em;color:var(--fg);margin:12px 0 0;text-wrap:balance;max-width:17ch}
+  .head h1 em{font-style:italic;color:var(--accent)}
+  .head .lead{font-size:14px;line-height:1.55;color:var(--fg2);margin:11px 0 0;max-width:54ch}
+  .head .lead b{color:var(--fg);font-weight:600}
+
+  /* HERO navy band - the one focal point */
+  .hero{margin:14px 15mm 0;border-radius:16px;position:relative;overflow:hidden;
+        background:radial-gradient(120% 130% at 78% 8%, #12234A 0%, var(--navy) 46%, var(--navy-deep) 100%);
+        color:var(--on-dark);padding:18px 26px 20px;box-shadow:0 8px 40px rgba(0,0,0,.35);border:1px solid var(--hair-dark)}
+  .hero::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(var(--hair-dark) 1px,transparent 1px),linear-gradient(90deg,var(--hair-dark) 1px,transparent 1px);
+    background-size:34px 34px;mask-image:radial-gradient(120% 120% at 78% 8%,#000 30%,transparent 82%)}
+  .hero>*{position:relative}
+  .hero .cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-dark-muted)}
+  .hero .top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-top:12px}
+  .hero .stat{font-family:var(--serif);font-weight:400;font-size:88px;line-height:.82;letter-spacing:-.03em;color:var(--on-dark);margin-top:8px}
+  .hero .stat em{font-style:normal;font-size:40px;color:var(--accent-bright)}
+  .hero .say{text-align:right;max-width:200px;padding-top:10px}
+  .hero .say .big{font-family:var(--serif);font-size:20px;font-style:italic;line-height:1.15;color:var(--on-dark)}
+  .hero .say .sm{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--on-dark-muted);margin-top:6px}
+
+  /* PROPORTION CHART: equal-length tracks, different fills (see references/dataviz-honesty.md) */
+  .bars{margin-top:16px;display:grid;gap:11px}
+  .brow{display:grid;grid-template-columns:188px 1fr;align-items:center;gap:16px}
+  .brow .who{font-size:12px;font-weight:600;color:var(--on-dark);line-height:1.2}
+  .brow .who small{display:block;font-family:var(--mono);font-weight:400;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--on-dark-muted);margin-top:2px}
+  .btrack{position:relative;height:36px;background:rgba(255,255,255,.06);border:1px solid var(--hair-dark);border-radius:7px;overflow:hidden}
+  .bfill{height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 15px;background:linear-gradient(90deg,var(--accent),var(--accent-bright))}
+  .bfill .v{font-family:var(--serif);font-size:18px;color:#F4F8FE;line-height:1}
+  .bfill .vt{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:rgba(244,248,254,.82)}
+  /* gap label lives fully inside the EMPTY track; pale so it never vanishes over the fill edge */
+  .bgap{position:absolute;right:9px;top:0;bottom:0;display:flex;align-items:center;font-family:var(--mono);font-size:8px;letter-spacing:.03em;text-transform:uppercase;color:#BCD0F5}
+
+  /* supporting columns */
+  .cols{display:grid;grid-template-columns:1fr 1fr;margin:12px 15mm 0}
+  .col{padding:0 26px}
+  .col:first-child{padding-left:0;border-right:1px solid var(--hair)}
+  .col:last-child{padding-right:0}
+  .col .n{font-family:var(--serif);font-size:15px;color:var(--accent);opacity:.5}
+  .col .eyebrow{color:var(--muted);margin-top:2px}
+  .col h3{font-family:var(--serif);font-weight:400;font-size:22px;line-height:1.1;letter-spacing:-.015em;color:var(--fg);margin:8px 0 0}
+  .col h3 em{font-style:italic;color:var(--accent)}
+  .col p{font-size:12px;line-height:1.5;color:var(--fg2);margin:8px 0 0}
+  .col p b{color:var(--fg);font-weight:600}
+
+  /* X VS Y ranking table (winner green+bold, loser red - both values visible) */
+  .qh{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);margin-top:11px;padding-bottom:4px;border-bottom:1px solid var(--hair)}
+  .qr{display:grid;gap:0}
+  .qrow{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:4.5px 0;border-bottom:1px solid var(--hair);font-size:11.5px}
+  .qrow:last-child{border-bottom:0}
+  .qrow .l{color:var(--fg2)}
+  .qrow .l .sub{color:var(--faint);font-size:9px}
+  .qrow .v{font-family:var(--mono);font-size:11.5px;font-weight:400;letter-spacing:.04em;color:var(--muted)}
+  .qrow .v .w{font-weight:700;color:var(--ok)}
+  .qrow .v .x{color:var(--danger)}
+  .qnote{margin-top:6px;font-family:var(--serif);font-style:italic;font-size:11px;line-height:1.38;color:var(--muted)}
+
+  /* verdict */
+  .verdict{margin:11px 15mm 0;padding-top:11px;border-top:1px solid var(--hair-strong);display:flex;align-items:baseline;gap:16px}
+  .verdict h2{font-family:var(--serif);font-weight:400;font-size:28px;letter-spacing:-.02em;color:var(--fg);margin:0}
+  .verdict h2 em{font-style:italic;color:var(--accent)}
+
+  /* footer */
+  .foot{margin-top:auto;padding:7px 15mm 6mm;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-top:1px solid var(--hair)}
+  .foot .method{font-size:10px;line-height:1.55;color:var(--muted);max-width:112mm}
+  .foot .method b{color:var(--fg2);font-weight:600}
+  .foot .brand{text-align:right;flex:0 0 auto}
+  .foot .flock{display:flex;align-items:center;gap:7px;justify-content:flex-end}
+  .foot .flock svg{width:15px;height:auto;display:block}
+  .foot .brand .wm{font-family:var(--serif);font-size:17px;color:var(--fg);letter-spacing:-.02em}
+  .foot .brand .tag{font-family:var(--serif);font-style:italic;font-size:11px;color:var(--muted);margin-top:1px}
+
+  @media print{
+    body{background:none;padding:0}
+    .page{width:auto;min-height:auto;box-shadow:none}
+    .hero,.bfill,.qrow .v,.hero::before{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .hero,.cols,.verdict,.foot{break-inside:avoid}
+  }
+  @page{size:A4;margin:0}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- MASTHEAD. Droplet = assets/diolog-icon.svg (light-bg variant, navy + off-white). -->
+  <header class="mast">
+    <div class="lock">
+      <svg viewBox="0 0 262 243" aria-hidden="true">
+        <path d="M93.562 0C42.0867 0 0.323744 41.4391 0 92.9143V187.447H94.5332C146.008 187.124 187.448 145.361 187.448 93.8855C187.448 42.0866 145.361 0 93.562 0Z" fill="#011837"/>
+        <path d="M0 220.469C1.29498 213.346 1.29498 207.195 11.9785 197.483C21.6908 188.742 31.4032 187.447 34.6406 187.447H0V220.469Z" fill="#011837"/>
+        <path d="M251.649 46.4479C242.272 55.3 232.896 56.6114 229.771 56.6114H263.212V23.1701C261.962 30.3829 261.962 36.6122 251.649 46.4479Z" fill="#ededf0"/>
+        <path d="M168.994 55.0365C117.519 55.3602 76.0797 97.1231 76.0797 148.598C76.0797 200.397 118.166 242.16 169.642 242.16C221.117 242.16 262.88 200.721 263.204 149.246V55.0365H168.994Z" fill="#ededf0"/>
+      </svg>
+      <span class="wm">diolog</span>
+    </div>
+    <div class="meta">TOPIC LABEL<br><b>Sub-topic &middot; Month Year</b></div>
+  </header>
+
+  <!-- TICKER: the finding's key facts, mono, separated by · (copy via create-luke-content). -->
+  <div class="ticker">
+    <span><b>FACT</b> one</span><span class="sep">&middot;</span>
+    <span>fact two</span><span class="sep">&middot;</span>
+    <span>fact <b>three</b></span><span class="sep">&middot;</span>
+    <span>fact four</span><span class="sep">&middot;</span>
+    <span>fact five</span>
+  </div>
+
+  <!-- HEADLINE: Newsreader, sentence case, ONE italic accent, ends in a full stop. Copy via create-luke-content. -->
+  <div class="head">
+    <div class="eyebrow">Eyebrow label</div>
+    <h1>The finding, with <em>one italic accent</em> that carries it.</h1>
+    <p class="lead">One-sentence standfirst that frames the stakes and points at the number. <b>The single takeaway in bold.</b></p>
+  </div>
+
+  <!-- HERO: the ONE focal point. Focal numeral + one honest chart. accent-bright lives here only. -->
+  <section class="hero" role="img" aria-label="Describe the chart's message for screen readers.">
+    <div class="cap">What this number is &middot; the unit</div>
+    <div class="top">
+      <div class="stat num">12<em>%</em></div>
+      <div class="say">
+        <div class="big">what the number means.</div>
+        <div class="sm">a qualifier</div>
+      </div>
+    </div>
+    <!-- Proportion chart: equal tracks, different fills. A = 100%, B = its proportion. -->
+    <div class="bars">
+      <div class="brow">
+        <div class="who">Option A<small>the reference</small></div>
+        <div class="btrack"><div class="bfill" style="width:100%"><span class="v">$1.90</span><span class="vt">per unit</span></div></div>
+      </div>
+      <div class="brow">
+        <div class="who">Option B<small>the alternative</small></div>
+        <div class="btrack"><div class="bfill" style="width:87.6%"><span class="v">$1.66</span></div><span class="bgap">12% less</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORTING COLUMNS. Numerals only if the points are a real sequence. -->
+  <div class="cols">
+    <div class="col">
+      <div class="n num">01</div>
+      <div class="eyebrow">Point one</div>
+      <h3>A short sub-head with <em>an accent.</em></h3>
+      <p>Two lines that explain the point. <b>The key phrase in bold.</b></p>
+    </div>
+    <div class="col">
+      <div class="n num">02</div>
+      <div class="eyebrow">Point two</div>
+      <h3>The comparison, <em>honestly.</em></h3>
+      <p>One line framing the x-vs-y table below.</p>
+      <div class="qh"><span>Metric</span><span>A vs B</span></div>
+      <div class="qr">
+        <div class="qrow"><span class="l">Category one</span><span class="v"><b class="w">87</b> vs <span class="x">72</span></span></div>
+        <div class="qrow"><span class="l">Category two</span><span class="v"><b class="w">80</b> vs <span class="x">71</span></span></div>
+        <div class="qrow"><span class="l">Category three</span><span class="v"><span class="x">71</span> vs <b class="w">87</b></span></div>
+        <div class="qrow"><span class="l">Category four <span class="sub">(detail)</span></span><span class="v"><span class="x">69</span> vs <b class="w">98</b></span></div>
+      </div>
+      <p class="qnote">An honest italic caveat about what the numbers do and do not show.</p>
+    </div>
+  </div>
+
+  <!-- VERDICT: one confident Newsreader line, one italic accent. No tacked-on caveats. -->
+  <div class="verdict">
+    <h2>The conclusion, <em>plainly.</em></h2>
+  </div>
+
+  <!-- FOOTER: methodology + diolog lockup. -->
+  <footer class="foot">
+    <div class="method"><b>How this was measured.</b> One or two sentences of honest method: sample, source, what was compared, any assumption.</div>
+    <div class="brand">
+      <div class="flock">
+        <svg viewBox="0 0 262 243" aria-hidden="true">
+          <path d="M93.562 0C42.0867 0 0.323744 41.4391 0 92.9143V187.447H94.5332C146.008 187.124 187.448 145.361 187.448 93.8855C187.448 42.0866 145.361 0 93.562 0Z" fill="#011837"/>
+          <path d="M0 220.469C1.29498 213.346 1.29498 207.195 11.9785 197.483C21.6908 188.742 31.4032 187.447 34.6406 187.447H0V220.469Z" fill="#011837"/>
+          <path d="M251.649 46.4479C242.272 55.3 232.896 56.6114 229.771 56.6114H263.212V23.1701C261.962 30.3829 261.962 36.6122 251.649 46.4479Z" fill="#ededf0"/>
+          <path d="M168.994 55.0365C117.519 55.3602 76.0797 97.1231 76.0797 148.598C76.0797 200.397 118.166 242.16 169.642 242.16C221.117 242.16 262.88 200.721 263.204 149.246V55.0365H168.994Z" fill="#ededf0"/>
+        </svg>
+        <span class="wm">diolog</span>
+      </div>
+      <div class="tag">Disclosure, without doubt.</div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "create-diolog-infographic",
+  "version": "1.0.1",
+  "description": "Create a print-ready, single-page A4 infographic in Diolog's brand design system to communicate one finding, comparison, or metric (a benchmark result, a cost or quality trade-off, a KPI, a 'we measured X' story). Themes everything from the live Diolog website design system (financial-broadsheet plus instrument-panel: Newsreader serif with one italic accent, Inter body, JetBrains Mono for tickers and data labels, navy ground used once, one blue accent, accent-bright for data on navy only, semantic colour always paired with a dot or sign, no em or en dashes, sentence case, no second hue, no emoji, no hype). Writes any copy in Luke's voice via create-luke-content and runs its voice lint. Embeds the three brand fonts inline as base64 so the page is self-contained for print and for publishing as an Artifact, and pulls the diolog droplet mark plus lowercase wordmark. Charts a finding honestly (equal-length tracks with differing fills for proportions, x versus y with both values shown and the winner styled, one dominant focal number, never a comparison of success or task counts) and verifies the page renders and fits exactly one A4 page (~794x1123px at 96dpi) by serving over http, rendering with a cache-busting URL, measuring the page height, confirming the fonts loaded, and trimming until it fits. Leans on design-craft and ux-craft for visual and UX craft. Use whenever someone wants an infographic, a one-pager, a shareable stat graphic, a poster of a result, or a designed chart of data in the Diolog look, even if they only say 'turn these numbers into something I can share'. Not for multi-slide decks (customer-deck-builder), email product mockups (email-mockups), or a full website or app UI (design-craft).",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
