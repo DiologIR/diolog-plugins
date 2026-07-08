@@ -46,10 +46,12 @@ a different output directory, use that instead — same layout (`events.ndjson`,
   studio gets `pages[].images[]` (per-page photo URLs + alt) plus the overview's inline
   image URLs + logo, and places real photos (see instructions.md's "Real imagery" step).
   For real-company parity the proxy MUST build that same shape — a facts-only envelope
-  starves the agent of imagery. Capture `pages[].images[]` with the harness's extraction
-  recipe (scroll to resolve lazy `<img>`s, read `currentSrc`, drop `data:` URLs); origin
-  URLs are correct — do NOT rehost to blob (the deployed *local* crawl path keeps origin
-  URLs too), and Tier-2 has network so they render. Use design-craft honest placeholders
+  starves the agent of imagery. Build it with the bundled capture script (any site):
+  `node apps/studio/scripts/capture-site.mjs --url <root> --out <run-dir>` → writes
+  `inputs/envelope.json` with real `pages[].images[]` (it mirrors the crawler's own
+  extraction — scroll to resolve lazy `<img>`s, read `currentSrc`, drop `data:` URLs).
+  Origin URLs are correct — do NOT rehost to blob (the deployed *local* crawl path keeps
+  origin URLs too), and Tier-2 has network so they render. Use design-craft honest placeholders
   only for slots the page genuinely lazy-loads or omits, and **say so in your summary** —
   a placeholder standing in for a real, capturable photo is a proxy capture gap to fix,
   not the studio's ceiling. Also implement the motion the DESIGN-NEW.md specifies
