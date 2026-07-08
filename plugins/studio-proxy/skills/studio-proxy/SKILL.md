@@ -42,6 +42,26 @@ a different output directory, use that instead — same layout (`events.ndjson`,
   anything you can't ground; live-data surfaces are empty `data-diolog-widget` markers,
   never hand-faked charts or prices. If you genuinely can't ground the artifact, emit
   an `error` event and stop.
+- **Build the deployed envelope shape, including real per-page images.** The deployed
+  studio gets `pages[].images[]` (per-page photo URLs + alt) plus the overview's inline
+  image URLs + logo, and places real photos (see instructions.md's "Real imagery" step).
+  For real-company parity the proxy MUST build that same shape — a facts-only envelope
+  starves the agent of imagery. Capture `pages[].images[]` with the harness's extraction
+  recipe (scroll to resolve lazy `<img>`s, read `currentSrc`, drop `data:` URLs); origin
+  URLs are correct — do NOT rehost to blob (the deployed *local* crawl path keeps origin
+  URLs too), and Tier-2 has network so they render. Use design-craft honest placeholders
+  only for slots the page genuinely lazy-loads or omits, and **say so in your summary** —
+  a placeholder standing in for a real, capturable photo is a proxy capture gap to fix,
+  not the studio's ceiling. Also implement the motion the DESIGN-NEW.md specifies
+  (reveals, hover-lift, behind `prefers-reduced-motion`) — that you CAN do locally.
+- **Modernise a captured DESIGN.md first.** When the job carries — or you generate from a
+  live site — a *captured* DESIGN.md, run one design-craft refinement pass before you
+  build: hold the `confirmed` brand anchors fixed, modernise the execution (crisp
+  near-black ink, warm neutral ramp, display tracking, whitespace, layered elevation,
+  motion tokens, a data mono), write `DESIGN-NEW.md`, and build every page from it. A
+  faithful scrape is a starting point to sharpen, not a spec to reproduce. Skip only if
+  the DESIGN.md is already an intentional, curated system. (See instructions.md's "Design
+  system — modernise a captured DESIGN.md" step.)
 - **The site review gate.** For `site`, you play builder AND critic: after drafting
   each page, critique it against `agent/subagents/design-reviewer/instructions.md`
   (`{scores, mustFix}`) and repair every mustFix before the page's `unit-content` —
