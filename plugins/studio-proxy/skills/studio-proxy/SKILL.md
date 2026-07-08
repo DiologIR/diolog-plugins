@@ -44,7 +44,10 @@ a different output directory, use that instead — same layout (`events.ndjson`,
   an `error` event and stop.
 - **Build the deployed envelope shape, including real per-page images.** The deployed
   studio gets `pages[].images[]` (per-page photo URLs + alt) plus the overview's inline
-  image URLs + logo, and places real photos (see instructions.md's "Real imagery" step).
+  image URLs + logo, and places real photos in **every** imagery surface the design calls
+  for — service/capability cards and project galleries, not just the hero (icon-grid cards
+  on a photo-led brand are the generic-SaaS default the step forbids). See instructions.md's
+  "Real imagery" step for the checkable rule.
   For real-company parity the proxy MUST build that same shape — a facts-only envelope
   starves the agent of imagery. Build it with the bundled capture script (any site):
   `node apps/studio/scripts/capture-site.mjs --url <root> --out <run-dir>` → writes
@@ -94,7 +97,7 @@ Report: the artifact location + how to open it (site pages in a browser; `.xlsx`
 embedded editor; deck JSON validated exit-0), the event count + a one-line confirmation
 that structure preceded all content, any review rounds that hit the cap, and the honest
 boundary — this proxy validates generation quality and converters, NOT the Diolog
-dispatcher/apply/live-view plumbing (that's `pnpm nx test api -- --testPathPatterns=content-studio`)
-and it runs a stronger model than the studio's deployed default, so treat quality as an
-upper bound. To exercise the real runtime instead, point the user at
-`apps/studio/docs/local-testing.md`.
+dispatcher/apply/live-view plumbing (that's `pnpm nx test api -- --testPathPatterns=content-studio`).
+It runs at least the deployed studio's model tier (Claude Code may run a higher one), so
+treat quality as a near-equal-or-upper bound, not the exact deployed behaviour. To exercise
+the real runtime instead, point the user at `apps/studio/docs/local-testing.md`.
