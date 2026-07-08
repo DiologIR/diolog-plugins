@@ -29,69 +29,46 @@ Default `<run-dir>` = `apps/studio/.local-run/` (gitignored). If the caller desi
 a different output directory, use that instead — same layout (`events.ndjson`,
 `artifact.json`, `out/`). Never commit run outputs.
 
-## The non-negotiables (the studio's contract, kept even in proxy mode)
+## What this skill covers — and what it deliberately does NOT
 
-- **Structure first, complete.** One `structure` event naming EVERY top-level unit
-  before any content exists; per-unit `substructure` before that unit drafts; events
-  appended as you go, never batched at the end.
-- **Wire-contract fidelity.** Every event payload and the final artifact must satisfy
-  the zod shapes in `agent/lib/studioContract.ts` (field names, discriminated unions,
-  size caps) — a non-conforming artifact would be rejected by the real dispatcher, so
-  it is a failed run here too.
-- **Honest failure, never fabrication.** Reproduce the envelope's facts verbatim; cut
-  anything you can't ground; live-data surfaces are empty `data-diolog-widget` markers,
-  never hand-faked charts or prices. If you genuinely can't ground the artifact, emit
-  an `error` event and stop.
-- **Build the deployed envelope shape, including real per-page images.** The deployed
-  studio gets `pages[].images[]` (per-page photo URLs + alt) plus the overview's inline
-  image URLs + logo, and places real photos in **every** imagery surface the design calls
-  for — service/capability cards and project galleries, not just the hero (icon-grid cards
-  on a photo-led brand are the generic-SaaS default the step forbids). See instructions.md's
-  "Real imagery" step for the checkable rule.
-  For real-company parity the proxy MUST build that same shape — a facts-only envelope
-  starves the agent of imagery. Build it with the bundled capture script (any site):
-  `node apps/studio/scripts/capture-site.mjs --url <root> --out <run-dir>` → writes
-  `inputs/envelope.json` with real `pages[].images[]` (it mirrors the crawler's own
-  extraction — scroll to resolve lazy `<img>`s, read `currentSrc`, drop `data:` URLs).
-  It also mirrors the deployed crawler's **innerHTML → markdown** step (not a flat
-  `innerText` dump): `pages[].markdown` is structure-preserving markdown (headings, lists,
-  prose, tables, chrome stripped), and discovery prioritises informational pages
-  (about / leadership / history / investor / governance / contact) so a deep site's real
-  story reaches the agent instead of nav boilerplate. A thin, nav-only overview is a proxy
-  capture defect to fix — re-run with `--pages`/`--max` — not the studio's ceiling.
-  Origin URLs are correct — do NOT rehost to blob (the deployed *local* crawl path keeps
-  origin URLs too), and Tier-2 has network so they render. Use design-craft honest placeholders
-  only for slots the page genuinely lazy-loads or omits, and **say so in your summary** —
-  a placeholder standing in for a real, capturable photo is a proxy capture gap to fix,
-  not the studio's ceiling. Also implement the motion the DESIGN-NEW.md specifies
-  (reveals, hover-lift, behind `prefers-reduced-motion`) — that you CAN do locally.
-- **Modernise a captured DESIGN.md first.** When the job carries — or you generate from a
-  live site — a *captured* DESIGN.md, run one design-craft refinement pass before you
-  build: hold the `confirmed` brand anchors fixed, modernise the execution (crisp
-  near-black ink, warm neutral ramp, display tracking, whitespace, layered elevation,
-  motion tokens, a data mono), write `DESIGN-NEW.md`, and build every page from it. A
-  faithful scrape is a starting point to sharpen, not a spec to reproduce. Skip only if
-  the DESIGN.md is already an intentional, curated system. (See instructions.md's "Design
-  system — modernise a captured DESIGN.md" step.)
-- **The site review gate.** For `site`, you play builder AND critic: after drafting
-  each page, critique it against `agent/subagents/design-reviewer/instructions.md`
-  (`{scores, mustFix}`) and repair every mustFix before the page's `unit-content` —
-  exactly one critique loop per page, max 3 rounds, open items stated on exhaustion.
-- **Build like a designer who knows the business, not a template.** The generic craft the
-  studio agent applies to ANY envelope (`agent/instructions.md`): mirror the site's real
-  **information architecture** instead of flattening it to a few pages (a grouped/drop-down
-  nav where the source has genuine depth); **lead with the content's grounded specifics**
-  (certifications, named projects, figures, history) over generic blurbs; **design a
-  finished frame around every live-data marker** — a labelled panel / price-readout / chart
-  container / feed region, never a bare box, so the surface reads as intentional before and
-  after Diolog injects data; and keep the brand's **signature component forms** (button
-  shape, logo mark) — modernise their execution, don't swap the form. For investor surfaces,
-  follow the **shared** blueprint the deployed agent also uses — the `diolog-widgets` skill's
-  `references/investor-portal.md` (`load_skill diolog-widgets`) — Diolog widgets in place of
-  any mock data. This proxy carries **no separate prompt**: everything above is read from the
-  studio agent's own on-disk sources (`agent/instructions.md`, the seeded skills), so the
-  proxy and the deployed agent never diverge. None of this is company-specific — each site
-  should look and navigate like its own company, driven by its own content and structure.
+**The generation contract and craft are NOT restated here** — they live in the studio agent's
+own on-disk sources you load per the harness: `agent/instructions.md` (structure-first
+streaming, honest-failure/no-fabrication, real imagery, the modernise-DESIGN.md pass, IA
+depth, live-data widget frames, the per-page `design-reviewer` gate, and — for investor
+surfaces — the shared `diolog-widgets` `references/investor-portal.md` blueprint), the wire
+contract in `agent/lib/studioContract.ts`, and the seeded skills. **Follow all of that FROM
+those files.** Re-documenting it here is exactly what would let the proxy drift from the
+deployed agent — so this skill stays thin and points back.
+
+This skill covers only what is genuinely **different in proxy mode**:
+
+- **You build the envelope the deployed dispatcher would build.** The deployed agent is handed
+  its envelope by the Diolog backend crawler; the proxy isn't inside the dispatcher, so it must
+  reconstruct it. Build it with the bundled capture (any site):
+  `node apps/studio/scripts/capture-site.mjs --url <root> --out <run-dir> --widgets a,b,c`
+  → `inputs/envelope.json` with real `pages[].images[]` + structure-preserving
+  `pages[].markdown` (it mirrors the deployed crawler's innerHTML→markdown, strips chrome, and
+  prioritises informational pages — about/leadership/history/investor/governance/contact — so a
+  deep site's real story reaches the agent, not nav boilerplate). Origin image URLs are kept
+  (not rehosted). A thin, nav-only envelope is a proxy **capture** defect (re-run with
+  `--pages`/`--max`), never the studio's ceiling — say so in your summary if a surface is thin.
+- **Simulate the two tools to files, run the local converters, validate per kind** — all
+  detailed in the harness (`emit_generation_event` → `<run-dir>/events.ndjson`;
+  `submit_artifact` → `<run-dir>/artifact.json` + `out/`; vendor `PYTHONPATH` converter paths).
+- The **run directory** (above), **Tier-2 locally** (below), and the **honest boundary report**
+  (below).
+
+**Finding the skills on disk (robustness).** The proxy reads the sources directly, so use the
+**committed, always-present** copies — never assume a built copy exists:
+- site build skills → the vendored submodule `apps/studio/vendor/diolog-plugins/plugins/*/skills/*`;
+- the `diolog-widgets` skill → **`scripts/generated/diolog-widgets-skill/`** (committed): its
+  `SKILL.md` + `references/catalogue.md` + `references/investor-portal.md`.
+
+The `apps/studio/agent/skills/*` copies are **built by `sync-skills` (predev/prebuild) and
+gitignored** — they may be absent in a fresh checkout. If a skill or reference isn't where you
+expect, read the committed generated/vendored paths above, or run
+`node apps/studio/scripts/sync-skills.mjs` (and, for `diolog-widgets`,
+`pnpm tsx scripts/generate-widgets-skill.ts`) first. Never fail a run because a built copy is missing.
 
 ## Optional Tier-2 — real screenshots, still zero gateway spend (site jobs)
 
