@@ -53,6 +53,12 @@ a different output directory, use that instead — same layout (`events.ndjson`,
   `node apps/studio/scripts/capture-site.mjs --url <root> --out <run-dir>` → writes
   `inputs/envelope.json` with real `pages[].images[]` (it mirrors the crawler's own
   extraction — scroll to resolve lazy `<img>`s, read `currentSrc`, drop `data:` URLs).
+  It also mirrors the deployed crawler's **innerHTML → markdown** step (not a flat
+  `innerText` dump): `pages[].markdown` is structure-preserving markdown (headings, lists,
+  prose, tables, chrome stripped), and discovery prioritises informational pages
+  (about / leadership / history / investor / governance / contact) so a deep site's real
+  story reaches the agent instead of nav boilerplate. A thin, nav-only overview is a proxy
+  capture defect to fix — re-run with `--pages`/`--max` — not the studio's ceiling.
   Origin URLs are correct — do NOT rehost to blob (the deployed *local* crawl path keeps
   origin URLs too), and Tier-2 has network so they render. Use design-craft honest placeholders
   only for slots the page genuinely lazy-loads or omits, and **say so in your summary** —
@@ -71,6 +77,21 @@ a different output directory, use that instead — same layout (`events.ndjson`,
   each page, critique it against `agent/subagents/design-reviewer/instructions.md`
   (`{scores, mustFix}`) and repair every mustFix before the page's `unit-content` —
   exactly one critique loop per page, max 3 rounds, open items stated on exhaustion.
+- **Build like a designer who knows the business, not a template.** The generic craft the
+  studio agent applies to ANY envelope (`agent/instructions.md`): mirror the site's real
+  **information architecture** instead of flattening it to a few pages (a grouped/drop-down
+  nav where the source has genuine depth); **lead with the content's grounded specifics**
+  (certifications, named projects, figures, history) over generic blurbs; **design a
+  finished frame around every live-data marker** — a labelled panel / price-readout / chart
+  container / feed region, never a bare box, so the surface reads as intentional before and
+  after Diolog injects data; and keep the brand's **signature component forms** (button
+  shape, logo mark) — modernise their execution, don't swap the form. For investor surfaces,
+  follow the **shared** blueprint the deployed agent also uses — the `diolog-widgets` skill's
+  `references/investor-portal.md` (`load_skill diolog-widgets`) — Diolog widgets in place of
+  any mock data. This proxy carries **no separate prompt**: everything above is read from the
+  studio agent's own on-disk sources (`agent/instructions.md`, the seeded skills), so the
+  proxy and the deployed agent never diverge. None of this is company-specific — each site
+  should look and navigate like its own company, driven by its own content and structure.
 
 ## Optional Tier-2 — real screenshots, still zero gateway spend (site jobs)
 
