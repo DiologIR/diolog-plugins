@@ -394,6 +394,17 @@
       },
       "source": "./plugins/ux-craft",
       "category": "development"
+    },
+    {
+      "name": "studio-proxy",
+      "description": "Act as the diolog-studio Eve agent locally inside Claude Code, with zero Eve/gateway spend \u2014 generate a site, document, spreadsheet, or deck from a job envelope using the studio's REAL on-disk instructions, wire contract, and skills, streaming the structure-first event log and the final artifact to local files. Use whenever the user wants to preview, test, dry-run, or iterate on a studio generation locally or \"in Claude Code\" \u2014 \"preview what the studio would generate\", \"run the studio locally without spend\", \"act as the studio agent\", \"test a studio site/deck/document/spreadsheet\", \"use the proxy harness\", \"would the studio produce good output for company X\" \u2014 even if they don't say \"proxy\" or \"harness\". Optionally runs the local Tier-2 screenshot self-review via the capture mock. NOT for running the real Eve runtime (use apps/studio/docs/local-testing.md \u2014 eve dev / eve eval) or the Diolog-side dispatcher/apply plumbing (content-studio unit tests).",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/studio-proxy",
+      "category": "development"
     }
   ]
 }
