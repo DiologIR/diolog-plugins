@@ -9,9 +9,9 @@ description: >-
   this result" and never say the word "infographic". It themes everything from the live Diolog website
   design system (financial-broadsheet + instrument-panel: Newsreader serif, Inter, JetBrains Mono, navy
   + one blue), writes any copy in Luke's voice via /create-luke-content, embeds the fonts so it prints
-  and shares self-contained, and verifies it fits exactly one A4 page. NOT for multi-slide decks (use
-  /customer-deck-builder), email product mockups (use /email-mockups), or a full website/app UI (use
-  /design-craft directly).
+  and shares self-contained, and verifies it fits exactly one A4 page. NOT for multi-page guides,
+  briefings or whitepapers (use /create-diolog-guides), multi-slide decks (use /customer-deck-builder),
+  email product mockups (use /email-mockups), or a full website/app UI (use /design-craft directly).
 ---
 
 # Create a Diolog infographic
@@ -57,10 +57,29 @@ correct page that is visually mediocre (stretched layouts, floating voids, weak 
 If any of these skills is genuinely unavailable in the session, say so explicitly in your summary and
 apply its principles from memory - never silently skip it.
 
+## If this is more than one page, you are in the wrong skill
+
+A poster is **composed**; a document is **systematised**. The moment the deliverable is a guide, a
+briefing, a playbook, a whitepaper, or anything that runs past one sheet, stop and invoke
+**`/create-diolog-guides`**. It carries the page archetypes, the multi-page grid, the screen-only
+motion layer, and a Node CDP harness that measures ink instead of boxes. Trying to stretch this skill
+across twenty pages is how a document ends up with twenty different spacings.
+
 ## Workflow
 
-Work in this order. Steps 1-3 are cheap thinking; do not open an editor until the finding and the copy
-are pinned.
+Work in this order. Step 0 is not optional and steps 1-3 are cheap thinking; do not open an editor
+until the design layer exists and the finding and the copy are pinned.
+
+0. **Build the design layer before you build the page.** Even a single page needs a scale, or every
+   value is invented at the moment it is needed and the result reads as assembled rather than
+   designed. Before any layout CSS, write the token block: a spacing scale (`--s1:4px` .. `--s8:64px`,
+   plus at most one documented half-step) that **every** margin, padding and gap draws from; the type
+   scale in points, sized for print first (body >= 11pt, mono chrome >= 11px); and the colour tokens.
+   If the poster hangs display numerals in a margin column, size that column to the **widest glyph run
+   you will ever put in it at its real font size** - undersize it and a 64px numeral renders 73px wide,
+   overflows, and you "fix" it by shrinking the type. Set `line-height:1` on display glyphs (below
+   ~0.95 the box is shorter than the glyph, so centring lies), right-align them in their column, and
+   do optical nudges with `transform: translateY()`, never `margin`.
 
 1. **Read the brand system, live.** Read `~/Dev/diolog-team-files/website/DESIGN-Website.md` - it is the
    always-present source of truth for Diolog's identity and it may have moved on since this skill was
@@ -127,9 +146,28 @@ are pinned.
    clipping / overlap. **A `.page` with `overflow:hidden` hides its own overflow, so a page-height
    check passes even when content collides at the bottom - also measure the inner content box
    (`inner.scrollHeight - inner.clientHeight`) and the gap between the last block and the footer, per
-   page, to catch collisions the page-level check misses.** Screenshot every page and actually look at
-   it (do not trust "no overflow" alone - stretched voids and weak hierarchy pass every automated
-   check). Delegate the render+measure to a verifier subagent when you have one. Iterate.
+   page, to catch collisions the page-level check misses.** Delegate the render+measure to a verifier
+   subagent when you have one. Iterate.
+
+   Then obey the **Looking Contract**, because every automated check above can pass on a bad poster:
+
+   - **Rendering a screenshot is not looking at one.** A successful capture proves a file exists. The
+     image enters your knowledge only when you open it. If you did not open it, you did not check it,
+     and you may not say you did.
+   - **Ask "what is wrong with this?", never "is this done?"** The same pixels answer the two
+     questions differently, and only the first is a review. Answering "nothing" requires you to first
+     name the three most likely failure modes and rule each out by pointing at pixels.
+   - **Crop to components at DPR 2-3.** A whole A4 page scaled into a review is a resolution at which
+     a 161px void reads as generous whitespace and a wrapped chip is a few ragged pixels.
+   - **A clean gate means "no known defect", never "verified".** Every rule you have was written after
+     someone pointed at a defect, so a gate is downstream of its findings and cannot see the defect
+     nobody has met yet. A rule whose selector matches nothing passes silently rather than warning
+     you. Report the two claims separately: *"the checks passed"* and *"I opened crops X, Y, Z"*.
+
+   `/design-craft`'s `references/visual-verification.md` § Phase 0 is the long version, including how
+   to measure **ink** (a baseline probe plus canvas `TextMetrics.actualBoundingBoxAscent`) rather than
+   boxes - two boxes with the same `top` can show their ink 8px apart, which is how "the CSS is
+   correct" and "it looks wrong" end up both being true.
 
 8. **Deliver.** The print-ready HTML is the artifact. Offer to publish it as an Artifact (fonts are
    already inlined, so the strict CSP is satisfied). If the user wants a PDF, headless-Chrome print it
@@ -147,10 +185,15 @@ The piece is finished only when all of these hold - each is checkable, so verify
 - Nothing clips, overlaps, or overflows (bar the intentional ticker), and no gap label sits invisibly on
   a same-coloured fill.
 - **No floating voids.** Content is anchored to the top of the page and fills it through generous,
-  even composition - never through `justify-content: space-between` or `flex: 1` stretching a few
-  blocks apart (see § Layout discipline). Body text meets the print minimum (>= 12pt / ~16px).
+  even composition - never through `justify-content: space-between`, `flex: 1`, or `margin-top: auto`
+  stretching a few blocks apart (see § Layout discipline). Body text meets the print minimum
+  (>= 11pt); mono chrome never below 11px.
+- **Every value is on the spacing scale**, or is a paper dimension in mm. No ad-hoc `7px` or `18px 22px`.
 - **`/design-craft` and `/ux-craft` were actually invoked** (Skill tool), and design-craft's per-unit
   critique gate was run on every page - not skipped with "looks on-brand, close enough".
+- **You opened every component crop** and asked each one what was wrong with it. Your summary
+  distinguishes *"the checks passed"* from *"I looked at it"* - they are different claims, and merging
+  them into "verified" hands the reviewing back to the person the work was supposed to save.
 
 ## Layout discipline (do not stretch to fill)
 
@@ -177,9 +220,14 @@ Hold these, and let design-craft's `hierarchy-rhythm-review` and `unit-critique-
   plug a hole. Set it to the medium's readable size first (A4 print body ~11-12.5pt), then solve
   fit by trimming or by composition.
 
-On a **multi-page** piece (a guide, not a single infographic), each `.page` is one A4 unit: run
-design-craft's per-unit critique gate on each, and keep the inter-block rhythm identical across pages.
-For a document rather than a poster, design-craft's `references/make-a-doc.md` is the matching procedure.
+The specific anti-patterns, so you can grep your own CSS for them: `justify-content: space-between` on
+a page container, `flex: 1` on a content block, and `margin-top: auto` on a trailing panel. The last
+one produced a **161px void** on a real page, which is not a rounding error, it is a hole. If a margin
+exceeds ~48px and you did not choose it deliberately, you did not choose it.
+
+On a **multi-page** piece, stop and use **`/create-diolog-guides`** instead. It owns the page
+archetypes, the shared baseline across sheets, the screen-only motion layer, and a harness that
+measures ink. Do not stretch this skill across a document.
 
 ## Brand non-negotiables (from DESIGN-Website.md)
 

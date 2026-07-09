@@ -14,8 +14,13 @@ self-contained), charts the finding honestly, and verifies it renders to exactly
 You want an infographic / one-pager / shareable stat graphic / poster of a result / designed chart of
 data in the Diolog look - even phrased as "turn these numbers into something I can share".
 
-Not for: multi-slide decks (`customer-deck-builder`), email product mockups (`email-mockups`), or a full
-website/app UI (`design-craft`).
+Not for: **multi-page guides, briefings or whitepapers (`create-diolog-guides`)**, multi-slide decks
+(`customer-deck-builder`), email product mockups (`email-mockups`), or a full website/app UI
+(`design-craft`).
+
+A poster is composed; a document is systematised. The moment the deliverable runs past one sheet, the
+sibling skill `create-diolog-guides` owns it - it carries the page archetypes, the shared baseline
+across sheets, the screen-only motion layer, and a Node CDP harness that measures ink rather than boxes.
 
 ## What's inside
 

@@ -76,6 +76,45 @@ computed font-family, overflow list, and a screenshot read). Have it confirm it 
 current version (the cache-bust) before trusting its numbers. Iterate until height <= 1123, fonts load,
 and nothing clips.
 
+## 7b. Then actually look, because everything above can pass on a bad poster
+
+The checks in 1-7 are **necessary and nowhere near sufficient**. Stretched voids, weak hierarchy,
+wrapped pills, misaligned numerals, and an off-centre caption all satisfy every one of them. Four
+rules, and they are not optional:
+
+- **Rendering a screenshot is not looking at one.** A capture tool-call returning success proves a
+  file exists. The image enters your knowledge only when you **open** it. Producing `page-01.png` and
+  never reading it is not verification, and reporting it as such is false.
+- **Ask each capture "what is wrong with this?"** - never "is this done?". Same pixels, different
+  question, different answer. Only the first one is a review. To answer "nothing", first name the
+  three most likely failure modes for that component and rule each out by pointing at pixels.
+- **Crop to the component and zoom (DPR 2-3).** A whole A4 page scaled into a review is a resolution
+  at which a 161px void reads as "generous whitespace" and a two-line pill is a smudge. Judging from
+  the page thumbnail is looking at an image in which the defect cannot exist and concluding there is
+  none.
+- **A clean check means "no known defect is present".** It never means "verified". Every rule you have
+  was written after someone pointed at a defect, so your checks are downstream of your findings and
+  are structurally blind to the defect nobody has met yet. And a check whose selector matches nothing
+  passes **silently**. State the two things separately in your summary: *"the checks passed"* and
+  *"I opened crops X, Y, Z"*.
+
+Measure **ink, not boxes**, when alignment matters. `getBoundingClientRect()` returns the box; where
+the glyph sits inside it depends on `line-height`, the font's metrics, and the character, so two boxes
+with the same `top` can show their ink 8px apart. Probe the baseline and add the real ascent:
+
+```js
+const probe = document.createElement('span');
+probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
+el.insertBefore(probe, el.firstChild);
+const baselineY = probe.getBoundingClientRect().top;
+probe.remove();
+ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+const inkTop = baselineY - ctx.measureText(text).actualBoundingBoxAscent;
+```
+
+`/design-craft`'s `references/visual-verification.md` § Phase 0 is the full account. If the piece grows
+past one page, `/create-diolog-guides` ships a Node CDP harness that automates all of this.
+
 ## 8. Print / publish
 
 `@page { size: A4 }` and print colour-adjust are already in the template. For a PDF, headless-Chrome
