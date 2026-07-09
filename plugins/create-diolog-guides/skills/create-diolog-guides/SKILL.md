@@ -110,10 +110,15 @@ No content, no components, no CSS for a specific page until this exists as a tok
 - **Motion tokens** (`--ease-out`, `--dur-micro`, `--dur-reveal`, `--stagger`), even if you add the
   motion later.
 
-Read `references/grid-and-tokens.md`. Copy `assets/guide-skeleton.html`, which already carries all of
+Read `references/grid-and-tokens.md` and `references/emphasis-and-legibility.md` (the evidence-based
+emphasis budget - italics are display-only, hierarchy comes from size and space, reading order is
+row-major; it exists because three defensible emphasis rules compounded into an unreadable page once
+already). Copy `assets/guide-skeleton.html`, which already carries all of
 the above plus the print CSS and the motion governor. Then read
 `~/Dev/diolog-team-files/website/DESIGN-Website.md` - it is the live source of truth for the brand and
-it outranks any value cached in this skill.
+it outranks any value cached in this skill, with one exception: where a master file or design note
+mandates emphasis that busts the budget in `emphasis-and-legibility.md` (e.g. italic micro-labels),
+the evidence wins and the conflict gets named in your summary.
 
 ### Step 1 - Shape the document, not the pages.
 
@@ -218,6 +223,12 @@ Each is checkable. Verify, do not assume.
   phrase, never bold a headline. Inter for body. JetBrains Mono for instrument-panel chrome: eyebrows,
   running footers, axis and stat labels, timestamps, data values. Hierarchy comes from size and the
   roman/italic axis, not weight.
+- **Emphasis budget** (`references/emphasis-and-legibility.md` is binding). Per page: the heading's
+  one italic accent plus at most one isolated pull quote is the entire italic allowance - micro-labels
+  are mono roman, never italic, at or above the 11px floor and sized to be read. Uppercase only for
+  mono labels of five words or fewer. Bold at most 1-2 short phrases per body paragraph. Grouped
+  sequences (chips, ToC entries) order row-major or stack vertically - a column-major grid reads
+  A,D,B,E,C,F to a human. Section openers must be unmistakable as section openers at arm's length.
 - **Colour.** One blue, `--accent #1F3FA6`, on light. `--accent-bright #6E8EF5` **only** for data on
   navy. Navy `#0A1733` is a surface, not a theme. Semantic `--ok / --warn / --danger` always pair with
   a dot, label, or sign, never colour alone. One cool grey temperature. No second accent hue, no
@@ -245,6 +256,12 @@ Each is checkable. Verify, do not assume.
 - `scripts/export-pdf.mjs` - render the PDF and verify the PDF.
 - `scripts/inline-fonts.py` - regenerate `fonts.css`, or inject it at the marker.
 - `references/grid-and-tokens.md` - Step 0 in full: the scale, the grid, ink vs boxes, optical nudges.
+- `references/emphasis-and-legibility.md` - the evidence-based emphasis budget: what italics, caps,
+  bold and underline measurably cost, hierarchy via size and space, row-major ordering, pull-quote
+  isolation, and the per-page density limit. Binding; outranks a master file's ad-hoc design notes.
+- `references/research/typography-legibility-research.md` - the full July 2026 deep-research report
+  (Tinker, Rello & Baeza-Yates, Arbel & Toler, Williams & Spyridakis, NNGroup, publisher style guides)
+  behind that reference.
 - `references/page-archetypes.md` - the five archetypes and what each one is for.
 - `references/verification.md` - **read this one.** What the harness can and cannot know.
 - `references/motion-layer.md` - the resting-is-final contract, the governor, and print safety.
