@@ -200,6 +200,39 @@ def fingerprint(text):
     }
 
 
+def repeated_phrases(text, allow=(), n=4, limit=8):
+    """Distinctive word runs (n+ words) occurring 2+ times — the once-per-document
+    rule, made checkable. Repeating a natural TERM is human (elegant variation is
+    the AI tell); repeating a rhetorical PHRASE is templating. The n-gram check
+    can't tell them apart, so results are advisories and scaffold labels belong
+    in the config's repeat_allowlist."""
+    body = re.sub(r"```.*?```", " ", text, flags=re.S)
+    words = re.findall(r"[a-z'’]+", body.lower())
+    if len(words) < n * 2:
+        return []
+    shingles = [" ".join(words[i:i + n]) for i in range(len(words) - n + 1)]
+    counts = {}
+    for s in shingles:
+        counts[s] = counts.get(s, 0) + 1
+    repset = {i for i, s in enumerate(shingles) if counts[s] >= 2}
+    phrases = {}
+    k = 0
+    while k < len(shingles):
+        if k in repset:
+            j = k
+            while j + 1 in repset and j + 1 - k < 12:
+                j += 1
+            phrase = " ".join(words[k:j + n])
+            phrases[phrase] = phrases.get(phrase, 0) + 1
+            k = j + 1
+        else:
+            k += 1
+    allow_low = [a.lower() for a in allow]
+    out = [(p, c) for p, c in phrases.items()
+           if c >= 2 and not any(a in p for a in allow_low)]
+    return sorted(out, key=lambda x: -x[1])[:limit]
+
+
 def compare_fingerprint(draft_fp, target):
     """Yield advisory strings where the draft deviates markedly from the corpus."""
     checks = [
@@ -372,6 +405,14 @@ def main():
                         print(f"warn  fingerprint: {d}")
                 else:
                     print("ok    stylometric fingerprint within corpus bands")
+
+    # --- Repeated distinctive phrases (advisory; once-per-document rule) ---
+    reps = repeated_phrases(text, allow=cfg.get("repeat_allowlist", []))
+    if reps:
+        print("warn  repeated phrases (a natural term repeating is fine; a rhetorical "
+              "phrase or landing line repeating is templating - judge each):")
+        for p, c in reps:
+            print(f"        {c}x \"{p}\"")
 
     # --- Stats + format advisories ---
     n_words = len(re.findall(r"\b\w+\b", text))

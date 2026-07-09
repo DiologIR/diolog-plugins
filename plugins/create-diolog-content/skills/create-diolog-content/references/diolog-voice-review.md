@@ -72,6 +72,27 @@ The revised master file fixed all nine classes above, and its remaining defects 
     **Rule:** an epigram appears once per document, captions/panels/pull quotes included; no contrast construction becomes a document tic.
     **Encoded in:** diolog-voice.md principle 3; ai-writing-signs.md §1.7 + checklist item 8.
 
+## Blind generalisation test (2026-07)
+
+A clean-room agent drafted a fresh guide subset (capital-raise investor questions, a topic never reviewed) through this skill; four class-blind adversarial reviewers then hunted it with only abstract class definitions, never the quoted instances above. What generalised: naming and the skim test (no wrong-frame names, headings carried the argument), the CTA library (no invented offers), product-truth limits, and every lint hard check. What regenerated in new clothes:
+
+13. **Instance:** "A capital raise compresses a quarter of investor questions into a fortnight" (invented quantified hook); "the three most common questions" (invented frequency claim; the brief said sample questions).
+    **Class:** data-shaped colour - rhythm written in the shape of a statistic, evading the citation rule because no real number was consciously asserted.
+    **Rule:** if a reader could ask "says who?", it is a claim; source it or rewrite it unquantified.
+    **Encoded in:** diolog-voice.md principle 5.
+
+14. **Instance:** "wants comfort that it will not happen again soon, and is listening for a firm 'no'"; "they read the 'why now' for reassurance either way" - investor psychology manufactured to fill the "Why they ask" slot.
+    **Class:** scaffold slots as fabrication traps - a repeated structure demanding a motive the source didn't supply.
+    **Rule:** slots state observable behaviour from the source or go leaner; internal states are never invented.
+    **Encoded in:** diolog-voice.md scope; personas/guide.md rule 2; ai-writing-signs §6.4.
+
+15. **Instance:** three "trap" entries all opening on a gerund fragment then one long sentence; intro carrying three landing lines; "hold you to" twice, "exactly true" three times; an expert AI-detection reviewer rated the draft 8/10 machine-shaped on structure alone despite a clean lexicon.
+    **Class:** texture rules stated as intentions ("vary") do not survive generation - exactly the zero-shot failure the research layer predicts.
+    **Rule:** countable texture budgets (≤half of units fragment-open; ≥1 unit with no landing line; no two units ending on the same move) plus the lint's deterministic repeated-phrase check.
+    **Encoded in:** diolog-voice.md fingerprint; personas/guide.md rule 2; voice_lint.py `repeated_phrases` + `repeat_allowlist`.
+
+The structural lesson: the classes enforced by procedure or determinism held; the classes enforced by intention failed. Rules must be countable or mechanical wherever possible, and the anchors section (approved output) is the only lever that improves what rules cannot reach.
+
 ## Adding the next review
 
 Copy the entry format above. Date the section, quote the reviewer's words as the instance (their phrasing is the evidence), and resist fixing only the draft: a correction that doesn't land in a rule file and the lint will be made again by the next session.
