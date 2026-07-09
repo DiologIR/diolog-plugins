@@ -27,6 +27,7 @@ The rules:
 6. **Section skeleton** [Inference - confirm against a real past update]: warm opening note → highlights → a trend worth watching → what slipped / what we are changing → key operating facts (runway, team) → one ask → suggestions invite + thanks.
 7. **Warm bookends around the dense middle,** as in her consultative emails. [Inference from email corpus §4]
 8. **Long detail moves out of the body:** demos and product depth go to a linked walkthrough video or appendix rather than paragraphs - she films updates rather than writing essays. [Source: email corpus §5] [Inference for the investor context]
+9. **No self-narrating frames, no big paragraphs.** She never announces her own register ("Thanks for reading. Short version of the month:", "The honest one:") - section labels are plain nouns and the candour lives in the sentences, not in a label promising it. Body paragraphs stay 1-3 sentences; when a paragraph carries more than two facts, it becomes bullets. Every sentence names its subject - an investor skimming must never have to reread to find what "it" refers to. [Source: Amy review 2026-07]
 
 ## 3. Shapes that work
 

@@ -26,9 +26,11 @@ The rules:
 5. **Asks are genuine and plain** - feedback, suggestions, introductions - with the specifics of who or what she is looking for. [Source: LinkedIn corpus; interview motto]
 6. **Startup life told honestly:** self-deprecating and specific (the miss, the overwhelm, the goal), paired with what she is doing about it. [Source: LinkedIn corpus; base voice principle 8]
 7. **200-500 words**, paragraphs of 1-3 sentences with white space - most readers are on mobile. [Source: lint note from her corpus; Craft]
-8. **Exactly one closing question, and it is the only CTA** - a focused open question inviting a specific experience. [Craft; Source: LinkedIn corpus questions habit]
-9. **3-5 PascalCase hashtags at the end** (#InvestorRelations #Fintech), one or two broad plus niche. More reads as spam. [Craft]
-10. **Links go in the first comment, never the body** - say "link in the first comment". LinkedIn renders no markdown, so no bold or headings in the post text. [Craft]
+8. **Break the post up - paragraphs alone are not her format.** Amy's own habit: "normally I try to break up the post using dot points or lists or an emoji instead of just having paragraphs". Any post past ~4 paragraphs needs a • dot-point run or a short list carrying part of the substance, or a single emoji as a visual marker. At most one or two emoji per post, never one per bullet, never 🚀. [Source: Amy review 2026-07; corpus list habit "Top AI use cases in IR (currently): …"]
+9. **Close on a question only when she'd genuinely read the answers** - one question, and never double-barrelled (a question followed by a "Keen to hear how…" restatement of the same question is a bolted-on close, and Amy reads it as fake). If the honest close is the observation itself, end there; a post with no question is better than a post with a decorative one. [Source: Amy review 2026-07; LinkedIn corpus questions habit]
+10. **Write as a peer, never as an outside admirer.** Her readers work in IR; an observation that is table stakes to them ("one adviser, who reviews disclosures for a living" - the whole industry does) reads as an imposter performing insider credibility. Every field observation must clear the bar: would this be news to someone in the room? [Source: Amy review 2026-07]
+11. **3-5 PascalCase hashtags at the end** (#InvestorRelations #Fintech), one or two broad plus niche. More reads as spam. [Craft]
+12. **Links go in the first comment, never the body** - say "link in the first comment". LinkedIn renders no markdown, so no bold or headings in the post text. [Craft]
 
 ## 3. Shapes that work
 
@@ -44,7 +46,7 @@ The rules:
 - **Post at all?** Only with a stance from the field (a conversation, a stat she has read, a milestone). A topic without a stance produces generic mush - hold until there is one. [Inference from base voice grounding]
 - **Mention Diolog?** Only if the topic genuinely shaped or was shaped by the product; otherwise leave it out entirely - a partial pitch is worse than none. [Source: LinkedIn corpus]
 - **Humour on hard news?** Self-deprecation yes, deflection no: state the miss plainly first, the dry line (if any) comes after. [Source: LinkedIn corpus; base voice principle 8]
-- **Ask or insight close?** If she wants something (intros, feedback), that ask is the close. Otherwise close on the one question. Never both. [Source: LinkedIn corpus]
+- **Ask or insight close?** If she wants something (intros, feedback), that ask is the close. Otherwise close on the one genuine question - or on the observation itself if a question would be decoration. Never both, and never a question restated twice. [Source: LinkedIn corpus; Amy review 2026-07]
 
 ## 5. Constraints
 
@@ -63,15 +65,17 @@ That stat is from an industry survey released this week (link in the first comme
 
 I think that fear is well placed.
 
-Most weeks I'm speaking with ASX-listed companies, IR professionals and their advisors, and the pattern is consistent - teams are adopting AI much faster than they're building the governance around it, because the tools are cheap, the reporting pressure is real, and nobody wants to be the last IR function still drafting everything by hand.
+Most weeks I'm speaking with ASX-listed companies, IR professionals and their advisors, and the same pattern keeps coming up:
 
-A general-purpose chatbot will happily draft an announcement for you. It has no idea what you disclosed last quarter, or what you can't say ahead of results.
+• The tools are cheap and the reporting pressure is real, so adoption is fast
+• The governance around the tools is being built much more slowly, if at all
+• A general-purpose chatbot has no idea what you disclosed last quarter, or what you can't say ahead of results
 
-Adoption at this speed, without that checking layer, is exactly how mixed messages end up in front of the market.
+Adoption at that speed, without a checking layer, is exactly how mixed messages end up in front of the market.
 
-This gap shapes a lot of how we build at Diolog - every draft checked against what you have already disclosed, because speed without consistency is just faster risk.
+This gap shapes a lot of how we build at Diolog - every draft checked against what the company has already disclosed, because speed without consistency is just faster risk.
 
-If your team is using AI anywhere near announcements: what has to be true before you trust a draft? Keen to hear how people are handling the checking step - that's where I see the least shared practice.
+If your team is using AI anywhere near announcements, what has to be true before you trust a draft?
 
 #InvestorRelations #ASX #AIinIR #ContinuousDisclosure</output>
 </example>

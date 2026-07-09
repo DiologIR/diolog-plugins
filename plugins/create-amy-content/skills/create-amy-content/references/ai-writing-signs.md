@@ -83,6 +83,8 @@ Repetition penalties make models cycle synonyms instead of repeating a term: "no
 
 Two structural tells with hard empirical backing (PNAS corpus studies): instruction-tuned models use **participial clauses at 2–5× human rates and nominalizations at 1.5–2×** ("the implementation of the solution provided an improvement" for "implementing it improved things"), and they emit **uniform mid-length sentences** where humans are spiky — a two-word fragment here, a 40-word run-on there. LLM text mimicking an author measures at roughly *half* the author's perplexity even when the surface style matches: the blueprint is copied, the unpredictability isn't. Prefer plain verbs over "-tion/-ment/-ness/-ity" abstractions, and vary sentence length deliberately — rhythm variance is a fidelity lever, not decoration.
 
+The overcorrection is equally detectable: a **metronomic short-then-long alternation** (punchy fragment, longer explaining sentence, punchy fragment, longer explaining sentence…) is uniform rhythm at one remove, and readers — especially the person being imitated — flag it as AI. Human spikiness is a distribution: short beats cluster where the writer got emphatic, and whole paragraphs pass without one.
+
 ### 2.7 Em dash overuse
 
 LLM text uses em dashes more than non-professional human writing of the same genre, in a formulaic "punched-up" way — often spaced, often in pairs, often powering a negative parallelism — like this. Because the tell became notorious, newer models suppress it; absence proves nothing. The generated persona should encode the **person's actual dash habit** from their corpus (many people never use them; if so, ban outright and let the lint enforce it).
@@ -95,6 +97,7 @@ LLM text uses em dashes more than non-professional human writing of the same gen
 - **Unnecessary tables** for three facts that belong in a sentence.
 - **Curly quotes** mixed inconsistently with straight quotes (model/platform-dependent; Claude and Gemini mostly emit straight quotes, so this is weak evidence either way).
 - **Section summaries**: paragraphs opening *In summary*, *In conclusion*, *Overall*; a closing section that restates the piece.
+- **Self-narrating meta-labels**: the writer announcing their own register or structure instead of just writing in it — *Short version:*, *The honest one:*, *Long story short:*, *Thanks for reading* as an opener. A person being brief is simply brief; a label promising brevity or honesty is the tell.
 - **Didactic disclaimers**: *it's important to note/remember*, *worth noting*, *it should be mentioned*. Older-model tell but still common in prompted "professional" tone.
 - **Thematic breaks** (`---`) before every section; heading levels that skip.
 - **Chat leakage** (fatal in ghostwritten content): *I hope this helps*, *Certainly!*, *Would you like me to…*, *Here's a…*, *Let me know if…* — assistant correspondence pasted as content. Also placeholder text left unfilled: `[Your Name]`, `[insert example]`, `2025-XX-XX`.

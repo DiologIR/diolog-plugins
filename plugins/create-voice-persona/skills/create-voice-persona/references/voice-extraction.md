@@ -14,6 +14,8 @@ Registers are not equally hard: replication measurably succeeds on structured wr
 
 Also collect **identity context**: who the person is, role, company, audience, topics they post about, and any self-declared rules ("I never use emojis", "I hate em dashes"). Self-declared rules count as evidence even with zero corpus occurrences.
 
+Part of identity context is the **audience-knowledge floor**: what the person's readers all know because they live in the same industry. Capture it explicitly ("writes to IR professionals — never explain what continuous disclosure is") and put it in the base voice's identity section. Without it, the persona writes *about* the field like an outside admirer — stating things every insider knows as if they were observations — and the owner reads the result as an imposter performing insider credibility.
+
 Provenance check: ask whether any sample was itself AI-assisted. AI-flavoured samples poison the extraction (you'd be cloning ChatGPT back at the person); prefer samples they wrote unaided, and if a sample shows heavy tell-density from `ai-writing-signs.md`, quietly down-weight it and confirm with the person.
 
 ## 2. What to extract (the observation grid)
@@ -44,6 +46,10 @@ Select 5–8 verbatim quotes across registers and put them in the base-voice fil
 
 **Anchors are style ground truth, never fact sources.** Models demonstrably leak exemplar *content* into new pieces (style–content entanglement); the generated package must state that facts, anecdotes, and names inside the anchors never migrate into new drafts.
 
+**Quote anchors with their antecedents.** A fragment's punch usually comes from the sentence before it ("it takes the pressure off" only works because the previous words named the "it"). An anchor clipped below the referent teaches the persona to emit context-free fragments — dangling "it"s the reader can't resolve, which owners reliably flag as "no context sentences". Include enough surrounding text that every pronoun and fragment in the anchor visibly resolves, and state in the base voice that every generated sentence must carry its referent.
+
+**Signature phrases are recognition markers, not generation quotas.** A phrase that recurs across the corpus (a saying, a framing, a pet metaphor) is the single easiest thing to over-deploy, and the owner hears repetition as self-parody long before an outside reader does — expect them to eventually retire their own catchphrase from the persona entirely. Encode every signature phrase with a hard ration (at most once per piece, never in consecutive pieces, never as the default close), and when the owner says stop, move it to a "retired — never generate" list rather than deleting the evidence.
+
 ## 5. The gap interview
 
 After extraction, list what the corpus couldn't tell you and ask in **one batched message**. Typical gaps:
@@ -65,7 +71,7 @@ Quality bar before moving on to variants:
 - Every rule evidenced or marked; zero rules copied from the reference package without corpus support.
 - Sample anchors present and verbatim; the anchors-are-not-facts rule stated.
 - The person's anti-patterns (never-does list) captured, not just their does-list.
-- The syntactic fingerprint captured — run `python3 scripts/voice_lint.py --extract-fingerprint <corpus files…>` to compute it mechanically (sentence-length spread, contraction rate, punctuation densities, nominalization rate) and paste the emitted block into `voice-lint.json`; describe the same habits in prose in the base voice.
+- The syntactic fingerprint captured — run `python3 scripts/voice_lint.py --extract-fingerprint <corpus files…>` to compute it mechanically (sentence-length spread, contraction rate, punctuation densities, nominalization rate) and paste the emitted block into `voice-lint.json`; describe the same habits in prose in the base voice. State the rhythm as a **distribution, never a formula**: a persona that alternates one short sharp sentence with one longer one, paragraph after paragraph, has replaced the person's spikiness with a metronome — owners flag exactly that pattern as "still feels AI". Say where the short beats actually land in the corpus, and that some paragraphs carry none.
 - Every trait encoded as a mechanical rule or a quoted example — an adjective on its own ("casual", "witty") is a null instruction that invites the model's own priors.
 - Mechanics section concrete enough to generate the `voice-lint.json` from it mechanically.
 - Read the profile back as the person would: if any line would make them say "I don't do that", fix it now — it's about to be multiplied across every variant. Remember this read-back catches *defects*, not certifies fidelity: a model's own "sounds like them" judgment is empirically uncalibrated (see `voice-replication-research.md`), so fidelity rests on the anchors, the lint, and the person's review.

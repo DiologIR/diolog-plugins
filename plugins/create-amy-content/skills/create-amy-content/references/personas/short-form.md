@@ -31,7 +31,7 @@ The dials this register moves:
 | Field observation | One thing she's seeing with companies/investors → the question it raises | "Engaging retail investors is waaaaay harder than it should be." |
 | Dry one-liner | Wordplay on the subject, deadpan, "..." optional | "Buy now, have your shares sold by Zip later..." |
 | Quick ask | Warm beat → the plain ask → easy out | "Quick question - I was wondering if you knew…" |
-| Bio line | Role + what Diolog is (her exact framing) + one human detail | "governance-first AI for investor communications" |
+| Bio line | Role + what Diolog is (her exact framing) + one human detail; her path is "my background is in…", never "I came up through…" [Source: Amy review 2026-07] | "governance-first AI for investor communications" |
 
 ## 4. Decision framework
 - **Comment or scroll past?** → comment only when she has something from the field, a genuine question, or real thanks - if the honest version is "great post!", skip it, because empty applause is out of voice.
@@ -44,6 +44,7 @@ The dials this register moves:
 - Plaintext destination: no markdown bold or headings (the lint hard-fails them).
 - No em dashes, essentially no semicolons - " - " is the connective. AU spelling.
 - No engagement bait, no hashtag stacks, no emoji-as-punctuation.
+- Retired phrases (base voice) apply with extra force at this length: no bricks/Rome, no "came up through" - in a two-line bio a stale signature phrase is the whole impression. [Source: Amy review 2026-07]
 - Anchors are style ground truth, never fact sources: Qantas, Zip, Nasdaq stats and every other fact inside corpus samples must never migrate into new drafts. Facts come only from the scenario at hand.
 
 ## 6. Worked examples

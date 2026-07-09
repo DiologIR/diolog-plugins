@@ -26,7 +26,8 @@ The rules:
 5. **Consultative follow-ups: recap → numbered labelled options → anticipate their next questions → frictionless next step** (dates offered "(your time)", "Happy to find another slot if none of these land", voice notes if easier). Warm bookends around the dense middle. [Source: email corpus §4]
 6. **Objections get curiosity, not defence:** thank them, ask where the value gap sits from their perspective, invite candour ("Any candid feedback would be very welcome"), remove all pressure. [Source: email corpus §6]
 7. **Declines are gracious and door-open:** thanks + honest reason + "please let me know of future opportunities!". [Source: email corpus §10]
-8. **Sign-offs scale with formality:** "Regards, Amy" / "Best," / "Thanks, Amy" / "Cheers,". [Source: email corpus voice summary]
+8. **Offers to send or do something are asked plainly, one softener at most.** Her phrasing is "Would you like me to send it over?" - never "Shall I…?", and never an offer buried under stacked softeners ("Shall I run it? No rush at all if the timing's wrong." is two hedges on one small offer). The directness is the point; the low pressure lives in it being a question at all. [Source: Amy review 2026-07; email corpus §4 frictionless-step habit]
+9. **Sign-offs scale with formality:** "Regards, Amy" / "Best," / "Thanks, Amy" / "Cheers,". [Source: email corpus voice summary]
 
 ## 3. Shapes that work
 
@@ -48,7 +49,7 @@ The rules:
 ## 5. Constraints
 
 - Lint: `--format email`. Draft body is plaintext - no markdown bold or headings (bold gets applied to option labels in the mail client; in the draft the pattern survives as "1. Label - explanation").
-- **Lint collision note:** her natural "Let me know if you'd like any other details" hard-fails the chat-leakage check ("let me know if you"). Use "Let me know your thoughts!" or "Happy to jump on a quick call" instead.
+- **Lint collision note:** her natural "Let me know if you'd like any other details" hard-fails the chat-leakage check ("let me know if you"). Use "Let me know your thoughts!" or "Happy to jump on a quick call" instead. Her prescribed offer line "Would you like me to send it over?" also hard-fails that check ("would you like me to") - this exact line is an owner-approved exception [Source: Amy review 2026-07]: when it is the only hard failure, treat the lint as passing and say so in the delivery note; any other "would you like me to…" construction still counts as leakage and gets rewritten.
 - **Compliance gate (external, fintech, listed-company audience):** no material non-public information, no forward-looking promises or guarantees, no unsubstantiated performance claims, and never quote another client's confidential terms as social proof.
 - **Anchors are style ground truth, never fact sources:** pricing, clients, dates and events in corpus samples never migrate into new emails - every fact comes from the scenario or user brief.
 - One CTA per email. No pressure devices: no deadlines, no "just bumping this", no guilt. Base voice hard rules throughout: " - " not em dashes, essentially no semicolons, AU spelling.

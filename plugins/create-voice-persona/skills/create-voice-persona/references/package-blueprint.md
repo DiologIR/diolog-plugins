@@ -56,7 +56,11 @@ are register deltas layered on top; they may move dials this file defines but ne
 the hard rules ([list THIS person's hard rules]).
 
 ## Who <Name> is (so the voice has a centre)
-[Role, company, audience, what their credibility rests on, what they write from.]
+[Role, company, audience, what their credibility rests on, what they write from. Include
+the audience-knowledge floor: what their readers all know because they share the
+industry — the persona writes as a peer and never explains or marvels at what the
+audience does daily; an observation earns its place only if it would be news to a
+person in the room.]
 
 ## The voice in one breath
 [One sentence a stranger could hold in mind while writing as them.]
@@ -67,7 +71,12 @@ why. Not Luke's principles — this person's.]
 
 ## Lexicon and phrasing
 [Openers/connectors, softeners, hedges, ownership phrasing, signature phrases,
-contraction habits — with [Source:] markers.]
+contraction habits — with [Source:] markers. Ration every signature phrase
+explicitly: recognition markers, not generation quotas — at most once per piece,
+never in consecutive pieces, never the default close. Keep a "Retired phrases
+(never generate)" list for anything the owner has asked the persona to stop
+using; retiring preserves the evidence while banning the output, and the lint
+should ban retired phrases too.]
 
 ## Mechanics
 [The lintable layer: dash policy, spelling variety, exclamation/emoji rules,
@@ -80,8 +89,13 @@ sentence-length spread (quote a short one and a long one; "vary like this, not
 uniform mid-length"), active/passive habit, And/But/So openers, plain verbs vs
 nominalizations, participial appetite. The numeric version lives in
 voice-lint.json's fingerprint block; this section is the prose version drafts
-are written against. Anchors here are style ground truth, never fact sources —
-facts inside samples must never migrate into new drafts.]
+are written against. State two guards explicitly: (1) spikiness is a
+distribution, not a formula — a mechanical short-sentence-then-long-sentence
+alternation repeated paragraph after paragraph is itself an AI tell owners
+catch; (2) every sentence carries its referent — fragments and pronouns must sit
+hard against the thing they refer to, and a corpus fragment must never be reused
+without the antecedent that gave it sense. Anchors here are style ground truth,
+never fact sources — facts inside samples must never migrate into new drafts.]
 
 ## Scope: voice shapes the delivery, never the content
 [VERBATIM in every package, adapted only for the person's name and personas' natural
@@ -146,14 +160,21 @@ E.g. "is this worth posting at all", "reply vs own post", "how hard to push back
 
 ## 5. Constraints
 [The variant's own bans and budgets, on top of the base voice. Include the lint
-format key and any compliance gate the person's context requires. Always include
-the scope guard: never manufacture the piece's premise — no invented prior
-conversation, no opinion on the subject unless the person's stance was supplied,
-no closing ask/offer/CTA unless the task called for one; convey exactly what you
-were given. For any register whose natural shape carries an ask (chat, email,
+format key and any compliance gate the person's context requires. Fence the
+register: name which sibling variants' signature moves are off-limits here —
+a line evidenced in one register (a sales-email closer like "happy to walk your
+team through it", a spoken hedge, a chat abbreviation) leaks into neighbouring
+registers unless the variant explicitly excludes it, and owners flag the leak
+("I'd only ever say that in a sales email"). Always include the scope guard:
+never manufacture the piece's premise — no invented prior conversation, no
+opinion on the subject unless the person's stance was supplied, no closing
+ask/offer/CTA unless the task called for one; convey exactly what you were
+given. For any register whose natural shape carries an ask (chat, email,
 short-form, outreach), state explicitly that the ask-shape applies only when the
 task genuinely has an ask — a pure FYI/summary/status share ends when the content
-ends, with no bolted-on question or offer to satisfy the template.]
+ends, with no bolted-on question or offer to satisfy the template. The same
+guard applies to closing questions in public registers: a question close only
+when the person would genuinely read the answers, never as template furniture.]
 
 ## 6. Worked examples
 [Exactly 2, in <example> tags with <scenario> and <output>: one ordinary case, one
@@ -212,11 +233,23 @@ Rules for generating it:
 - Set `spelling` from the corpus, not the person's country of residence.
 - Chat-leakage phrases ("I hope this helps", "Certainly!", placeholders) hard-fail and are deliberately not configurable: they mark assistant correspondence pasted as content, which is fatal in ghostwriting regardless of register. If a person's genuine chat register collides with one (rare), handle it at review time rather than weakening the gate.
 
+## Maintaining a package from owner feedback
+
+A package's highest-grade evidence arrives *after* delivery: the owner's line-edits on real drafts. When the owner reviews output ("I would never say X", "I'd phrase it as Y", "stop using Z"), fold it back into the package rather than just fixing the draft:
+
+- **Owner corrections outrank corpus inference.** A reviewed correction is a self-declared rule with a live example attached. Mark it `[Source: owner review <YYYY-MM>]` — it wins over anything previously marked `[Inference]`, and over corpus-derived rules where the owner explicitly overrides them (people's writing evolves past their own corpus).
+- **Fix the class, not the instance.** "I'd never say 'three results ago'" is an instance; the class is "time runs in the reader's units". Find which file owns the class (base voice if register-crossing, the variant if register-specific), state the rule there once, and quote the owner's example as the illustration.
+- **Encode never-say phrases in the lint** (`banned_phrases`), not just prose — the lint is what makes the correction stick across sessions.
+- **Retire, don't delete, overexposed signature phrases**: move them to the base voice's retired list with the reason, and lint-ban them.
+- **Update the worked examples** that demonstrate the old behaviour — examples steer generation harder than rules, so a stale example silently outvotes the new rule.
+- Bump the package/plugin version so the change ships.
+
 ## Package self-check (before delivery)
 
 - Every rule in every file traces to this person's corpus/interview or to `ai-writing-signs.md` — nothing inherited from Luke's package without evidence.
 - The base voice carries the **Scope** section, the router's Step 3 + Constraints restate the scope rule, and every ask-shaped variant guards its ask-shape — so the persona can't fabricate continuity, experience, endorsements, or CTAs the request never supplied. Sanity-check it: a "summarise X" request through any variant should yield only the summary, with no invented opener, verdict, or closing offer.
 - Zero placeholders anywhere; every template slot filled with real content.
 - Each variant has its tension example, and every worked-example output passes the lint and the AI-signs drafting checklist.
+- Worked-example outputs also pass the post-delivery tells owners most reliably flag: no dangling referents (every fragment/pronoun resolves in-sentence), no metronomic short/long sentence alternation, no bolted-on closing question, no self-narrating meta-labels ("The honest one:", "Short version:"), no insider-obvious observations for the person's peer audience, and signature phrases within ration.
 - `ai-writing-signs.md` and `voice_lint.py` copied verbatim; `voice-lint.json` valid JSON (run the lint once against a sample anchor to prove the toolchain works — a sample anchor failing the lint means the config contradicts the corpus: reconcile before shipping).
 - Consent: the voice being cloned belongs to the requester or someone who has clearly consented; the delivery note reminds the owner that they remain the author who reviews and publishes.

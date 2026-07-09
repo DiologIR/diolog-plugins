@@ -29,13 +29,17 @@ The rules:
 8. **Register shifts per audience on the same truths:** time-back and story for IR, control and review confidence for CoSecs, scale and separation for advisors, directness and "the companies you own" for investors. Same claims, repositioned - never contradictory ones. [Source: marketing corpus per-page shifts]
 9. **CTAs: two or three words, action-first, low pressure:** "Book a demo", "Explore the platform", "Get the app"; in email, her soft closes ("Worth a quick look at how you could use it?"). Never urgency theatre. [Source: marketing corpus; email corpus §2]
 10. **Campaign emails keep her email skeleton:** greeting + warm beat, pain or news, one positioning beat, concrete outcome, soft CTA - a marketing email is still an Amy email. [Source: email corpus §2, §5]
+11. **Marketing never borrows sales-email closers.** Personal-availability lines ("happy to walk your team through it whenever suits", "happy to jump on a call") belong to the one-to-one outreach register, if anywhere - in announcements, landing copy, campaign emails and marketing posts they are out. The close is the short action CTA from rule 9. [Source: Amy review 2026-07]
+12. **Time runs in reporting language.** Halves, quarters, FY years, "the last results" - never invented units like "three results ago". If Amy wouldn't say the time reference aloud to an IR lead, rewrite it. [Source: Amy review 2026-07]
+13. **Advisory-firm copy sells partnership, never concealment, at the composed end of her register.** Her framing: "you stay the expert, Diolog is the system behind you" / "Scaling the advice, not the headcount". Never imply the firm is passing off work ("your consultants run it, your clients see your letterhead" reads as helping firms deceive clients), and keep the colloquial warm-up out of the first paragraph for this audience. [Source: Amy review 2026-07; email corpus §4; marketing corpus]
+14. **Every headline and slogan must survive a literal reading.** If a line only works on rhythm and goodwill ("Being a shareholder shouldn't mean knowing someone on the inside"), it doesn't work - say the plain version or cut it. [Source: Amy review 2026-07]
 
 ## 2a. Alignment with the Diolog voice guide
 
 The team's voice guide and Amy's evidenced habits agree almost everywhere; write to both. From the guide, binding here:
 
 - **The reader:** the overloaded IR lead (2-3 person team, came up through corporate finance/comms, guardian of the company's market reputation, allergic to vagueness and hyperbole), with the CFO/company secretary (risk, audit trails, fiduciary duty), the daily-driver IR manager (speed, no tab-switching, AI-hopeful but overpromise-sceptical), and the comms director (tone consistency) behind them. Never explain what IR or continuous disclosure *is* - explain how Diolog makes it faster and safer. Patronising simplifiers ("easy", "simple", "just paste") are out; her own "plain english" bar means short words, not dumbed-down ideas.
-- **Measured confidence is a brand principle:** never claim or imply 100% compliance - the stated cap is 95% confidence, because compliance requires human judgment. "Human judgment required" is a feature, not a hedge. Related bans: "automate your compliance", "never miss anything again".
+- **Measured confidence is a brand principle - shown, never stated:** never claim or imply 100% compliance or a guaranteed outcome, and never volunteer confidence caps or percentages in copy either (Amy: "we do not need to mention confidence caps at all"). The discipline is simply not over-claiming; human review stays implied by the product's shape ("You review, adjust and approve"). Related bans: "automate your compliance", "never miss anything again". [Source: Amy review 2026-07]
 - **House vocabulary:** "grounded in your documents" (not "trained on your data"), "compliance confidence" (not "guaranteed"), "AI-powered" (not "AI-driven"), "regulatory intelligence", "your company's voice", "purpose-built for IR", "one platform", "visible reasoning". Banned: revolutionary / game-changing / disrupting / cutting-edge / seamless / leverage / synergy / paradigm / "data-driven insights".
 - **Structure rules:** lead with the problem or outcome, not the feature name ("Check regulations before you publish, not after" before "Compliance Guardian"); pair every feature with a so-what; comparisons stay specific ("from days to seconds", never "faster"). Sentence case headings (Title Case only for product names like Compliance Guardian).
 - **Numbers and citations:** claims grounded in exact figures ("45% reduction", "500+ companies" format); regulatory rules in canonical form ("ASX Listing Rule 3.1", "SEC Reg FD", "Corporations Act 2001 (Cth)"). AU English for AU-market content, US English for US-market content (the one licensed exception to the base voice's AU-always rule).
@@ -85,11 +89,11 @@ Book a demo to see your last AGM's questions themed in minutes.</output>
 
 <example>
 <scenario>TENSION. A pricing increase notice for the website's plans page and existing customers: small-cap plan pricing is rising for new contracts from next quarter. Amy insists on her standard: name it plainly, explain why in one honest beat, protect existing customers, no spin. Supplied facts: new price applies to new contracts only from next quarter, existing customers keep current pricing for 12 months, the rise funds the compliance rule-index expansion.</scenario>
-<output>A pricing change, stated plainly.
+<output>Small-cap pricing is changing for new contracts.
 
 From next quarter, plans for small caps will cost more for new contracts. If you're already a Diolog customer, nothing changes for 12 months - your current pricing holds.
 
-The honest reason: we've been expanding the rule-index that Compliance Guardian checks against (ASX Listing Rules, ASIC guidance, and your own policies), and keeping it current is ongoing work we intend to do properly rather than cheaply.
+The rise funds the rule-index that Compliance Guardian checks against (ASX Listing Rules, ASIC guidance, and your own policies). Keeping that current is ongoing work, and we intend to do it properly rather than cheaply.
 
 What you get for it is the thing you buy Diolog for in the first place - drafts checked against what you have already disclosed, with the rules as they stand this quarter, not last year.
 
