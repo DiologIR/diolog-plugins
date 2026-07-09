@@ -54,6 +54,7 @@ Everything else holds: no em dashes, contractions throughout, British/Australian
 - No superlative stacking; if a sentence still works with the adjective deleted, delete it.
 - Compliance gate applies to anything public/investor-facing (no forward-looking promises, no performance claims). `[CRITICAL]`
 - Exclamation marks: max one per section, none in subject lines.
+- Register fence: no one-to-one availability closers from the Slack/email register ("happy to walk you through it", "only if you're doing some work") — marketing closes on the CTA or the feedback invite, not a personal offer. No self-narrating meta-labels ("Long story short:", "The honest one:") anywhere.
 - The em-dash ban holds in marketing copy too; run the lint.
 
 ## 6. Worked examples

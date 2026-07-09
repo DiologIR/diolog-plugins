@@ -26,12 +26,12 @@ Avoid hooks that are throat-clearing ("I've been thinking a lot about…"), clic
 ## Structure
 
 **LinkedIn feed post:**
-- Hook (1–3 lines) → body (the insight/story/argument) → one genuine question to close.
+- Hook (1–3 lines) → body (the insight/story/argument) → one genuine question to close, or the observation itself if a question would be decoration. A bolted-on question reads as engagement bait and never double-barrel it (a question followed by a "keen to hear…" restatement of the same question).
 - Short paragraphs, 1–3 sentences, with line breaks for white space (most readers are on mobile).
 - Bullets or a short numbered list when breaking down steps or options.
 - 3–5 relevant hashtags at the end, PascalCase (e.g. #InvestorRelations #Fintech), mixing one or two broad with niche.
 - Length: ~150–400 words (under ~300 words tends to over-perform for feed engagement; up to ~2,000 characters is fine for a thought-leadership point). Communicate the value in as few words as possible.
-- One CTA only: a focused, open question inviting a specific experience or perspective. No sell, no "DM me", no feature pitch.
+- One CTA at most: a focused, open question inviting a specific experience or perspective — only when Luke would genuinely read the answers. No sell, no "DM me", no feature pitch.
 
 **LinkedIn article / long-form blog:**
 - Built for depth and authority, not immediate feed engagement. Sweet spot ~1,500–2,200 words (LinkedIn Articles peak around 1,900–2,200).

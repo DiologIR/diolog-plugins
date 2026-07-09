@@ -45,6 +45,7 @@ CLICHES = [
     "leverage the power", "it's no secret that", "its no secret that",
     "buckle up", "the bottom line is", "paradigm shift", "best-in-class",
     "thought leader", "circle back", "low-hanging fruit", "supercharge",
+    "long story short", "short version:", "the honest one:",
 ]
 
 
