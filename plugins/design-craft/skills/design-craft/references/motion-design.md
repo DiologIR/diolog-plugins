@@ -96,3 +96,23 @@ Flag on sight, in this order of severity: content visibility gated on a class-tr
 Fix with the remedial hierarchy — cheapest lever first: **1 delete the animation → 2 reduce duration/distance → 3 fix easing → 4 fix origin/physicality → 5 make it interruptible → 6 move it to transform/opacity → 7 asymmetric timing → 8 polish (blur, stagger) → 9 a11y and cohesion (tokens)**. Report findings as a Before / After / Why table and end with a verdict: ship, or the specific items that block.
 
 Debug like an animator: slow everything 2–5× (DevTools animation panel), step frame-by-frame, test gestures on a real device, and look again the next day with fresh eyes.
+
+### Motion is invisible to every static check you own
+
+A lint, a screenshot, a computed-style probe, a review subagent reading the DOM — all of them see the artifact **at rest**. At rest an entrance has finished and a transient overlay is `opacity: 0`. A whole class of bug lives in neither state and therefore in none of your evidence.
+
+Concretely: a status chip's "Checking…" overlay painted *underneath* the chip's own inline text, so a real capture briefly rendered `CONSISTEN` + `CHECKING…` + `RRENT DRAFT` superimposed. Every static rule passed. The only artifact that contained the bug was a frame captured 200ms in. (The cause was a full-cover `position: absolute` overlay with `z-index: auto` inside a `position: relative` parent that also held inline text — **give transient overlays an explicit `z-index`**, never rely on default paint order.)
+
+So verify motion in three passes:
+
+1. **At rest, under `media: print`** — anything invisible here is content that will be missing from the export. See `make-a-doc.md` Phase 3.
+2. **At rest, under `prefers-reduced-motion: reduce`** — the same check, for the audience that asked not to see motion.
+3. **Mid-flight frames.** Restart the animation deterministically rather than waiting on an observer or a timer, then capture every ~200ms and **open every frame**:
+
+```js
+el.classList.remove('seen');
+void el.offsetWidth;          // force reflow — this is what restarts the animations
+el.classList.add('seen');
+```
+
+No rule you write, present or future, can see what only exists at t=200ms.

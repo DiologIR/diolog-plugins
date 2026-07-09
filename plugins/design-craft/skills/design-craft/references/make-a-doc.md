@@ -33,9 +33,38 @@ Add `@media print` from the start, not as a retrofit:
 - **Backgrounds:** `print-color-adjust: exact` **only** on elements whose background carries meaning (a resume's skill tags, a status chip); let purely decorative backgrounds drop — browsers strip them by default, and forcing them everywhere wastes ink and muddies the print.
 - **Links print legibly** in body ink — never rely on hover styling to make a link findable on paper.
 
-## Phase 3: Freeze animations at their end state
+## Phase 3: Make print safety structural, not a patch
 
-If the document (or a deck being exported) has entrance animations, do **not** use `animation: none` — that reverts fade-ins to their hidden base state and prints blank content. Instead, jump every animation to its finished frame inside `@media print`:
+The failure this phase prevents: the PDF exports with blank rows where the animated content should be.
+
+### When you own the CSS: invert the states (always prefer this)
+
+> **The resting style IS the final style. The "from" state lives only inside `@keyframes`.**
+
+```css
+/* right — at rest the row is visible; the keyframes only say where it came from */
+.row { opacity: 1; transform: none }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px) } }
+.section.seen .row { animation: fadeUp 650ms var(--ease-out) both }
+
+/* wrong — at rest the row is invisible. Kill the animation and the row is GONE. */
+.row { opacity: 0 }
+@keyframes fadeUp { to { opacity: 1 } }
+```
+
+Written this way, `animation: none` yields the settled design. Print, `prefers-reduced-motion`, and a JS-disabled fallback are then all correct **by construction**, and the neutraliser is one honest rule:
+
+```css
+@media print, (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important }
+}
+```
+
+This also removes the whole class of "reveal-safety" bugs that `motion-design.md` Phase 8 flags on sight (content visibility gated on a class-triggered transition ships blank sections). The same inversion fixes both.
+
+### When you don't own the CSS: skip to the last frame
+
+For inherited stylesheets, third-party widgets, or a deck you're exporting rather than authoring, you cannot invert the states. Jump every animation to its finished frame instead:
 
 ```css
 @media print {
@@ -47,7 +76,13 @@ If the document (or a deck being exported) has entrance animations, do **not** u
 }
 ```
 
-The negative delay skips to the end; `fill-mode: both` holds the final keyframe. Every page prints the fully-built layout. Be clear with the user about what this means: **animations do not play in a PDF** — the export shows each section's finished state.
+The negative delay skips to the end; `fill-mode: both` holds the final keyframe. Treat it as the fallback it is: it depends on every keyframe's `100%` being the intended resting state, which is exactly the assumption you cannot check in code you didn't write.
+
+### Verify it rather than assuming it
+
+Emulate print, then list everything invisible **at rest** — opacity under 0.05, `visibility: hidden`, a near-zero transform scale, an SVG stroke left fully dashed out. Each entry is content that will be missing from the PDF. Do the same under `prefers-reduced-motion: reduce`. And check for transient overlay labels ("Checking…", "Loading…") that are visible at rest, because they will print.
+
+Either way, be clear with the user: **animations do not play in a PDF** — the export shows each section's finished state.
 
 ## Phase 4: The `-print.html` variant (when the source isn't already a doc)
 

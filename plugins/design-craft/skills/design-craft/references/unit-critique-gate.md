@@ -29,6 +29,8 @@ python3 scripts/design-lint.py path/to/unit.html
 
 (The script is stdlib-only Python 3 and lives in this skill's `scripts/` directory; it runs anywhere the skill is seeded, including headless sandboxes.) Fix everything it reports at critical/major before Phase 2. It catches the mechanically-checkable slop: lorem ipsum, pure `#FFF`/`#000`, the border-left default card, decorative emoji, unresolved `var(--…)`, untracked caps, over-tight display tracking, silent default fonts, 3+-stop gradients, `100vh`, ad-hoc z-index, unsized images, div-as-button.
 
+**A clean lint is the start of Phase 2, never a substitute for it.** The lint enumerates defects someone already met; it cannot see the one nobody has met yet, and a rule whose pattern matches nothing passes silently rather than warning you. So a clean run licenses exactly one sentence — *"the lint found nothing"* — and never the sentence *"the unit is verified."* If you extend the lint, run the new rule against the artifact that motivated it and watch it fire before you fix that artifact: a rule only ever observed passing is a rule you have not written. `visual-verification.md` § Phase 0 has the long version.
+
 ## Phase 2: Critique with fresh eyes
 
 Prefer a **fresh-context reviewer** over self-review — a reviewer who didn't write the unit can't share its blind spots:
@@ -38,6 +40,8 @@ Prefer a **fresh-context reviewer** over self-review — a reviewer who didn't w
 - **No subagent mechanism at all:** self-critique in a deliberately separate pass — do at least one unrelated action first, then re-read the rendered artifact top-to-bottom *as the reviewer*, scoring each axis against the anchors. Never critique from your memory of writing it.
 
 Pair the critique with the per-unit visual micro-check from `visual-verification.md` when browser automation exists (375px + 1280px, overflow probe, console); when it doesn't, run the static checks and say rendered verification didn't happen.
+
+Whoever does the looking — you or the reviewer — captures **component crops at DPR 2–3, not page thumbnails**, opens each one, and asks it *"what is wrong with this?"* rather than *"is this done?"* The two questions get different answers from identical pixels, and only the first one is a review.
 
 ## Phase 3: Repair and converge
 
