@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide title</title>
+
+<!-- Fonts are inlined as base64 woff2 at build time. A webfont <link> is blocked by the Artifact
+     CSP and unreliable in print, and a silent Georgia fallback wrecks the whole look.
+     python3 scripts/inline-fonts.py --inject guide.html   (or paste assets/fonts.css here) -->
+<style>/*__FONTS__*/</style>
+
+<style>
+/* ============================================================================================
+   STEP 0: THE DESIGN LAYER. Nothing below this block invents a value.
+   ========================================================================================= */
+:root{
+  /* Spacing scale. Every margin, padding and gap comes from here. --s0 is the one documented
+     half-step (tabular density); if you cannot justify it, delete it. */
+  --s0:2px; --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:64px;
+
+  /* Column grid. --colnum must fit the widest glyph run you will ever hang in it, at its real
+     size. Undersize it and a 64px numeral overflows and you "fix" it by shrinking the type. */
+  --colnum:88px; --gut:24px;
+
+  /* Optical nudges. MEASURED FROM INK (see references/grid-and-tokens.md), never eyeballed.
+     Each is calibrated to ONE glyph/text pair at ONE size. Change a size, re-measure the nudge. */
+  --numnudge:2.74px;   /* .qnum 44pt vs .qq 17pt      -> ink delta 0.00px */
+  --bandnudge:1.31px;  /* .L    34pt vs .eyebrow 8.25pt -> ink delta 0.00px */
+  --stepnudge:1.88px;  /* .s    20pt vs h4 12pt        -> ink delta 0.00px */
+
+  /* Type */
+  --serif:"Newsreader",Georgia,serif;
+  --sans:"Inter",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;
+
+  /* Colour. One blue on light. Navy is a surface, not a theme. No second accent hue. */
+  --fg:#12161F; --muted:#5B6472; --hair:#E2E5EA; --soft:#F2F4F7;
+  --paper:#FFFFFF; --ground:#E9EBEF;
+  --accent:#1F3FA6; --accent-bright:#6E8EF5; --navy:#0A1733;
+  --ok:#1E8A5A; --warn:#B7791F; --danger:#B4342C;
+
+  /* Motion */
+  --ease-out:cubic-bezier(.22,.61,.36,1);
+  --dur-micro:200ms; --dur-reveal:650ms; --stagger:70ms;
+}
+
+/* ============================================================================================
+   PAPER
+   ========================================================================================= */
+@page{size:A4;margin:0}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--ground);font-family:var(--sans);color:var(--fg);
+     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+.page{width:210mm;height:297mm;background:var(--paper);position:relative;overflow:hidden;
+      margin:0 auto var(--s8);box-shadow:0 2px 14px rgba(10,23,51,.10);page-break-after:always}
+.page:last-child{margin-bottom:0}
+
+/* ONE inner padding, every page. This is the baseline promise: the first content element on p2
+   starts at the same y as on p19. An override here is `baseline-drift`, and it is HIGH. */
+.inner{padding:16mm 18mm 0}
+
+/* Running footer. Mono chrome, never below 11px. */
+.rf{position:absolute;left:18mm;right:18mm;bottom:12mm;display:flex;justify-content:space-between;
+    font-family:var(--mono);font-size:8.25pt;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted);border-top:1px solid var(--hair);padding-top:var(--s3)}
+
+@media screen{ body{padding:var(--s8) 0} }
+@media print{
+  body{background:none;padding:0}
+  .page{margin:0;box-shadow:none}
+  #depth-canvas{display:none}
+}
+
+/* ============================================================================================
+   TYPE
+   ========================================================================================= */
+h1,h2,h3,h4{font-family:var(--serif);font-weight:400;margin:0}
+.eyebrow,.ml{font-family:var(--mono);font-size:8.25pt;letter-spacing:.08em;text-transform:uppercase;
+             color:var(--accent)}
+.prose > p{font-size:10.5pt;line-height:1.55;color:var(--fg);margin:0 0 var(--s4);max-width:68ch;
+           text-wrap:pretty}
+/* `>` not a descendant combinator: `.prose p` would reach into any card nested here and clamp its
+   caption, which then centres inside the CLAMPED box. That is `centre-drift`. */
+
+/* ============================================================================================
+   ARCHETYPE 1 - COVER (a composition; exempt from the spacing scale)
+   ========================================================================================= */
+.cover{display:flex;flex-direction:column;justify-content:flex-end;padding:0 18mm 12mm;height:100%}
+.cover h1{font-size:40pt;line-height:1.08;letter-spacing:-.02em;max-width:16ch}
+.cover h1 em{font-style:italic}
+.cover .standfirst{font-size:12pt;line-height:1.5;color:var(--muted);max-width:52ch;margin:var(--s5) 0 0}
+.cover .meta{display:flex;gap:var(--s5);margin-top:var(--s8);font-family:var(--mono);font-size:8.25pt;
+             letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cover .meta a{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
+#depth-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
+.cover > *{position:relative;z-index:1}
+
+/* ============================================================================================
+   ARCHETYPE 2 - SECTION OPENER. The band bleeds by EXACTLY its own padding, so its interior
+   lands on the page grid. Otherwise its letter drifts off the numeral column (`column-misalign`).
+   ========================================================================================= */
+.secband{background:var(--navy);color:#fff;border-radius:12px;padding:var(--s5);
+         margin:0 calc(-1 * var(--s5)) var(--s6);
+         display:grid;grid-template-columns:var(--colnum) 1fr;gap:var(--gut);align-items:start}
+.secband .L{font-family:var(--serif);font-size:34pt;line-height:1;color:var(--accent-bright);
+            text-align:right;transform:translateY(var(--bandnudge))}
+.secband .eyebrow{color:var(--accent-bright);display:block;margin-bottom:var(--s2)}
+.secband h2{font-size:18pt;line-height:1.2;letter-spacing:-.01em}
+
+/* ============================================================================================
+   ARCHETYPE 3 - CONTENT RUN. One rhythm. Numerals right-aligned so the optical gutter is
+   constant whether the glyph run is `9` or `28`.
+   ========================================================================================= */
+.qwrap{display:block}
+.q{display:grid;grid-template-columns:var(--colnum) 1fr;gap:var(--gut);
+   padding:var(--s5) 0;border-top:1px solid var(--hair);align-items:start}
+.q:first-child{border-top:0;padding-top:0}
+.qnum{font-family:var(--serif);font-size:44pt;line-height:1;color:var(--accent);opacity:.30;
+      letter-spacing:-.02em;text-align:right;transform:translateY(var(--numnudge))}
+.qq{font-family:var(--serif);font-size:17pt;line-height:1.2;letter-spacing:-.012em;
+    margin:0 0 var(--s3);text-wrap:pretty}
+.qbody p{font-size:10.5pt;line-height:1.55;margin:0 0 var(--s2);color:var(--fg)}
+.qbody p:last-child{margin-bottom:0}
+.lbl{font-family:var(--mono);font-size:8.25pt;letter-spacing:.08em;text-transform:uppercase;
+     color:var(--accent);margin-right:var(--s1)}
+
+/* Step / rule rows share the margin column. Same right-align, own measured nudge. */
+.step,.rule{display:grid;grid-template-columns:var(--colnum) 1fr;gap:var(--gut);
+            padding:var(--s4) 0;border-top:1px solid var(--hair);align-items:start}
+.step:first-child,.rule:first-child{border-top:0;padding-top:0}
+.step .s,.rule .s{font-family:var(--serif);font-size:20pt;line-height:1;color:var(--accent);
+                  opacity:.30;text-align:right;transform:translateY(var(--stepnudge))}
+.step h4,.rule h4{font-size:12pt;line-height:1.25;margin:0 0 var(--s1)}
+.step p,.rule p{font-size:10.5pt;line-height:1.5;margin:0;color:var(--muted)}
+
+/* ============================================================================================
+   ARCHETYPE 4 - PRODUCT SLICE. Impression, not replica. Built in HTML/CSS so it is sharp,
+   self-contained, and can carry the motion layer. Give it `.slice` for the governor.
+   ========================================================================================= */
+.slice{border:1px solid var(--hair);border-radius:14px;padding:var(--s5);background:var(--paper);
+       margin-top:var(--s6)}
+.slice .st{font-family:var(--mono);font-size:8.25pt;letter-spacing:.08em;text-transform:uppercase;
+           color:var(--muted);margin:0 0 var(--s4)}
+.slicecap{font-family:var(--serif);font-style:italic;font-size:10pt;color:var(--muted);
+          text-align:center;margin:var(--s4) 0 0}
+.statuscard{border:1px solid var(--hair);border-radius:10px;padding:var(--s3);background:var(--soft)}
+/* position:relative is load-bearing: the ambient ring below is absolutely positioned against it.
+   Without it the ring resolves against .flip and pulses from the centre of the whole chip. */
+.dot{width:6px;height:6px;border-radius:999px;display:inline-block;vertical-align:middle;
+     margin-right:var(--s1);position:relative}
+.dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)}
+.schip,.fchip{display:inline-flex;align-items:center;white-space:nowrap;   /* pills never wrap */
+              font-family:var(--mono);font-size:8.25pt;letter-spacing:.06em;text-transform:uppercase;
+              border-radius:999px;padding:var(--s1) var(--s2);background:var(--soft);color:var(--muted)}
+mark{background:#FBF1DE;color:inherit;padding:0 2px}
+
+/* ============================================================================================
+   ARCHETYPE 5 - PANELS AND BACK MATTER
+   Never `margin-top:auto` here. An under-full page is top-anchored and lets the bottom breathe.
+   ========================================================================================= */
+.fampanel{margin-top:var(--s6);border:1px solid var(--hair);border-radius:14px;padding:var(--s5)}
+.chiprow{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2)}
+.chiprow .fchip{justify-self:start}   /* a 3-col grid: never an orphan `[5,1]` wrap row */
+.back{display:flex;flex-direction:column;justify-content:flex-end;padding:0 18mm 12mm;height:100%}
+
+/* ============================================================================================
+   MOTION. THE CONTRACT: the resting style IS the final style. The "from" state lives only
+   inside @keyframes. So `animation:none` yields the settled design, and print / reduced-motion
+   are safe BY CONSTRUCTION rather than by override.
+   ========================================================================================= */
+@keyframes fadeUp   { from { opacity:0; transform:translateY(8px) } }
+@keyframes barFill  { from { transform:scaleX(0) } }
+@keyframes drawPath { from { stroke-dashoffset:1 } }
+@keyframes washIn   { from { background-color:transparent } }
+@keyframes settleOk { from { background:var(--soft); color:var(--muted) } }
+@keyframes flipOut  { 0%,55% { opacity:1 } 100% { opacity:0 } }
+@keyframes ringPulse{ 0% { transform:translate(-50%,-50%) scale(.7); opacity:.5 }
+                      70%,100% { transform:translate(-50%,-50%) scale(2.7); opacity:0 } }
+
+.slice.seen .an{animation:fadeUp var(--dur-reveal) var(--ease-out) both}
+.slice.seen .an:nth-child(2){animation-delay:calc(1 * var(--stagger))}
+.slice.seen .an:nth-child(3){animation-delay:calc(2 * var(--stagger))}
+.slice.seen .an:nth-child(4){animation-delay:calc(3 * var(--stagger))}
+.slice.seen mark{animation:washIn 900ms var(--ease-out) both;animation-delay:280ms}
+.slice.seen .barfill{transform-origin:left;animation:barFill 1100ms var(--ease-out) both;animation-delay:320ms}
+.slice.seen .settle{animation:settleOk 1400ms var(--ease-out) both;animation-delay:700ms}
+
+/* Draw-on for SVG connectors, when a slice actually HAS one that connects two real things.
+   pathLength="1" normalises any path's length, so one dasharray draws any geometry. At rest the
+   offset is 0, i.e. the line is drawn: resting = final. Uncomment together with the markup.
+     <path class="draw" pathLength="1" d="..." stroke="#D2D6DE" stroke-width="1"/>
+   Left commented rather than shipped with a decorative placeholder path: a stroke that connects
+   nothing is filler, and adding filler to give a lint rule something to match is gaming the lint.
+.slice svg path.draw{stroke-dasharray:1;stroke-dashoffset:0}
+.slice.seen svg path.draw{animation:drawPath 1100ms var(--ease-out) both;animation-delay:160ms}
+*/
+
+/* A transient overlay. z-index is NOT optional: without it this paints under the chip's own
+   inline text and a mid-flight frame renders both superimposed. */
+.flip{position:relative}
+.slice.seen .flip::after{content:"Checking\2026";position:absolute;inset:0;display:grid;
+  place-items:center;white-space:nowrap;border-radius:999px;background:var(--soft);
+  color:var(--muted);opacity:0;z-index:1;animation:flipOut 2200ms var(--ease-out) both}
+
+/* Ambient loops run only while on screen (.live is removed on exit and on tab blur). */
+.slice.live .dot.ok::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;
+  border-radius:999px;background:var(--ok);opacity:0;animation:ringPulse 6s var(--ease-out) infinite}
+
+@media print,(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================ p01 - COVER ============================ -->
+<section class="page">
+  <div class="cover">
+    <!-- <canvas id="depth-canvas" aria-hidden="true"></canvas> -->
+    <h1>The guide title, with <em>one italic accent</em>.</h1>
+    <p class="standfirst">One sentence that says what this is and who it is for.</p>
+    <div class="meta">
+      <span>2026</span><span>Diolog</span>
+      <a href="https://diolog.app/">diolog.app</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= p02 - CONTENT RUN (prose) ======================= -->
+<section class="page">
+  <div class="inner">
+    <div class="prose">
+      <p class="eyebrow">Introduction</p>
+      <p>Body prose lives here, at print size. Do not shrink it to buy whitespace, and do not grow
+        it to plug a hole. An under-full page is anchored to the top and the bottom breathes.</p>
+    </div>
+
+    <div class="step">
+      <div class="s">1</div>
+      <div><h4>A step in a real sequence</h4><p>Oversized serif numerals only when the content is genuinely ordered.</p></div>
+    </div>
+    <div class="step">
+      <div class="s">2</div>
+      <div><h4>The next step</h4><p>Same rhythm, same padding, same right-aligned numeral.</p></div>
+    </div>
+
+    <div class="rule" style="margin-top:var(--s6)">
+      <div class="s">&sect;</div>
+      <div><h4>A rule, not a step</h4><p>The same margin column, so the same nudge and the same optical gutter.</p></div>
+    </div>
+  </div>
+  <div class="rf"><span>Section name</span><span>diolog &middot; page 02</span></div>
+</section>
+
+<!-- ================= p03 - SECTION OPENER + CONTENT RUN ================= -->
+<section class="page">
+  <div class="inner">
+    <div class="secband">
+      <div class="L">A</div>
+      <div><span class="eyebrow">Family A</span><h2>What this family of questions is about.</h2></div>
+    </div>
+
+    <div class="qwrap">
+      <div class="q">
+        <div class="qnum">01</div>
+        <div>
+          <h3 class="qq">The question, set in serif, sentence case?</h3>
+          <div class="qbody">
+            <p><span class="lbl">Why they ask</span>the reason, in one sentence.</p>
+            <p><span class="lbl">A good answer</span>what a good answer contains.</p>
+            <p><span class="lbl">The trap</span>the failure mode to avoid.</p>
+          </div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="qnum">02</div>
+        <div>
+          <h3 class="qq">A second question on the same rhythm?</h3>
+          <div class="qbody"><p><span class="lbl">Why they ask</span>the reason, in one sentence.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><span>Family A</span><span>diolog &middot; page 03</span></div>
+</section>
+
+<!-- ==================== p04 - PRODUCT SLICE ==================== -->
+<section class="page">
+  <div class="inner">
+    <div class="prose"><p>A slice shows one idea about the product. An impression, not a replica.</p></div>
+
+    <figure class="slice" style="margin:var(--s6) 0 0">
+      <p class="st">One idea &middot; stated plainly</p>
+      <div class="statuscard an">
+        <p style="margin:0;font-size:10pt">&ldquo;A quoted line with a <mark>highlighted claim</mark> inside it.&rdquo;</p>
+      </div>
+      <div class="an" style="margin-top:var(--s3)">
+        <span class="schip flip settle"><span class="dot ok"></span>Consistent with current draft</span>
+      </div>
+      <figcaption class="slicecap">The caption, centred inside the card, not inside a clamped box.</figcaption>
+    </figure>
+  </div>
+  <div class="rf"><span>Family A</span><span>diolog &middot; page 04</span></div>
+</section>
+
+<!-- ==================== p05 - BACK MATTER ==================== -->
+<section class="page">
+  <div class="inner">
+    <div class="prose"><p class="eyebrow">Sources</p><p>Consolidated citations land here, never on the content pages.</p></div>
+    <div class="fampanel">
+      <p class="st" style="font-family:var(--mono);font-size:8.25pt;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 var(--s3)">Covered in this guide</p>
+      <div class="chiprow">
+        <span class="fchip">Family A</span><span class="fchip">Family B</span><span class="fchip">Family C</span>
+      </div>
+    </div>
+  </div>
+  <div class="rf"><span>Back matter</span><span>diolog &middot; page 05</span></div>
+</section>
+
+<!-- ============================================================================================
+     THE GOVERNOR. All state is in CSS; this only adds and removes classes.
+       .seen  entrance, added once, never removed  (an entrance that replays on scroll is torture)
+       .live  ambient loop, removed on exit and on tab blur (nothing animates off-screen)
+     Every early return leaves the document in its resting state, which is its final state.
+     ========================================================================================= -->
+<script>
+(function () {
+  "use strict";
+  if (!("IntersectionObserver" in window)) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var slices = document.querySelectorAll(".slice");
+  if (!slices.length) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add("seen"); e.target.classList.add("live"); }
+      else { e.target.classList.remove("live"); }
+    });
+  }, { threshold: 0.28 });
+  Array.prototype.forEach.call(slices, function (s) { io.observe(s); });
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) return;
+    Array.prototype.forEach.call(document.querySelectorAll(".slice.live"), function (s) {
+      s.classList.remove("live");
+    });
+  });
+})();
+</script>
+</body>
+</html>

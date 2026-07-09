@@ -1,0 +1,76 @@
+{
+  "_": "Selector vocabulary for the QA harness. Drop a copy named qa.config.json next to your guide.html to override. Every rule below degrades to a no-op when its selectors match nothing, so an unfilled section is safe - but it is also unchecked. Fill in what your guide actually uses.",
+
+  "page": ".page",
+  "inner": ".inner",
+  "runningFooter": ".rf",
+
+  "_geometry": "Elements whose box is set by paper geometry (mm) or margin:auto pins. Their spacing is not a scale violation.",
+  "geometryExempt": [".inner", ".rf", ".page", ".wrap", ".bfoot"],
+
+  "_chrome": "Whole regions exempt from the spacing scale (a cover is a composition, not a rhythm).",
+  "chromeExempt": [".cover", ".back"],
+
+  "_scale": "The spacing scale, in px. 2 is a documented half-step for tabular density. Anything off this list is an ad-hoc value, which is where layout rot starts.",
+  "spacingScale": [0, 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 128],
+
+  "minFontPx": 10,
+  "warnFontPx": 11,
+  "maxVoidPx": 48,
+  "minBandGapPx": 24,
+  "capAlignTolerancePx": 1.5,
+  "gutterTolerancePx": 4,
+
+  "_components": "Self-contained islands. A page-level rule must never reach inside one of these. Used by scope-lint and by the leak detector.",
+  "components": [
+    ".slice", ".secband", ".statuscard", ".doctile", ".calrow",
+    ".searchf", ".presend", ".ctacard", ".fampanel", ".cix"
+  ],
+
+  "_marginColumn": "Rows with a display glyph hanging in a margin column beside a text block. Checks ink-top cap alignment and a constant optical gutter. glyph/text are resolved within each row.",
+  "marginColumn": [
+    { "row": ".q", "glyph": ".qnum", "text": ".qq" },
+    { "row": ".step", "glyph": ".s", "text": "h4" },
+    { "row": ".rule", "glyph": ".s", "text": "h4" }
+  ],
+
+  "_capAlign": "Extra ink-top pairs that are not margin-column rows (e.g. a band's display letter vs its eyebrow).",
+  "capAlign": [
+    { "scope": ".secband", "a": ".L", "b": ".eyebrow", "tolerance": 2 }
+  ],
+
+  "_columnAlign": "Does the grid actually hold across components? Each entry asserts two elements share a left edge.",
+  "columnAlign": [
+    { "scope": ".secband", "a": ".L", "pageB": ".qnum", "label": "band letter on the numeral column" },
+    { "scope": ".secband", "a": ".eyebrow", "pageB": ".qq", "label": "band eyebrow on the title column" }
+  ],
+
+  "_bandGap": "Gap between a full-bleed band and the first content block beneath it.",
+  "bandGap": { "band": ".secband", "next": ".qwrap .q" },
+
+  "_rhythm": "Repeated blocks that must share a top padding across the whole document.",
+  "rhythm": [".q"],
+
+  "_pills": "Must never wrap to a second line.",
+  "pills": [".schip", ".fchip", ".ctabtn", ".pill", ".chip"],
+
+  "_wrapRows": "Flex/grid rows where a lone item on the last line reads as a mistake.",
+  "wrapRows": [".chiprow", ".chips", ".rv"],
+
+  "_uniformRows": "Repeated siblings that must all be the same height (an unequal one is a wrapping row).",
+  "uniformRows": [".cix-grid > .cix", ".doctiles > .doctile", ".branches > .branch"],
+
+  "_prose": "Blocks checked for one-word last lines (widows).",
+  "prose": [".page > .inner p", ".page .draft", ".page h1", ".page h2", ".page .qq"],
+
+  "_crops": "Components screenshotted individually at high zoom. THESE ARE THE IMAGES YOU MUST OPEN. A full-page thumbnail cannot show you a 161px void or an orphaned chip.",
+  "crops": [".secband", ".slice", ".q:first-of-type", ".statuscard", ".presend", ".cix-grid"],
+
+  "_motion": "Screen-only micro-interaction contract. entranceClass is added when a slice scrolls into view; ambientClass while it stays there.",
+  "motion": {
+    "slice": ".slice",
+    "entranceClass": "seen",
+    "ambientClass": "live",
+    "overlayText": ["Checking"]
+  }
+}
