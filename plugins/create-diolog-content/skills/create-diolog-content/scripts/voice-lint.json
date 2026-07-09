@@ -1,0 +1,65 @@
+{
+  "person": "Diolog company voice (metadata only; the script doesn't read it)",
+  "em_dash": "forbid",
+  "banned_phrases": [
+    "ai-driven",
+    "automate your compliance",
+    "but here's the kicker",
+    "but heres the kicker",
+    "compliance guaranteed",
+    "data-driven insights",
+    "disrupting the",
+    "game-changing",
+    "game changing",
+    "governance-first workspace",
+    "guaranteed compliance",
+    "never miss anything again",
+    "revolutionary",
+    "that's only half the story",
+    "trained on your data",
+    "100% compliance",
+    "100% compliant"
+  ],
+  "advisory_phrases": [
+    "serves as",
+    "stands as",
+    "represents a",
+    "sign up",
+    "easy",
+    "simple",
+    " just ",
+    "reimagine",
+    "confidence cap",
+    "95%"
+  ],
+  "ai_vocab_extra": [
+    "leverage",
+    "paradigm",
+    "synergy",
+    "synergies",
+    "stakeholder alignment"
+  ],
+  "spelling": "AU",
+  "exclamations": "ration",
+  "emoji": "forbid",
+  "formats": {
+    "guide": {
+      "min_words": 1200,
+      "warn_words": 14000,
+      "note": "multi-page guide master copy; lint per section during drafting, then the whole reader-facing body once"
+    },
+    "blog": {
+      "min_words": 600,
+      "warn_words": 2000,
+      "note": "articles past ~2,000 words drift; split or cut"
+    },
+    "marketing": {
+      "warn_words": 450,
+      "note": "marketing copy sells one job; past ~450 words split the piece"
+    },
+    "case": {
+      "warn_words": 1600,
+      "note": "a business case past ~1,600 words stops being forwardable; move detail to appendices"
+    }
+  }
+}
