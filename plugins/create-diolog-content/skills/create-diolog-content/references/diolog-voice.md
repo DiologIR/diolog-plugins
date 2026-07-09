@@ -29,13 +29,21 @@ Plain, specific and measured: name the reader's real workload, prove the point w
 
 ## Positioning beats (reuse exactly)
 
-- "the workspace for everything investor-facing" - the frame line. Use this, not invented variants.
-- "governance-first AI for investor communications" - a descriptor, used in running prose, not as the frame line.
-- "checked against what you have already disclosed" / "without disclosure risk or mixed messages"
+The company voice is Amy's voice with the personal warmth dialled to brand register - so the beats library is Amy-evidenced: every line here is either her curated site copy or confirmed verbatim in her live sales calls (the meetings corpus in `create-amy-content`, 2025-26).
+
+- "the workspace for everything investor-facing" - the frame line. Use this, not invented variants. [Live-confirmed: "we like to call dialogue a governance first workspace for anything investor facing", 2026-04]
+- "governance-first AI for investor communications" - a descriptor, used in running prose, not as the frame line. [Live-confirmed verbatim, 2026-03]
+- "checked against what you have already disclosed" / "without disclosure risk or mixed messages" [Live-confirmed as concept: "check it against all your previous announcements"]
 - "grounded in your documents" (never "trained on your data")
+- "purpose-built for IR" [Live-confirmed]
+- "human in the loop" - her named framework: "it will do all the work up until the human goes 'Yep, that's great, press play'". Pairs with "You review, adjust and approve."
+- "not a replacement - a superpower for the experts" - her live rebuttal shape ("give them a step up, give them a ladder"). Use the concept; don't stack the triplet in writing.
+- The Compliance Guardian explained as **an internal auditor** that raises flags - her live metaphor, and the plainest one available.
+- "disclosure risk and AI risk" - her two-fronts governance framing.
 - "Disclosure, without doubt." - the sign-off tagline.
 - Hero pattern: two short balanced beats ("Less time in the inbox. More time on the story.") or one concrete image.
 - Standard CTAs: "Book a demo" · "Get your first disclosure-consistency report free" · "Get the app" (investors). CTAs route to these standard actions; never invent a bespoke offer, however plausible - an offer the business hasn't made is a scope violation, not copy. [Source: Amy review 2026-07]
+- **Retired positioning (never generate):** "investor chat repository" and the engagement-utility framing - Amy narrated the pivot away from it herself in late 2025 ("we have kind of doubled down… more to this compliance governance tool"). Governance framing is current; repository framing only appears in pre-Nov-2025 material and must not regenerate from it.
 
 ## Lexicon
 
