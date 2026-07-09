@@ -48,6 +48,14 @@ overflows — do not enlarge them to save subagent count. Cap fan-out at 4 concu
 subagents (house pipeline convention); retry a failed slice once before reporting it as
 a gap — never silently drop a slice, a review with holes reads as "covered everything".
 
+**Paste the review.json canonical shape (rubric §7, including its enum vocabularies)
+VERBATIM into every subagent prompt.** Pointing agents at the rubric file is not enough:
+the 2026-07-09 pass showed parallel agents drift into ad-hoc variants (arrow verdicts,
+compound rerun values, renamed fields) whenever the shape is merely referenced, and the
+downstream requeue reader then skips their files. After the fan-out returns, run
+`pnpm task:requeue` once as a smoke check — "N skipped (invalid)" greater than zero means
+some agent drifted; normalise those files before assembling the document.
+
 Two economies that keep this cheap without corrupting it:
 - Stage-2 mutations are mandatory only for false-floor suspects and for stage-1 trap
   hits; certified-KEEP mutation sweeps are optional on a scheduled re-review.

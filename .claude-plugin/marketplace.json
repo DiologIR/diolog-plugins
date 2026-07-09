@@ -409,7 +409,7 @@
     {
       "name": "bench-qa",
       "description": "Quality-assurance automation for the diolog-swe-bench benchmark corpus. bench-task-judge: judge one benchmark task (difficulty band from measured pass rates, over-fit verifier detection via a mutation harness, contract-parity checks, verdict + concrete cited fixes + rescore-vs-re-run decision). bench-corpus-review: regenerate the whole-corpus task review document with per-task verdicts, summary counts, an action list, and a delta vs the previous review - designed so a cheaper model can run it. bench-task-author: author new behavioural and ui design benchmark tasks to the deepswe-task-author bar, hard-gated by the judge skill and a measured peer-trio mini-cull before a task may enter the bench.",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "author": {
         "name": "DiologIR",
         "email": "luke@diolog.com.au"

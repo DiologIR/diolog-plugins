@@ -165,7 +165,17 @@ or re-rescore after any import) → re-run only prompt-changed tasks → `pnpm c
 
 ## 7. review.json output shape
 
-Write to `tasks/<dimension>/<taskId>/review.json`:
+Write to `tasks/<dimension>/<taskId>/review.json`. **Emit the canonical shape below
+EXACTLY — every enum value verbatim, no invented variants.** The harness schema
+(`packages/harness/src/tasks/review-schema.ts`) ingests leniently because the first
+implementation pass proved that 30+ parallel agents WILL drift (it produced
+`AUDIT->SPLIT`, `rerun+version-bump`, `side: "scoring"`, verdicts nested under a
+`reviewRow` key — and the strict reader skipped all 61 files). Lenient ingest is the
+safety net, not permission: a review that needs normalising is a review that may be
+misread. Canonical vocabularies: verdict = the §5 table values only (one word, no
+arrows); rerun = `none | rescore | rerun | new-version` (a version bump is implied by
+`new-version`, never appended to `rerun`); side = `verifier | instruction | fixture |
+reference | task-toml | none`; band = the §1 table values only.
 
 ```jsonc
 {
