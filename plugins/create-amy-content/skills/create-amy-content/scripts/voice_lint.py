@@ -71,6 +71,21 @@ CHAT_LEAKAGE = [
 
 # Structural AI-tell regexes (advisory): negative parallelisms, participle
 # analysis tails, inline-header bullets.
+# Quiet claim shapes (advisory): frequency/comparative assertions phrased as calm
+# domain wisdom. "Most X <verb>..." and "more ... than <baseline>" are statistics
+# even when no number appears; they need a source, a hedge ("a common", "often"),
+# or an internal referent the reader can check. Sentences already carrying a
+# citation "(...)" nearby still warn — the human judges.
+QUIET_FREQ = re.compile(
+    r"(?im)(?:^|(?<=[.!?:]\s)|(?<=[.!?:]\s\s))most\s+(?:[a-z][\w-]*\s+){1,3}"
+    r"(?:is|are|was|were|comes?|goes?|gets?|has|have|do|does|happens?|fails?|reads?|"
+    r"re-\w+s?|\w+ises?|\w+izes?)\b"
+)
+QUIET_COMPARATIVE = re.compile(
+    r"(?i)\b(?:more|better|worse|faster|harder|longer)\s+[\w\s-]{0,35}\bthan\s+"
+    r"(?:news|memory|any\b|anything|anyone|most\b|all\b|either\b|ever\b)"
+)
+
 NEG_PARALLEL = re.compile(
     r"(?i)\b(it'?s not just|isn'?t just|not only .{3,60} but also"
     r"|it'?s not (?:a |an |about )?\w+[,;] it'?s"
@@ -366,6 +381,12 @@ def main():
             print(f"warn  participle analysis tail (\", highlighting/ensuring ...\"), line {i}: {line.strip()}")
         if BOLD_HEADER_BULLET.match(line):
             print(f"warn  inline-header bullet (bullet + bold label + colon), line {i}: {line.strip()}")
+        if QUIET_FREQ.search(line):
+            print(f"warn  quiet frequency claim (\"Most X ...\" is a statistic even without a number"
+                  f" - source it, hedge it, or make it checkable), line {i}: {line.strip()}")
+        if QUIET_COMPARATIVE.search(line):
+            print(f"warn  quiet comparative claim (\"more ... than <baseline>\" needs a source or a"
+                  f" hedge), line {i}: {line.strip()}")
 
     # --- Emoji / exclamations per config ---
     emoji_lines = [(i, l.strip()) for i, l in enumerate(lines, 1) if EMOJI.search(l)]
