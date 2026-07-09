@@ -73,7 +73,9 @@ CHAT_LEAKAGE = [
 # analysis tails, inline-header bullets.
 NEG_PARALLEL = re.compile(
     r"(?i)\b(it'?s not just|isn'?t just|not only .{3,60} but also"
-    r"|it'?s not (?:a |an |about )?\w+[,;] it'?s)"
+    r"|it'?s not (?:a |an |about )?\w+[,;] it'?s"
+    r"|\w+ (?:the|a|an|your|his|her|their) (?:\w+ ){0,2}?\w+, never (?:the|a|an|your|his|her|their) \w+"
+    r"|not (?:the|a|an) \w+, but (?:the|a|an) \w+)"
 )
 PARTICIPLE_TAIL = re.compile(
     r"(?i),\s(?:highlighting|underscoring|emphasi[sz]ing|showcasing|reflecting"
