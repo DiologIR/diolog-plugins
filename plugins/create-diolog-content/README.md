@@ -14,12 +14,13 @@ Built on the `create-voice-persona` package architecture (the same pattern as `c
 - `references/research/ai-writing-markers-research.md` - the full deep-research report behind that layer
 - `scripts/voice_lint.py` + `scripts/voice-lint.json` - the deterministic gate
 
-## Known gap
+## Fingerprint provenance
 
-The lint config carries no stylometric `fingerprint` block yet. Generate one from the human-approved published corpus (the live blog articles and site copy in the main Diolog repo):
+The `fingerprint` block in `scripts/voice-lint.json` was extracted 2026-07-09 from the live published corpus: ~26,000 words across 40 pages of diolog.com.au - the marketing pages (home, about, book-a-demo, contact, listed-companies, retail-investors, invite-your-investors), the 13 non-legal help-centre articles, and all 20 blog articles. Excluded: legal/terms pages, blog category indexes, and the two `/resources/` guides (AI-drafted in the July 2026 content run, so not human-baseline material). Boilerplate (nav, footers, repeated CTAs and teasers) was stripped before extraction.
 
-```bash
-python3 scripts/voice_lint.py --extract-fingerprint <published corpus files...>
-```
+Two notes from the extraction run:
 
-and paste the result into `scripts/voice-lint.json`. Until then, rhythm discipline rests on the prose rules in `diolog-voice.md`.
+- Single pages legitimately drift from the corpus-average bands (the fingerprint advisories are corpus-level signals, not per-page laws).
+- The live site copy predates the current house rules and itself fails the lint in places (an em dash in the listed-companies page title; "Seamlessly organise" in its body). The gate is correct and that copy is stale - fix the site, don't weaken the lint.
+
+To re-extract after a site refresh: `python3 scripts/voice_lint.py --extract-fingerprint <corpus files...>` and paste the block into `scripts/voice-lint.json`.

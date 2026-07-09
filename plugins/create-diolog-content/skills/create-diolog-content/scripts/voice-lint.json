@@ -42,6 +42,15 @@
   "spelling": "AU",
   "exclamations": "ration",
   "emoji": "forbid",
+  "fingerprint": {
+    "mean_sentence_words": 17.7,
+    "sd_sentence_words": 10.7,
+    "contraction_per_100w": 1.36,
+    "comma_per_sentence": 0.74,
+    "semicolon_per_1000w": 0.59,
+    "nominalization_per_1000w": 50.2,
+    "mean_paragraph_sentences": 1.6
+  },
   "formats": {
     "guide": {
       "min_words": 1200,
