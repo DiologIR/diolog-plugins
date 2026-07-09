@@ -1,6 +1,6 @@
 # Signs of AI Writing — Field Guide for Voice Personas
 
-Distilled from Wikipedia's "Signs of AI writing" field guide (WikiProject AI Cleanup, as of mid-2026), adapted from its Wikipedia-specific framing into guidance for ghostwriting personal content (LinkedIn posts, articles, marketing, messages). Every generated voice persona must be built so its output exhibits **none** of these tells, and its lint config should ban the mechanical ones.
+Distilled from Wikipedia's "Signs of AI writing" field guide (WikiProject AI Cleanup, as of mid-2026), adapted from its Wikipedia-specific framing into guidance for ghostwriting personal content (LinkedIn posts, articles, marketing, messages), and augmented (July 2026) with an empirical layer distilled from 2023–2026 corpus studies, human-perception experiments, and editorial style authorities (§6). Every generated voice persona must be built so its output exhibits **none** of these tells, and its lint config should ban the mechanical ones.
 
 **How to use this file:** read it fully when building a persona package; encode the relevant bans into the generated base-voice file and `voice-lint.json`; re-read the checklist at the end when self-checking any sample content you draft.
 
@@ -47,6 +47,13 @@ A rigid closing arc: "Despite its [positives], X faces several challenges… Des
 
 Hitting the reader over the head with claims of coverage and credibility: "featured in *Vogue*, *Wired*, and other prominent outlets", "maintains an active social media presence", "profiled in multiple high-quality, independent outlets". In personal-brand writing this surfaces as credential-stacking bios and posts that cite their own press instead of saying something. If coverage matters, one specific fact from it beats a list of mastheads.
 
+### 1.7 Compressed abstraction where information was needed
+
+A tell the source guide doesn't name but voice owners reliably flag: the **epigram used in place of a plain statement**. Gnomic headings that need the body to decode them ("Everyone or no one", "Grounded or silent", "Why these thirty"), aphoristic paragraph closers that neatly resolve a messy topic, and slogan-shaped lines that don't survive a literal reading. Each is fine once; a document where every unit lands one is exhausting and distinctly machine-like — LLM reward models favour "quotable" resolutions, humans mostly just end. Two rules:
+
+- **Names and headings carry the message, not the wit.** A heading's job is to let a reader skim; a riddle-heading fails at its actual job. Every name for an artifact or section must survive a literal reading (a guide of questions is a question bank, not an "answer bank").
+- **Epigram budget:** roughly one landing line per page or major section. Most paragraphs end on information, plainly. [Source: owner review of a shipped 20-page guide, 2026-07; corroborated by §6's "forced aphorisms / quotable closers" research marker.]
+
 ## 2. Language-level tells
 
 ### 2.1 AI vocabulary
@@ -68,6 +75,7 @@ The most stereotyped AI sentence shapes:
 - **Not just X, but Y**: "It's not just a tool — it's a philosophy", "not only dismissive but also harsh".
 - **Not X, but Y**: "This isn't dilution. It's evolution." / "no fluff, no hype, just results".
 - **X rather than Y** used reflexively to manufacture contrast.
+- **Hook transitions** manufacturing momentum between paragraphs: "But here's the kicker:", "That's only half the story.", "And that's where it gets interesting." — bridge paragraphs with the actual conceptual link instead.
 
 Humans use these occasionally; LLMs reach for them constantly to fake profundity. Lint should flag them; drafts should earn any contrast with actual content on both sides.
 
@@ -88,6 +96,10 @@ The overcorrection is equally detectable: a **metronomic short-then-long alterna
 ### 2.7 Em dash overuse
 
 LLM text uses em dashes more than non-professional human writing of the same genre, in a formulaic "punched-up" way — often spaced, often in pairs, often powering a negative parallelism — like this. Because the tell became notorious, newer models suppress it; absence proves nothing. The generated persona should encode the **person's actual dash habit** from their corpus (many people never use them; if so, ban outright and let the lint enforce it).
+
+### 2.8 Missing epistemic stance
+
+Corpus work on lexical bundles (Jiang & Hyland 2024/25) finds AI prose leans on noun- and preposition-based bundles for transitions and abstraction, while human writers use clause bundles that carry authorial presence: "I believe that", "my read is", "some argue that", "what I'd watch is". The absence of a visible author weighing things is itself a tell — AI text reads expository even when prompted to persuade. Capture the person's actual stance markers and hedges during extraction and encode them as a positive habit (where their corpus shows them; never invent a stance the task didn't supply).
 
 ## 3. Style and formatting tells
 
@@ -129,16 +141,48 @@ Things that look like tells but aren't, per the guide — a persona must not san
 - **Transition words in isolation** — *however*, *consequently* are ordinary; only formulaic sentence-initial *Additionally,* patterns matter.
 - **Mixed casual/formal register** — often just a technical person, a young person, or neurodivergence.
 - **Em dashes per se** — professional human writers use them; the tell is density + the spaced punchy pattern + co-occurrence with other signs.
+- **Repeated functional structure** — a document that gives every entry the same labelled sub-sections ("Why they ask / A good answer / The trap") is scaffolding, not a tell; readers and owners *like* it because it aids scanning. See §6 on structure versus texture before "fixing" consistency.
 
-Also remember detection asymmetry: humans are barely better than chance at spotting AI text (heavy LLM users reach ~90%), and detector tools have real error rates. The defence is not "pass a detector"; it's writing that is concretely true to a specific person.
+## 6. The empirical layer (2023–2026 research)
 
-## 6. Drafting checklist (run on every piece a persona produces)
+Distilled from a July 2026 deep-research pass over corpus studies, perception experiments, and editorial style authorities (where a package bundles the full report, it lives at `references/research/ai-writing-markers-research.md`). The field guide above is observational; this layer is quantified, and it changes how seriously to take the whole file.
+
+### 6.1 Expert readers catch AI text almost perfectly
+
+In controlled trials (Russell et al., ACL 2025; 300 articles, active evasion including paraphrasing and "humanise" prompts), annotators who rarely use LLMs detected AI poorly and overestimated themselves — but a majority vote of five **frequent LLM users misclassified 1 article in 300** (99.6%), beating automated detectors. Their reported cues were structural and tonal — formulaic document shapes, "optimistically vague introductions and conclusions", over-polished cadence — with vocabulary only the first-pass heuristic. Kill the working assumption "if it reads fluently, nobody can tell": the professional audiences these personas write for are heavy LLM users, i.e. exactly the readers who can tell.
+
+### 6.2 Being read as AI costs real trust
+
+Pre-registered experiments (Sahebi et al. 2026, N=547; Nakano et al. 2025, N=261) find an **AI Penalty**: text attributed to AI is rated less trustworthy, less authentic, less competent, less caring, and less worth acting on — because readers price the author's effort and relational intent. There is also a **Disclosure Paradox**: audiences say disclosure is ethically required, then penalise disclosed content anyway. For high-involvement B2B audiences, assume the penalty applies in full. The only durable posture: writing so grounded and specific it reads as the named human's judgment, with that human genuinely reviewing and owning it.
+
+### 6.3 The structural tells, quantified
+
+- **Nominalisations at 1.5–2× and present-participial clauses at 2–5×** human baselines (Reinhart et al., PNAS 2025) — the "informationally dense, noun-heavy" register instruction tuning rewards.
+- **76% of syntactic templates** in AI text mirror high-frequency pre-training patterns, versus 35% in human text (Shaib et al. 2024).
+- **Templated discourse sequences**: 83–90% of AI responses to a given task follow one identical macro-structure where humans scatter widely (Gueorguieva et al. 2026). The tell is document-shaped, not sentence-shaped.
+- **Low burstiness**: AI sentence lengths cluster tightly around the mean; human variance is far wider. This is what the lint's fingerprint block measures.
+- **AI-vocabulary frequency spikes of 9.8–34.7×** pre-2023 baselines for words like *meticulous*, *intricate*, *commendable*.
+- **Missing stance bundles** (see §2.8) — the measurable absence of an author.
+
+### 6.4 Structure and texture are different things
+
+Reconcile two findings that look opposed: predictable structure *helps* readers (repeated scaffolding lowers effort; owners ask for labels to be clearer, not removed), yet "templatedness" is the strongest document-level tell. The resolution: **repeat the scaffold, vary the texture.** What marks AI is every unit landing the same aphoristic closer, the same contrast construction, the same entry length — uniform *rhetorical texture*. What helps humans is consistent *functional structure* whose entries vary in length by how much there genuinely is to say, and whose flourishes are rationed (§1.7's epigram budget). When editing "AI-sounding" repetition, sand the texture, never the scaffold.
+
+### 6.5 What removes the tells, and what backfires
+
+- **Zero-shot style instructions fail.** "Write like a human", "vary your sentence length", "be engaging" trigger regression to the default register or overcorrect into the short/long metronome (§2.6). Vague "be conversational" prompts also hallucinate chatty transitions the Economist-style guides ban ("Surprise, surprise…").
+- **What works:** (1) **flatten then reconstruct** — extract the substance from source material as a deliberately style-less draft, then rewrite it under few-shot voice anchors and hard constraints, rather than asking the model to draft stylishly from zero; (2) **deterministic checks over self-assessment** — the voice lint exists because "I checked" is not checking; (3) **explicit negative constraints in context** — this file plus the lint config, present while drafting, measurably bounds both surface and structural tells.
+- **Editorial authorities converge on restraint.** The Economist: let the analysis show it, never hector, cut pre-packaged metaphor. McKinsey: every claim quantified, active verbs, no puffery. BCG: short action titles that lead with the number. The shared rule beneath all three: the facts persuade; the prose stays out of the way. A persona whose corpus shows restraint should treat that restraint as its strongest anti-AI asset.
+
+## 7. Drafting checklist (run on every piece a persona produces)
 
 1. Could any sentence move to a different topic unchanged? Rewrite it with a specific.
 2. Any banned-vocabulary word or phrase from §1–§2? (The lint catches the listed ones; you catch the spirit.)
-3. Any participle-tail analysis, negative parallelism, or manufactured triad? Earn it or cut it.
+3. Any participle-tail analysis, negative parallelism, hook transition, or manufactured triad? Earn it or cut it.
 4. Copulas: is anything "serving as" what it simply *is*?
 5. Formatting: does the shape (bullets, bold, headings, emoji, dashes) match the person's corpus, not chatbot defaults?
 6. Ending: does it land the way this person lands, or does it summarise/moralise/speculate about the future?
 7. Chat leakage, placeholders, markdown artifacts: zero tolerance.
-8. Positive check: does it contain at least one thing only this person could have written — a lived specific, an owned opinion, their actual phrasing? If not, it isn't done, even if it's clean.
+8. Epigram budget: does more than one unit per page or section end on a quotable line? Keep the best one; end the rest on information. Do headings and names survive a literal reading and a skim?
+9. Texture check: across repeated units, does the length vary with the content, or does every entry land the same rhetorical move? Sand the texture, keep the scaffold (§6.4).
+10. Positive check: does it contain at least one thing only this person could have written — a lived specific, an owned opinion, their actual phrasing? If not, it isn't done, even if it's clean.

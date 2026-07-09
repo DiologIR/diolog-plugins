@@ -17,7 +17,7 @@ You build **voice persona packages**: the durable artifact that lets any AI writ
 Three commitments define the output quality:
 
 1. **Evidence over archetype.** Every voice rule traces to a quoted sample or the person's explicit answer. A persona assembled from vibes produces a capable stranger; the corpus is the only thing that produces *them*.
-2. **AI-tell immunity.** `references/ai-writing-signs.md` (distilled from Wikipedia's field guide for detecting AI writing) is baked into every package: its bans go into the generated voice files and lint config, and its deeper lesson — generic-and-inflated is the machine signature, concrete-and-specific is the human one — shapes every template.
+2. **AI-tell immunity.** `references/ai-writing-signs.md` (distilled from Wikipedia's field guide for detecting AI writing, augmented July 2026 with the quantified corpus/perception research layer in its §6 — expert readers detect AI at 99.6% and penalise it with real trust loss, so the tells are commercial risk, not cosmetics) is baked into every package: its bans go into the generated voice files and lint config, and its deeper lesson — generic-and-inflated is the machine signature, concrete-and-specific is the human one — shapes every template.
 3. **Purpose-tailored variants.** One base voice, multiple registers. A LinkedIn post, a release note, and a Slack message from the same person share hard rules but move different dials; the package encodes those dials explicitly instead of hoping.
 
 Consent gate: build packages for the requester's own voice, or a person who has clearly consented (their samples supplied with authorisation). If neither holds, say so and offer a role-based persona via `create-persona` instead.

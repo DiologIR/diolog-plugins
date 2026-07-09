@@ -81,7 +81,9 @@ should ban retired phrases too.]
 ## Mechanics
 [The lintable layer: dash policy, spelling variety, exclamation/emoji rules,
 paragraphing, list style, capitalisation. Concrete enough to generate voice-lint.json
-mechanically. Include the AI-signs bans that apply to everyone plus this person's own.]
+mechanically. Include the AI-signs bans that apply to everyone plus this person's own,
+and the plain-copula preference ("X is Y" over "serves as / stands as / represents a")
+unless the corpus genuinely shows otherwise.]
 
 ## Syntactic fingerprint
 [The subconscious layer, stated as counter-rules to the LLM default: their
@@ -89,12 +91,18 @@ sentence-length spread (quote a short one and a long one; "vary like this, not
 uniform mid-length"), active/passive habit, And/But/So openers, plain verbs vs
 nominalizations, participial appetite. The numeric version lives in
 voice-lint.json's fingerprint block; this section is the prose version drafts
-are written against. State two guards explicitly: (1) spikiness is a
+are written against. State three guards explicitly: (1) spikiness is a
 distribution, not a formula — a mechanical short-sentence-then-long-sentence
 alternation repeated paragraph after paragraph is itself an AI tell owners
 catch; (2) every sentence carries its referent — fragments and pronouns must sit
 hard against the thing they refer to, and a corpus fragment must never be reused
-without the antecedent that gave it sense. Anchors here are style ground truth,
+without the antecedent that gave it sense; (3) the epigram budget — at most one
+quotable landing line per page or major section, most paragraphs ending on
+information, and repeated units varying in length with their content rather
+than repeating one rhetorical move (ai-writing-signs §1.7, §6.4). Also capture
+the person's epistemic stance markers ("I reckon", "my read is") as a positive
+habit where the corpus shows them; their absence is a measured AI tell
+(ai-writing-signs §2.8). Anchors here are style ground truth,
 never fact sources — facts inside samples must never migrate into new drafts.]
 
 ## Scope: voice shapes the delivery, never the content
@@ -251,5 +259,6 @@ A package's highest-grade evidence arrives *after* delivery: the owner's line-ed
 - Zero placeholders anywhere; every template slot filled with real content.
 - Each variant has its tension example, and every worked-example output passes the lint and the AI-signs drafting checklist.
 - Worked-example outputs also pass the post-delivery tells owners most reliably flag: no dangling referents (every fragment/pronoun resolves in-sentence), no metronomic short/long sentence alternation, no bolted-on closing question, no self-narrating meta-labels ("The honest one:", "Short version:"), no insider-obvious observations for the person's peer audience, and signature phrases within ration.
+- Epigram budget and texture: no worked example lands more than one quotable closer, headings and names survive a literal reading, and repeated units vary in length with their content rather than repeating one rhetorical move (ai-writing-signs §1.7, §6.4).
 - `ai-writing-signs.md` and `voice_lint.py` copied verbatim; `voice-lint.json` valid JSON (run the lint once against a sample anchor to prove the toolchain works — a sample anchor failing the lint means the config contradicts the corpus: reconcile before shipping).
 - Consent: the voice being cloned belongs to the requester or someone who has clearly consented; the delivery note reminds the owner that they remain the author who reviews and publishes.
