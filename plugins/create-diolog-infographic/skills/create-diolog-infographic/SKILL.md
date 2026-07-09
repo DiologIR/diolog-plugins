@@ -26,19 +26,36 @@ The whole job is: take a finding the user has (usually some numbers plus a point
 crammed data-dump is the failure mode. So is anything that reads as a hype poster - Diolog is measured,
 governed, and calm.
 
-## The two skills this leans on
+## The three skills this leans on (invoking two of them is mandatory)
 
-This skill is the conductor. It hands two jobs to specialists:
+This skill is the **conductor**, not the designer. It owns the Diolog-specific system and the A4 print
+constraint; the actual design and UX judgement come from two specialist skills that you **must invoke
+with the Skill tool** - not "read the reference", not "apply from memory", not "load if it seems worth
+it". Invoke them. Skipping this step is the single most common way this skill produces a technically-
+correct page that is visually mediocre (stretched layouts, floating voids, weak hierarchy).
 
-- **Copy → `/create-luke-content`.** Every word a reader sees (headline, standfirst/dek, captions, the
-  verdict line) is written by invoking the `/create-luke-content` skill so it is genuinely in Luke's
+- **Visual craft → invoke `/design-craft` (BLOCKING).** Call the `design-craft` Skill **before you write
+  any layout CSS** (workflow step 5). It is the hands that execute to a lead-designer finish: spacing
+  rhythm on a scale, hierarchy through size and the roman/italic axis, the anti-AI-slop rules, print
+  CSS, and - critically - its **per-unit critique gate** (`references/unit-critique-gate.md`) and
+  deterministic lint (`scripts/design-lint.py`). On any multi-page piece, run that gate on each page.
+  When you catch yourself thinking "this looks calm/on-brand, close enough", that is the exact moment
+  you have skipped design-craft; stop and actually run its critique gate.
+- **UX craft → invoke `/ux-craft` (BLOCKING).** Call the `ux-craft` Skill **before you decide the
+  narrative order** (workflow step 2). It is the brain for the one-primary-thing discipline, the
+  low-cognitive-load reading order (what the eye hits first, second, third), and the five-states/scanning
+  rules. A poster or a guide page lives or dies on that order.
+- **Copy → invoke `/create-luke-content`.** Every word a reader sees (headline, standfirst/dek, captions,
+  the verdict line) is written by invoking the `create-luke-content` Skill so it is genuinely in Luke's
   voice and passes that skill's voice lint. Diolog's public writing has hard rules (no em/en dashes,
   sentence case, no hype, a real point of view) that the lint enforces; do not hand-write the copy and
-  hope. Route a headline/standfirst as its "marketing" or "short-form" register.
-- **Visual + UX craft → `/design-craft` and `/ux-craft`.** Load `/design-craft` for the build/verify
-  discipline (spacing, hierarchy, anti-slop, print CSS) and `/ux-craft` for the one-focal-point,
-  low-cognitive-load narrative order. This skill supplies the Diolog-specific system and the A4 print
-  constraint on top of their general craft.
+  hope. Route a headline/standfirst as its "marketing" or "short-form" register. **Exception:** when the
+  source copy is already drafted and approved in a Diolog voice (e.g. a guide `.md` written in company
+  voice), render it verbatim rather than re-voicing it - but still run design-craft and ux-craft on the
+  layout.
+
+If any of these skills is genuinely unavailable in the session, say so explicitly in your summary and
+apply its principles from memory - never silently skip it.
 
 ## Workflow
 
@@ -55,9 +72,10 @@ are pinned.
    one sentence it exists to deliver ("the split barely saves money", "disclosure review dropped from 6
    days to 1"), then pick the **single number** that carries it (a percentage, a multiple, a dollar
    figure, a before/after). Everything else on the page is subordinate to that number. If you cannot
-   name one focal number, the piece is not ready - go back to the user. **Load `/ux-craft` here** and
-   apply its one-primary-thing and low-cognitive-load discipline to decide the narrative order (what the
-   eye hits first, second, third); a poster lives or dies on that, and /ux-craft is the brain for it.
+   name one focal number, the piece is not ready - go back to the user. **Invoke `/ux-craft` here (Skill
+   tool, mandatory)** and apply its one-primary-thing and low-cognitive-load discipline to decide the
+   narrative order (what the eye hits first, second, third); a poster or guide page lives or dies on
+   that, and /ux-craft is the brain for it.
 
 3. **Get the real numbers straight, and stay honest.** Read `references/dataviz-honesty.md` before you
    design any chart. The non-negotiables that came out of real use:
@@ -85,10 +103,11 @@ are pinned.
    honest chart (navy is where data comes alive - use `--accent-bright` here and only here), broadsheet
    columns for the supporting points, a verdict line, and a footer with the logo lockup. Fill it with
    the real finding. Follow `references/design-system.md` for tokens and the component grammar; obey
-   the brand non-negotiables (below). **Load `/design-craft` here** and apply its craft as you lay out -
-   hierarchy through size and the roman/italic axis, spacing rhythm, anti-AI-slop, and its print-CSS
-   discipline. This skill gives you the Diolog system and the A4 constraint; /design-craft is the hands
-   that execute it to a lead-designer finish.
+   the brand non-negotiables (below). **Invoke `/design-craft` here (Skill tool, mandatory) BEFORE you
+   write layout CSS** and apply its craft as you lay out - hierarchy through size and the roman/italic
+   axis, spacing rhythm, anti-AI-slop, and its print-CSS discipline. This skill gives you the Diolog
+   system and the A4 constraint; /design-craft is the hands that execute it to a lead-designer finish.
+   Then run its per-unit critique gate on each page you draft (§ Layout discipline below).
 
 6. **Embed the fonts so it is self-contained.** The page must carry Newsreader, Inter and JetBrains
    Mono inline as base64 - a webfont `<link>` fails under the Artifact CSP and is unreliable in print,
@@ -105,7 +124,12 @@ are pinned.
    you), then measure `document.querySelector('.page').getBoundingClientRect().height`. A4 content
    height is ~1123px at 96dpi; **trim spacing until the page is ≤ 1123px**. Confirm the computed
    `font-family` on the headline is actually `Newsreader` (not Georgia), and check for overflow /
-   clipping / overlap. Delegate the render+measure to a verifier subagent when you have one. Iterate.
+   clipping / overlap. **A `.page` with `overflow:hidden` hides its own overflow, so a page-height
+   check passes even when content collides at the bottom - also measure the inner content box
+   (`inner.scrollHeight - inner.clientHeight`) and the gap between the last block and the footer, per
+   page, to catch collisions the page-level check misses.** Screenshot every page and actually look at
+   it (do not trust "no overflow" alone - stretched voids and weak hierarchy pass every automated
+   check). Delegate the render+measure to a verifier subagent when you have one. Iterate.
 
 8. **Deliver.** The print-ready HTML is the artifact. Offer to publish it as an Artifact (fonts are
    already inlined, so the strict CSP is satisfied). If the user wants a PDF, headless-Chrome print it
@@ -122,6 +146,40 @@ The piece is finished only when all of these hold - each is checkable, so verify
   about five seconds.
 - Nothing clips, overlaps, or overflows (bar the intentional ticker), and no gap label sits invisibly on
   a same-coloured fill.
+- **No floating voids.** Content is anchored to the top of the page and fills it through generous,
+  even composition - never through `justify-content: space-between` or `flex: 1` stretching a few
+  blocks apart (see § Layout discipline). Body text meets the print minimum (>= 12pt / ~16px).
+- **`/design-craft` and `/ux-craft` were actually invoked** (Skill tool), and design-craft's per-unit
+  critique gate was run on every page - not skipped with "looks on-brand, close enough".
+
+## Layout discipline (do not stretch to fill)
+
+The most common failure this skill has produced is **under-full pages stretched to look full**. It
+happens on any page whose real content does not reach the bottom - intro prose, a page of two or three
+question blocks, a rules list. The wrong instinct is to make the container `flex: 1` and set
+`justify-content: space-between` so the blocks push apart to the edges. That does not read as
+"generous"; it reads as **AI slop** - big arbitrary voids between blocks, no rhythm, the eye falling
+through holes. design-craft ch.5 is explicit: *if a section feels empty, that is a layout problem,
+solve it with composition, not by stretching (or by inventing filler).*
+
+Hold these, and let design-craft's `hierarchy-rhythm-review` and `unit-critique-gate` enforce them:
+
+- **Anchor to the top.** Flow content from the top on one consistent spacing rhythm (a 4/8px scale).
+  A page that is 60% full and top-anchored looks intentional; the same content stretched to 100% with
+  `space-between` looks broken. Let the bottom breathe.
+- **Fill honestly, or not at all.** If a page feels thin, fill it with *composition and correctly-sized
+  type* - larger editorial body (print wants >= 12pt), a real pull-quote, a supporting product slice,
+  a lead-in standfirst - never with even gaps or with invented copy/stats.
+- **One rhythm per page.** Repeated block spacing with a deliberate break for emphasis, not a different
+  gap on every page because the content count changed. Uniform inter-block spacing across all pages of
+  a set is what makes a multi-page document feel designed.
+- **Type sized for the medium, not to fit.** Do not shrink body type to buy whitespace or grow it to
+  plug a hole. Set it to the medium's readable size first (A4 print body ~11-12.5pt), then solve
+  fit by trimming or by composition.
+
+On a **multi-page** piece (a guide, not a single infographic), each `.page` is one A4 unit: run
+design-craft's per-unit critique gate on each, and keep the inter-block rhythm identical across pages.
+For a document rather than a poster, design-craft's `references/make-a-doc.md` is the matching procedure.
 
 ## Brand non-negotiables (from DESIGN-Website.md)
 
