@@ -72,6 +72,8 @@ Hard-fails (em dash, banned phrases, chat leakage, emoji) must be fixed. Advisor
 
 When a reviewer corrects shipped output, update the package, not just the draft: add the entry to `references/diolog-voice-review.md` (instance → class → rule → encoded-in), state the rule in the file that owns the class, encode never-say phrases in `scripts/voice-lint.json`, and rewrite any worked example demonstrating the old behaviour. Bump the plugin version.
 
+**Disposition every item - nothing evaporates.** The review is not folded in until every item in it is either applied, overruled with the reason stated back to the requester, or routed - and routed means written into the owning skill's ledger or rules (design/layout items go to `create-diolog-guides`' design-review ledger), then verified landed. When the task is *revising an artifact* against feedback, follow the base voice's "Revising against review feedback" protocol: the item-by-item completeness pass plus the restatement and duplication sweeps are part of the deliverable, and the delivery note lists any overruled or routed items.
+
 ## Constraints (all formats)
 
 - **Never use an em dash (—) or en dash (–).** The house connective is the spaced hyphen " - ". The lint enforces this.

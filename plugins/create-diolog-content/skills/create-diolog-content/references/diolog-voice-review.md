@@ -53,6 +53,25 @@ The first full review of AI-drafted company-voice long-form. ~40 items on a 20-p
    **Rule:** CTAs route to the standard actions (Book a demo / free disclosure-consistency report / Get the app).
    **Encoded in:** diolog-voice.md beats library.
 
+## Validation follow-up: the company-voice revision of the same guide (2026-07)
+
+The revised master file fixed all nine classes above, and its remaining defects were process failures, not copy failures - which is exactly what a ledger that only encodes copy rules produces.
+
+10. **Instance:** Amy's design-layer items (grid texture "not very Diolog" on both covers; page 19 "can be removed") were neither applied nor overruled - they were noted as belonging to the design skill and then went nowhere, because nothing there received them.
+    **Class:** feedback evaporation - items routed to another owner without being delivered to it, and deviations from explicit feedback left unstated.
+    **Rule:** every review item gets a disposition (applied / overruled with stated reason / routed AND landed); a revision's delivery note lists the overruled and routed items.
+    **Encoded in:** diolog-voice.md "Revising against review feedback"; SKILL.md Step 7; create-diolog-guides `references/design-review.md` (the receiving ledger, seeded with the routed items).
+
+11. **Instance:** the micro-label size was corrected to 9pt at the layout note "per the voice review" while Part 1's design foundation still specified 7.5-8pt for the same labels.
+    **Class:** restatement divergence - a corrected spec left stale where it was stated a second time.
+    **Rule:** any applied change to a value/name/spec triggers a sweep for every other statement of the old value, in the artifact and the package.
+    **Encoded in:** diolog-voice.md "Revising against review feedback"; create-voice-persona blueprint (maintenance section).
+
+12. **Instance:** "the calendar you can honour in a bad month" landed in Q30's copy and again as the panel caption on the same spread; "an announcement, not a reply" recurred across two entries.
+    **Class:** per-page epigram budget met while the document repeats itself - captions and panel text weren't counted as the document.
+    **Rule:** an epigram appears once per document, captions/panels/pull quotes included; no contrast construction becomes a document tic.
+    **Encoded in:** diolog-voice.md principle 3; ai-writing-signs.md §1.7 + checklist item 8.
+
 ## Adding the next review
 
 Copy the entry format above. Date the section, quote the reviewer's words as the instance (their phrasing is the evidence), and resist fixing only the draft: a correction that doesn't land in a rule file and the lint will be made again by the next session.

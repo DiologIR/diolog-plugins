@@ -110,10 +110,13 @@ No content, no components, no CSS for a specific page until this exists as a tok
 - **Motion tokens** (`--ease-out`, `--dur-micro`, `--dur-reveal`, `--stagger`), even if you add the
   motion later.
 
-Read `references/grid-and-tokens.md` and `references/emphasis-and-legibility.md` (the evidence-based
+Read `references/grid-and-tokens.md`, `references/emphasis-and-legibility.md` (the evidence-based
 emphasis budget - italics are display-only, hierarchy comes from size and space, reading order is
 row-major; it exists because three defensible emphasis rules compounded into an unreadable page once
-already). Copy `assets/guide-skeleton.html`, which already carries all of
+already), and `references/design-review.md` (the reviewer-correction ledger; apply or explicitly
+overrule every open item that touches your guide - open items are debts, and this ledger is where
+other skills route design feedback, so it is part of the spec, not history). Copy
+`assets/guide-skeleton.html`, which already carries all of
 the above plus the print CSS and the motion governor. Then read
 `~/Dev/diolog-team-files/website/DESIGN-Website.md` - it is the live source of truth for the brand and
 it outranks any value cached in this skill, with one exception: where a master file or design note
@@ -259,6 +262,10 @@ Each is checkable. Verify, do not assume.
 - `references/emphasis-and-legibility.md` - the evidence-based emphasis budget: what italics, caps,
   bold and underline measurably cost, hierarchy via size and space, row-major ordering, pull-quote
   isolation, and the per-page density limit. Binding; outranks a master file's ad-hoc design notes.
+- `references/design-review.md` - the reviewer-correction ledger (design-layer twin of the content
+  skill's voice ledger, and the receiver for design feedback routed from other skills). Open items
+  are debts: apply or explicitly overrule each one that touches your guide, and record new review
+  feedback here as instance → class → rule → status.
 - `references/research/typography-legibility-research.md` - the full July 2026 deep-research report
   (Tinker, Rello & Baeza-Yates, Arbel & Toler, Williams & Spyridakis, NNGroup, publisher style guides)
   behind that reference.

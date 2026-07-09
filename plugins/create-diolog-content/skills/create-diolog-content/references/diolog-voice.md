@@ -20,7 +20,7 @@ Plain, specific and measured: name the reader's real workload, prove the point w
 
 1. **Plain and literal beats clever.** Every name, title and heading must survive a literal reading. A guide of questions is a question bank, not an "answer bank"; question groups are categories, not "families"; a reader declining to answer handles an objection, not a "refusal". The model's habit is to coin a conceptual metaphor on page one and propagate it for twenty pages; the discipline is to name the artifact and its parts in the dullest accurate words first, and earn any upgrade from there. [Source: Amy review 2026-07]
 2. **Headings carry the message, not the wit.** A reader must be able to skim the headings, section labels and bolded lead-ins alone and still get the argument. "Why these 30 questions keep coming back" passes; "Why these thirty" fails. Compressed, gnomic phrasing ("Everyone or no one", "Grounded or silent") reads as AI-generated and unprofessional to this audience - say the plain version. [Source: Amy review 2026-07; ai-writing-signs §1.7]
-3. **Professional and measured beats punchy.** The reader is a governance professional weighing risk. Rhetorical punch reads as performance; calm precision reads as competence. One landing line per page or section at most; every other paragraph ends on information. [Source: Amy review 2026-07; ai-writing-signs §6.4]
+3. **Professional and measured beats punchy.** The reader is a governance professional weighing risk. Rhetorical punch reads as performance; calm precision reads as competence. One landing line per page or section at most, any given epigram once per document (captions, panel text and pull quotes count as the document), and no contrast construction recurring as a verbal tic across units; every other paragraph ends on information. [Source: Amy review 2026-07 + validation follow-up; ai-writing-signs §1.7, §6.4]
 4. **Measured confidence is shown, never stated.** Never claim or imply 100% compliance, a guaranteed outcome, or "never miss anything again" - and never volunteer confidence caps or percentages in copy either. The discipline is simply not over-claiming; human review stays implied by the product's shape ("You review, adjust and approve"). [Source: voice guide; Amy review 2026-07]
 5. **Grounded or held.** Every claim traces to the product's shipped truth or the supplied research. Every statistic carries an inline (Source, Year). A needed figure that doesn't exist is asked for, never invented. Regulatory references use canonical form: ASX Listing Rule 3.1, ASX Guidance Note 8, Corporations Act 2001 (Cth), SEC Reg FD.
 6. **Lead with the problem or outcome, never the feature name.** "Check regulations before you publish, not after" comes before "Compliance Guardian". Every feature is paired with its so-what; comparisons stay specific ("from days to seconds", never "faster").
@@ -73,6 +73,19 @@ The voice governs *how* a piece reads, never *what* it contains. Everything subs
 - **No invented problem framings** - the pain a piece names must come from the supplied material or the documented audience personas, not from what sounds like a marketing insight.
 - **No invented product truth** - module names and claims are re-verified against the live product or supplied docs before reuse; shipped truth only.
 - **Internal apparatus never ships.** Evidence tags ([Confirmed], [Corpus - verify]), production checklists, verification registers and process notes stay in the master file; the reader-facing artifact carries none of them. Every label a reader does see must be self-explanatory to a first-time reader ("retirement rule" and "approval route" were not). [Source: Amy review 2026-07]
+
+## Revising against review feedback (a different task from drafting)
+
+A revision pass fails differently from a draft: it applies the items that became rules and silently drops the rest. So a revision ends with an **item-by-item completeness pass** against the original feedback, and every item gets exactly one disposition:
+
+- **Applied** - the change is in the artifact (and, if it generalises, in a rule file).
+- **Overruled** - kept deliberately, with the reason stated back to the requester in the delivery note. Silence is not an overrule.
+- **Routed** - it belongs to another skill (design and layout items belong to `create-diolog-guides`); routing means writing it into that skill's ledger or rules and saying so, not just naming the owner.
+
+Two sweeps accompany any applied change:
+
+- **Restatement sweep.** If the change touches a value, name, or spec stated more than once (a foundation section and a per-page note; a rule and its echo in an example), find and update every statement. A spec stated twice will diverge, and the stale copy wins. [Source: validation 2026-07: label size updated to 9pt at the layout note while the design foundation still said 7.5-8pt]
+- **Duplication sweep.** After edits, re-check the document for a landing line or contrast construction now appearing twice (body copy and a panel caption on the same spread is the caught case).
 
 ## Compliance gate (every public piece)
 

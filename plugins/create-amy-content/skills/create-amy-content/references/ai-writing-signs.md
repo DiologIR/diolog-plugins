@@ -52,7 +52,7 @@ Hitting the reader over the head with claims of coverage and credibility: "featu
 A tell the source guide doesn't name but voice owners reliably flag: the **epigram used in place of a plain statement**. Gnomic headings that need the body to decode them ("Everyone or no one", "Grounded or silent", "Why these thirty"), aphoristic paragraph closers that neatly resolve a messy topic, and slogan-shaped lines that don't survive a literal reading. Each is fine once; a document where every unit lands one is exhausting and distinctly machine-like — LLM reward models favour "quotable" resolutions, humans mostly just end. Two rules:
 
 - **Names and headings carry the message, not the wit.** A heading's job is to let a reader skim; a riddle-heading fails at its actual job. Every name for an artifact or section must survive a literal reading (a guide of questions is a question bank, not an "answer bank").
-- **Epigram budget:** roughly one landing line per page or major section. Most paragraphs end on information, plainly. [Source: owner review of a shipped 20-page guide, 2026-07; corroborated by §6's "forced aphorisms / quotable closers" research marker.]
+- **Epigram budget:** roughly one landing line per page or major section, and any given epigram appears **once per document** — captions, panel text, pull quotes and image copy count as part of the document, so a line in the body may not recur as the caption on the same spread. The same contrast construction ("an X, not a Y") also may not become a document's verbal tic across units. Most paragraphs end on information, plainly. [Source: owner review of a shipped 20-page guide, 2026-07, and its follow-up validation; corroborated by §6's "forced aphorisms / quotable closers" research marker.]
 
 ## 2. Language-level tells
 
@@ -183,6 +183,6 @@ Reconcile two findings that look opposed: predictable structure *helps* readers 
 5. Formatting: does the shape (bullets, bold, headings, emoji, dashes) match the person's corpus, not chatbot defaults?
 6. Ending: does it land the way this person lands, or does it summarise/moralise/speculate about the future?
 7. Chat leakage, placeholders, markdown artifacts: zero tolerance.
-8. Epigram budget: does more than one unit per page or section end on a quotable line? Keep the best one; end the rest on information. Do headings and names survive a literal reading and a skim?
+8. Epigram budget: does more than one unit per page or section end on a quotable line, or does any landing line or contrast construction recur anywhere in the document (captions and panel text included)? Keep the best instance; end the rest on information. Do headings and names survive a literal reading and a skim?
 9. Texture check: across repeated units, does the length vary with the content, or does every entry land the same rhetorical move? Sand the texture, keep the scaffold (§6.4).
 10. Positive check: does it contain at least one thing only this person could have written — a lived specific, an owned opinion, their actual phrasing? If not, it isn't done, even if it's clean.
