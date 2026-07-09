@@ -29,7 +29,7 @@ Synthesised from Luke's raw writing corpus: LinkedIn posts and comments, work me
 - Precision over roundness ("(up to) 30 users", "100 local parents"); a concrete "e.g." within a sentence of any abstract claim; edge cases as plain `Note:` callouts.
 - Honest downside disclosure, even when selling.
 - British/Australian spelling, contractions throughout.
-- **No em dashes** — Luke's actual habit is a semicolon where most people reach for an em dash. This is the hardest-watched rule.
+- **No em dashes**: Luke's actual habit is a semicolon where most people reach for an em dash. This is the hardest-watched rule.
 - No AI clichés, no hype, no salesy CTA.
 
 A bundled `voice_lint.py` hard-fails on any em dash or AI-tell phrase in **every** format (including two-line Slack messages) and adds per-format advisory checks: exclamation density and hype adjectives (marketing), bare negations (review), message length (slack), word/char budgets (short), segment length and a try-today action (brief).
@@ -37,8 +37,8 @@ A bundled `voice_lint.py` hard-fails on any em dash or AI-tell phrase in **every
 ## Inputs it expects
 
 - **The content type / destination** (or enough signal to route).
-- **Topic / subject matter** and **source material** (a doc, a diff, a thread, notes) — the factual ground truth.
-- **Luke's point of view** for anything public — non-negotiable; a topic without a stance produces generic mush.
+- **Topic / subject matter** and **source material** (a doc, a diff, a thread, notes): the factual ground truth.
+- **Luke's point of view** for anything public (non-negotiable); a topic without a stance produces generic mush.
 - For reviews: the diff. For Slack: who it's to and the outcome needed. For ADHD/book: the audience and medium.
 
 ## Installation
@@ -77,19 +77,19 @@ Turn this research corpus into an ADHD-friendly Monday morning brief.
 
 ## What this skill does not do
 
-- Does not invent facts, figures, quotes, code behaviour, or Luke's opinions — missing grounding is flagged or framed as opinion, never fabricated.
+- Does not invent facts, figures, quotes, code behaviour, or Luke's opinions; missing grounding is flagged or framed as opinion, never fabricated.
 - Does not write sales pitches; marketing sells by demonstrating usefulness concretely.
 - Does not publish, post, or send anything; it produces the draft for Luke to review.
-- Does not impersonate Luke without his consent — this is a consented, self-authored voice tool; the human Luke remains the author of record.
+- Does not impersonate Luke without his consent; this is a consented, self-authored voice tool; the human Luke remains the author of record.
 - Diolog-brand (company-voice) content belongs to the `diolog-brand-voice` plugin; this one is Luke-personal.
 
 ## Bundled resources
 
-- `skills/create-luke-content/references/luke-voice.md` — the base voice spec + authentic sample anchors (all registers).
-- `skills/create-luke-content/references/personas/` — the five register deltas (marketing, code review, slack, short-form, ADHD/book).
-- `skills/create-luke-content/references/linkedin-engagement.md` — distilled 2024–2025 LinkedIn engagement research.
-- `skills/create-luke-content/references/graphic-concepting.md` — Diolog lead-designer ideation + palette.
-- `skills/create-luke-content/scripts/voice_lint.py` — em-dash / AI-cliché guardrail + per-format advisories.
+- `skills/create-luke-content/references/luke-voice.md`: the base voice spec + authentic sample anchors (all registers).
+- `skills/create-luke-content/references/personas/`: the five register deltas (marketing, code review, slack, short-form, ADHD/book).
+- `skills/create-luke-content/references/linkedin-engagement.md`: distilled 2024–2025 LinkedIn engagement research.
+- `skills/create-luke-content/references/graphic-concepting.md`: Diolog lead-designer ideation + palette.
+- `skills/create-luke-content/scripts/voice_lint.py`: em-dash / AI-cliché guardrail + per-format advisories.
 
 ## License
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-voice_lint.py — deterministic guardrail for a Luke-voiced content draft.
+voice_lint.py: deterministic guardrail for a Luke-voiced content draft.
 
 Why this exists: the no-em-dash rule and the no-AI-cliche rule are the two
 things a language model most reliably slips on, and "I checked" is not the same
@@ -189,7 +189,7 @@ def main():
 
     print()
     if failures:
-        print(f"RESULT: {failures} hard issue(s) — fix before delivering.")
+        print(f"RESULT: {failures} hard issue(s); fix before delivering.")
         sys.exit(1)
     print("RESULT: clean on the hard checks (em dashes + cliches).")
     sys.exit(0)

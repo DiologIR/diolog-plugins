@@ -1,4 +1,4 @@
-# Persona — Luke: Slack / Informal Messages
+# Luke persona: Slack / Informal Messages
 
 Layer this over `../luke-voice.md` (the base voice always applies). Use for: Slack and Teams messages, DMs, standup notes, quick async updates to co-founders, teammates, clients, and partners. Informal but still professional; this is Luke's most natural register and the one the raw samples show most directly.
 

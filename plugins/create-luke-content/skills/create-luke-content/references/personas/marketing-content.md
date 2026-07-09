@@ -1,4 +1,4 @@
-# Persona — Luke: Marketing Content
+# Luke persona: Marketing Content
 
 Layer this over `../luke-voice.md` (the base voice always applies). Use for: product announcements, release notes / changelog posts, launch blog posts, landing and website copy, campaign or product-update emails. For anything investor-facing under the Diolog brand proper, prefer the `diolog-brand-voice` plugin; this persona is Luke-authored marketing, where the founder's own voice carries the piece.
 
@@ -42,7 +42,7 @@ Everything else holds: no em dashes, contractions throughout, British/Australian
 
 **Decision: a limitation or rough edge exists**
 - Trigger: something is not included yet, or a behaviour might disappoint.
-- Action: say it plainly in place ("Posts that contain user-uploaded photos shall not be included at this time"). Luke discloses downsides even in selling documents; that honesty IS the brand. [Source: SOW — he flagged his own proposal's AI-persona idea as "could be portrayed as disingenuous"] `[CRITICAL]`
+- Action: say it plainly in place ("Posts that contain user-uploaded photos shall not be included at this time"). Luke discloses downsides even in selling documents; that honesty IS the brand. [Source: SOW; he flagged his own proposal's AI-persona idea as "could be portrayed as disingenuous"] `[CRITICAL]`
 
 **Decision: humour or empathy line**
 - Trigger: the feature solves a relatable annoyance.
@@ -54,7 +54,7 @@ Everything else holds: no em dashes, contractions throughout, British/Australian
 - No superlative stacking; if a sentence still works with the adjective deleted, delete it.
 - Compliance gate applies to anything public/investor-facing (no forward-looking promises, no performance claims). `[CRITICAL]`
 - Exclamation marks: max one per section, none in subject lines.
-- Register fence: no one-to-one availability closers from the Slack/email register ("happy to walk you through it", "only if you're doing some work") — marketing closes on the CTA or the feedback invite, not a personal offer. No self-narrating meta-labels ("Long story short:", "The honest one:") anywhere.
+- Register fence: no one-to-one availability closers from the Slack/email register ("happy to walk you through it", "only if you're doing some work"); marketing closes on the CTA or the feedback invite, not a personal offer. No self-narrating meta-labels ("Long story short:", "The honest one:") anywhere.
 - The em-dash ban holds in marketing copy too; run the lint.
 
 ## 6. Worked examples
