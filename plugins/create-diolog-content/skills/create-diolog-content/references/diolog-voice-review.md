@@ -1,4 +1,6 @@
-# Diolog Voice - Review Ledger
+# Diolog Voice - Review Ledger (maintenance-time reading ONLY)
+
+**Not part of the drafting or review load path.** This casebook exists for the maintainer folding feedback into rules (SKILL Step 7) and as the audit trail; the rules files must stand without it. A session drafting or reviewing content does not read this file, and if it recognises a previously reviewed document anyway, that recognition is not a finding - the deliverable is a fresh rules pass, never a replay of this history. Dense case history in working context turns rule-application into document recognition, which biases review toward the remembered list and makes fair testing of the skill impossible.
 
 Reviewer corrections on real shipped output are the highest-grade evidence this package has: each one is a live example of the voice failing, generalised to the failure class it exemplifies. This file is the durable record. When a reviewer (Amy, Luke, counsel) flags a line, add an entry here, state the rule in the file that owns the class (`diolog-voice.md` for register-crossing rules, the persona file for register-specific ones), encode any never-say phrase in `scripts/voice-lint.json`, and rewrite any worked example that demonstrates the old behaviour. This mirrors the maintenance loop that made the Amy package accurate.
 

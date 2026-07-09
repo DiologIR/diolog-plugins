@@ -1,6 +1,6 @@
 # Diolog - Company Voice Reference
 
-The voice every company-voice piece must be written in. This is the **non-negotiable base layer**: a piece can be perfectly optimised for its format and still be wrong if it doesn't sound like Diolog. Synthesised from the team's voice and audience guide (`~/Dev/diolog-team-files/company/diolog-voice-persona.md`), the live diolog.app copy Amy curated, the deployed content-writer prompts, and Amy's line-by-line review of the shipped 30-questions guide (2026-07, logged in `diolog-voice-review.md`). Where guidance here conflicts with published, human-approved Diolog copy, **the published copy wins** - it is ground truth.
+The voice every company-voice piece must be written in. This is the **non-negotiable base layer**: a piece can be perfectly optimised for its format and still be wrong if it doesn't sound like Diolog. Synthesised from the team's voice and audience guide (`~/Dev/diolog-team-files/company/diolog-voice-persona.md`), the live diolog.app copy Amy curated, the deployed content-writer prompts, and reviewer corrections (whose case history lives in the maintenance-only ledger, not here - this file carries the rules, stated to stand on their own). Where guidance here conflicts with published, human-approved Diolog copy, **the published copy wins** - it is ground truth.
 
 **How this file relates to the personas:** this is the constant. The files in `personas/` are register deltas layered on top; they may move dials this file defines (warmth, structure, length) but never break the hard rules (no em or en dashes - the house connective is the spaced hyphen " - "; AU English; sentence-case headings; grounded claims with cited statistics; measured confidence; critique the old way, never the reader).
 
@@ -18,14 +18,14 @@ Plain, specific and measured: name the reader's real workload, prove the point w
 
 ## Core principles
 
-1. **Plain and literal beats clever.** Every name, title and heading must survive a literal reading. A guide of questions is a question bank, not an "answer bank"; question groups are categories, not "families"; a reader declining to answer handles an objection, not a "refusal". The model's habit is to coin a conceptual metaphor on page one and propagate it for twenty pages; the discipline is to name the artifact and its parts in the dullest accurate words first, and earn any upgrade from there. [Source: Amy review 2026-07]
-2. **Headings carry the message, not the wit.** A reader must be able to skim the headings, section labels and bolded lead-ins alone and still get the argument. "Why these 30 questions keep coming back" passes; "Why these thirty" fails. Compressed, gnomic phrasing ("Everyone or no one", "Grounded or silent") reads as AI-generated and unprofessional to this audience - say the plain version. [Source: Amy review 2026-07; ai-writing-signs §1.7]
+1. **Plain and literal beats clever.** Every name, title and heading must survive a literal reading: a collection of questions is a question bank, not an answer bank. The model's habit is to coin a conceptual metaphor on page one and propagate it for twenty pages; the discipline is to name the artifact and its parts in the dullest accurate words first, and earn any upgrade from there. [Source: Amy review 2026-07]
+2. **Headings carry the message, not the wit.** A reader must be able to skim the headings, section labels and bolded lead-ins alone and still get the argument. A heading that names its point ("Why these questions keep coming back") passes; a riddle the body must decode ("Why these thirty") fails. Compressed, gnomic phrasing - the two-noun epigram standing where a plain statement was needed - reads as AI-generated and unprofessional to this audience; say the plain version. [Source: Amy review 2026-07; ai-writing-signs §1.7]
 3. **Professional and measured beats punchy.** The reader is a governance professional weighing risk. Rhetorical punch reads as performance; calm precision reads as competence. One landing line per page or section at most, any given epigram once per document (captions, panel text and pull quotes count as the document), and no contrast construction recurring as a verbal tic across units; every other paragraph ends on information. [Source: Amy review 2026-07 + validation follow-up; ai-writing-signs §1.7, §6.4]
 4. **Measured confidence is shown, never stated.** Never claim or imply 100% compliance, a guaranteed outcome, or "never miss anything again" - and never volunteer confidence caps or percentages in copy either. The discipline is simply not over-claiming; human review stays implied by the product's shape ("You review, adjust and approve"). [Source: voice guide; Amy review 2026-07]
 5. **Grounded or held.** Every claim traces to the product's shipped truth or the supplied research. Every statistic carries an inline (Source, Year). A needed figure that doesn't exist is asked for, never invented. Regulatory references use canonical form: ASX Listing Rule 3.1, ASX Guidance Note 8, Corporations Act 2001 (Cth), SEC Reg FD. **Data-shaped colour is a claim.** A quantified hook ("compresses a quarter of investor questions into a fortnight"), a frequency claim ("the three most common questions"), a superlative ("more than at any other time") is a statistic even when it was written as rhythm - if the reader could ask "says who?", it needs a source or it gets rewritten unquantified. [Source: blind generation test 2026-07]
 6. **Lead with the problem or outcome, never the feature name.** "Check regulations before you publish, not after" comes before "Compliance Guardian". Every feature is paired with its so-what; comparisons stay specific ("from days to seconds", never "faster").
 7. **Critique the old way of doing IR, never the reader.** The status quo is the problem; the people living with it are the audience.
-8. **Reuse evidenced positioning verbatim; never remix it.** The beats below are tested lines. Fusing two of them into a new hybrid ("the governance-first workspace for investor communications") produced a line Amy corrected on sight. Reach for the library before inventing. [Source: Amy review 2026-07]
+8. **Reuse evidenced positioning verbatim; never remix it.** The beats below are tested lines. Fusing two of them into a new hybrid produces a line no one approved that reads almost right - the kind a reviewer corrects on sight (the lint bans the known one). Reach for the library before inventing. [Source: Amy review 2026-07]
 
 ## Positioning beats (reuse exactly)
 
@@ -35,7 +35,7 @@ Plain, specific and measured: name the reader's real workload, prove the point w
 - "grounded in your documents" (never "trained on your data")
 - "Disclosure, without doubt." - the sign-off tagline.
 - Hero pattern: two short balanced beats ("Less time in the inbox. More time on the story.") or one concrete image.
-- Standard CTAs: "Book a demo" · "Get your first disclosure-consistency report free" · "Get the app" (investors). CTAs route to these standard actions; never invent a bespoke offer ("a digital version of this worksheet is available from the Diolog team" was invented, and cut). [Source: Amy review 2026-07]
+- Standard CTAs: "Book a demo" · "Get your first disclosure-consistency report free" · "Get the app" (investors). CTAs route to these standard actions; never invent a bespoke offer, however plausible - an offer the business hasn't made is a scope violation, not copy. [Source: Amy review 2026-07]
 
 ## Lexicon
 
@@ -52,7 +52,7 @@ Plain, specific and measured: name the reader's real workload, prove the point w
 - **Numbers:** "500+ companies" format; exact figures with inline (Source, Year); "45% reduction", never "significant savings".
 - **No emoji. Exclamation marks rare** and never in marketing body copy.
 - **Short paragraphs** (2-3 sentences in marketing, 4-5 in advisory prose). Bold lead-in bullets for multi-item substance.
-- **No self-narrating meta-labels or artifact captions.** Never announce the register ("The honest version:") and never caption an image with what it is ("an impression of pre-send review, not the product"); say what the reader does with it instead. [Source: Amy review 2026-07]
+- **No self-narrating meta-labels or artifact captions.** Never announce the register ("The honest version:") and never caption an image with what it is; say what the reader does with it instead. [Source: Amy review 2026-07]
 
 ## Syntactic fingerprint
 

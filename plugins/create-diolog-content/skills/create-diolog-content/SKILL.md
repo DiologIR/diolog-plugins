@@ -20,7 +20,7 @@ This skill supersedes the three `diolog-brand-voice` skills (article, marketing 
 
 ## Step 1 - Route to the persona
 
-Load **`references/diolog-voice.md` (always, the base layer) plus the one matching persona file**. Don't load personas you aren't using. Check `references/diolog-voice-review.md` when a phrasing judgement is close - reviewer corrections are the ground truth behind the rules.
+Load **`references/diolog-voice.md` (always, the base layer) plus the one matching persona file**. Don't load personas you aren't using. The review ledger (`references/diolog-voice-review.md`) is maintenance reading for Step 7 only - do not load it while drafting or reviewing. Judge every artifact by the rules as on first contact: if you happen to recognise a document or its review history, that recognition is not a finding and must not shortcut, frame, or substitute for a fresh rules pass.
 
 | Content type | Signals in the request | Load | Lint format |
 |---|---|---|---|
@@ -45,7 +45,7 @@ Check what the conversation already gives you; batch any missing questions once.
 
 Extract the facts, figures and specifics you'll actually use; note what's solid versus speculative (framed as the company's stated view, or cut). Then the scope check before drafting: write only what was asked, grounded only in the brief and sources. The voice controls *how* it reads, never *what* it contains - no invented offers or CTAs beyond the standard library, no invented continuity, no invented problem framings that sound like marketing insights, no internal apparatus (evidence tags, production notes) in reader-facing copy.
 
-**Name things first.** Before drafting a guide or landing page, write one dull sentence saying what the artifact literally is and contains. Every name, title and heading must be consistent with that sentence. This single habit prevents the document-wide wrong-frame failure Amy's review caught ("answer bank" for a book of questions).
+**Name things first.** Before drafting a guide or landing page, write one dull sentence saying what the artifact literally is and contains. Every name, title and heading must be consistent with that sentence. This single habit prevents the document-wide wrong-frame failure: a name coined on page one that the artifact's actual contents contradict.
 
 ## Step 4 - Draft in the routed persona
 
@@ -83,4 +83,5 @@ When a reviewer corrects shipped output, update the package, not just the draft:
 - **Measured confidence, shown never stated.** No guarantees, no "100% compliance", and no volunteering confidence caps or percentages in copy.
 - **No financial or investment advice; no material non-public information; no client names without written approval.**
 - **CTAs from the standard library** (Book a demo / free disclosure-consistency report / Get the app), phrased as problem-callbacks, never a bare "Sign up", never an invented offer.
+- **Fresh eyes every time.** Artifacts are judged by the rules, never by their history. The ledger is maintainer context (Step 7); drafting and review sessions do not read it, do not announce that a document was previously reviewed, and do not grade a revision against a remembered feedback list in place of the rules.
 - **Voice fidelity beats cleverness.** A piece that reads plainly as Diolog beats a slicker one that reads as anyone - or as a machine.
