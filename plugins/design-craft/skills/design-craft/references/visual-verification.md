@@ -68,7 +68,7 @@ if (document.documentElement.scrollWidth > innerWidth) console.warn('PAGE overfl
 - **Alignment drift** — grid/flex items evenly distributed; icons vertically centered with their labels; form labels attached to their fields; nothing off-grid by a few accidental pixels.
 - **Stability (CLS/FOUT)** — reload and watch: no layout jump when images load (explicit `width`/`height`), no font flash reflow, skeletons matching the layout they replace.
 - **Z-order** — dropdowns above cards, modals above everything, toasts above modals. If z-index values look ad-hoc, tokenize the scale: `--z-dropdown: 100; --z-sticky: 200; --z-overlay: 300; --z-modal: 400; --z-toast: 500`.
-- **Media** — aspect ratios held (`object-fit`), no stretched or squashed images, embeds/iframes contained.
+- **Media** — aspect ratios held (`object-fit`), no stretched or squashed images, embeds/iframes contained. **Measure rendered vs natural AR — don't trust the declared ratio:** an `<img>` with *both* a `height` attribute and a CSS `aspect-ratio` on its slot renders distorted (two definite dims → the attribute wins, `aspect-ratio` is ignored), so a photo silently over-crops to its natural height. Probe: `[...document.images].filter(i=>i.naturalWidth).map(i=>{const r=i.getBoundingClientRect();const c=Math.max((r.width/r.height)/(i.naturalWidth/i.naturalHeight),(i.naturalWidth/i.naturalHeight)/(r.width/r.height));return c>1.4?[i.src,c.toFixed(2)]:null}).filter(Boolean)` — anything over ~1.4× is a heavy crop; fix with `height:auto`.
 
 ## Phase 2: Screenshot playbook (for verifier subagents)
 
