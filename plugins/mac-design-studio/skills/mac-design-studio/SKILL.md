@@ -1,0 +1,68 @@
+---
+name: mac-design-studio
+description: Design beautiful, varied, authentically native macOS app UIs and app icons from scratch — full mock windows (HTML/CSS or spec) and 1024pt icon designs (SVG/spec) with committed aesthetic directions learned from 135 curated macapp.supply apps, Apple's macOS 27 UI kit ground truth, and the HIG. Use whenever the user asks to design/mock/create a mac app UI, a macOS window, a menu-bar app, a native-feeling interface, or a mac app icon — "design me a mac app for X", "mock the main window", "make an icon for my app", "give me 3 directions for a macOS tool" — including when they just say "make it beautiful/native". Routes native correctness to the macosify HIG library and craft/variation to design-craft. For analysing existing screenshots into the corpus use mac-design-digest; for refitting existing built UI use macosify.
+---
+
+# Mac Design Studio
+
+Create new macOS app designs — windows and icons — that are **native to the platform** (correct), **committed to a direction** (beautiful), and **distinct from each other** (varied). This skill is the generation counterpart to `mac-design-digest`: it consumes taste learned from 135 curated apps and the ground truth of Apple's macOS 27 UI kit.
+
+## Knowledge sources — load before designing
+
+**Bundled (always read):**
+1. `references/design-directions.md` — the aesthetic direction catalogue synthesised from the macapp.supply corpus: named style clusters with identity tokens, member exemplars, and do/don'ts. **Direction choice is the first design decision — this file is calibration for it, not a closed menu.** The corpus exists to teach what *high-quality, committed* macOS design looks like broadly; the directions are its proven exemplars, and a new or hybrid direction is always legitimate when the subject earns it.
+2. `references/native-foundation.md` — the distilled platform floor every design must stand on: macOS 27 control ladder + type ramp + label tiers `(specified)`, the native-feel grammar, Liquid Glass layer discipline, and the delivery audits.
+3. `references/icon-directions.md` — the icon style catalogue (eras, palette families, recurring devices, composition recipes) synthesised from 134 curated icons. For icon work.
+4. `references/motion-and-feel.md` — fluid-interface physics (springs, interruptibility, materials-on-web, optical typography, reduced-motion floor) and the eight Apple design principles as review vocabulary. Mandatory for any interactive/HTML deliverable; static mocks take its typography + materials sections and ship with its motion spec appendix.
+
+**External (read the relevant parts per task):**
+- **macosify plugin** (`plugins/macosify/`): `reference/hig/index.md` → read every component file relevant to the surfaces you're designing (its "common non-native mistakes" lists are the correction table); `reference/DESIGN.md` for material ramp, motion tokens, elevation, and the hard-HIG-numbers table; `learnings/macos-ui-learnings.md` for evidence-backed native tells.
+- **design-craft plugin**: follow its router for craft procedures — `frontend-aesthetic-direction` (when the user has no direction preference), `wireframe` (structure before polish), `generate-variations` (when asked for options), `hierarchy-rhythm-review`, `interaction-states-pass`, `ai-slop-check`, `polish-pass` (always, before delivery).
+- **ux-craft plugin**: `references/psychology-laws.md` and `references/flows-and-forms.md` when the design includes flows, forms, or onboarding.
+- **Live corpus** (if present, default `./design-corpus/` or the user's stated location): `TASTE.md`, `patterns/*.md`, `ICONS.md`, and specific `apps/<slug>.md` / `icons/<slug>.md` profiles — richer and fresher than the bundled snapshots; prefer it when available.
+
+**Precedence:** Apple kit `(specified)` values and HIG → corpus canon → chosen direction's identity tokens → design-craft general craft. Native correctness is never traded for style; style is chosen *within* the native envelope.
+
+## Procedure — designing an app UI
+
+1. **Brief.** Pin down: what the app does, its audience (pro tool / consumer utility / menu-bar companion / creative), the surface(s) to design (main window / settings / onboarding / menu-bar extra), light/dark or both. Ask only what the request leaves genuinely open.
+2. **Choose a direction — deliberately.** Start from `design-directions.md` by audience + subject match, but treat the catalogue as calibration, not a whitelist: you may hybridise two directions or compose a novel one when the subject demands it — a new direction must be stated with the same rigour (identity tokens, do/don'ts, differentiation from its nearest catalogue neighbours). State the choice, the runner-up, and *why*. Rules:
+   - **AI-default calibration:** Warm Paper (cream + terracotta + serif display) and Terminal Dark (near-black + single acid accent) are simultaneously corpus-proven directions *and* the looks AI currently defaults to on any brief. When the brief explicitly asks for them, or the subject positively earns them (a break app named after a musical rest earned its paper), commit fully. When the brief leaves the aesthetic axis free, don't spend that freedom on either — reach for a direction the subject actually pulls toward.
+   - Never default to the same direction twice in a row across a session; if the user asks for "another app", pick a different direction or justify staying.
+   - Subject-mine (design-craft vocabulary): let the app's own world pull the palette/type personality *within* the direction.
+   - If the user wants options, produce 2–3 directions as thumbnail-level descriptions first (design-craft `generate-variations` discipline) — genuinely different directions, not tints of one.
+   - **Name the risk and the signature.** Every design declares (a) one signature element — the single thing it will be remembered by (draw from or generalise the corpus signature-move bank, or invent) — and (b) one justified aesthetic risk. Spend the boldness there; keep everything around it quiet and disciplined. Before delivery, apply the remove-one-accessory pass: cut any decoration that isn't the signature or serving it. Not taking a risk is itself a risk — "competent but anonymous" is the corpus's named failure mode.
+3. **Structure before polish.** Lay out the window from the pattern library: three-zone window (toolbar / sidebar / content), correct chrome archetype, native lists-tables-forms — per `native-foundation.md` metrics and the relevant HIG files. Sketch the skeleton (regions + kit-tier sizes) before any styling.
+4. **Apply the system.** Tokens first: derive the app's palette (accent bound to a system hue, label tiers for text, Fills tiers for bezels), type from the 11-role ramp (13pt body), spacing on the 8pt grid, radii concentric. Liquid Glass only on floating chrome, scroll-edge where content meets it. Every value from the kit ladder or the direction's identity tokens — no magic numbers.
+5. **Build the artifact.** Default: a self-contained HTML/CSS mock (no external assets; system font stack; both appearances if asked) rendered at a realistic window size (e.g. 840×400+ or 1200×760). Alternative on request: a token-precise written spec. Include realistic content — never lorem ipsum (content discipline from design-craft). Apply `motion-and-feel.md`: interactive mocks get real press/hover states (pointer-down response, spring defaults, materialize-not-fade on floating surfaces) and the three accessibility media queries; static mocks ship with the short motion-spec appendix so the implementer inherits the feel, not just the pixels.
+6. **Audit before delivery — non-negotiable.** Run, and report honestly:
+   - The 10-point native-tells audit (`native-foundation.md`) — all ten pass unless the direction deliberately deviates (say which and why).
+   - The 14-point quality rubric (grid, type scale, hierarchy, contrast, targets).
+   - design-craft `ai-slop-check` — kill template tropes (gradient-on-everything, purple-blue SaaS wash, uniform card grids, tracked-uppercase labels) — plus the AI-default calibration above (unjustified Warm Paper / Terminal Dark counts as slop even though both are corpus-legitimate when earned).
+   - The signature check: the declared signature element is present, singular, and the boldest thing on the surface; the remove-one-accessory pass has run.
+   - Motion floor (interactive deliverables): springs not durations, interruptible, reduced-motion/transparency/contrast queries present (`motion-and-feel.md` quick reference).
+   - The lookalike check: if the mock would pass as a specific corpus app's screen, differentiate deliberately.
+7. **Deliver** with the direction named, the audit scores, and the token table (so an implementer or another AI can build it).
+
+## Procedure — designing an app icon
+
+1. **Brief:** the app's subject, personality (3 committed adjectives), and any brand colour constraints.
+2. **Choose era + direction** from `icon-directions.md` — same open-menu rule as UI: the families are calibration, and a hybrid or novel composition is legitimate when the subject earns it. State choice + runner-up. Calibration warning: the corpus's own template-default is the **stock-glyph-on-indigo/blue ramp** (technically clean, communicates nothing — the `sparkles`-on-indigo problem); blue/indigo backgrounds need positive justification, and the glyph must name *this* subject, not its category. Vary across a session — don't produce five glyph-on-blue-ramp icons in a row. Declare the icon's signature device (subject-mined, from the device bank or invented).
+3. **Silhouette first.** Design the glyph as a solid shape that names the subject instantly; run the mental 16px squint test before any styling.
+4. **Compose on the grid:** 1024 canvas, squircle mask discipline, optical centring, one light model, ≤2 hue families with ramps, accent saturation reserved for the focal element.
+5. **Build:** default a layered SVG (background layer(s), glyph, overlay) sized 1024, plus a rendered preview if tooling allows. Alternative: an Icon Composer-ready layer spec (background + foreground layers with glass properties).
+6. **Audit:** the 12-point icon rubric (`mac-design-digest` icon-anatomy if installed; the distilled version is in `icon-directions.md`) — delivery bar ≥10/12 with checks 1–4 (mask, grid, silhouette, 16px) non-negotiable. Report the score.
+
+## Variety discipline (what makes this a studio, not a template)
+
+- **The corpus is a taste education, not a style library.** 135 curated apps taught what high-quality macOS design looks like *broadly*: mathematical consistency, one committed identity, restraint everywhere else, native grammar honoured even at the edges. Apply that understanding to any direction — catalogued, hybrid, or new. Copying the catalogue's surface without its discipline produces exactly the templated output the corpus exists to prevent.
+- **One direction per design, fully committed** — depth of commitment beats breadth of features. The corpus's strongest lesson: memorable mac apps pick one signature move (a serif display face, a single saturated accent on graphite, a mascot) and honour the native grammar everywhere else.
+- **Track what you've produced this session** (directions, palettes, glyph types) and steer new work away from repeats.
+- **Beautiful ≠ maximal.** "Competent but anonymous" is the failure mode; so is decoration fighting the platform. The target: an app a macapp.supply curator would accept — native at a glance, distinct at a second look.
+
+## Boundary conditions
+
+- **User has an existing brand/design system:** it wins over the direction catalogue — use design-craft's rule (existing context beats greenfield direction), mapped into the native envelope.
+- **User asks for iOS/web styling on macOS:** flag the specific non-native tells it would introduce (macosify correction table), offer the native equivalent, follow their call — recording it as a deliberate deviation in the audit.
+- **Corpus absent:** the bundled reference snapshots stand alone; note that live-corpus depth (per-app profiles) is unavailable.
+- **Asked to clone a specific app:** decline per the inspiration-not-cloning constraint; offer its cluster's direction instead.

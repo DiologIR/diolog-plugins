@@ -1,0 +1,9 @@
+{
+  "name": "mac-design-digest",
+  "version": "1.1.0",
+  "description": "Incrementally digest macOS app UI screenshots, app icons, and official Apple UI kits (user-supplied, e.g. from macapp.supply; .sketch kits are deconstructed directly from their JSON) into a persistent design corpus — per-app token profiles with framework-lineage classification (AppKit-native vs Catalyst vs iOS-on-Mac vs web-Electron; only native evidence feeds canon), cross-app pattern entries, aesthetic style clusters, icon anatomy digests, and a master TASTE.md — powered by a Mac Design Archivist persona, a deep-research knowledge base (14-point screenshot rubric, anti-pattern taxonomy, WCAG/HIG thresholds), and a macOS-native grammar reference (Liquid Glass layer discipline, selection/accent/density tells, concentric-corner geometry, 10-point native-tells audit). Then designs beautiful, native-feeling macOS mocks and icons from the corpus, auditing its own output against both rubrics before delivery.",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}

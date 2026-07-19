@@ -1,0 +1,34 @@
+{
+  "skill_name": "mac-design-digest",
+  "note": "Eval prompts need user-supplied macOS screenshots as input files. Populate 'files' with real screenshot paths before running.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "first-digest-cold-corpus",
+      "prompt": "Digest these macOS app screenshots into my design corpus. The app is shown in the filenames.",
+      "expected_output": "Creates design-corpus/ with ledger.md (hash rows), apps/<app>.md with provenance-marked token tables, pattern entries for recognisable patterns, TASTE.md at Novice level with non-empty knowledge gaps, and per-screenshot digest blocks in chat with 14-point rubric scores. No canon promotions from a single app.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "icon-digest",
+      "prompt": "Study this mac app icon and add what you learn to the corpus.",
+      "expected_output": "Era classification, 12-point icon rubric with evidence, icons/<app>.md digest (palette ramps as hex, light model, layer stack, signature devices), ICONS.md created/updated, ledger row appended without disturbing existing rows.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "incremental-second-app-and-promotion-discipline",
+      "prompt": "Here are screenshots of a second app for the corpus. After digesting, tell me what the two apps have in common and whether anything is ready to become a rule.",
+      "expected_output": "Reads ledger first, skips nothing already digested, writes a second app profile, records shared observations as (recurring) in pattern files, explicitly declines canon promotion at 2 apps, and states what a third app would settle.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "design-mode-with-audit",
+      "prompt": "Using the corpus, design the main window mock (HTML/CSS) for a new macOS RSS reader aimed at the same audience as the digested apps.",
+      "expected_output": "States cluster choice + runner-up, inherits identity tokens with provenance, builds from pattern skeletons, self-audits against the 14-point rubric reporting an honest score, runs the lookalike check, and discloses corpus thinness if below Competent.",
+      "files": []
+    }
+  ]
+}
