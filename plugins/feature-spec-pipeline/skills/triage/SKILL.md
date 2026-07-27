@@ -30,10 +30,25 @@ This skill runs **in your current session** using `Read`/`Glob`/`Grep`/`Write`/`
 5. **Run the Specification Sentinel review.** Classify a strictness tier (S0–S3), run the five-lens scan, the architectural red-flag scan, and assign severities. Default to **stating assumptions, not asking questions**. See `references/sentinel-review.md` for the full framework.
 
 6. **Decide the outcome and append the triage section to the spec.** See `references/spec-format.md` for the exact section shapes, the non-technical language rules, and worked examples.
-   - **Ready** (every non-essential gap can be reasonably defaulted): append a "Ready for Implementation Plan" triage section (Sentinel verdict + **UI & logic preview** + Assumptions block when any defaults were picked). In a full-auto run, pass the **Assumptions review gate** (below) first; then set `Status: Ready for Plan` in the spec header and in the ledger row.
+   - **Ready** (every non-essential gap can be reasonably defaulted): append a "Ready for Implementation Plan" triage section (Sentinel verdict + **UI & logic preview** + Assumptions block when any defaults were picked). Then pass the **Codex cross-family spec review** (below) and — in a full-auto run — the **Assumptions review gate**; only then set `Status: Ready for Plan` in the spec header and in the ledger row.
    - **Needs improvement** (≥1 essential gap per §4 of the framework, or any uncovered S3 gap, or a genuine contradiction only the author can resolve): append an Essential Questions triage section (+ Assumptions block for the non-essential gaps). Set `Status: Needs More Info` in the spec header and ledger row.
    - On **re-triage**, append a **new dated** triage section (don't overwrite prior ones); open it with a short "Resolved:" note summarizing what the human's answers settled, then the current verdict.
    - In **dry-run**, report the verdict and the section you would append; make no file changes.
+
+## Codex cross-family spec review (mandatory where available)
+
+Before the status flips to `Ready for Plan`, hand the written spec to a reviewer **outside Claude's model family**: the Codex CLI running `gpt-5.6-sol` at **`max`** reasoning effort, read-only, grounded in the actual codebase. Everything else in this pipeline is Claude reviewing Claude, and the defect this catches is the one the author's own family is blind to — a spec whose logic doesn't close, or whose "grounding" names code that doesn't do what it claims.
+
+```bash
+codex exec -C "<repo root>" -m gpt-5.6-sol -c model_reasoning_effort="max" \
+  -s read-only -o /tmp/codex-review-<ID>.md "<prompt>" < /dev/null
+```
+
+Full mechanics — the availability check, the verbatim prompt contract (R1), how to dispose of findings, and the fallback rules — are in `feature-spec-pipeline/skills/work/references/codex-cli.md`. Follow it; don't re-derive the invocation here. In brief: `read-only` so the reviewer cannot edit the artifact it is reviewing; pass `-m` and the effort **explicitly** (the user's `~/.codex/config.toml` defaults to a lower effort); `< /dev/null` or it waits on stdin.
+
+**Then act on the findings — running the review is not the gate; acting is.** Per finding: **accept** it and edit the spec, **reject** it with a stated reason (it contradicts a human's authoritative answer, it expands scope the feature description never asked for, or you checked the code and it's wrong), or **escalate** it — a `Critical`/`High` finding that exposes a genuine **external** dependency becomes an Essential Question and the spec goes to `Needs More Info` per step 6. Never flip the status on `MATERIAL DEFECTS` without resolving them. Record the verdict plus the accept/reject tally in the triage section so the planner can see the review happened and how it landed. A finding you adopt without checking is how a spec acquires requirements nobody asked for; Codex is a reviewer, not an authority.
+
+If the lane is genuinely unavailable — no binary, not logged in, usage or rate limit, repeated errors — the gate falls back to a Claude strong-model one-shot review of the same prompt, and you **note the downgrade in the triage section**. Availability is the only licensed skip: an in-family review is weaker evidence, not no evidence, and the next reader deserves to know which they got.
 
 ## Assumptions review gate (full-auto runs)
 

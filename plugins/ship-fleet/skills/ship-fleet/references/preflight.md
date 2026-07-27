@@ -17,6 +17,7 @@ Resolve each expected artifact **inside the project** (Glob; exclude `.worktrees
 | Design language | `DESIGN*.md` at project root | Ask the user for one (or point at design-md-from-website / design-md-from-screenshots skills); UI stages degrade without it |
 | Best practices | `docs/CODING_PRACTICES.md` + `docs/NEW_PROJECT_BEST_PRACTICES.md` | See §2 |
 | Git | repo root is a git repo with a detectable integration branch | Hard requirement — stop and sort this with the user |
+| Codex CLI | `codex` on PATH, logged in, `gpt-5.6-sol` answering | See §5 — the pipeline's three out-of-family review gates degrade to in-family without it |
 
 Present one consolidated report (found ✓ / missing ✗ / degraded consequence), then a single AskUserQuestion for the repairs rather than one prompt per item.
 
@@ -45,3 +46,20 @@ For each candidate, show the user the filename + first heading/opening line and 
 Read the **project-layout section of the repo's own copy** of `docs/NEW_PROJECT_BEST_PRACTICES.md` — §3 (single-app layout: `app/`, `components/`, `lib/` with server-only boundary, `scripts/`, `public/`) or §17 (pnpm-workspaces/Turborepo monorepo: `apps/*`, `packages/*`) if the repo is multi-app. The doc is the source of truth, not this file — it evolves; compare against what it *currently* says.
 
 Report deviations (missing `lib/` server-only boundary, route handlers outside `app/api/`, apps outside `apps/`, phantom top-level dirs) as a short list with severity. **Only restructure if the user asks** — the fleet can run on a non-conforming repo; the check exists so new code from the fleet doesn't inherit a broken shape, and so the user can choose to fix structure first as its own work item (queue it in the ledger if they do).
+
+## 5. Codex lane availability (check once, here)
+
+Three review gates in this pipeline route **out of Claude's model family** on purpose — the triage spec review, the plan review gate, and work Phase D's completeness critic, each on `gpt-5.6-sol` at `max` effort — plus an optional `medium`-effort implementation executor. Check the lane once at fleet start so every runner inherits the same picture instead of each discovering it mid-run:
+
+```bash
+command -v codex && codex --version                       # expect codex-cli 0.145.0+
+codex exec -m gpt-5.6-sol -c model_reasoning_effort="max" \
+  -s read-only --skip-git-repo-check "Reply with exactly: OK" < /dev/null
+```
+
+Record the outcome in ORCHESTRATOR.md's header contract as `codex: available` or `codex: unavailable (<reason>) → in-family fallback`:
+
+- **Available** → the three gates run on Codex; the executor lane is open.
+- **Unavailable** — no binary, not logged in (`codex login`), a usage/rate-limit response, or the probe erroring — → every gate falls back to its Claude reviewer and every executor slice falls back to Opus. The pipeline still runs; the review evidence is just weaker, and **that has to be visible in the ledger** rather than discovered later. Don't install unprompted; offer `npm i -g @openai/codex` (or the Codex desktop app) and `codex login`.
+
+Usage limits are a *transient* unavailability — a lane that fails at fleet start may work an hour later. Note the time, and let a runner re-probe rather than treating the fleet-start result as permanent. Full mechanics live in `feature-spec-pipeline/skills/work/references/codex-cli.md`.

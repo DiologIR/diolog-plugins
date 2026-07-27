@@ -26,9 +26,17 @@ branches), correct drifted rows, then continue filling slots. Rules:
   writer), design-system shared files, integration-branch merges.
 - Context contract per agent: brief + spec + plan + root DESIGN md + docs/CODING_PRACTICES.md
   + docs/NEW_PROJECT_BEST_PRACTICES.md + the item's deep-research docs READ IN FULL;
-  re-read brief/spec/plan/DESIGN after any compaction (composer-2.5 especially).
-- Coding lane: Cursor CLI composer-2.5 for mechanical plan-scoped edits only when it
-  saves Opus tokens; Opus verifies and fixes; fall back to Opus freely.
+  re-read brief/spec/plan/DESIGN after any compaction (external executors especially).
+- Coding lane: codex gpt-5.6-sol at medium effort (default; install + self-test its
+  post-compaction re-context hooks per codex-cli.md), else Cursor composer-2.5 / glm-5.2,
+  for mechanical plan-scoped edits only when it saves Opus tokens; Opus verifies and
+  fixes; fall back to Opus freely.
+- Review gates OUT OF FAMILY on codex gpt-5.6-sol at max effort, read-only: the triage
+  spec review, the plan review gate, and work Phase D's completeness critic. Mandatory
+  where available; exempt from the revert-rate kill-switch; an in-family fallback is a
+  LOGGED downgrade in the artifact and the ledger, never a silent pass.
+- codex lane availability at fleet start: <available | unavailable (reason) → in-family
+  fallback, checked at HH:MM — usage limits are transient, so let a runner re-probe>.
 
 ## Wave plan
 Wave 1 (no unmerged internal deps): <ID> <title>, <ID> <title>, …

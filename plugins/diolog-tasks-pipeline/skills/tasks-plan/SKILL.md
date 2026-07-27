@@ -29,15 +29,31 @@ Runs **in your current session** with the **diolog-tasks MCP**, `Read`/`Glob`/`G
 
 4. **Write the plan file.** Use `Write` to save it at `docs/plans/<id>.md` (lowercase id) in the **target repository** (the repo you're working in — the same repo the worker will run against). Start with the shared header, then the tier's template. Follow `references/plan-tiers.md` for the exact templates, quality criteria, and the anti-over-engineering rules (a 10-line diff gets a ~30-line plan, not a 260-line one).
 
-5. **Post the Tasks comment with the repo-relative path (the key change — do NOT upload the file).** Via `mcp__diolog-tasks__create_comment`, post:
+5. **Plan review gate — Codex cross-family review, before the status moves (Standard and Large tiers; skip for Trivial/Small).** The plan is the artifact every later stage amplifies, so its reviewer comes from **outside Claude's model family**. Run it after the file is written and before step 6:
+
+   - **Mechanical path check first (a script/grep, not a model).** Every file path the plan references must exist: extract the backtick-quoted paths from `docs/plans/<id>.md` and check each (`ls` / `git ls-files`), exempting only paths the plan explicitly marks *to be created*. A referenced-but-missing path means the plan was grounded in assumption, not code — re-investigate and fix it.
+   - **Cross-family one-shot review — the Codex CLI, `gpt-5.6-sol` at `max` effort (mandatory where available).** Read-only and grounded in the real codebase:
+
+     ```bash
+     codex exec -C "<repo root>" -m gpt-5.6-sol -c model_reasoning_effort="max" \
+       -s read-only -o /tmp/codex-review-<id>.md "<prompt>" < /dev/null
+     ```
+
+     Codex has no Tasks access, so write the ticket description + the full comment thread to a scratch markdown file and name it in the prompt alongside `docs/plans/<id>.md`. Full mechanics — availability check, the verbatim prompt contract (R1), finding disposition, fallback — are in the generalized twin's `feature-spec-pipeline/skills/work/references/codex-cli.md`; follow it rather than re-deriving the invocation. `read-only` so the reviewer cannot "helpfully" fix the plan it reviews; pass `-m` and the effort **explicitly** (`~/.codex/config.toml` may default lower); `< /dev/null` or it waits on stdin.
+
+     It reads the ticket + plan cold and answers: Is every Acceptance Criterion *testable* (a checkable outcome, not a vibe)? Do the ACs cover **every ticket requirement and every prior triage assumption**? Was any requirement or subfeature dropped or silently shrunk? Is every referenced analogue *real* — do the named files actually do what the plan claims (it opens them and checks)? Does the step ordering close — no circular dependency, no step that cannot follow the one before it?
+
+   **Then evaluate and act — running the review is not the gate; acting is.** Per finding: **accept** it and fix the plan (then re-run the failed mechanical check); **reject** it with a stated reason (it contradicts a human's authoritative reply, it expands scope the ticket never asked for, or you verified the code and the finding is wrong); or **escalate** — a `Critical`/`High` finding exposing a genuine **external** dependency becomes `NEEDS TRIAGE` for the blocked slice only, per the guidelines below. Never move the status on `MATERIAL DEFECTS` without resolving them. If the lane is genuinely unavailable (no binary, not logged in, usage/rate limit, repeated errors), fall back to a **Claude strong-model** one-shot review of the same prompt — the strongest model regardless of what synthesized the plan — and note the downgrade. Availability is the only licensed skip; a plan defect costs the whole downstream pipeline, so the gate itself is not optional.
+
+6. **Post the Tasks comment with the repo-relative path (the key change — do NOT upload the file).** Via `mcp__diolog-tasks__create_comment`, post:
 
    > Implementation plan written to `docs/plans/<id>.md` (in the repo). — Claude (AI Assistant)
 
    Do **not** base64-encode, do **not** call `mcp__diolog-tasks__add_issue_link`, do **not** attach the file. The comment carries only the repository-relative path so a developer (or the `tasks-worker` skill) can open it from the repo. (Rationale: the file lives in the repo with the code and is read from there; an uploaded copy would immediately drift from the in-repo source of truth.)
 
-6. **Move status** (skip in dry-run). Call `mcp__diolog-tasks__update_issue` with the `Ready for AI` state ID and verify the response shows it. Skip only if the issue is already in `Ready for AI`, `Developer Review`, `In Progress`, or any further-downstream state — never downgrade.
+7. **Move status** (skip in dry-run). Call `mcp__diolog-tasks__update_issue` with the `Ready for AI` state ID and verify the response shows it. Skip only if the issue is already in `Ready for AI`, `Developer Review`, `In Progress`, or any further-downstream state — never downgrade.
 
-7. Print a short summary (tier + the repo-relative plan path). In dry-run, say the file was written locally and no Tasks writes were made.
+8. Print a short summary (tier + the repo-relative plan path + the review gate's verdict and accept/reject tally, or `codex: unavailable → claude`). In dry-run, say the file was written locally and no Tasks writes were made — the gate is read-only, so it still runs.
 
 ## Workflow fan-out limits (avoid throttling)
 

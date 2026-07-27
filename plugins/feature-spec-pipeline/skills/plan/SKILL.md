@@ -25,9 +25,22 @@ Runs **in your current session** with `Read`/`Glob`/`Grep`/`Write`/`Edit`, `Bash
 
 5. **Plan review gate — before the status flips (Standard and Large tiers; skip for Trivial/Small).** The plan is the pipeline's highest-leverage trusted-first-output artifact — everything downstream amplifies it — so it gets its own gate, run after the file is written and before step 6:
    - **Mechanical path check (a script/grep, not a model).** Every file path the plan references must exist: extract the backtick-quoted paths from `plan-<ID>.md` and check each (`ls` / `git ls-files`), exempting only paths the plan explicitly marks *to be created*. A referenced-but-missing path means the plan was grounded in assumption, not code — re-investigate and fix it.
-   - **Strong-model one-shot review.** One reviewer — the strongest model, regardless of what synthesized the plan — reads the spec + plan cold and answers: Is every Acceptance Criterion *testable* (a checkable outcome, not a vibe)? Do the ACs cover **every spec clause, including every triage assumption**? Was any spec requirement or subfeature dropped or silently shrunk? Is every referenced analogue *real* — the named files actually do what the plan claims? And when the plan adds a **replacement or parallel path** for a flow the product already serves (an engine swap, a v2 pipeline, a new provider behind a flag): does it carry the **Parity inventory** below?
+   - **Cross-family one-shot review — the Codex CLI, `gpt-5.6-sol` at `max` effort (mandatory where available).** The plan is the artifact every later stage amplifies, so its reviewer comes from **outside Claude's model family** rather than from the family that wrote it. Run it read-only and grounded in the real codebase:
 
-   Findings → fix the plan (and re-run the failed check) before flipping status. The gate costs one read; a plan defect costs the whole downstream pipeline.
+     ```bash
+     codex exec -C "<repo root>" -m gpt-5.6-sol -c model_reasoning_effort="max" \
+       -s read-only -o /tmp/codex-review-<ID>.md "<prompt>" < /dev/null
+     ```
+
+     Full mechanics — availability check, the verbatim prompt contract (R1), finding disposition, fallback — are in `feature-spec-pipeline/skills/work/references/codex-cli.md`; follow it rather than re-deriving the invocation. `read-only` matters: the reviewer must not be able to "helpfully" fix the plan it is reviewing, because **you** apply the changes and stay accountable for them. Pass `-m` and the effort explicitly (the user's `~/.codex/config.toml` may default lower), and redirect stdin from `/dev/null`.
+
+     The reviewer reads the spec + plan cold and answers: Is every Acceptance Criterion *testable* (a checkable outcome, not a vibe)? Do the ACs cover **every spec clause, including every triage assumption**? Was any spec requirement or subfeature dropped or silently shrunk? Is every referenced analogue *real* — do the named files actually do what the plan claims (it opens them and checks)? Does the step ordering actually close — no circular dependency, no step that cannot follow the one before it? And when the plan adds a **replacement or parallel path** for a flow the product already serves (an engine swap, a v2 pipeline, a new provider behind a flag): does it carry the **Parity inventory** below?
+
+     **Then evaluate and act — running the review is not the gate; acting is.** Per finding: **accept** it and fix the plan; **reject** it with a stated reason (it contradicts a human's authoritative spec answer, it expands scope the spec never asked for, or you verified the code and the finding is wrong); or **escalate** — a `Critical`/`High` finding exposing a genuine **external** dependency converts to `NEEDS TRIAGE` for the blocked slice only, per the guidelines below. Never flip the status on `MATERIAL DEFECTS` without resolving them. A finding adopted without checking is how a plan acquires work nobody asked for — Codex is a reviewer, not an authority.
+
+     If the lane is genuinely unavailable (no binary, not logged in, usage/rate limit, repeated errors), fall back to a **Claude strong-model** one-shot review of the same prompt — the strongest model regardless of what synthesized the plan — and **note the downgrade** in the gate note. Availability is the only licensed skip.
+
+   Findings → fix the plan (and re-run the failed check) before flipping status. Record the verdict, the accept/reject tally, and any downgrade in the plan's gate note. The gate costs one read; a plan defect costs the whole downstream pipeline.
 
 6. **Link the plan from the spec and bump status** (skip in dry-run). Append a short pointer section to `docs/specs/spec-<ID>.md`:
 
@@ -56,4 +69,4 @@ When step 3 uses the `Workflow` tool to investigate in parallel:
 - Keep the plan scoped to the spec; don't extend to adjacent features or cleanup.
 - Name specific file paths, functions, components, and analogues — but only where they're real (verify with Glob/Grep). A bad plan references files that don't exist or invents patterns not used in the codebase.
 - When the change is trivial, a short plan is the correct output, not a failure.
-- **Model routing by tier (REVIEWER ≥ WRITER).** Trivial/Small synthesis may run on a cheaper model (sonnet). Standard synthesis runs on the strongest model (opus) — or on glm-5.2-high via the zero CLI, in which case the step-5 gate is doubly mandatory. Large synthesis never downgrades. Whatever wrote the plan, the gate's reviewer must be at least as strong as the strongest model that wrote it.
+- **Model routing by tier (REVIEWER ≥ WRITER).** Trivial/Small synthesis may run on a cheaper model (sonnet). Standard synthesis runs on the strongest model (opus) — or on glm-5.2-high via the zero CLI, in which case the step-5 gate is doubly mandatory. Large synthesis never downgrades. Whatever wrote the plan, the gate's reviewer must be at least as strong as the strongest model that wrote it — and step 5 routes it **out of family** to Codex `gpt-5.6-sol` at `max` effort, which satisfies that bar and adds the independence an in-family reviewer cannot.

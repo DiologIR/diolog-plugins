@@ -32,7 +32,22 @@ This skill runs **in your current session** using the **diolog-tasks MCP**, `Rea
 
 5. **Run the Specification Sentinel review.** Classify a strictness tier (S0–S3), run the five-lens scan, the architectural red-flag scan, and assign severities. Default to **stating assumptions, not asking questions**. See `references/sentinel-review.md` for the full framework.
 
-6. **Decide the outcome and post.** See `references/comment-format.md` for the exact comment shapes, the non-technical language rules, and worked examples.
+6. **Codex cross-family review of the drafted triage (mandatory where available) — before you post.** Draft the comment, then hand it plus the ticket to a reviewer **outside Claude's model family**: the Codex CLI running `gpt-5.6-sol` at **`max`** reasoning effort, read-only, grounded in the actual codebase. Everything else in this pipeline is Claude reviewing Claude, and this catches what that family is blind to — a readiness verdict whose logic doesn't close, or a "grounded" assumption that names code which doesn't behave the way the draft claims.
+
+   Codex has no Tasks access, so give it files: write the ticket description, the full comment thread, and your drafted comment to a scratch markdown file, then name that file in the prompt.
+
+   ```bash
+   codex exec -C "<repo root>" -m gpt-5.6-sol -c model_reasoning_effort="max" \
+     -s read-only -o /tmp/codex-review-<ID>.md "<prompt>" < /dev/null
+   ```
+
+   Full mechanics — the availability check, the verbatim prompt contract (R1), finding disposition, and the fallback — are in the generalized twin's `feature-spec-pipeline/skills/work/references/codex-cli.md`; follow it rather than re-deriving the invocation. `read-only` so the reviewer cannot edit what it reviews; pass `-m` and the effort **explicitly** (`~/.codex/config.toml` may default lower); `< /dev/null` or it waits on stdin.
+
+   **Then act — running the review is not the gate; acting is.** Per finding: **accept** it and revise the draft; **reject** it with a stated reason (it contradicts a human's authoritative reply, it expands scope the ticket never asked for, or you checked the code and it's wrong); or **escalate** — a `Critical`/`High` finding exposing a genuine **external** dependency becomes an Essential Question and the issue goes to `Needs More Info`. Never post a `MATERIAL DEFECTS` draft unrevised. A finding adopted without checking is how a ticket acquires requirements nobody asked for. If the lane is genuinely unavailable (no binary, not logged in, usage/rate limit, repeated errors), fall back to a Claude strong-model one-shot review of the same prompt and **say so in your final summary** — availability is the only licensed skip.
+
+   **The review is technical; the comment is not.** Codex will answer in file paths and identifiers — that is what makes it useful. Absorb its findings into the *substance* of the draft and keep the posted comment inside the non-technical language rules in `references/comment-format.md`; never paste its wording into a Tasks comment. The review is read-only, so it runs in **dry-run** too — report the verdict alongside the comment you would have posted.
+
+7. **Decide the outcome and post.** See `references/comment-format.md` for the exact comment shapes, the non-technical language rules, and worked examples.
    - **Ready** (every non-essential gap can be reasonably defaulted): post the "Ready for Implementation Plan" comment via `mcp__diolog-tasks__create_comment` (Sentinel verdict + **UI & logic preview** + Assumptions block when any defaults were picked). Set status to `Todo` (ready for the planner) via `mcp__diolog-tasks__update_issue` with the resolved state ID, if it isn't already there.
    - **Needs improvement** (≥1 essential gap per §4 of the framework, or any uncovered S3 gap, or a genuine contradiction only the author can resolve): post the Essential Questions comment (+ Assumptions block for the non-essential gaps). Set status to `Needs More Info`.
    - In **dry-run**, report the verdict and the comment you would post; make no Tasks writes.

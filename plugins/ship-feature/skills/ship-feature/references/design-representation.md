@@ -23,7 +23,7 @@ Invoke **`/design-craft`** with the feature + the three inputs above as context.
 
 Design-craft verifies its own renders via a verifier subagent — make sure it does. **A mock that type-checks but renders blank has represented nothing.** Open the rendered surfaces (via the design-system dev host / playwright-cli, as design-craft's environment notes describe) and confirm they actually draw before you call Phase 1 done.
 
-**Model routing for design work:** the leaf render-verifiers and page assembly from *existing* composites may run on a cheaper model (sonnet) — but **aesthetic direction and any new element/composite never run below opus**, and the cheap-executor CLI lanes (composer/glm) are **never used for design work** (their design ability is weak; a cheap page that "works" but reads generic poisons every later stage that cites the mock as the UI oracle).
+**Model routing for design work:** the leaf render-verifiers and page assembly from *existing* composites may run on a cheaper model (sonnet) — but **aesthetic direction and any new element/composite never run below opus**, and the external executor CLI lanes (codex/composer/glm) are **never used for design work** (their design ability is weak; a cheap page that "works" but reads generic poisons every later stage that cites the mock as the UI oracle).
 
 ## Two outputs — both matter
 
