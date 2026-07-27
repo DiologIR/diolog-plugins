@@ -92,6 +92,27 @@ Non-negotiable, and the reason this skill exists at all.
   animation has finished and a transient overlay is `opacity:0`. Mid-flight bugs exist only in
   mid-flight frames. Capture them (`motion-check.mjs --out`) and open them.
 
+## References - read each when its trigger fires
+
+This skill ships six reference docs plus a research appendix. They are **progressive disclosure**: this
+file stays short, and you pull the full detail into context **only when its trigger fires**. Read the
+whole doc when the trigger matches; do not work from the one-line summary here. Not reading a triggered
+reference is the same failure as skipping a step - the detail it carries is load-bearing, not optional.
+
+| Reference | Read it when (trigger) |
+|---|---|
+| `references/grid-and-tokens.md` | **Step 0, always.** Before any page CSS - the scale, the column grid, ink-vs-boxes, optical nudges, CSS scoping. |
+| `references/emphasis-and-legibility.md` | **Step 0, always** (binding), and again the moment a page feels flat and you reach for another emphasis style. The per-page italic/bold/caps budget, hierarchy by size and space, row-major order, pull-quote isolation. |
+| `references/design-review.md` | **Step 0, always.** Apply or explicitly overrule every open item that touches your guide; append any new review as instance -> class -> rule -> status. It is where other skills route design feedback, so it is spec, not history. |
+| `references/page-archetypes.md` | **Step 1**, before you write the page map. The five archetypes and what each is for. |
+| `references/verification.md` | **Step 2, before you trust any gate**, and again at Step 7. What the harness can and cannot know: a gate is downstream of its findings, coverage is silent, prove a rule can fail, measure ink not boxes. The most important doc here. |
+| `references/motion-layer.md` | **Step 5, only if** you add a screen-only motion layer. The resting-is-final contract, the governor, print safety. Skip entirely for a static guide. |
+| `references/research/typography-legibility-research.md` | **On demand**, when you need the citation or the evidence behind an `emphasis-and-legibility.md` rule (a reviewer pushes back, or you are deciding a close call). A leaf: the emphasis doc points into it. |
+
+If a trigger is ambiguous, read the reference - a wasted read costs a few seconds; an unread binding
+rule costs a defect that ships. `assets/qa.config.json` is not on this list because it is edited, not
+read as guidance; `references/grid-and-tokens.md` tells you how.
+
 ## Workflow
 
 ### Step 0 - Build the design layer before you build a page. (Mandatory.)
@@ -140,6 +161,10 @@ node scripts/page-fit.mjs   guide.html --out shots/
 node scripts/guide-qa.mjs   guide.html --out crops/     # exits 1 on any HIGH
 node scripts/scope-lint.mjs guide.html
 ```
+
+**Before you trust any of these gates, read `references/verification.md`** - a clean gate means "no
+known defect is present", never "verified", and that doc is where you learn to prove a rule can
+actually fail (a rule that never fails is indistinguishable from one that always passes).
 
 Fix every HIGH. Open every crop. Run design-craft's per-unit critique gate on the archetype. Only
 then reproduce it across its pages. Early mistakes otherwise compound into every page that copies
