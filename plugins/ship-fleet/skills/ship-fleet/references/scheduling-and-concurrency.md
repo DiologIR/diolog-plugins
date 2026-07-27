@@ -145,11 +145,22 @@ propagate this whole block into every prompt that itself spawns agents:
   installed and self-tested — else cursor-composer.md): delegation criteria + Opus
   verify-fix loop + per-lane kill-switch; any lane failure falls back to Opus — never to
   a sibling cheap lane, never skipped.
-  OUT-OF-FAMILY GATES (mandatory where codex is available, read-only, max effort):
-  the triage spec review, the plan review gate, and work Phase D's completeness critic
-  run on codex gpt-5.6-sol — NOT as a Claude subagent. They exist because every other
-  reviewer here is Claude auditing Claude. Exempt from the kill-switch; if codex is
-  unavailable, run the in-family reviewer and LOG the downgrade in the artifact.
+  OUT-OF-FAMILY GATES (read-only, max effort): the triage spec review, the plan review
+  gate, and work Phase D's completeness critic run on codex gpt-5.6-sol — NOT as a
+  Claude subagent. They exist because every other reviewer here is Claude auditing
+  Claude. Exempt from the kill-switch.
+  BEFORE EVERY codex call, re-grep CLAUDE.md / AGENTS.md / ORCHESTRATOR.md for
+  'ANTHROPIC-ONLY', 'NO EXTERNAL MODEL CLIS' or 'external-model-clis: off'. A hit means
+  this repo OPTED OUT: run in-family, log 'codex: opted out (<file>) -> claude', do not
+  request an exception. Re-check EVERY time, not once — every codex call ships the
+  artifact and every file it opens to OpenAI (-s read-only restricts writes, NOT
+  egress), and this grep is the only kill-switch that reaches you once you are running.
+  Bound every call: perl -e 'alarm shift @ARGV; exec @ARGV' 600 codex exec … — never
+  poll unbounded, it holds a fleet slot for nothing. Verify the wire: the captured log
+  must contain 'model: gpt-5.6-sol' and 'reasoning effort: max', or it is a lane
+  failure — a dropped flag silently inherits the user's config default. An empty -o
+  file is a lane failure, never a pass; findings without a verdict line are PARTIAL.
+  If codex is unavailable, run the in-family reviewer and LOG the downgrade.
 
 Feature: ⟨ID · title⟩
 Sources — read all that exist, in full, before starting:

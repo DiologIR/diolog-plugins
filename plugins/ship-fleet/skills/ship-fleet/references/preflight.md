@@ -49,7 +49,18 @@ Report deviations (missing `lib/` server-only boundary, route handlers outside `
 
 ## 5. Codex lane availability (check once, here)
 
-Three review gates in this pipeline route **out of Claude's model family** on purpose — the triage spec review, the plan review gate, and work Phase D's completeness critic, each on `gpt-5.6-sol` at `max` effort — plus an optional `medium`-effort implementation executor. Check the lane once at fleet start so every runner inherits the same picture instead of each discovering it mid-run:
+Three review gates in this pipeline route **out of Claude's model family** on purpose — the triage spec review, the plan review gate, and work Phase D's completeness critic, each on `gpt-5.6-sol` at `max` effort — plus a `medium`-effort implementation executor. Check the lane once at fleet start so every runner inherits the same picture instead of each discovering it mid-run.
+
+**Check the repo opt-out FIRST — it outranks availability.** Every Codex call is data egress: `-s read-only` restricts writes, not the network, so the reviewer transmits the artifact and every source file it opens to OpenAI. The lane is **on by default and opted out per repo**:
+
+```bash
+grep -rlE 'ANTHROPIC[- ]ONLY|NO EXTERNAL MODEL CLIS?|external-model-clis:\s*off' \
+  CLAUDE.md AGENTS.md ORCHESTRATOR.md docs/CODING_PRACTICES.md 2>/dev/null
+```
+
+A hit ⇒ record `codex: opted out (<file>)` in ORCHESTRATOR.md, tell every runner to run fully in-family, and stop here — an opted-out fleet is a correct fleet, not a degraded one. **Runners re-check this marker before every single Codex call**, not once: a fleet cannot message its own in-flight workflow agents, so this file is the only kill-switch an owner has if they ban external CLIs mid-run. Say so explicitly in the runner prompt. If the owner has not expressed a preference and the repo holds auth, secrets, tenancy or payment code, surface the egress tradeoff in the preflight report and let them decide before the first gate runs.
+
+If there is no opt-out, probe availability:
 
 ```bash
 command -v codex && codex --version                       # expect codex-cli 0.145.0+
@@ -62,4 +73,6 @@ Record the outcome in ORCHESTRATOR.md's header contract as `codex: available` or
 - **Available** → the three gates run on Codex; the executor lane is open.
 - **Unavailable** — no binary, not logged in (`codex login`), a usage/rate-limit response, or the probe erroring — → every gate falls back to its Claude reviewer and every executor slice falls back to Opus. The pipeline still runs; the review evidence is just weaker, and **that has to be visible in the ledger** rather than discovered later. Don't install unprompted; offer `npm i -g @openai/codex` (or the Codex desktop app) and `codex login`.
 
-Usage limits are a *transient* unavailability — a lane that fails at fleet start may work an hour later. Note the time, and let a runner re-probe rather than treating the fleet-start result as permanent. Full mechanics live in `feature-spec-pipeline/skills/work/references/codex-cli.md`.
+Usage limits are a *transient* unavailability — a lane that fails at fleet start may work an hour later. Note the time, and let a runner re-probe rather than treating the fleet-start result as permanent. The **opt-out is not transient in the same way**: it is a standing owner decision, so a runner re-reads it to see if it has appeared, never to see whether it has expired.
+
+Two operational rules the runner prompt must carry, both learned from a real fleet: **bound every Codex call** (`perl -e 'alarm shift @ARGV; exec @ARGV' 600 codex exec …` — there is no timeout flag and macOS has no `timeout(1)`) so a slot is never held by an unbounded polling loop, and **verify the effort on the wire** (`grep -qx "reasoning effort: max"` on the captured log) because a dropped flag silently inherits the user's own config default. Full mechanics live in `feature-spec-pipeline/skills/work/references/codex-cli.md`.

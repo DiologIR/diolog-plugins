@@ -33,8 +33,17 @@ branches), correct drifted rows, then continue filling slots. Rules:
   fixes; fall back to Opus freely.
 - Review gates OUT OF FAMILY on codex gpt-5.6-sol at max effort, read-only: the triage
   spec review, the plan review gate, and work Phase D's completeness critic. Mandatory
-  where available; exempt from the revert-rate kill-switch; an in-family fallback is a
-  LOGGED downgrade in the artifact and the ledger, never a silent pass.
+  where available and not opted out; exempt from the revert-rate kill-switch; an
+  in-family fallback is a LOGGED downgrade in the artifact and the ledger, never a
+  silent pass. Bound every call (perl alarm 600), verify 'reasoning effort: max' in the
+  captured log, and treat an empty -o file as a lane failure rather than a pass.
+- EXTERNAL-CLI EGRESS + OPT-OUT: every codex call ships the artifact and every file it
+  opens to OpenAI ('-s read-only' restricts writes, NOT egress). This repo's setting:
+  <ON (default) | OPTED OUT via <file>>. Runners re-grep CLAUDE.md / AGENTS.md /
+  ORCHESTRATOR.md for 'ANTHROPIC-ONLY' | 'NO EXTERNAL MODEL CLIS' |
+  'external-model-clis: off' BEFORE EVERY codex call — it is the only kill-switch that
+  reaches an in-flight runner, since workflow-inner agents cannot be messaged. To turn
+  the lane off mid-fleet, add the marker here; the next call honours it.
 - codex lane availability at fleet start: <available | unavailable (reason) → in-family
   fallback, checked at HH:MM — usage limits are transient, so let a runner re-probe>.
 

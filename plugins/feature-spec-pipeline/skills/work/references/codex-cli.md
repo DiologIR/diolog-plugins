@@ -8,9 +8,32 @@ The pipeline's **cross-family** lane. Everything else in this pipeline is Claude
 | **R2 — Completeness critic** | `max` | `read-only` | **Replaces** the Claude completeness critic that closes the work skill's Phase D acceptance review |
 | **R3 — Implementation executor** | `medium` | `workspace-write` | Writes plan-scoped code in the feature worktree, under Claude's verify-fix loop |
 
-R1 and R2 are **mandatory where Codex is available** — they are verification, not cost optimization. R3 is an executor lane like the ones in ship-fleet's `references/cursor-composer.md`, and is subject to the same verify-fix loop, kill-switch, and fallback rules.
+R1 and R2 are **mandatory where Codex is available and the repo has not opted out** — they are verification, not cost optimization. R3 is an executor lane like the ones in ship-fleet's `references/cursor-composer.md`, and is subject to the same verify-fix loop, kill-switch, and fallback rules.
 
-Availability is the *only* licensed reason to skip any of them (see "Fallback"). "It looked fine" is not.
+Availability and the repo opt-out are the *only* licensed reasons to skip any of them (see "Fallback"). "It looked fine" is not.
+
+## Read this first — every Codex call is data egress
+
+**`-s read-only` restricts WRITES. It does nothing about network egress.** A read-only reviewer still transmits your prompt and the full text of every file it opens to OpenAI. On a plan review that means the spec, the plan, and every source file the prompt tells it to check — which, for a security feature, is exactly the code you would least want to send: auth guards, session handling, origin checks, the threat model.
+
+This bit a real fleet: a plan-review gate on an OAuth feature sent `lib/auth/require.ts`, `lib/auth/session.ts`, `lib/auth/guest.ts` and `proxy.ts` to OpenAI before anyone framed it as an egress decision. The sandbox flag reads like a safety property and is not one, in this dimension.
+
+So treat the lane as a **disclosed default, not an invisible one**: it is on unless the repo says otherwise, and the repo gets a first-class way to say otherwise.
+
+### The repo opt-out (checked before EVERY invocation, not once)
+
+Before any `codex` call, grep the repo's own policy documents for an opt-out marker:
+
+```bash
+grep -rlE 'ANTHROPIC[- ]ONLY|NO EXTERNAL MODEL CLIS?|external-model-clis:\s*off' \
+  CLAUDE.md AGENTS.md ORCHESTRATOR.md docs/CODING_PRACTICES.md 2>/dev/null
+```
+
+Any hit ⇒ **this repo is opted out.** Every role falls back in-family (R1/R2 → the Claude reviewer, R3 → Claude writes the code), and you log the reason as `codex: opted out (<file>) → claude`. Do not argue with it, do not ask for an exception mid-run, and do not treat it as a degraded run needing escalation — an opted-out repo running fully in-family is a *correct* run.
+
+**Check it per invocation, not once at startup.** This is the only kill-switch that reaches an agent already in flight: a fleet cannot message its own inner workflow agents, so an owner who bans external CLIs mid-run has no way to stop them except a file the next invocation re-reads. A once-at-startup check would let every in-flight runner keep shipping code to OpenAI for hours after the policy landed. The grep costs milliseconds; run it every time.
+
+Adding the marker to `CLAUDE.md` (or `ORCHESTRATOR.md` for a fleet) is the supported way to turn the lane off for a repo, permanently or mid-flight.
 
 ## Availability check (once per run)
 
@@ -22,11 +45,26 @@ codex exec -m gpt-5.6-sol -c model_reasoning_effort="max" \
 
 A non-zero exit, an auth prompt, a usage-limit / rate-limit message, or a missing binary → the lane is **unavailable**: record it explicitly and route that role back to Claude (see "Fallback"). Don't install unprompted; offer `npm i -g @openai/codex` or the Codex desktop app, and `codex login` for auth.
 
-**Always pass `-m` and `-c model_reasoning_effort` explicitly.** `~/.codex/config.toml` carries the user's own `model` / `model_reasoning_effort` / `sandbox_mode` defaults, and a role that silently inherits `high` instead of `max`, or `danger-full-access` instead of `read-only`, is not the role you specified. Flags beat config; be explicit every time.
+**Always pass `-m` and `-c model_reasoning_effort` explicitly — then VERIFY them on the wire.** `~/.codex/config.toml` carries the user's own `model` / `model_reasoning_effort` / `sandbox_mode` defaults, and a role that silently inherits `high` instead of `max`, or `danger-full-access` instead of `read-only`, is not the role you specified. This is not hypothetical: a shipped plan-review gate ran at `high` because one invocation dropped the flag, and nothing caught it until the session log was read afterwards.
 
-Two invocation details that bite:
+Codex prints its resolved settings in a header, so the check is cheap. Capture the run and assert:
+
+```bash
+codex exec … "<prompt>" < /dev/null > "$LOG" 2>&1
+grep -qx "model: gpt-5.6-sol"   "$LOG" || echo "WRONG-MODEL — treat as lane failure"
+grep -qx "reasoning effort: max" "$LOG" || echo "WRONG-EFFORT — treat as lane failure"
+```
+
+This is the same wire-level verification the pipeline already applies to every routed model lane — launch parameters have been observed not to stick, so the header is the evidence, not the command you typed.
+
+Three more invocation details that bite:
 - **`< /dev/null` on every call.** With stdin open, `codex exec` prints `Reading additional input from stdin...` and waits for input it will never get.
-- **`-o <file>` to capture the verdict.** `--output-last-message` writes the final message to a file, which is what you read and act on. Parsing it out of the streamed transcript is unnecessary.
+- **`-o <file>` to capture the verdict** — and then **check the file is non-empty.** `--output-last-message` only gets written when the run produces a final assistant message. A run that exits on its turn budget writes **nothing**, and an absent or empty file is a lane failure, not a silent pass. A real gate lost 10 minutes to exactly this and reported "no output — abandoned".
+- **Bound the wall clock.** `codex exec` has no timeout flag and macOS has no `timeout(1)`; use perl's alarm, which is present everywhere:
+  ```bash
+  perl -e 'alarm shift @ARGV; exec @ARGV' 600 codex exec … < /dev/null > "$LOG" 2>&1
+  ```
+  Exit 142 means the deadline fired. **Never poll a Codex run in an unbounded loop** — a blocked runner holds a fleet slot doing nothing, and one gate cost ~15 minutes of a slot across two attempts before returning anything at all.
 
 Flags below are verified against codex-cli 0.145.0 — confirm against `codex exec --help` before first use and prefer what `--help` says over this file.
 
@@ -35,11 +73,21 @@ Flags below are verified against codex-cli 0.145.0 — confirm against `codex ex
 Run **after** the artifact is written and **before** the status flips. Codex reads the repo, so its review is grounded in the same code the plan claims to build on — that is the point: it catches the plan that references a file that doesn't do what the plan says.
 
 ```bash
-codex exec -C "<repo root>" -m gpt-5.6-sol -c model_reasoning_effort="max" \
-  -s read-only -o /tmp/codex-review-<ID>.md "<prompt>" < /dev/null
+perl -e 'alarm shift @ARGV; exec @ARGV' 600 \
+  codex exec -C "<repo root>" -m gpt-5.6-sol -c model_reasoning_effort="max" \
+  -s read-only -o /tmp/codex-review-<ID>.md "<prompt>" < /dev/null \
+  > /tmp/codex-review-<ID>.log 2>&1
 ```
 
-`-s read-only` is load-bearing: the reviewer must not be able to "helpfully" fix the artifact it is reviewing. You apply the changes, so you stay accountable for them.
+`-s read-only` is load-bearing for one thing only: the reviewer must not be able to "helpfully" fix the artifact it is reviewing — you apply the changes, so you stay accountable for them. It is **not** a privacy control; see "every Codex call is data egress" above.
+
+**Keep the review scope small enough to finish.** `max` effort on a large artifact plus a dozen source files plus web search will burn its turn budget and emit nothing — the failure is not rare, it is the default outcome for an over-scoped review. Name the artifact and **the handful of files whose claims actually need checking**, not every file the plan mentions. If a plan is big enough that one review can't cover it, run two narrower reviews (say, security clauses and then completeness) rather than one that dies at the end and returns nothing.
+
+**The effort ladder, when a run returns nothing.** Do not retry `max` unchanged and do not silently drop to `high`:
+
+1. `max` with a 600s deadline. Non-empty output → done.
+2. Empty output or deadline → retry **once** at `high`, with the scope **narrowed** (fewer files, fewer questions). Record this in the gate note as an explicit, logged downgrade — `high` is not what the gate specifies, so a reader must be able to see they got the cheaper pass.
+3. Still nothing → the lane has **failed**, not "returned clean". Fall back in-family per "Fallback" and log it. A gate that produced findings but never emitted its verdict line is **PARTIAL**: treat its findings as evidence, and never treat the missing verdict as a pass.
 
 The prompt must be self-contained — Codex starts cold and shares no memory with you:
 
@@ -260,21 +308,25 @@ Codex output counts only once you've checked it. After each invocation:
 
 ## Fallback — availability is the only licensed skip
 
-Codex is a **verification upgrade with a Claude fallback, never a dependency the pipeline can stall on or silently skip work over.** If the lane isn't working for *any* reason — binary missing, not logged in, usage-limit or rate-limit response, wrong model on the wire, repeated CLI errors or timeouts, the harness failing its own verification, or the kill-switch below tripped — then:
+Codex is a **verification upgrade with a Claude fallback, never a dependency the pipeline can stall on or silently skip work over.** If the lane isn't working for *any* reason — the repo opted out, binary missing, not logged in, usage-limit or rate-limit response, wrong model *or wrong effort* on the wire, an empty `-o` file, the deadline firing, repeated CLI errors, the harness failing its own verification, or the kill-switch below tripped — then:
 
 - **R1 / R2** fall back to the Claude reviewer the skill originally specified (the strong-model one-shot review; the Claude completeness critic). The gate still runs — it just runs in-family. **Record the downgrade prominently** in the artifact's gate note, because an in-family review of in-family work is measurably weaker evidence and the next reader deserves to know which one they got.
 - **R3** falls back to Claude writing the code, per the standing rule: never to another cheap lane, never dropped, never deferred because the executor was down.
 
-An unavailable lane is a logged downgrade. A skipped gate is a defect.
+An unavailable lane is a logged downgrade. A skipped gate is a defect. **An opted-out repo is neither** — it is a correct run that used the in-family reviewer by the owner's instruction, and it needs no escalation, no exception request, and no apology in the report.
 
 ## Accounting honesty
 
 Record per run, in the artifact's progress/gate note and (in a fleet) the ORCHESTRATOR.md ledger Notes:
 
 ```
-codex-review:  <SOUND | CHANGES RECOMMENDED | MATERIAL DEFECTS> · N findings · A accepted / R rejected
+codex-review:  <SOUND | CHANGES RECOMMENDED | MATERIAL DEFECTS | PARTIAL (no verdict emitted)>
+               · effort actually on the wire · N findings · A accepted / R rejected
 codex-critic:  N seed items · M converted to confirmed findings
-codex-exec:    N tasks · M retries · K reverted        (or: codex: unavailable → claude)
+codex-exec:    N tasks · M retries · K reverted
+               (or: codex: unavailable → claude · codex: opted out (<file>) → claude)
 ```
+
+Record the **effort that was on the wire**, not the one you asked for — that is the whole point of the header check, and a gate note reading `max` when the run was `high` is a false record of how strong the evidence was.
 
 The R3 lane carries the same **per-lane revert-rate kill-switch** as every other downgraded lane (`cursor-composer.md` §"Accounting honesty"): if a repo's early items show Codex reverting more than roughly **1 task in 3**, stop using it as an executor for that repo, route its work to Claude, and note why. R1/R2 are exempt from the kill-switch — they are verification, and a reviewer that keeps finding real defects is *working*, not thrashing. But do track the **rejection rate**: a reviewer whose findings you reject far more often than you accept is either mis-prompted or being handed artifacts it can't ground, and both are worth fixing rather than tolerating.
