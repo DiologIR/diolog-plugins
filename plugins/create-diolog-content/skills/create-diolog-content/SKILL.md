@@ -79,6 +79,7 @@ When a reviewer corrects shipped output, update the package, not just the draft:
 - **Never use an em dash (—) or en dash (–).** The house connective is the spaced hyphen " - ". The lint enforces this.
 - **No AI hallmarks.** Full field guide in `references/ai-writing-signs.md` including the quantified §6 layer; the lint bans the worst phrases. The audience detects AI text and penalises it with real trust loss - this is commercial risk, not cosmetics.
 - **Ground every claim.** Shipped product truth only; every statistic carries an inline (Source, Year); a missing figure is asked for, never invented.
+- **Write to the length the destination allows.** Default output runs long, and the drift is invisible from inside the draft: a landing section becomes three paragraphs, a guide page overflows its A4, an article pads its middle. Take the target from the brief or the destination's real constraint, state it before drafting, and cut content to fit rather than shrinking type or thinning the argument. Padding fails the skim test on its own.
 - **Names, titles and headings survive a literal reading and carry the argument for a skimming reader.**
 - **Measured confidence, shown never stated.** No guarantees, no "100% compliance", and no volunteering confidence caps or percentages in copy.
 - **No financial or investment advice; no material non-public information; no client names without written approval.**

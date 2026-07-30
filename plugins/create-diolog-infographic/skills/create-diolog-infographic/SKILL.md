@@ -146,8 +146,9 @@ until the design layer exists and the finding and the copy are pinned.
    clipping / overlap. **A `.page` with `overflow:hidden` hides its own overflow, so a page-height
    check passes even when content collides at the bottom - also measure the inner content box
    (`inner.scrollHeight - inner.clientHeight`) and the gap between the last block and the footer, per
-   page, to catch collisions the page-level check misses.** Delegate the render+measure to a verifier
-   subagent when you have one. Iterate.
+   page, to catch collisions the page-level check misses.** Do the render+measure yourself - a few tool calls,
+   and a subagent spawned to re-check a page you just built spends a whole context telling you
+   what a crop would. Iterate.
 
    Then obey the **Looking Contract**, because every automated check above can pass on a bad poster:
 

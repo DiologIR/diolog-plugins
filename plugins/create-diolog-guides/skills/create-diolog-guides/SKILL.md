@@ -225,6 +225,9 @@ of the actual PDF** and look at them. The exporter's report is not the document.
 Report, separately and in these words: which gates ran and what they returned; which images you
 opened; what you did **not** check. An unchecked page is unverified, not passing.
 
+Keep the report to those three lists. Written output runs long by default, and a delivery note that
+restates the design decisions buries the one thing a reader needs from it: the not-checked list.
+
 ## Done when
 
 Each is checkable. Verify, do not assume.
