@@ -66,6 +66,8 @@ When step 3 uses the `Workflow` tool to investigate in parallel:
 
 ## Guidelines
 
+- **Length is a tier constraint, and effort is the second routing dial.** A 10-line diff gets a ~30-line plan; padding with empty sections is worse than omitting them, because the worker treats every section as work. Per-lane effort (readers `low`, Trivial/Small synthesis `medium`, Standard/Large and the gate `high`) and the length budget are canonical in the twin's `feature-spec-pipeline/skills/work/references/model-and-effort.md` §§2, 7. Step effort down before model down — a strong model at low effort keeps the capability class REVIEWER ≥ WRITER is about.
+
 - **Ambiguity is not a reason to bail.** Resolve it yourself from the codebase, the closest analogue, and the safer default, and record the picks as plan assumptions — a plan built on documented internal assumptions is the correct output, not a failure. Reserve `NEEDS TRIAGE` for a genuine **external (non-internal) dependency** you cannot resolve (a product/policy/brand decision that is the human's to make, or an external contract/credential/system you lack), and even then plan everything that dependency does not block and flag only the blocked slice. Never punt a whole ticket over gaps you could settle yourself.
 - **Plan every requirement and subfeature the ticket asks for.** Do not drop, shrink, or push a subfeature "out of scope" or to a follow-up because it is large, fiddly, or lower priority — if it has no external dependency, it belongs in this plan. Size is handled by the tier + decomposition, not by cutting scope.
 - Keep the plan scoped to the issue; don't extend to adjacent features or cleanup.

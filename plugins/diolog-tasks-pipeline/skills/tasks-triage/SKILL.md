@@ -61,6 +61,8 @@ When step 2 uses the `Workflow` tool to triage issues / lenses in parallel:
 
 ## Hard rules
 
+- **Effort is the second dial alongside model, and review sections have a length budget.** Canonical in the twin's `feature-spec-pipeline/skills/work/references/model-and-effort.md`: grounding readers at `low`, the verdict and any gate at `high`; an agent spawned without an explicit effort runs at `high`. Step effort down before model down. The posted triage comment stays short — verdict, a skimmable UI-and-logic preview, and one line per assumption stating the default and why (§7).
+
 - **Non-technical comments only.** No file paths, code identifiers, library/framework names, or architecture words (module, service, resolver, route, endpoint, schema, …) in any Tasks comment. Translate to what the user sees or does. Full ban list + good/bad examples in `references/comment-format.md`.
 - **Never write an implementation spec, suggested description, or file list** — the `tasks-plan` skill owns that.
 - **Never modify the original issue description.**

@@ -56,7 +56,7 @@ If the lane is genuinely unavailable — no binary, not logged in, usage or rate
 
 In a full-auto pipeline run — no human will read the spec between triage and `/plan` — the Assumptions block is a trusted first output: a wrong default doesn't get caught, it gets **built**. So before the status flips to `Ready for Plan`, run one strong-model one-shot review of the Assumptions block (a fresh reviewer — not the agent that wrote the assumptions) answering, per assumption: would this default **surprise the owner**? Does it **reverse a locked or documented decision** (check the spec, the ledger, and the repo's own decision records — CLAUDE.md, plans of record)? Does it **deserve to be an Essential Question** instead — is it really an external dependency wearing a default? Any failure converts that assumption into an Essential Question (→ `Needs More Info`, per step 6) or fixes the default, before the flip. When a human reviews specs before planning, the gate is optional — the human *is* the gate. This gate reviews the defaults; it never re-asks questions a human already answered (those stay authoritative).
 
-**Model note:** the Sentinel verdict + Assumptions synthesis may run on a mid-tier model (sonnet) *because* this gate stands behind it — but **S2/S3 (governance-adjacent) features stay on the strong model end-to-end**: verdict, Assumptions, and the gate itself.
+**Model note:** the Sentinel verdict + Assumptions synthesis may run on a mid-tier model (sonnet) *because* this gate stands behind it — but **S2/S3 (governance-adjacent) features stay on the strong model end-to-end**: verdict, Assumptions, and the gate itself. Effort is the second dial and is canonical in `feature-spec-pipeline/skills/work/references/model-and-effort.md`: grounding readers run at `low`, the verdict and this gate at `high`, and stepping a reviewer's *effort* down keeps the capability class where stepping its *model* down does not.
 
 ## Workflow fan-out limits (avoid throttling)
 
@@ -67,6 +67,7 @@ When step 3 uses the `Workflow` tool to triage features / lenses in parallel:
 
 ## Hard rules
 
+- **Keep the review sections short.** Written output drifts long by default; the triage section is a verdict, a UI-and-logic preview a non-technical reader can skim, and a list of assumptions — each assumption one line stating the default and why, never a paragraph defending it. Length budget in `feature-spec-pipeline/skills/work/references/model-and-effort.md` §7.
 - **Non-technical review sections only.** No file paths, code identifiers, library/framework names, or architecture words (module, service, resolver, route, endpoint, schema, …) in the triage review sections. Translate to what the user sees or does. The `## Feature description` section is the exception — it preserves whatever the author wrote, verbatim. Full ban list + good/bad examples in `references/spec-format.md`.
 - **Never write an implementation spec, suggested rewrite, or file list** — the `/plan` skill owns that.
 - **Never modify the original `## Feature description` section.** Append new triage sections; don't rewrite history.

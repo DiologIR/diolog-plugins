@@ -76,12 +76,23 @@ faster than Opus-at-high, and nothing in the launch result tells you it happened
    **string**, `args.prompt` was `undefined`, and every runner burned ~60k tokens politely replying
    "no task was provided" — the guard turns that into a fast, free failure.
 
-2. **Set `effort` explicitly.** `effort: 'high'` is the runner default; reserve higher tiers for a
-   specific hard verify/judge stage, never fleet-wide.
+2. **Set `effort` explicitly — and read the effort dial before you pick.** Full per-lane guidance is
+   canonical in `feature-spec-pipeline/skills/work/references/model-and-effort.md`; the three facts that
+   change launch decisions here: (a) an agent spawned with no `effort` runs at `high`, so a leaf reader
+   left unset is over-spending — `low` is the level built for subagents; (b) a feature runner is
+   long-horizon agentic work (multi-phase, >30 min), which is what **`xhigh`** is for — `effort: 'high'`
+   is the fleet's deliberate cost choice, not the capability-matched setting, so if you raise a runner to
+   `xhigh` raise its `max_tokens` too (start at 64k, since `max_tokens` caps thinking plus response text);
+   (c) effort is the *primary* cost dial and model the second — where a review lane is routed a model tier
+   down purely to save tokens, prefer keeping the stronger model at lower effort, which saves the same and
+   keeps REVIEWER ≥ WRITER intact (that invariant is about capability class, not spend).
 
 3. **Verify at two levels; trust neither the launch parameters nor a probe.**
-   - *In the prompt*: make the runner's FIRST ACTION a self-check — "your system prompt states the model
-     powering you; if it is not claude-opus-4-8, reply exactly `WRONG-MODEL: <id>` and stop."
+   - *In the prompt*: make the runner's FIRST ACTION a self-check, written against the **tier** and never
+     a dated id: "your system prompt states the model powering you; if it is not an Opus-class Claude
+     model, reply exactly `WRONG-MODEL: <id>` and stop." A check that hardcodes last generation's string
+     fires on every correctly-routed runner and stops the fleet before it starts — a newer model in the
+     same tier is a pass, a different *tier* is the failure.
    - *On the wire*: after launch, grep the model id from the first assistant turn of each runner's
      transcript (`agent-*.jsonl` under the workflow run's transcript dir):
      `grep -o '"model":"[^"]*"' <transcript> | head -1`. A one-off probe agent is NOT sufficient evidence —
@@ -127,7 +138,8 @@ You are a feature runner in an orchestrated fleet. Deliver ONE feature by invoki
 ship-feature skill (Skill tool: "ship-feature:ship-feature") on it, from the repo root.
 
 FIRST ACTION — model self-check: your system prompt states the model powering you. If it is
-NOT claude-opus-4-8, reply immediately with exactly "WRONG-MODEL: <that id>" and stop.
+NOT an Opus-class Claude model, reply immediately with exactly "WRONG-MODEL: <that id>" and
+stop. Check the TIER, never a dated id — a newer Opus is a pass; sonnet/haiku/another family is not.
 MODEL ROUTING — you run on Opus at high effort; route the agents YOU spawn per lane, and
 propagate this whole block into every prompt that itself spawns agents:
   · leaf readers + typecheck/lint gate-runners → model:'haiku'
@@ -264,10 +276,13 @@ There is **no session-pinning knob at the API level**: the cache keys on the exa
 only because it replays the identical transcript, making the prefix match. Compaction, an injected
 system-reminder, or a model change forfeits the hit.
 
-- **Warm (paused minutes ago, ~5-min harness TTL — the API's 1h extended TTL is a harness-level
-  `cache_control` choice you cannot set; never design around it):** revive via SendMessage to the
-  runner's agentId — full context, near-free.
-- **Cold (hours — usage reset):** fresh relaunch through the workflow lane, prompt = pointers to
+- **Warm (inside the harness's prompt-cache TTL):** revive via SendMessage to the runner's agentId —
+  full context, near-free. The TTL is a harness-level `cache_control` choice you cannot set, so treat it
+  as an observation, not a guarantee: current Claude Code sessions run a **1-hour** TTL, dropping to
+  ~5 minutes once the session is in usage overage. Plan the warm window as "about an hour, shorter in
+  overage", and confirm by whether the revival actually came back cheap — never build a pause strategy
+  that only works at one TTL.
+- **Cold (beyond that window, or after a usage reset):** fresh relaunch through the workflow lane, prompt = pointers to
   the handover section + the context contract files. Do NOT cold-revive to continue; use ladder
   rung 3 only to extract a missing handover, then still resume fresh.
 - **Workflow journal replay** (`{scriptPath, resumeFromRunId}`) replays completed `agent()` results
