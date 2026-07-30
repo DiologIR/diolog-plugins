@@ -4,6 +4,8 @@ Build a document (resume, one-pager, memo, letter, report, proposal) as an HTML 
 
 **A document has two renderings — screen and print — and both ship.** Most web-styled documents fall apart in the print dialog: backgrounds vanish, sections split mid-heading, animations freeze half-played. Design for both from the first line.
 
+**Length is part of the design.** A document runs as long as its substance needs and stops there — the page count is an outcome, not a target to fill. Cut restated summaries, "Overview" sections that repeat the opening paragraph, and boilerplate headings carrying one sentence each; a two-page memo that says the thing beats a six-page memo that circles it. If the brief names a length or a page count, that is a constraint to design to, and content gets cut to fit rather than type shrunk to hide the overflow.
+
 ## Phase 1: Screen presentation — paper on a desk
 
 - **Page container:** `max-width: 816px` (US Letter at 96dpi), centered (`margin: auto`), white background, 64–72px padding, subtle shadow (`0 2px 12px rgba(0,0,0,0.08)`), 2–4px border-radius. The size matters: 816px means what the user sees on screen is what lands on the printed page, so no layout surprises at print time.

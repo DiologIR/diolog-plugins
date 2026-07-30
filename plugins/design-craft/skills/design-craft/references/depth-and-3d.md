@@ -113,4 +113,4 @@ Only when the object is the content: product configurators, data sculptures, bra
 - Grain/glass/mesh present only where stated in the design-reasoning block — decoration that can't name its purpose comes out.
 - Tilt ≤8°, parallax layers ≤3, one sticky scene, one glass stack, one WebGL canvas — exceeding any of these needs a written reason.
 - `prefers-reduced-motion` verified: tilt/parallax/idle-rotation off, states jump; keyboard path unaffected by any pointer-driven effect; text contrast holds over every gradient/glass/image region (test the worst frame, not the first one).
-- Performance verified by a subagent: no layout thrash from scroll handlers (scroll-driven CSS or `transform`-only rAF), stable 60fps while scrolling the heaviest section.
+- Performance measured in a browser, not inferred from the source: no layout thrash from scroll handlers (scroll-driven CSS or `transform`-only rAF), stable 60fps while scrolling the heaviest section.

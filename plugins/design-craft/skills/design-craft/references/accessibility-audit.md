@@ -12,20 +12,22 @@ Determine what to review, in order of preference:
 
 Read the file end-to-end. Note: the framework or component library in use, the accessibility level expected (WCAG AA is the standard default), and any user-stated constraints.
 
-## Phase 2: Launch four review agents in parallel
+## Phase 2: Work the four checklists
 
-Use the **`Agent`** tool to launch all four agents concurrently in a single message. Pass each agent the full file contents so it has complete context.
+The audit is four checklists, not four agents. **Default: run all four yourself in one pass**, in the order below — they read the same file and the later ones depend on what the earlier ones resolve (a contrast finding needs the token followed to its source; a focus-ring finding needs the element's real role). Splitting one file four ways costs four briefs and four reconciliations for a pass you can do directly.
 
-Instruct every agent explicitly: **report every issue found, including borderline and low-severity ones, with a confidence and severity estimate.** Coverage is the agent's job; filtering happens at aggregation (Phase 3).
+**Fan out** (the **`Agent`** tool, all lenses in a single message, full file contents first and the questions last) only when the surface is genuinely large — a multi-page site, a whole deck, a screen set — or when this audit is running as one lens of a `polish-pass` panel. Give each agent one checklist and nothing else, so the scopes don't overlap.
 
-### Agent 1: Contrast and Color
+Whoever runs a checklist: **report every issue found, including borderline and low-severity ones, with a confidence and severity estimate.** Coverage comes first; filtering happens at aggregation (Phase 3). Don't pre-filter to "the serious ones" — that lowers recall, and the filter belongs after the find.
+
+### Checklist 1: Contrast and Color
 
 1. **Verify text contrast.** Normal text (under 18px) needs 4.5:1; large text (18px+ bold or 24px+) needs 3:1; UI components (buttons, icons, focus rings) need 3:1. Thresholds are **inclusive with no rounding**: exactly 4.5:1 passes, 4.499:1 fails — rounding up is not a permitted mechanism. Compute the actual ratio for any color pair you can resolve (resolved hex values, tokens followed back to their source). Flag every failing pair with the ratio and the required minimum. **Sweep the "muted" roles specifically** — placeholder text, secondary/tertiary text, captions: mid-gray tokens in the `#6b7380` neighborhood fail 4.5:1 on light backgrounds most of the time, and muted-gray-on-tinted-near-white is the single most common generated-design contrast failure.
 2. **Check for color-only signaling.** Flag any state communicated by color alone — green/red without an icon, blue link with no underline, chart with no legend or text labels.
 3. **Check for difficult color combinations.** Red+green (most common colorblindness), blue+yellow at similar lightness, light gray on white, colored text on colored backgrounds with similar brightness.
 4. **Check whites and blacks.** Flag pure `#FFFFFF` on `#000000`. Subtly toned (e.g. `#FAFAFA` / `#1A1A1A`) is preferred — though this is style, not WCAG, so flag as a recommendation.
 
-### Agent 2: Semantic HTML and Structure
+### Checklist 2: Semantic HTML and Structure
 
 1. **Heading hierarchy.** Exactly one `<h1>`. No skipped levels (don't go from `<h2>` to `<h4>`). Headings describe content, not styled visual size.
 2. **Right element for the role.** `<button>` not `<div onclick>`. `<a href>` not `<div>` styled as a link. `<label for="id">` linked to `<input id="id">`. `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>` for landmarks.
@@ -33,7 +35,7 @@ Instruct every agent explicitly: **report every issue found, including borderlin
 4. **Form input labels.** Every input has an associated `<label>` (or `aria-label` if visually labelless). Placeholder text alone is not a label — it disappears when the user types.
 5. **Avoid ARIA when semantic HTML works.** Flag `role="button"` on a `<div>` if it could just be a `<button>`. ARIA is a patch, not a default — pages using ARIA average *more* accessibility errors than pages without it, because deployment outpaces correctness. The decision order is strict: (1) native HTML element with the right semantics; (2) native element under custom visuals if restyling is the issue; (3) the ARIA APG pattern followed verbatim if no native element fits; (4) the closest APG pattern plus a documented deviation, as a last resort. **Never invent ARIA** — flag any role/attribute combination that doesn't appear in the APG.
 
-### Agent 3: Keyboard Navigation and Focus
+### Checklist 3: Keyboard Navigation and Focus
 
 1. **Keyboard reachable.** Everything clickable must also be reachable with Tab. Hover-only menus, modals that don't open with keyboard, dropdowns that need mouse hover all fail.
 2. **Logical tab order.** The Tab sequence should follow reading order. Flag explicit `tabindex` values greater than 0 (they distort the natural order).
@@ -42,7 +44,7 @@ Instruct every agent explicitly: **report every issue found, including borderlin
 5. **Skip links.** For pages with significant repeated navigation, recommend a "Skip to main content" link as the first focusable element.
 6. **Client-side route changes move focus.** In an SPA, a route change without a page load leaves focus (and the screen reader) stranded on the old page — move focus to the new main content region or its heading on navigation.
 
-### Agent 4: Motion, Forms, and Misc
+### Checklist 4: Motion, Forms, and Misc
 
 1. **`prefers-reduced-motion` respected.** Animations and transitions over a couple hundred milliseconds should have a `@media (prefers-reduced-motion: reduce)` block that shortens or removes them.
 2. **No flashing content.** Anything flashing more than 3 times per second can trigger photosensitive epilepsy. Auto-playing videos, strobe effects, rapid loops — flag and require pause control.
@@ -55,11 +57,11 @@ Instruct every agent explicitly: **report every issue found, including borderlin
 
 ## Phase 3: Aggregate and fix
 
-Wait for all four agents to complete. Aggregate their findings into a single list, deduplicating where multiple agents flagged the same issue.
+Aggregate the four checklists into a single list (waiting for every agent first, if you fanned out), deduplicating where more than one flagged the same issue.
 
 Fix each issue directly. For ambiguous cases (e.g. "this contrast is 4.4:1, very close to passing"), apply the fix anyway — accessibility is the floor, not the ceiling.
 
-If a finding is a clear false positive or out-of-scope (e.g. the agent flagged a third-party embed you can't modify), note it and skip it. Don't argue with the finding — just move on.
+If a finding is a clear false positive or out-of-scope (e.g. a third-party embed you can't modify), note it and skip it. Don't argue with the finding — just move on.
 
 When done, summarize:
 - Issues found by category (contrast / semantic / keyboard / motion-forms)

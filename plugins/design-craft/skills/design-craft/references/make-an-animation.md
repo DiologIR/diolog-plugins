@@ -80,7 +80,7 @@ Conventions on top of the engine: group each scene in a positioned container gat
 
 ## Phase 3: Score the pacing
 
-Scrub through at 0.25× increments and check: every beat lands ≥300ms after the previous motion settles; nothing important happens during a camera move (viewers can't read mid-pan); total duration is honest (product teasers 15–30s, walkthroughs 30–90s; past 2 minutes it's a video series, not an animation); the last frame is a designed end card that can hold indefinitely. Then delegate a verifier subagent to step `window.__animStage.setTime()` through the shot list's boundary times and screenshot each — mis-timed scenes show up as empty or overlapping frames.
+Scrub through at 0.25× increments and check: every beat lands ≥300ms after the previous motion settles; nothing important happens during a camera move (viewers can't read mid-pan); total duration is honest (product teasers 15–30s, walkthroughs 30–90s; past 2 minutes it's a video series, not an animation); the last frame is a designed end card that can hold indefinitely. Then step `window.__animStage.setTime()` through the shot list's boundary times, screenshot each, and open every frame — mis-timed scenes show up as empty or overlapping frames, and only in a frame you actually looked at.
 
 ## Phase 4: Export to .mp4 (when the user wants a file)
 

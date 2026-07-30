@@ -26,6 +26,8 @@ Procedures chain. A typical greenfield flow: `discovery-questions → frontend-a
 
 **Agentic iteration (v1.4).** The skill iterates without waiting for a human: `unit-critique-gate` gates every drafted unit (page, screen, slide, section) through a draft → lint → critique → repair loop with a canonical `scores + mustFix` rubric and convergence budgets; `scripts/design-lint.py` (stdlib Python 3) catches the mechanically-detectable slop deterministically in any environment the skill is seeded into, including headless sandboxes; and an **autonomous mode** converts would-be questions into stated assumptions when the skill runs under an orchestrator or pipeline. Harnesses that already mandate their own per-unit reviewer adopt the rubric instead of stacking a second loop (the don't-double-loop rule).
 
+**Model-behaviour calibration (v1.8).** The skill carries an explicit working posture: narration cadence (one line before the first action, updates only on findings or direction changes, outcome first at the end), calibrated lengths for both the reply and any written deliverable, held scope with concerns raised in a sentence rather than acted on, corrections narrated only when they change the user's decisions, and a delegation policy that keeps verification first-person — a fresh reviewer's value is the question they bring (*"what is wrong with this?"*), which the skill brings itself. Fan-out survives where it earns its cost: the ship-time `polish-pass` panel over a real deliverable.
+
 **Pairs with `ux-craft`.** design-craft is the visual hands; the companion `ux-craft` plugin is the UX brain (flows, forms, IA, perception psychology, AI-product UX, ethics gate). The skill loads ux-craft references whenever a task involves a flow, form, navigation, or AI surface, and `polish-pass` includes a ux-craft review lens alongside its visual reviewers. Install both for full coverage.
 
 ## What makes it different
@@ -34,16 +36,16 @@ Procedures chain. A typical greenfield flow: `discovery-questions → frontend-a
 - **Native-feel mobile and real motion range** — `mobile-design` carries iOS/Material platform grammar, thumb-zone and input rules, per-industry conventions, and emotional-design mechanics; `gsap-motion` adds choreographed timelines, ScrollTrigger scroll storytelling, SplitText, and SVG draw/morph on top of the platform-first `motion-design` toolkit.
 - **Accessibility is the floor, not a feature** — WCAG AA contrast, semantic HTML, keyboard/focus, motion preferences, and form correctness are baked into both the philosophy and the `accessibility-audit` / `polish-pass` reviews.
 - **Rooted in real context** — hi-fi never starts from scratch; the skill reads the codebase/brand/tokens/screenshots and lifts exact values before adding to them.
-- **Coverage-first reviews** — review procedures fan out parallel verifier agents (via the `Agent` tool) that report *everything* with confidence/severity, then aggregation filters — so minor findings aren't silently suppressed.
+- **Coverage-first reviews, two passes** — a review finds wide (every issue, including uncertain and low-severity ones, with confidence/severity) and *then* filters at aggregation, never both at once; a reviewer told to be conservative reports less rather than better. Review work is sized to the artifact: a single screen is one pass you run yourself, a real deliverable opens a parallel lens panel via the `Agent` tool — one agent per non-overlapping lens, none to audit another.
 - **Self-contained output** — deck-scaling shells, device frames, side-by-side canvases, and live tweak panels are written as plain, dependency-free HTML/CSS/JS that persist state to `localStorage` and run as standalone files.
 
 ## Built for Claude Code
 
 Designed for this environment:
 
-- Kickoff question rounds use the **`AskUserQuestion`** tool (structured options, previews for visual choices).
-- Verifier fan-out and parallel reviews use the **`Agent`** tool.
-- Browser verification (render, DOM, console, screenshots) drives whatever automation is available — Playwright, `playwright-cli`, or the Chrome MCP — through a verifier subagent.
+- Kickoff question rounds use the **`AskUserQuestion`** tool (structured options, previews for visual choices), front-loaded into one round so the build runs on a complete brief.
+- Browser verification (render, DOM, console, screenshots) drives whatever automation is available — Playwright, `playwright-cli`, or the Chrome MCP — and the skill does the looking itself: another crop resolves more than another round of deliberation.
+- Ship-time review panels use the **`Agent`** tool, briefed artifact-first and task-last, scoped to deliverables large enough to split. Delegation is never used to re-check a change the skill just made.
 
 ## Installation
 

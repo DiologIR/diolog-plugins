@@ -11,11 +11,13 @@ When hierarchy and rhythm are right, the design feels effortless to scan. When t
 
 Find what to review, in order: (1) the HTML/CSS file the user just edited or asked about; (2) the most recently modified design file in the session; (3) if unclear, ask. Read the file and the styles it references. Note the medium (slide / page / mobile / dashboard) — hierarchy and rhythm rules vary by context.
 
-## Phase 2: Launch two review agents in parallel
+## Phase 2: Run both lenses
 
-Use the **`Agent`** tool to launch both agents concurrently in a single message. Instruct both agents explicitly: **report every issue found, including uncertain and low-severity ones, with a confidence and severity estimate.** Coverage is the agent's job; filtering happens at aggregation (Phase 3).
+Hierarchy and rhythm are read together by the eye, so **run both lenses yourself in one pass** — two agents over one file is two briefs to reconcile for a review you can do directly. Fan them out (the **`Agent`** tool, both in a single message, file contents first and questions last) only when the surface is large enough to justify it — a multi-page site, a full deck — or when this review is one lens of a `polish-pass` panel.
 
-### Agent 1: Hierarchy review
+Either way: **report every issue found, including uncertain and low-severity ones, with a confidence and severity estimate.** Coverage comes first; filtering happens at aggregation (Phase 3). Don't narrow to "the serious ones" during the find pass.
+
+### Lens 1: Hierarchy review
 
 Hierarchy is built from **five vectors**, not size alone: scale, weight, spacing (more breathing room = more importance), tracking (tighter = faster, wider = ceremonial), and alignment (breaking the grid signals importance). The dominant element needs **at least two vectors working in the same direction**; size-only hierarchy is fragile — any layout constraint that collapses the size contrast destroys it.
 
@@ -30,7 +32,7 @@ For every screen, slide, or major section:
 7. **Check label/value pairs.** On stat tiles, dashboards, and metadata rows the **value outranks its label** — flag "Sales" set larger or bolder than "591". The label whispers; the number speaks. (Pair with `font-variant-numeric: tabular-nums` on comparable columns.)
 8. **Verify "the 5-second test."** A first-time user should understand what to look at and what to do within 5 seconds. If you can't, the eye doesn't have a clear path through the design. On multi-page or navigation-bearing surfaces, also run Krug's trunk test on an interior page in isolation: What site is this? What page am I on? What are the major sections? What are my options here? Where am I in the scheme? Any unanswerable question is a wayfinding gap (logo, page title, nav state, breadcrumbs).
 
-### Agent 2: Rhythm review
+### Lens 2: Rhythm review
 
 For the document as a whole:
 
@@ -49,7 +51,7 @@ Five mechanical lint rules to run regardless of judgment: **no two adjacent hier
 
 ## Phase 3: Aggregate and fix
 
-Wait for both agents. Aggregate findings. For each issue:
+Aggregate the findings from both lenses. For each issue:
 
 - **Random spacing → snap to scale.** If the file already has a scale, snap to the nearest value. If not, define one (4px or 8px multiples) and update all spacing.
 - **Random font sizes → snap to type scale.** Same approach.

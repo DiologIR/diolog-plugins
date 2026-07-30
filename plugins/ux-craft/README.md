@@ -44,7 +44,12 @@ The skill operationalizes the UX canon rather than name-dropping it:
 | `mobile-ux.md` | Touch targets, thumb zones, safe areas, iOS/Material platform grammar, mobile forms, mobile a11y, React Native notes |
 | `email-ux.md` | The two-second triage contract, structure, email-client rendering constraints, marketing & transactional patterns, compliance floor (CAN-SPAM / GDPR / one-click unsubscribe), pre-send checklist |
 | `ux-writing.md` | Microcopy patterns (buttons, errors, empty states, confirmations), tone matrix, plain language, Butterick typography, localization hygiene |
-| `checklists.md` | Pre-ship checklists per surface + WCAG 2.2 quick pass + shared severity ladder |
+| `ai-product-ux.md` | AI-feature patterns: inputs, blank-box wayfinding, governors (action plans, verification, stream of thought, cost), narration cadence, trust builders, tuners, trust evolution, identity, AI review lens |
+| `checklists.md` | Pre-ship checklists per surface (incl. AI features) + WCAG 2.2 quick pass + shared severity ladder |
+
+## Working posture
+
+The skill states how it works, not just what it knows: **find wide, then filter hard** (a review's find pass records everything and the filter pass ranks and drops — merging them is how recall dies, and why "only flag serious issues" produces a worse review rather than a shorter one); **reports proportional to their findings**, not to the template; **held scope** (review what was pointed at, raise a deeper problem in a sentence rather than auditing it uninvited); **delegation only when the scope genuinely exceeds one pass**, never to grade its own findings; and corrections surfaced only when they change the user's decisions.
 
 ## Ecosystem fit
 

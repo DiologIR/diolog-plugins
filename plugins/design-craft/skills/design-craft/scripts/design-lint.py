@@ -96,7 +96,7 @@ def check_file(path):
                 "use shadow, a thin all-around border, or background contrast")
 
     # --- typography ---------------------------------------------------------
-    for m in re.finditer(r"font-family\s*:\s*['\"]?(Inter|Roboto|Arial)\b", html):
+    for m in re.finditer(r"font-family\s*:\s*['\"]?(Inter|Roboto|Arial|Space Grotesk)\b", html):
         add("major", path, lineno(html, m.start()), "default-font",
             f"{m.group(1)} as the leading family — a silent default unless the brand genuinely uses it")
 

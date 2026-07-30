@@ -73,6 +73,7 @@ Calibration: use the full range; severity = user impact, not fix effort; multipl
 - [ ] Retrieved/connected content treated as untrusted: sources-in-play visible, tool actions gated on previews, per-source kill switch
 - [ ] Memory visible, editable, deletable; save events announced; training/retention consents separate and opt-in
 - [ ] Cost shown before long/bulk/chained runs
+- [ ] Narration cadence specified, not inherited: one line before the first action, updates only on findings or direction changes, outcome first at the end; self-corrections surfaced only when they change the user's decision or data
 - [ ] Cancel/downgrade/opt-out paths no harder than their opposites (click-symmetry ≤ ~1×; >2× is a hard fail)
 
 ## Email

@@ -33,6 +33,8 @@ Your questions should be informed by what's already there. Asking "do you have a
 
 If the open question changes the design's direction (audience, format, brand, scope), ask. If it's a minor choice you can defensibly make yourself (a label, a default value, two equivalent approaches), decide, build, and note the decision in your summary instead of asking.
 
+**Ask everything in one round.** You do your best work handed a complete brief and left to run, so the goal of this phase is to make the brief complete *before* you start — not to drip-feed questions across the build. Front-load every direction-changing question into the single kickoff round, then execute. Coming back mid-build for something you could have asked at the start costs the user a context switch and costs you the units already drafted against the wrong assumption (Phase 7 covers the exception: a signal that genuinely changes during the work).
+
 ## Phase 3: Build the question set
 
 Every question round should include the following **always-ask** questions, plus the problem-specific questions the brief actually leaves open (typically 3–6).

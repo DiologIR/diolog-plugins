@@ -1,6 +1,8 @@
 # Visual Verification: Layout Integrity and the Screenshot Playbook
 
-The procedure for *seeing* a design the way a user will — structural layout checks across viewports, plus the screenshot discipline that makes verifier subagents fast and their evidence trustworthy. Use it three ways: as the **fifth review axis** in `polish-pass.md` (layout integrity & responsive), as the **standing playbook** handed to any verifier subagent checking rendered output, and as the **per-unit micro-check** inside `unit-critique-gate.md` — after each unit drafts, load just that unit at 375px and 1280px, run the overflow probe, and collect console errors, rather than saving all layout verification for the end.
+The procedure for *seeing* a design the way a user will — structural layout checks across viewports, plus the screenshot discipline that makes the looking fast and the evidence trustworthy. Use it three ways: as the **fifth review axis** in `polish-pass.md` (layout integrity & responsive), as the **standing playbook** for any rendered-output check — yours by default, a delegate's when `polish-pass` fans out — and as the **per-unit micro-check** inside `unit-critique-gate.md`: after each unit drafts, load just that unit at 375px and 1280px, run the overflow probe, and collect console errors, rather than saving all layout verification for the end.
+
+**Looking is cheaper than reasoning about what you'd see.** Every check below is a tool call that returns fact where deliberation returns inference. When a capture leaves you unsure, take another capture — a tighter crop, a higher DPR, the other viewport, the mid-transition frame — before spending another round of thought on the one you have.
 
 **When no browser automation exists** in the environment (a headless sandbox, no Playwright/Chrome), degrade honestly: run the static checks you can — the lint script, the overflow-prone patterns (missing `min-width: 0`, absent `max-width`, fixed widths in fluid containers), explicit image dimensions — and state in your summary that rendered verification did not happen. Never imply a page was seen.
 
@@ -70,7 +72,7 @@ if (document.documentElement.scrollWidth > innerWidth) console.warn('PAGE overfl
 - **Z-order** — dropdowns above cards, modals above everything, toasts above modals. If z-index values look ad-hoc, tokenize the scale: `--z-dropdown: 100; --z-sticky: 200; --z-overlay: 300; --z-modal: 400; --z-toast: 500`.
 - **Media** — aspect ratios held (`object-fit`), no stretched or squashed images, embeds/iframes contained. **Measure rendered vs natural AR — don't trust the declared ratio:** an `<img>` with *both* a `height` attribute and a CSS `aspect-ratio` on its slot renders distorted (two definite dims → the attribute wins, `aspect-ratio` is ignored), so a photo silently over-crops to its natural height. Probe: `[...document.images].filter(i=>i.naturalWidth).map(i=>{const r=i.getBoundingClientRect();const c=Math.max((r.width/r.height)/(i.naturalWidth/i.naturalHeight),(i.naturalWidth/i.naturalHeight)/(r.width/r.height));return c>1.4?[i.src,c.toFixed(2)]:null}).filter(Boolean)` — anything over ~1.4× is a heavy crop; fix with `height:auto`.
 
-## Phase 2: Screenshot playbook (for verifier subagents)
+## Phase 2: Screenshot playbook
 
 Screenshots are the evidence; take them so they're cheap to retake and honest to compare.
 

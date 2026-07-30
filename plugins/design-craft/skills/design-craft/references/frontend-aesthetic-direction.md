@@ -69,7 +69,7 @@ Pick **specific** fonts (not "a sans-serif"):
 - **Mono font** (if needed for code) — name
 - **Utility face** (optional) — for captions, data tables, and metadata on data-heavy surfaces; often the mono doing double duty
 
-Avoid the overused defaults — Inter, Roboto, Arial, bare system stacks, and the silent serif-display defaults (Fraunces, Playfair Display, Georgia-as-display). Pick something with intent: a humanist sans (Söhne, Suisse), a modern serif (Tiempos, GT Sectra), an editorial classic (Tiempos Headline, Canela), a typewriter mono (JetBrains Mono, IBM Plex Mono), a geometric sans (Visby), depending on the mood.
+Avoid the overused defaults — Inter, Roboto, Arial, bare system stacks, and the silent serif-display defaults (Fraunces, Playfair Display, Georgia-as-display). Add **Space Grotesk** to that list: it is the face this model reaches for unprompted when told to "pick something distinctive", which makes it the opposite of distinctive. The tell for any of them is that you arrived at the name before you had a reason — a font chosen because the direction called for it can be defended in one sentence ("a typewriter mono, because the product is a log reader"); a font chosen by gravity can't. Pick something with intent: a humanist sans (Söhne, Suisse), a modern serif (Tiempos, GT Sectra), an editorial classic (Tiempos Headline, Canela), a typewriter mono (JetBrains Mono, IBM Plex Mono), a geometric sans (Visby), depending on the mood.
 
 If the user might not have access to a paid foundry, suggest the closest free alternative (e.g. "Inter is overused, but Söhne is paid — try Söhne for production, or Albert Sans / Geist as free alternatives").
 
