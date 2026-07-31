@@ -176,7 +176,7 @@ Each procedure below is a phased file in `references/`. **Read the file and foll
 | `references/discovery-questions.md` | Start of any new or ambiguous request, before designing. One consolidated kickoff round (via `AskUserQuestion`). |
 | `references/frontend-aesthetic-direction.md` | Before any hi-fi work when no brand/design system exists. Proposes 4 distinct directions and commits to one. |
 | `references/wireframe.md` | "Explore options" / "sketch" / "a few directions" before hi-fi. 3+ low-fi greyscale disposable variations. |
-| `references/make-a-deck.md` | Any slide / presentation / pitch. Self-contained fixed-size deck shell with letterboxing. |
+| `references/make-a-deck.md` | Any slide / presentation / pitch — **redirects to the `deck-craft` skill**, which owns deck production across HTML, `lecturn.deck/1` JSON/`.pptx`, and the Diolog template library. |
 | `references/make-a-prototype.md` | Anything clickable or interactive. Real state, navigation, validation, loading, feedback. |
 | `references/make-tweakable.md` | "Let me play with it" / "make this adjustable." Self-contained floating tweak panel, persisted to `localStorage`. |
 | `references/generate-variations.md` | Options / alternatives on hi-fi work. 3+ distinct variations across substantive axes, in one file. |
@@ -216,6 +216,8 @@ Each procedure below is a phased file in `references/`. **Read the file and foll
 | `references/interaction-states-pass.md` | Before shipping anything interactive. Hover/active/disabled/focus + transitions. |
 | `references/visual-verification.md` | Layout integrity across viewports (overflow/overlap/clipping/breakpoints) + the screenshot playbook. Part of every polish pass; also the standing instructions for any browser-verification task, yours or a delegate's. |
 | `references/polish-pass.md` | Before any delivery/ship. Runs the review lenses — as one pass on a small artifact, as a parallel panel on a real deliverable (including the motion gate when motion exists) — then fixes. |
+
+**Decks route out.** Any slide/presentation request goes to the `deck-craft` skill, which is self-contained and owns the whole deck flow; don't rebuild a deck shell here.
 
 **Chaining.** Greenfield: `discovery-questions → frontend-aesthetic-direction → wireframe → make-a-prototype → polish-pass`, with `unit-critique-gate` running per unit inside the build step and reading `motion-design.md` / `depth-and-3d.md` / `laws-of-composition.md` as the build touches their territory. Brand-aware: `design-system-extract → generate-variations → make-tweakable → polish-pass`. Motion deliverable: `discovery-questions → make-an-animation → motion-design (review gate) → polish-pass`, escalating to `gsap-motion.md` when the piece needs choreographed or scroll-driven sequencing. Mobile app: `discovery-questions → mobile-design → make-a-prototype (device frame / installable) → polish-pass`. Redesign: `redesign (mode + audit, running the review references as diagnosis) → modernisation levers → polish-pass`.
 
