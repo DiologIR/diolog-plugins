@@ -91,7 +91,7 @@ Gate each slide as you finish it, before starting the next — a mistake on slid
 
 **Narrate thinly.** One sentence before you start building. After that, write only when you find something or change direction. Lead the close with the outcome — what the deck is and what's open — not a slide-by-slide recap of what the user watched you build.
 
-**Do the looking yourself.** Render the deck, screenshot slides, open every capture. A screenshot you generated but didn't open is not evidence, and looking costs less than reasoning about what you'd see. Delegation is for a genuinely wide review of a finished long deck, not for re-checking a slide you just wrote.
+**Do the looking yourself.** Render the deck, screenshot slides, open every capture. A screenshot you generated but didn't open is not evidence, and looking costs less than reasoning about what you'd see. Delegation is for a genuinely wide review of a finished long deck, not for re-checking a slide you just wrote. Inside the Diolog deck producer this has a name — `render_deck`, mandatory, looped until it reports zero blockers; see `references/diolog-templates.md`.
 
 **Hold the scope.** Build the deck asked for. If the brief looks wrong — nine slides for a topic that needs four, a chart with no underlying data — say so in a sentence and build what was asked. Don't quietly re-scope.
 
@@ -114,7 +114,7 @@ This skill is self-contained — it needs no other skill installed. Read only th
 - `references/visual-craft.md` — **the design layer, read on every build**: consuming a `DESIGN.md` / token file, authoring a direction, type, colour, hierarchy and rhythm, anti-slop, the accessibility floor, the subtractive last look.
 - `references/html-deck.md` — the HTML target: the scaling shell, type-scale tokens, static-markup discipline, the wrapper-collapse failure mode, speaker notes, print/PDF.
 - `references/lecturn-json.md` — the `lecturn.deck/1` target: root shape, the element union, locating and driving the converter (`from-pptx` / `to-pptx` / `validate` / `inspect`), and the validator rules that bite.
-- `references/diolog-templates.md` — the template-assembly target: read order, `x.diolog.structure`, the deck producer handoff, and the read discipline that keeps a deck run from becoming a repository sweep.
+- `references/diolog-templates.md` — the template-assembly target: read order, the `render_deck` loop, the job envelope, the theme type scale, `x.diolog.structure`, the deck producer handoff, and the read discipline that keeps a deck run from becoming a repository sweep.
 - `references/template-catalogue.md` — **200 layouts in 27 families**, each with its job and typed slots. The bundled library.
 - `references/layout-specs.md` — per-template geometry, hierarchy, type roles, accent placement, UX job and failure mode, fitted to the 1280×720 frame. Read a template's block before authoring with it; its `caps` override the catalogue.
 - `references/recipes.md` — 21 deck spines by occasion (12 investor + 9 business/product/engineering), and how to adapt one.
