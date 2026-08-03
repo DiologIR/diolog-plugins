@@ -64,7 +64,7 @@ compresses meaning — it only declines to repeat what is already in context.
 
 **5. Placement.** Caveman is invoked; this is injected into the cached prefix, so it is paid for once
 per cache window rather than re-read. A skill body that the model consults costs something each time
-it is consulted. ~1029 bytes sitting in the prefix does not.
+it is consulted. ~736 bytes sitting in the prefix does not.
 
 ## Where caveman is straightforwardly better
 
