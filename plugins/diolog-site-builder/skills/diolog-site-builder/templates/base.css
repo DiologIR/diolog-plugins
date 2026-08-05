@@ -453,7 +453,7 @@
   .ftr { padding-block: var(--sp-9) var(--sp-7); }
   .ftr__top { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: var(--sp-6); }
   .ftr--compact .ftr__top { grid-template-columns: minmax(0, .9fr) minmax(0, .6fr) minmax(0, .6fr); }
-  .ftr h4:not(.wframe__title) { font-size: var(--fs-meta); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); font-family: var(--font-mono); font-weight: 500; margin-bottom: var(--sp-4); }
+  .ftr h3, .ftr h4:not(.wframe__title) { font-size: var(--fs-meta); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); font-family: var(--font-mono); font-weight: 500; margin-bottom: var(--sp-4); }
   .ftr .wframe__title { font-family: var(--font-display); font-size: var(--fs-h4); font-weight: 700; color: var(--ink); text-transform: none; letter-spacing: -0.01em; margin-bottom: 0; }
   .ftr--compact .ftr__top > :first-child > .tag { display: block; margin-top: var(--sp-3); }
   .ftr__links { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }

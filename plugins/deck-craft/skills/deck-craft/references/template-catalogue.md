@@ -14,8 +14,11 @@ Slot kinds: `text` · `stat` · `list` · `tableRows` · `chartSeries` · `image
 **Templates carry no colour and no font.** The deck theme resolves those, so the same template is
 correct under every format. Never put a colour in a slot value.
 
-Sections 1–18 are the established library (140). Sections 19–27 are the deck-craft additions (60) —
-see `template-additions.md` for the gap analysis and rationale behind them.
+Sections 1–18 are the **server-expandable template library (140)** — those ids, and only those, are
+valid `templateId` values. Sections 19–27 are the deck-craft additions (60):
+**hand-author composition specs**, structures you build element-by-element. Their names are
+**never valid `templateId` values** — sending one is rejected at expansion (`ask-and-close` hit
+exactly this). See `template-additions.md` for the gap analysis and rationale behind them.
 
 **`layout-specs.md` carries the geometry, hierarchy and UX block for every entry here, and its
 `caps` override the `max N` values below** — those were measured against the frame; these were

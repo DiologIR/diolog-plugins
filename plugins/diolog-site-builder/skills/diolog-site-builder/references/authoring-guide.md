@@ -101,8 +101,14 @@ Blocks pass the gates by construction; failures come from NEW content. Common ca
 - **stat-numeric** — a `.stat__v` value with no digit. Keep stat values numeric; put a ticker/category/decade
   in the eyebrow or prose.
 - **em-dash-density / copy-not-verbatim** — restructure connective em-dashes; reproduce fact sentences verbatim.
-- **contrast-in-context** — a themed `--accent`/`--accent-ink` (or on-dark accent) below AA on nav/buttons.
+- **contrast-in-context** — a themed `--accent`/`--accent-ink` (or on-dark accent) below AA on nav/buttons,
+  OR a muted `--ink-3` one step under AA on the page surface. The gate measures BODY text too — eyebrows,
+  meta labels, captions and fact labels all paint from `--ink-3`, so one bad token fails every one of them
+  at once. `build.mjs` refuses to assemble a theme whose ink × surface matrix drops below 4.5:1.
   Re-pick the theme value; aim primary CTAs ≥ 5:1.
+- **heading-order** — a skipped level (`h1` → `h3`, `h2` → `h4`). The document outline is a structural
+  contract (WCAG 1.3.1): a screen reader announces the gap. Rank headings by DEPTH, then restyle — never
+  pick `h4` because you want small type. Use a class for size and the correct level for rank.
 - **proportion** — a display headline that stacks near one word per line: keep hero headlines ~6–9 words; cap the
   measure on the heading itself (never a `ch` max-width on a smaller-font wrapper).
 - **interaction** — a ⌘K / mobile-nav trigger opening nothing: don't remove `app.js` or the overlay partials.
