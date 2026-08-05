@@ -561,7 +561,9 @@
   .media-split__image { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--r-3); }
   .fact-list { margin-top: var(--sp-6); border-top: 1px solid var(--line); }
   .fact-list > div { display: grid; grid-template-columns: minmax(5rem, .35fr) 1fr; gap: var(--sp-4); padding-block: var(--sp-3); border-bottom: 1px solid var(--line); }
-  .fact-list dt { font-family: var(--font-mono); font-size: var(--fs-eyebrow); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+  /* A long single-word label (`Certifications`) is wider than the 5rem minimum
+     column at 375px and clips. Let it wrap; break only as a last resort. */
+  .fact-list dt { font-family: var(--font-mono); font-size: var(--fs-eyebrow); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; overflow-wrap: anywhere; hyphens: auto; }
   .fact-list dd { margin: 0; color: var(--ink-2); }
 
   /* a numbered manifesto / thesis list */
