@@ -463,9 +463,15 @@
   .ftr__links a:hover { color: var(--ink); }
   .ftr__sub { display: flex; gap: 8px; flex-wrap: wrap; margin-top: var(--sp-3); }
   .ftr__sub input { flex: 1 1 180px; }
-  .ftr__subscribe { display: grid; grid-template-columns: minmax(12rem, .55fr) minmax(0, 1.45fr); gap: var(--sp-7); align-items: start; margin-top: var(--sp-8); padding: var(--sp-6); }
+  /* The label column must sit on the INPUT row, not the consent row below it —
+     `align-items: start` on unequal-height columns dropped the heading ~70px
+     under the fields it names. */
+  .ftr__subscribe { display: grid; grid-template-columns: minmax(12rem, .55fr) minmax(0, 1.45fr); gap: var(--sp-7); align-items: baseline; margin-top: var(--sp-8); padding: var(--sp-6); }
   .subform__consent { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; margin-top: var(--sp-3); color: var(--ink-2); font-size: var(--fs-meta); line-height: 1.45; }
-  .subform__consent input { margin-top: .18em; width: 18px; height: 18px; flex-shrink: 0; }
+  /* A default checkbox paints an opaque white square on a dark ground while every
+     sibling control is themed. `accent-color` themes the check without replacing
+     the native control (keeps keyboard + AT behaviour). */
+  .subform__consent input { margin-top: .18em; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--accent); }
   .ftr__disclaimer { margin-top: var(--sp-8); padding-top: var(--sp-5); border-top: 1px solid var(--line); font-size: var(--fs-eyebrow); color: var(--ink-3); line-height: 1.7; }
   .ftr__legal { display: flex; flex-wrap: wrap; gap: var(--sp-5) var(--sp-6); align-items: center; justify-content: space-between; margin-top: var(--sp-5); }
   .ftr__legal .powered { font-family: var(--font-mono); letter-spacing: .04em; }

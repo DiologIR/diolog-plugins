@@ -1,7 +1,7 @@
 <!-- BLOCK company-feature — source-photography investor story feature (NO widget). Supply a real source URL and natural dimensions; never invent an asset. slots: eyebrow, heading, body, image_url, image_alt, image_width, image_height, fact{1..3}_{label,value} -->
 <section class="band band--tight reveal">
   <div class="gutter media-split">
-    <img class="media-split__image" src="{{image_url|data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'%3E%3Crect width='1600' height='900' fill='%23e6e3db'/%3E%3C/svg%3E}}" alt="{{image_alt|Company source photograph}}" width="{{image_width|1600}}" height="{{image_height|900}}">
+    <img class="media-split__image" loading="lazy" decoding="async" src="{{image_url|data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'%3E%3Crect width='1600' height='900' fill='%23e6e3db'/%3E%3C/svg%3E}}" alt="{{image_alt|Company source photograph}}" width="{{image_width|1600}}" height="{{image_height|900}}">
     <div>
       <p class="eyebrow">{{eyebrow|§ The operating company}}</p>
       <h2>{{heading|The work behind the ticker.}}</h2>

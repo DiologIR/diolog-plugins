@@ -106,6 +106,11 @@ Blocks pass the gates by construction; failures come from NEW content. Common ca
   meta labels, captions and fact labels all paint from `--ink-3`, so one bad token fails every one of them
   at once. `build.mjs` refuses to assemble a theme whose ink × surface matrix drops below 4.5:1.
   Re-pick the theme value; aim primary CTAs ≥ 5:1.
+- **orphan line** — a body paragraph whose last line carries one or two words. Do not hard-break
+  copy to force a shape; rewrite the sentence or let it wrap. `text-wrap: pretty` already handles
+  the common case.
+- **lazy images** — every image BELOW the fold ships `loading="lazy" decoding="async"`. The hero
+  stays eager: it is the LCP element and lazying it delays the largest paint.
 - **heading-order** — a skipped level (`h1` → `h3`, `h2` → `h4`). The document outline is a structural
   contract (WCAG 1.3.1): a screen reader announces the gap. Rank headings by DEPTH, then restyle — never
   pick `h4` because you want small type. Use a class for size and the correct level for rank.
