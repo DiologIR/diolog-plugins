@@ -170,6 +170,29 @@ function assertThemeContrast(themeCss) {
     );
   }
 }
+// Name the theme source and the pairs checked. Run 3 shipped `--ink-3 #74757c`
+// on `--surface-0 #f7f7f8` (4.28:1) with all five build_site calls succeeding —
+// the floor never fired and the workdir was gone before it could be diagnosed.
+{
+  const themeSource = spec.theme != null
+    ? "inline spec.theme"
+    : spec.themeFile
+      ? "themeFile " + spec.themeFile
+      : "theme.default.css";
+  const seenTokens = parseTokens(theme);
+  const inkKeys = ["ink", "ink-2", "ink-3"].filter((k) => seenTokens[k]);
+  const surfaceKeys = ["surface-0", "surface-1", "surface-2"].filter((k) => seenTokens[k]);
+  const fmt = (keys) => keys.map((k) => k + " " + seenTokens[k]).join(", ");
+  console.error(
+    "[build] theme source: " + themeSource +
+      "; overrides ink=[" + fmt(inkKeys) + "] surface=[" + fmt(surfaceKeys) + "]"
+  );
+  if (!inkKeys.length || !surfaceKeys.length) {
+    console.error(
+      "[build] theme declares no ink/surface overrides — the contrast floor is checking base.css defaults only"
+    );
+  }
+}
 assertThemeContrast(theme);
 
 function fillBrand(s) {
