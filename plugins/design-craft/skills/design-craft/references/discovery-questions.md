@@ -44,6 +44,10 @@ Every question round should include the following **always-ask** questions, plus
 - **Starting point.** "Is there a UI kit, design system, codebase, brand guide, or screenshots I should match? If not, I'll need to commit to an aesthetic from scratch — confirm if that's OK."
 - This question is non-negotiable. Starting a hi-fi design without context produces bad design. Confirm via a question, not in your own assumptions.
 
+### Always-ask: what the visitor is here to do
+
+- **Visitor mode.** Persuade (decide and act) / Operate (complete a task) / Read (understand something) / Experience (be inside the work). Assert your reading and invite correction rather than making it a menu — "reading this as an Operate surface: the user is here to reconcile transactions, not to be sold to" — since it's usually obvious from the brief and only needs confirming when it isn't. It governs everything downstream (`visitor-modes.md`), so getting it wrong costs the whole build.
+
 ### Always-ask: variations
 
 - **How many variations of the overall design?** (1, 2, 3, more)
@@ -120,3 +124,4 @@ If during the work you discover an early answer was wrong (e.g. the user said "n
 - **Don't ask one at a time across multiple turns.** Bundle into one or two `AskUserQuestion` calls.
 - **Don't ask about details you can derive.** If the user attached a brand guide with their primary color, don't ask what their primary color is.
 - **Don't ask to be safe.** A question is justified by the design impact of its answer, not by your uncertainty.
+- **Don't ask for CSS values or canned aesthetic lanes.** "What border radius do you want?" and "pick a vibe: minimal / bold / playful" both hand the design decision back to the user in the one form they can't evaluate. Ask about the job, the audience, the proof, and the constraints; commit to the aesthetic yourself and present it (`frontend-aesthetic-direction.md`).

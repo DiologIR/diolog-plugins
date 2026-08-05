@@ -16,7 +16,16 @@ Confirm with the user — or propose and check — which aspects to expose. Comm
 - **Copy** — headline, subhead, CTA text
 - **Feature flags** — show/hide testimonials section, show/hide footer signup, etc.
 
-Resist exposing every possible knob. **Keep the tweak surface small** — 3–8 controls is a healthy range. The point is a few meaningful axes to explore, not to recreate Figma. If the user didn't ask for tweaks but the design has obvious axes of variation, add 1–2 by default to surface interesting possibilities.
+**Scale the knob count to the target's visual weight** — count visible children, not DOM depth. Exposing four sliders on a button is as wrong as exposing none on a hero:
+
+| Target | Knobs |
+|---|---|
+| Leaf / tiny (a button, an icon, a bare heading) | **0** |
+| Small composition (a simple card, a labelled input, ≤ ~5 visible children) | **0–1** |
+| Medium composition (a section, a nav cluster, 6–15 children) | **target 2**, 1 if genuinely simple |
+| Large composition (a hero, a full region, 16+ children or sub-sections) | **target 2–3, up to 4** when the axes are independent and all authored in CSS |
+
+**Hard cap: four.** The test for whether an axis earns a knob: could the user plausibly mutter *"a bit tighter"* or *"a touch more accent"* without wanting the whole thing regenerated? Then wire it. Micro-margins and one-off nudges are not parameters — they're edits. And a hero with zero knobs is almost always a miss: you chose the axes, so expose them.
 
 **Lead with expressive, multi-variable knobs — the kind a design tool couldn't give.** One control that moves several tokens at once is worth more than five pixel-pushers: a *minimalism slider* (strips ornament, collapses the palette, opens up whitespace), a *time-of-day slider* (morphs the palette dawn → dusk → night), a *brutalism toggle*, an *era slider* (1998 → flat → glass). These are the reason to tweak in code rather than in Figma. A border-radius or spacing slider is fine as the third control, never the first. Every knob must still be implementable as keys in the defaults object plus a control — skip anything that needs new assets or network calls. Knobs always tweak the **user's design content**, never the panel, frame, or scaffolding around it.
 

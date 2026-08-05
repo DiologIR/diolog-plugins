@@ -13,7 +13,24 @@ Confirm:
 - **Number of variations.** Default to 3 if unspecified. 5–6 is a healthy ceiling — more than that and the user can't hold them all in mind.
 - **Axis preference.** Does the user care most about visuals, interactions, layout, or copy/tone? You can vary on multiple axes, but knowing the priority helps you weight the explorations.
 
-## Phase 2: Pick the axes
+## Phase 2: Lock the identity before picking axes
+
+**When the variations sit on an existing surface, the brand is already chosen — the job is variation *within* identity, not selection *between* identities.** The worst failure of a variation round is three off-brand options the user cannot accept, so this phase runs first and doesn't get skipped.
+
+Write **one sentence** recording what is actually on screen, from DESIGN.md's visual fields, the CSS custom properties (the de-facto tokens), the computed styles on the target and its parent, and the visual rhetoric of its siblings: dominant surface and accent colour as **real values**, the loaded font pairing, layout topology (stacked / side-by-side / grid / asymmetric / overlay), surface treatment (corners, borders, shadows, decoration density), and the voice tone read off the copy. Be specific, skip an axis rather than invent one, and **don't name an aesthetic family** — a family is a conclusion, not data, and naming one licenses drift toward what that family usually looks like. A missing DESIGN.md is never an excuse; the identity is in the code.
+
+This sentence is the **identity lock**. Every variation has to read as the same brand standing next to the others.
+
+### Default mode vs departure mode
+
+- **Default** preserves the identity and varies expression within it. Right for roughly nine rounds in ten.
+- **Departure** rejects the identity. Trigger it **only** on the user's explicit ask in the current request — "redesign this", "rebuild from scratch", "something completely different". A stale note or an old critique is not authorization.
+
+Unsure means default, and the reason is asymmetric risk: a wrong default costs three on-brand options that feel similar, which the next round recovers from; a wrong departure costs three off-brand options, which it doesn't.
+
+Greenfield work with no incumbent surface skips this phase and runs `frontend-aesthetic-direction.md` instead.
+
+## Phase 3: Pick the axes
 
 Common variation dimensions — pick 2–4 to vary across:
 
@@ -26,11 +43,30 @@ Common variation dimensions — pick 2–4 to vary across:
 - **Tone** — minimal / formal / playful / expressive / editorial
 - **Component style** — filled vs ghost buttons, cards with shadows vs flat, rounded vs sharp
 
+**In default mode, each variation commits to a different *primary* axis, drawn from these six:** **hierarchy** (which element commands the eye) · **layout topology** (stacked / side-by-side / grid / asymmetric / overlay) · **typographic system** (pairing logic, scale ratio, case and weight — within the faces already loaded) · **colour strategy** (which existing palette role carries the surface: Restrained / Committed / Full palette / Drenched, existing tokens only) · **density** (minimal / comfortable / dense) · **structural decomposition** (merge, split, progressive disclosure). Three variations, three *different* primary axes — the same brand seen from three angles. New fonts, new hues, and new aesthetic-family signals belong to departure mode only.
+
+**In departure mode**, anchor each variation to a different aesthetic direction *derived from the brand*, never a fixed catalogue: read the product's personality, derive physical or material experiences that embody it, and from those derive three directions genuinely different from each other and from the current surface. Each one names a real-world referent in a concrete sentence ("a museum exhibition label system"), not an adjective pair ("clean and minimal"). Reject any direction whose rationale would fit a neighbouring product unchanged.
+
 Within a chosen brand, variations **remix the brand's own visual DNA**: play with scale, fills, texture, visual rhythm, layering, novel layouts, and type treatments built from the same tokens. The goal isn't the one perfect option — it's atomic variations the user can mix and match.
 
 For each variation, write down which axis (or axes) you're flexing. This makes the comparison legible to the user.
 
-## Phase 3: Build with intent — basic to bold
+**When the round has an intent, vary along that intent's own dimension** — three takes on the same lever is one variation:
+
+| Intent | Each variation differs by |
+|---|---|
+| Bolder | which dimension is amplified — scale / saturation / structural change |
+| Quieter | which dimension pulls back — colour / ornament / spacing |
+| Distill | which class of excess is removed — visual noise / redundant content / nested structure |
+| Polish | which refinement axis — rhythm / hierarchy / micro-detail |
+| Typeset | a different pairing **and** a different scale ratio |
+| Colorize | a different hue family; vary chroma and contrast strategy too |
+| Layout | a different structural arrangement, never spacing tweaks |
+| Adapt | a different target context — mobile-first / tablet / desktop / print or low-data |
+| Animate | a different motion vocabulary — cascade stagger / clip wipe / scale-and-focus / morph / parallax |
+| Delight | a different flavour of personality — micro-interaction / typographic surprise / illustrated accent / easter egg |
+
+## Phase 4: Build with intent — basic to bold
 
 Order matters. Start with the most by-the-book, end with the most novel:
 
@@ -41,7 +77,7 @@ Order matters. Start with the most by-the-book, end with the most novel:
 
 **Cover both ends.** Three "safe" variations waste the user's time; three "wild" ones feel like you didn't take the brief seriously.
 
-## Phase 4: Vary substantively, not cosmetically
+## Phase 5: Vary substantively, not cosmetically
 
 A variation is not "the same design with a different color." Each should differ on something that actually matters:
 
@@ -52,7 +88,13 @@ If two variations are too close, drop one and replace it with a more substantive
 
 **Specify each variation concretely before building it** — distinct palette family, distinct type pairing, distinct layout skeleton, written down per variation. Variety must be designed, not hoped for: left unspecified, variations drift toward one default look (typically the warm-editorial house style). For the novel variation, deliberately pick something off-distribution and interesting.
 
-## Phase 5: Present in a single file
+### The squint test — run it before you build
+
+**Default mode.** Compare each planned variation against the Phase 2 identity lock: palette drift, type-voice drift, or changed rhetoric means it crossed into departure by accident — rework it. Then confirm three *different* primary axes. Three "slightly tighter density" variations is one variation with rounding error.
+
+**Departure mode — two passes, family before sentence.** *Family pass:* label each variation with a concrete family of your own choosing; shared or interchangeable labels mean rework. *Sentence pass:* write the three one-line descriptions side by side; any two that rhyme mean rework. When the primary axis is colour or theme, the trio must not share theme plus dominant hue — three colour worlds, not three shades of one.
+
+## Phase 6: Present in a single file
 
 Put all variations in **one file**, not scattered across `v1.html / v2.html / v3.html` — live comparison is far more useful. Two patterns:
 
@@ -61,7 +103,7 @@ Put all variations in **one file**, not scattered across `v1.html / v2.html / v3
 
 For a flow or multi-screen variation, build each variation as a small storyboard within the canvas.
 
-## Phase 6: Annotate
+## Phase 7: Annotate
 
 For each variation, add a short caption (one or two sentences):
 
@@ -73,7 +115,7 @@ Variation 3 — Editorial. Asymmetric layout, large pull quote, slow scroll-driv
 
 The captions are a thinking tool — they force you to articulate what makes each variation distinct. If you can't write a clear caption, the variation isn't distinct enough.
 
-## Phase 7: Recommend
+## Phase 8: Recommend
 
 End with a clear recommendation. The user is the decider, but a designer offers an opinion:
 
@@ -83,6 +125,6 @@ End with a clear recommendation. The user is the decider, but a designer offers 
 
 Be direct. Don't hedge by saying all options are equally good. They aren't.
 
-## Phase 8: Hand off
+## Phase 9: Hand off
 
 After the user picks (or asks for another round), suggest the next step: a single-direction iteration to refine the chosen variation; a second variation round on a different axis; `make-a-prototype` to take a chosen variation to interactive; or `polish-pass` if they're ready to ship the chosen variation.

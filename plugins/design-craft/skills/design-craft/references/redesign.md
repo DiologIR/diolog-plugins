@@ -8,9 +8,11 @@ Redesign an existing site, screen, or artifact — a surface with users, traffic
 
 Classify the request before any design work:
 
-- **Preserve** — modernise without breaking the brand. The identity, IA, and voice stay; execution improves. This is the default reading of "refresh", "clean up", "modernise".
-- **Overhaul** — new visual language on existing content. Treat the *visuals* as greenfield (route through `frontend-aesthetic-direction.md`), but preserve content, IA, and the Phase 3 never-change list.
+- **Preserve** — modernise without breaking the brand. The identity, IA, and voice stay; execution improves. This is the default reading of "refresh", "clean up", "modernise". Scope is sovereign here (SKILL.md ch. 19): touch the named target, and introduce no colour, font, radius, shadow, or other system primitive the surface doesn't already own — if the existing system genuinely can't express the direction, stop and ask, naming the exact addition and the job it would do.
+- **Overhaul** — new visual language on existing content. Treat the *visuals* as greenfield (route through `frontend-aesthetic-direction.md`), but preserve content, IA, and the Phase 3 never-change list. The old look is **evidence of what the subject is, not authority over what it becomes** — mine it for the subject's own materials and vocabulary, then replace it.
 - **Actually greenfield** — the brand itself is changing, or the old surface is being abandoned. Leave this file; run the normal greenfield chain.
+
+**Never split the difference.** Once the mode is Overhaul, polish stops being applied to the discarded look — spend on both sides of a decision nobody made is the most expensive way to redesign. Once the mode is Preserve, the replacement world stays out of the diff entirely.
 
 If the mode is ambiguous, ask once — "Should this preserve the existing brand, or start visually from scratch?" — and nothing else; the audit answers the rest. And before modernising at all, apply the trust-signal test from SKILL.md ch. 4: on long-lived, high-trust surfaces (documentation, reference tools, institutional pages), "looks dated" may be doing credibility work — prefer changing behavior (affordances, IA, states) over appearance unless the brief explicitly asks for a new look.
 

@@ -29,9 +29,26 @@ Ask the user (or confirm if they've stated):
 
 **Mine the subject before consulting the map.** Pin down one concrete subject, its audience, and the surface's single job (state your choice if the brief leaves it open). The subject's own world — its materials, instruments, artifacts, and vernacular — is where non-template choices come from: a coffee brand suggests crema tones and kraft textures; a synth plugin suggests panel silkscreen type and patch-cable color; a climbing gym suggests chalk, rope weaves, topo lines. Subject-mining tells you *which* family to pick and how to remix it; the range map alone produces family-generic output. Anything you remember about this user's prior designs or preferences counts as context too.
 
+### Name the rut, then derive past it
+
+Two things are ruled out before you generate a single candidate: **the page this category always ships**, and **its predictable opposite**. Write both down. "Fintech → navy and gold" is the first; "fintech, but not navy → terminal dark" is the second, and it is exactly as reflexive. Neither goes on the candidate list. If the brief paints its own picture — a product name, a titled artifact, a governing metaphor — its literal reading joins the rut: spend at most one candidate on it and derive the rest from elsewhere in the audience's world.
+
+Then list **seven concrete visual systems, artifacts, places, or rituals the audience knows by heart**, each with one line on why it resonates and can carry the product's mechanism. Two rules keep the list honest:
+
+- **The audience's world includes its graphic and screen traditions, not only its physical objects** — the notation, publications, identity programs, data graphics, and interfaces it reads daily. A nameable abstract system (a school of poster design, a documentation standard, a scoring notation) is as concrete a candidate as any object. Ask both: what would this thing look like as a physical object, and what did its world look like before the web?
+- **Span at least three material families.** Near-duplicates count once. When more than three of the seven share one material family, the derivation stopped at the subject's most obvious artifact — dig further before proceeding.
+
+**Then don't build your top-ranked candidate by default.** Rank the seven by resonance, and treat the top one with suspicion: it is what *every* run on this brief would produce, which is the definition of the outcome this whole procedure exists to avoid. Build a lower-ranked candidate unless the top one is genuinely forced by product truth or an explicit brief constraint — and say in the direction block which rank you took and why. Taste is never grounds for climbing back to the top of the list; a factual failure (the candidate can't carry the mechanism, the assets don't exist, the claim isn't true) is.
+
 Set three dials (1–10) from the brief and say them out loud — they calibrate everything downstream: **VARIANCE** (how far from category convention), **MOTION** (how much movement), **DENSITY** (how much per screen). A Linear-style dev tool reads ~5/3/2; a public-sector portal ~3/2/5; a festival site ~9/8/4. If the brief reads as an established design system (Material, Fluent, Carbon, Polaris, GOV.UK), **install the official package rather than hand-faking its CSS** — one system per project; aesthetics like glassmorphism or brutalism have no official package, so build them honestly and label approximations.
 
-If the user is unsure, propose **4 distinct visual directions**, each specified concretely — background hex / accent hex / display + body typeface, with a one-line rationale tied to the brief — and let them pick. Draw them from different rows of the range map below; the directions must not share a palette family (four takes on warm-cream is one direction, not four), and at least one must be deliberately off-distribution. Ship each direction as a complete drop-in `:root` block (5–6 color tokens + font stacks) plus 4–6 "posture" bullets (border weight, radius, accent budget, motion mode, what to avoid) — once chosen, that block is binding. (The `AskUserQuestion` tool's `preview` field is ideal here — show each direction as a small swatch/type sample so the user compares them side by side.)
+### Presenting the round
+
+If the user is unsure, present **one direction fully committed** — its world, first viewport, visitor path, signature moment, and honest risk — alongside 2–3 named alternates from different rows of the range map, each with a one-line case. Lead with the commitment rather than a flat lineup: a neutral menu of your own ranked candidates invites the safest card, which is the failure mode this procedure is built against. The alternates must not share a palette family (four takes on warm-cream is one direction, not four), and at least one must be deliberately off-distribution.
+
+**Always include the standing exit: the category standard, played straight.** One quiet, permanent option — the conventional answer executed at full fidelity. It is the user's door, never your recommendation: never argue for it, never weigh it against the committed direction, never let it soften the alternates. When the user takes it (through the option, through a request for something safer, or in plain words asking for the familiar or competitor-like path), convention *becomes* the commitment: ask once for two or three products this should sit alongside, make their craft level the bar, and execute the canon at full fidelity — no irony, no smuggled quirk.
+
+Ship each direction as a complete drop-in `:root` block (5–6 color tokens + font stacks) plus 4–6 "posture" bullets (border weight, radius, accent budget, motion mode, what to avoid) — once chosen, that block is binding. (The `AskUserQuestion` tool's `preview` field is ideal here — show each direction as a small swatch/type sample so the user compares them side by side.)
 
 ### The range map — named aesthetic families
 
@@ -79,12 +96,12 @@ Commit to a type scale (sizes, weights, line heights). 1–2 families maximum. *
 
 **First pick a strategy — the commitment axis** (how much of the surface color carries):
 
-- **Restrained** — tinted neutrals + one accent ≤10% of pixels. The product-UI default.
+- **Restrained** — tinted neutrals + one accent ≤10% of pixels. The product-UI default, and the floor whenever the visitor came to *operate* or *read*.
 - **Committed** — one saturated color carries 30–60% of the surface. Identity-driven pages.
 - **Full palette** — 3–4 named color roles, each used deliberately. Campaigns, data-viz.
 - **Drenched** — the surface *is* the color. Heroes and campaign pages.
 
-Choosing Restrained is fine; *defaulting* to it unexamined is how timid, evenly-distributed palettes happen. State the strategy in the direction block.
+Persuade and Experience surfaces have permission for the bolder strategies; take it when the brief allows. Choosing Restrained is fine; *defaulting* to it unexamined is how timid, evenly-distributed palettes happen. Colour commits at page scale — fields that own whole regions, not accents scattered over a neutral ground. State the strategy in the direction block.
 
 **Theme (dark vs light) is never a default.** Not dark "because tools look cool dark," not light "to be safe." Before choosing, write one sentence of physical scene: who uses this, where, under what ambient light, in what mood. If the sentence doesn't force the answer, it isn't concrete enough — add detail until it does.
 
@@ -95,6 +112,8 @@ Then pick a tone:
 - **Neutral** — concrete, charcoal, off-white
 
 **The warm-editorial combination (cream background + serif display + terracotta/amber accent) is the current default-model look.** Choose it only when the brief is genuinely editorial, hospitality, or portfolio — and say so explicitly in the direction block. If the direction drifts there without a stated reason, pick again. Its successor default is already visible: **beige/cream + brass/clay/oxblood + espresso** appears unprompted on every cookware/wellness/artisan brief. When a brief pulls that way, deliberately rotate: cold luxury (silver/chrome/smoke), deep forest + bone + amber, black-and-tan, cobalt + cream, terracotta + slate, or monochrome + one saturated pop.
+
+**The rendition self-check — run it after committing, before writing a line of CSS.** Reread your own OWN-WORLD block. If it says cream, paper, parchment, ivory, sand, or lamplight for a Persuade surface the brief did not pin, the *rendition* failed even though the direction may be sound: rework it from the world's saturated materials first. This is the specific prior that reasserts itself on warm, bookish, family, and child-facing subjects, and a warm subject is never a licence for it — book cloth, thread, jackets, endpapers, and shelf ephemera span the whole saturated spectrum, and cream paper is the smallest corner of that world. Treat the first palette that arrives on those briefs as already spent.
 
 Then pick:
 
@@ -183,25 +202,53 @@ Before documenting, run the counterfactual: imagine a neighboring brief — a di
 
 Then run it **one tier deeper**: could someone guess your chosen family from the category *plus your anti-references* alone? "Fintech, but not navy-and-gold → terminal dark" and "AI workflow tool, but not SaaS-cream → editorial-typographic" are second-order reflexes — the predictable alternative is still a reflex. Rework until neither the first-order nor the second-order guess lands.
 
-## Phase 4: Document the direction in the file
+## Phase 4: Write the direction contract into the file
 
-Write the chosen direction into the file as a visible block — both as a comment at the top of the source AND as a "design system summary" section in the rendered output. Like a junior designer showing their thinking to their manager.
+The chosen direction goes into the artifact as a visible block — a comment at the top of the source **and** a "design system summary" section in the rendered output. Like a junior designer showing their thinking to their manager.
+
+Write it as a **contract in five named blocks**, ≤150 words total, placed where it survives the build (an HTML comment in the emitted markup, as the first child of `<body>` in the root layout — not only in templating frontmatter, and never inside a slotted child component, since some compilers strip a slot's leading comment). After the first production build, grep the built output for it: a contract the build erased is a contract nobody can audit.
+
+- **THESIS** — the one idea this surface owns, and the category-default arrangement it refuses.
+- **OWN-WORLD** — the palette and component language, specific enough to be recognizable with all content removed. This is where the token block lives.
+- **STORY** — what the visitor understands, believes, and does.
+- **FIRST VIEWPORT** — the exact composition: what is where, at what scale, and where the primary action sits.
+- **FORM** — the candidate you took, its rank on your seven-item list, and why you took that one.
+
+Close with a sixth line — **FINISH** — naming the run's exit condition, verbatim: *"unreviewed is unfinished; this build ends with the review, the verdict, and the open items declared."* The contract tops the artifact you reopen on every edit, and it is the one reminder that survives a long build: a page that looks complete with FINISH undischarged is not done, it's abandoned at the finish line.
+
+**If a block reads like a mood, the direction isn't decided yet.** "Warm and confident" is not an OWN-WORLD; `#2B1B12` ground, ochre plate, 1px hairlines, no radius above 4px, and a stencil display face is. The critique gate audits the render against these blocks promise by promise (`unit-critique-gate.md`), so a block that can't be checked is a block that won't be.
 
 ```
-/* Aesthetic direction:
- * Editorial / serious / spacious.
- * - Type: Tiempos Headline (display) + Söhne (body) — paid foundry.
- *   Free alternative: GT Sectra → Albert Sans.
- * - Color: cool-neutral. #FAFAFA bg / #1A1A1A text.
- *   Brand: oklch(55% 0.18 250) deep blue. No accent.
- * - Density: loose. 8px scale, generous padding.
- * - Radius: 4px (sharp-ish). No shadow — borders only.
- * - Components: ghost buttons. Filled for primary CTA only.
- * - Imagery: real photography, full-bleed.
- * - Motion: quiet. 200ms ease transitions, no entrance animations.
- * - Signature: full-bleed duotone hero photo with the headline knocked out of it.
+/* Direction contract
+ * THESIS: A field notebook for climbers — refuses the hero-photo-plus-gradient
+ *   outdoor-brand page and the terminal-dark "tech" alternative.
+ * OWN-WORLD: Topo-map ground #1C2119, chalk #EDE8DC, one route-marker orange
+ *   #D2521E. Tiempos Headline + JetBrains Mono for grades and metadata.
+ *   Hairline 1px rules, radius 2px, no shadow. Contour linework as the motif.
+ * STORY: A climber sees their own logbook, believes the grades are honest,
+ *   and books a session.
+ * FIRST VIEWPORT: Full-bleed contour field, headline knocked out of it at 5rem,
+ *   grade ladder running the left gutter, one filled CTA at lower-left.
+ * FORM: Candidate 4 of 7 (topo survey sheet) — candidate 1 was the
+ *   climbing-photo page every run ships.
+ * FINISH: unreviewed is unfinished; this build ends with the review, the
+ *   verdict, and the open items declared.
  */
 ```
+
+## Phase 4.5: Comp before build (when an image backend exists)
+
+When image generation is available (`generate-images.md` resolves the backend), **visualize the committed direction before building it.** This step produces the most compositional and ambitious work, and skipping it is how a strong direction becomes a flat page with the right colours.
+
+- **Three comps, not one.** One comp invites rubber-stamping; the spread between three is what surfaces the composition worth building. Render three high-fidelity north-star comps of the requested surface at its own viewport (portrait at device size for a mobile-first surface, desktop landscape otherwise) and save them where they survive the session.
+- **A comp is a designed surface, not a picture of the subject.** Lead the prompt with the surface's own structure — the regions this design actually has, named in order with their scale relationships — then the world's atmosphere. A prompt that leads with atmosphere returns a vignette: the model paints the fish market instead of the fish market's website. Self-check every render: if it could hang as a poster, regenerate with the layout scaffold stated more literally.
+- **The comps test composition, not identity.** The world is already committed — keep palette, type direction, material language, and motion grammar fixed and vary only what an image can resolve: topology, sequence, density, hierarchy, focal composition.
+- **One approval point.** Show all three, ask what carries forward and what feels false, then stop and wait. Don't start code until the user approves or explicitly delegates the choice; a delegated pick is recorded exactly as an approval is, and disclosed in your first reply rather than your last.
+- **Then inventory the approved comp in writing** before building: its component grammar, corner language, line weights, elevation treatment, type ramp, navigation items, headline levels and their scale relationships, signature geometry, and each section's arrangement and density — plus an implementation medium per region (`generate-images.md`, "The medium gate"). Everything the comp doesn't show gets built from this record; without it the fallback is the stock kit of square boxes, 1px grids, and bento cells. An element never written down is the element the build silently drops, and the 150-word contract can't carry this list.
+
+**Building against an approved comp runs in two phases.** Phase one is *reproduction*: rebuild the comp at its own breakpoint until a screenshot at the comp's dimensions overlaps it near-exactly — materials, components, elevation, assets, and implied design language included. Three concessions exist and no others: fonts (the closest obtainable face), icons (exact match unless the user chose a library), and genuine defects in the comp. Set the screenshot beside the freshly reopened comp image at identical dimensions after every region, never beside your memory of it — models systematically believe their HTML/CSS/SVG recreation succeeded when it didn't. When a region keeps losing that comparison, stop recreating it in code and produce it as a rendered asset. Only when reproduction holds does phase two begin: motion, interactivity, then responsiveness.
+
+**The comp outranks every written record of it.** When your inventory or brief committed to less than the comp shows — a softer texture, a sparser field, a sculpted plate reduced to flat CSS — correct the record *upward* to the comp. Qualifiers like "subtle", "restrained", and "low-contrast", and counts rounded down to a comfortable fraction, are how approved materials die between approval and build.
 
 ## Phase 5: Apply, then test
 

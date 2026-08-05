@@ -12,13 +12,24 @@ Fold one imagery question into the flow's opening clarifying round:
 - **Always include a "none / minimal" option.** Asking late means regenerating everything late.
 - If the content clearly won't benefit (dense data UI, terse internal review, an explicit "keep it minimal"), skip the question and proceed without imagery.
 
-## Phase 2: Divide the labor
+## Phase 2: Divide the labor — the medium gate
 
 Route each visual to the right medium by **editability and exactness**, not by whether it contains text:
 
 - **HTML/CSS owns** anything that must stay live-editable, selectable, pixel-exact, or data-bound: tables the user will edit, exact financial figures, charts bound to real numbers, dense small print. These change after generation; a bitmap can't.
 - **Generation owns** what raster is good at: conceptual metaphors, characters/mascots, hero and section art, textures, and genuine infographics whose narrative labels don't need data-exactness.
 - **Don't avoid text out of fear.** Modern backends render text reliably — including CJK. Text-rich infographics with headings, labels, and callouts are a good use of generation; don't shrink labels or strip copy to dodge rendering errors that no longer happen.
+
+**The medium is decided by what the region *shows*, never by what feels buildable in the current stack.** This is where an approved design most often dies quietly, so it's a gate rather than a preference:
+
+- **A human figure, a product object, machinery, or any material with lighting and depth is raster, whatever the stack.** So is any texture named as one — woven cloth, paper grain, fabric, leather, brushed metal — and it needs no depth argument to qualify. A CSS gradient is not a texture medium, and "layered CSS textures" is not a medium at all.
+- Writing "silhouette" for a photographic figure, or "CSS" for a sculpted panel's finish, isn't a medium choice — it's the quiet deletion of the design, and it's how a page full of physical material becomes a flat page with the same section order.
+- **Style doesn't move the boundary.** A region with perspective, shading, figure drawing, or dense mechanical detail is *illustration* however line-drawn it looks, and no build session authors illustration as vectors. An instruction-manual world doesn't convert its illustrations into diagrams; it makes them line-art illustrations, generated.
+- **Authored SVG covers what a session can specify exactly** — diagrams with countable elements, controls, flat shape systems, crisp vector geometry, animated linework — and it ends where drawing skill begins.
+- **The gate runs both ways.** Precise geometry, hard-edged shape systems, diagrams, expressive motion, shaders, and anything interactive are vector and GPU territory (SVG, canvas, WebGL), where a raster flattens what should move, scale, and respond. Choosing code there is ambition, not economy.
+- **Dropping an image-native region is a scope decision the user makes, never a silent flattening after the fact.**
+
+**Fields and textures carry a quantity commitment.** When a region is built from many small elements, write down its approximate density and coverage before building — "thousands of glyphs over two-thirds of the fold, dense at the top, fading into the path". A field rebuilt at a tenth of its density passes every checklist and still isn't the design.
 
 Keep **one shared style/identity block** — medium, palette, lighting, character description, mood — reused verbatim across every generated image in a project. Per-image prompts written independently produce a set that looks like it came from five different artists.
 
@@ -69,6 +80,11 @@ papers swirling. Camera slightly low. Empty upper-left third for headline.
 - **Confirm it loads in the artifact** — open the embedding HTML and verify no broken-image icon. A wrong relative path fails silently until someone looks.
 - **Wrong text → regenerate, never paint over.** If a label came out wrong, tighten the prompt file (quote the exact string more explicitly, reduce competing text) and regenerate. Don't patch the bitmap with overlaid HTML text or image edits — the seam always shows, and the prompt file stops being the record of the image.
 - **Edit the prompt file, then regenerate from it** — never invoke with an ad-hoc tweaked prompt that the file doesn't contain, or the record and the image diverge.
+- **The produced material has to survive to the screen.** Check the composite, not the asset: a texture buried under a near-opaque colour wash ships the wash, and an asset applied at near-zero opacity or hidden behind other paint is a compliance token, not a shipped material. Judge every asset in the rendered screenshot beside what it was supposed to be.
+
+## Generation context travels with the asset
+
+A build composed by a session that never saw the prompts places assets it doesn't understand. Keep `prompts/NN-*.md` next to `imgs/NN-*.png` with matching numbers, and read the prompt before composing with the image — especially when the image was produced in a different pass or by a delegate. The prompt file is what makes the asset legible to whoever places it.
 
 ## Hard rules
 
