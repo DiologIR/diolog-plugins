@@ -1,0 +1,69 @@
+<!-- BLOCK inv-hero — editorial investor hero + four-line grounded thesis rail (NO widget). slots: eyebrow, headline, accent_word, headline_tail, lead, cta1_*, cta2_*, thesis{1..4}_{title,body} -->
+<section class="band hero hero--investor">
+  <div class="gutter hero__grid">
+    <div class="reveal">
+      <p class="eyebrow">
+        {{eyebrow|Investor centre · the company on the record}}
+      </p>
+      <h1>{{headline|Built for the long }} <span class="accent-word">{{accent_word|view}}</span>{{headline_tail|.}}</h1>
+      <p class="lead">
+        {{lead|A grounded statement of the company's investment identity belongs
+        here.}}
+      </p>
+      <div class="hero__cta">
+        <a
+          class="btn btn-primary btn-lg"
+          href="{{cta1_href|announcements.html}}"
+          >{{cta1_label|Latest announcements}}</a
+        >
+        <a class="btn btn-ghost btn-lg" href="{{cta2_href|ai.html}}"
+          >{{cta2_label|Ask a question}}</a
+        >
+      </div>
+    </div>
+    <aside class="card thesis-rail reveal" aria-label="Investment thesis">
+      <p class="eyebrow eyebrow--plain">
+        {{thesis_eyebrow|The thesis · in four lines}}
+      </p>
+      <ol class="thesis-list">
+        <li class="thesis-item">
+          <span class="thesis-num">01</span>
+          <div>
+            <h2>{{thesis1_title|What the company does}}</h2>
+            <p>{{thesis1_body|One grounded line about the business model.}}</p>
+          </div>
+        </li>
+        <li class="thesis-item">
+          <span class="thesis-num">02</span>
+          <div>
+            <h2>{{thesis2_title|Why it is differentiated}}</h2>
+            <p>
+              {{thesis2_body|One grounded line about history, assets or
+              capability.}}
+            </p>
+          </div>
+        </li>
+        <li class="thesis-item">
+          <span class="thesis-num">03</span>
+          <div>
+            <h2>{{thesis3_title|How capital is treated}}</h2>
+            <p>
+              {{thesis3_body|One grounded line about ownership or capital
+              discipline.}}
+            </p>
+          </div>
+        </li>
+        <li class="thesis-item">
+          <span class="thesis-num">04</span>
+          <div>
+            <h2>{{thesis4_title|What scale looks like}}</h2>
+            <p>
+              {{thesis4_body|One grounded line about reach, people or
+              capacity.}}
+            </p>
+          </div>
+        </li>
+      </ol>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,35 @@
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr" id="hdr">
+  <div class="gutter hdr__inner">
+    <a class="brand" href="index.html" aria-label="{{COMPANY}} — home">
+      <span class="brand__mark" aria-hidden="true">{{MONO}}</span>
+      <span>{{COMPANY}}</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      {{NAV_LINKS}}
+    </nav>
+    <span class="hdr__spacer"></span>
+    <div class="hdr__actions">
+      <a class="price-tag" href="https://www.asx.com.au/markets/company/{{TICKER}}" aria-label="View {{TICKER}} on {{EXCHANGE}}">
+        <span class="code">{{TICKER}} · {{EXCHANGE}}</span>
+        <span class="price-tag__value" data-diolog-value="market.price" data-value-format="currency" data-value-args='{"format":"currency"}'>Price via {{EXCHANGE}}</span>
+      </a>
+      <a class="ask-link" href="investors.html#ask" aria-label="Ask about {{COMPANY}}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 9.5a3.5 3.5 0 1 1 6.1 2.35c-.98 1.02-2.1 1.5-2.1 3.15"/><path d="M12 19h.01"/></svg>
+        <span class="lbl">Ask</span>
+      </a>
+      <a class="btn btn-primary btn-subscribe" href="#subscribe" data-open="subscribe">Subscribe</a>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-controls="mnav" aria-expanded="false" data-open="mnav">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<nav id="mnav" data-nav-sheet aria-label="Menu">
+  <div class="mnav__group">{{COMPANY}}</div>
+  {{MOBILE_NAV_LINKS}}
+  <div class="mnav__actions">
+    <a class="btn btn-ghost" href="{{PHONE_HREF}}">{{PHONE_LABEL}}</a>
+    <a class="btn btn-primary" href="#subscribe" data-open="subscribe">Subscribe to updates</a>
+  </div>
+</nav>

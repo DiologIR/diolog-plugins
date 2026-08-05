@@ -1,0 +1,97 @@
+{
+  "mode": "full-site",
+  "header": "compact",
+  "footer": "compact",
+  "overlays": "overlays.none",
+  "brand": {
+    "COMPANY": "Northwind",
+    "MONO": "N",
+    "TICKER": "NWD",
+    "EXCHANGE": "ASX",
+    "YEAR": "20XX",
+    "COMPANY_ID": "",
+    "PHONE_HREF": "tel:",
+    "PHONE_LABEL": "Call the company",
+    "EMAIL": "investors@example.com"
+  },
+  "navigation": [
+    { "slug": "index", "label": "Home", "nav": "home" },
+    { "slug": "investors", "label": "Investors", "nav": "investors" }
+  ],
+  "themeFile": "theme.default.css",
+  "pages": [
+    {
+      "slug": "index",
+      "title": "Home",
+      "nav": "home",
+      "desc": "Company home.",
+      "blocks": [
+        {
+          "block": "marketing/hero-photo",
+          "content": {
+            "cta1_href": "investors.html",
+            "cta1_label": "Investor centre",
+            "cta2_href": "#subscribe",
+            "cta2_label": "Stay informed"
+          }
+        },
+        {
+          "block": "marketing/capability-photo-grid",
+          "content": {
+            "eyebrow": "What we do",
+            "heading": "One group. Proven capability.",
+            "lead": "Use source photography and grounded operating detail for every card."
+          }
+        },
+        "marketing/values-grid",
+        "marketing/stat-band",
+        "marketing/project-photo-grid",
+        {
+          "block": "marketing/cta-band",
+          "content": {
+            "cta1_href": "investors.html",
+            "cta1_label": "Read the investor story",
+            "cta2_href": "#subscribe",
+            "cta2_label": "Stay informed"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "investors",
+      "title": "Investors",
+      "nav": "investors",
+      "desc": "Investor overview.",
+      "blocks": [
+        {
+          "block": "investor-static/inv-hero",
+          "content": {
+            "cta1_href": "#latest",
+            "cta1_label": "Latest announcements",
+            "cta2_href": "#ask",
+            "cta2_label": "Ask a question"
+          }
+        },
+        "investor-static/portal-map",
+        "investor-static/price-snapshot",
+        {
+          "block": "investor-static/resource-digest",
+          "content": {
+            "announcements_link_href": "https://www.asx.com.au/markets/company/NWD",
+            "announcements_link_label": "Official announcements",
+            "reports_link_href": "https://www.asx.com.au/markets/company/NWD",
+            "reports_link_label": "Official documents"
+          }
+        },
+        "investor-static/company-feature",
+        {
+          "block": "investor-static/ai-inline",
+          "content": {
+            "cta_href": "mailto:investors@example.com",
+            "cta_label": "Ask investor relations"
+          }
+        }
+      ]
+    }
+  ]
+}

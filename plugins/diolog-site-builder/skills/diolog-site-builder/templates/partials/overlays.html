@@ -1,0 +1,68 @@
+<!-- GLOBAL AI COMMAND PALETTE → chatAssistant, variant palette (studio owns the shell) -->
+<!-- diolog-widget: {"kind":"chatAssistant","variant":"palette","config":{"welcomeMessage":"","promptPlaceholder":"Ask a question about the company…","suggestedQuestions":"How do I buy shares?|Latest results|Board & leadership|Capital structure","showCitations":true},"styleOverrides":{},"note":"⌘K command palette. Studio owns the <dialog> shell + trigger; the widget fills the body. Configure prompts/citations via portal editor."} -->
+<dialog class="dlg palette" id="palette-dlg" aria-label="Ask {{COMPANY}} AI">
+  <div class="dlg__head">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2"/><circle cx="12" cy="12" r="3.2"/></svg>
+    <div>
+      <p class="ttl">{{COMPANY}} AI</p>
+      <span class="sub">Sourced from disclosures</span>
+    </div>
+    <button class="dlg__x" type="button" data-close aria-label="Close">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="dlg__body">
+    <div class="wmarker" data-diolog-widget="chatAssistant" data-widget-variant="palette" aria-label="AI assistant">
+      <label class="sr-only" for="palette-input">Ask a question</label>
+      <input id="palette-input" type="search" placeholder="Ask a question about the company…" autocomplete="off">
+      <div class="suggest mt-4" aria-hidden="true">
+        <span class="chip">How do I buy shares?</span>
+        <span class="chip">Latest results</span>
+        <span class="chip">Board &amp; leadership</span>
+        <span class="chip">Capital structure</span>
+      </div>
+      <div class="wf-rows mt-6" aria-hidden="true">
+        <div><div class="wf-bar" style="width:38%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:88%"></div><div class="wf-bar wf-bar--sm" style="width:72%"></div></div>
+        <div><div class="wf-bar" style="width:44%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:80%"></div></div>
+      </div>
+      <span class="wframe__note">Answers are AI-generated from public disclosures and reviewed by Investor Relations. Press Enter to ask, Esc to close.</span>
+    </div>
+  </div>
+</dialog>
+
+<!-- LEAD-CAPTURE MODAL (first-visit auto-popup except on pages with an inline #subscribe form) → leadCapture, variant modal -->
+<!-- diolog-widget: {"kind":"leadCapture","variant":"modal","config":{"heading":"Never miss a disclosure","bullets":"","segmentOptions":""},"styleOverrides":{},"note":"First-visit subscribe modal. Studio owns the <dialog> + conditional 8s auto-open + localStorage dismiss; an inline #subscribe form suppresses the prompt. The widget fills the form. Configure copy/segments via portal editor."} -->
+<dialog class="dlg dlg--split modal" id="subscribe-modal" aria-label="Subscribe to updates">
+  <div class="dlg__body">
+    <div class="dlg__brand">
+      <div>
+        <p class="eyebrow eyebrow--plain" style="color:var(--ink-3)">{{TICKER}} · [Exchange]</p>
+        <h3 style="max-width:14ch">Never miss a disclosure.</h3>
+        <p style="margin-top:var(--sp-4)">Placeholder value line for the subscribe modal. Replace with the company's own reason-to-subscribe.</p>
+      </div>
+      <div class="ph-img" style="--ph-ar: 4 / 3" role="img" aria-label="Placeholder brand visual">
+        <span class="ph-img__label">BRAND VISUAL<b>logo lockup or hero photo · 800×600</b></span>
+      </div>
+    </div>
+    <div class="dlg__form" style="position:relative">
+      <button class="dlg__x" type="button" data-close aria-label="Close" style="position:absolute;top:var(--sp-4);right:var(--sp-4)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="wmarker" data-diolog-widget="leadCapture" data-widget-variant="modal" aria-label="Subscribe form">
+        <p class="wframe__eyebrow">Investor updates</p>
+        <h4 class="wframe__title" style="margin-bottom:var(--sp-4)">Announcements, in your inbox</h4>
+        <ul style="list-style:none;padding:0;margin:0 0 var(--sp-5);display:grid;gap:10px" aria-hidden="true">
+          <li class="wf-bar" style="width:82%"></li>
+          <li class="wf-bar" style="width:66%"></li>
+          <li class="wf-bar" style="width:74%"></li>
+        </ul>
+        <div class="field">
+          <label for="modal-email">Email address</label>
+          <input id="modal-email" type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <button class="btn btn-primary btn-block" type="button">Subscribe to updates</button>
+        <span class="wframe__note">The form and its fields are served live. You can unsubscribe at any time.</span>
+      </div>
+    </div>
+  </div>
+</dialog>

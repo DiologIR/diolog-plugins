@@ -1,0 +1,18 @@
+<!-- BLOCK capital-structure — value-UI capital-structure table (NO widget) from capital.structure; each row fills per resolved item ({{label}}, {{value}}) and the list falls back to the empty note. slots: eyebrow, heading, empty_text -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <div class="shead">
+      <p class="eyebrow">{{eyebrow|§ Capital}}</p>
+      <h2>{{heading|Capital structure.}}</h2>
+    </div>
+    <div class="grid grid-2" data-diolog-value="capital.structure" data-value-args='{"limit":12}'>
+      <template>
+        <div class="stat">
+          <span class="stat__k">{{label}}</span>
+          <span class="stat__v">{{value}}</span>
+        </div>
+      </template>
+      <p class="card card--flat card--pad-sm">{{empty_text|Capital-structure detail will appear here once published.}}</p>
+    </div>
+  </div>
+</section>

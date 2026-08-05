@@ -1,0 +1,21 @@
+<!-- BLOCK hero-split — text + labelled placeholder image. slots: eyebrow, headline, accent_word, lead, cta1_label, cta1_href, cta2_label, cta2_href, img_label, img_meta, img_ar -->
+<section class="band hero">
+  <div class="gutter">
+    <div class="hero__grid">
+      <div class="reveal">
+        <p class="eyebrow">{{eyebrow|Placeholder eyebrow · replace me}}</p>
+        <h1>{{headline|Building things that }} <span class="accent-word">{{accent_word|last}}</span>{{headline_tail|.}}</h1>
+        <p class="lead">{{lead|A short placeholder positioning line goes here. Describe, in one or two sentences, what the company does and who it serves. This copy is a stand-in.}}</p>
+        <div class="hero__cta">
+          <a class="btn btn-primary btn-lg" href="{{cta1_href|services.html}}">{{cta1_label|What we do}}</a>
+          <a class="btn btn-ghost btn-lg" href="{{cta2_href|investors.html}}">{{cta2_label|For investors}}</a>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="ph-img" style="--ph-ar: {{img_ar|4 / 3}}" role="img" aria-label="Placeholder hero image">
+          <span class="ph-img__label">{{img_label|HERO IMAGE}}<b>{{img_meta|flagship product, site or team · landscape · 1600×1200}}</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

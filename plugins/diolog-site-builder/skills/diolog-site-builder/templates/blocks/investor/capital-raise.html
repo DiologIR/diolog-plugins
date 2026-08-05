@@ -1,0 +1,20 @@
+<!-- BLOCK capital-raise → capitalRaise (card-form). slots: eyebrow, question, intent, intro -->
+<section class="band band--tight reveal">
+  <div class="wrap">
+    <div class="doclayout">
+      <div class="sticky"><p class="eyebrow eyebrow--plain">{{eyebrow|Question № 03}}</p><h3>{{question|When is the next capital raise?}}</h3><p class="tag" style="text-transform:none;letter-spacing:0;font-style:italic">·{{intent|register interest}}</p></div>
+      <div>
+        <p>{{intro|A placeholder line about how the company raises capital sits here. Any last-raise figures and the register form below are served live.}}</p>
+        <!-- diolog-widget: {"kind":"capitalRaise","variant":"card-form","config":{"lastRaise":[],"body":"","collectIndicativeInterest":true},"styleOverrides":{},"note":"Capital raise stats + register-interest form, served live. Non-binding."} -->
+        <div class="wframe mt-5">
+          <div class="wmarker" data-diolog-widget="capitalRaise" data-widget-variant="card-form" aria-label="Capital raise">
+            <div class="grid grid-3"><div><p class="wframe__eyebrow">Last raise</p><div class="wf-bar wf-bar--lg mt-4" style="width:70%"></div></div><div><p class="wframe__eyebrow">Type</p><div class="wf-bar wf-bar--lg mt-4" style="width:60%"></div></div><div><p class="wframe__eyebrow">Completed</p><div class="wf-bar wf-bar--lg mt-4" style="width:66%"></div></div></div>
+            <div class="field mt-6"><label for="ci-email">Register interest</label><input id="ci-email" type="email" placeholder="you@example.com"></div>
+            <button class="btn btn-primary" type="button">Register indicative interest</button>
+            <span class="wframe__note">Indicating interest is non-binding. The form is served live.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

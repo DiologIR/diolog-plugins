@@ -1,0 +1,25 @@
+<!-- BLOCK announcements-feed — value-UI ASX announcement summary cards (NO widget) from `announcements.recent`; the <template> card fills per resolved item ({{title}}, {{summary}}, {{category}}, {{dateLabel}}, {{url}}) and the whole grid falls back to the empty note when there are none. slots: eyebrow, heading, link_label, link_href, empty_text -->
+<section class="band band--tight reveal" id="latest">
+  <div class="gutter">
+    <div class="shead shead--row">
+      <div>
+        <p class="eyebrow">{{eyebrow|§ The latest}}</p>
+        <h2>{{heading|Announcements, in plain words.}}</h2>
+      </div>
+      <a class="flink" href="{{link_href|announcements.html}}">{{link_label|All announcements}}</a>
+    </div>
+    <div class="grid grid-auto" data-diolog-value="announcements.recent" data-value-args='{"limit":6,"dateFormat":"dMMMyyyy"}'>
+      <template>
+        <a class="card card--pad-sm card-link" href="{{url}}">
+          <div class="shead shead--row">
+            <span class="chip">{{category}}</span>
+            <time class="eyebrow eyebrow--plain">{{dateLabel}}</time>
+          </div>
+          <h3>{{title}}</h3>
+          <p>{{summary}}</p>
+        </a>
+      </template>
+      <p class="card card--flat card--pad-sm" style="grid-column:1 / -1">{{empty_text|Recent ASX announcements will appear here once released to the market.}}</p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,13 @@
+<!-- BLOCK article-body — a blog/news article. slots: eyebrow, title, date, body1, body2 -->
+<section class="band band--tight reveal">
+  <div class="wrap" style="max-width:760px">
+    <a class="flink" href="{{back_href|news.html}}" style="flex-direction:row-reverse">{{back_label|Back to news}}</a>
+    <p class="eyebrow mt-6">{{eyebrow|§ Article}} · {{date|[Date]}}</p>
+    <h1 style="max-width:22ch">{{title|An article headline goes here.}}</h1>
+    <div class="ph-img mt-6" style="--ph-ar: 16 / 9" role="img" aria-label="Placeholder"><span class="ph-img__label">ARTICLE HERO<b>1200×675</b></span></div>
+    <div class="mt-8">
+      <p class="dropcap">{{body1|A first placeholder paragraph for the article body. Replace with real, grounded copy. The first letter is set as a dropcap for an editorial feel.}}</p>
+      <p>{{body2|A second placeholder paragraph continues the article. Keep every claim verifiable.}}</p>
+    </div>
+  </div>
+</section>

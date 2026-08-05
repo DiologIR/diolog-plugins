@@ -1,0 +1,20 @@
+<!-- BLOCK contact-form → contactForm widget (real labelled shell). slots: eyebrow, heading -->
+<section class="band band--tight reveal">
+  <div class="wrap" style="max-width:720px">
+    <!-- diolog-widget: {"kind":"contactForm","variant":"default","config":{"showCategories":true,"categories":["General enquiry","Investor relations","Media","Careers"],"requirePhone":false,"successMessage":"Thanks — we'll be in touch."},"styleOverrides":{},"note":"Live contact form. The widget wires submission + validation + states; configure categories via portal editor."} -->
+    <div class="wframe">
+      <p class="wframe__eyebrow">{{eyebrow|Enquiry form}}</p>
+      <h2 class="wframe__title" style="font-size:var(--fs-h3);margin-bottom:var(--sp-5)">{{heading|Send us a message}}</h2>
+      <div class="wmarker" data-diolog-widget="contactForm" data-widget-variant="default" aria-label="Contact form">
+        <div class="grid grid-2">
+          <div class="field"><label for="c-name">Your name</label><input id="c-name" type="text" placeholder="Full name" autocomplete="name"></div>
+          <div class="field"><label for="c-email">Email</label><input id="c-email" type="email" placeholder="you@example.com" autocomplete="email"></div>
+        </div>
+        <div class="field"><label for="c-topic">Topic</label><select id="c-topic"><option>General enquiry</option><option>Investor relations</option><option>Media</option><option>Careers</option></select></div>
+        <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" placeholder="How can we help?"></textarea></div>
+        <button class="btn btn-primary" type="button">Send message</button>
+        <span class="wframe__note">The form is served live, with validation, loading and success states.</span>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,27 @@
+{
+  "mode": "investor-centre",
+  "header": "investor",
+  "footer": "investor",
+  "brand": { "COMPANY": "Northwind", "MONO": "N", "TICKER": "NWD", "EXCHANGE": "[Exchange]", "YEAR": "20XX", "COMPANY_SITE_URL": "https://www.example.com" },
+  "themeFile": "theme.default.css",
+  "pages": [
+    { "slug": "investors", "title": "Investor centre", "nav": "overview", "ticker": true, "desc": "Investor centre overview.",
+      "blocks": ["investor-static/inv-hero", "investor-static/price-snapshot", "investor-static/announcements-feed", "investor-static/reports-library", "investor/hub-nav", "investor-static/ai-inline"] },
+    { "slug": "announcements", "title": "Announcements", "nav": "announcements", "ticker": true, "desc": "Announcements chronicle.",
+      "blocks": [ {"block":"marketing/page-header","content":{"eyebrow":"§ Announcements","title":"A company in its own words.","lead":"Every disclosure, in order."}}, "investor/price-chart-compact", "investor/announcements-timeline", "marketing/cta-band"] },
+    { "slug": "announcement", "title": "Announcement", "nav": "announcements", "ticker": true, "desc": "Announcement detail.",
+      "blocks": ["investor/announcement-reader"] },
+    { "slug": "reports", "title": "Reports & presentations", "nav": "reports", "ticker": true, "desc": "Reports library.",
+      "blocks": [ {"block":"marketing/page-header","content":{"eyebrow":"§ The library","title":"Long-form, in print.","lead":"Reports, presentations and corporate documents."}}, "investor/reports-library"] },
+    { "slug": "videos", "title": "Videos", "nav": "videos", "ticker": true, "desc": "Video programme.",
+      "blocks": [ {"block":"marketing/page-header","content":{"eyebrow":"§ The programme","title":"Watch the company's story.","lead":"Results calls, site visits and briefings."}}, "investor/video-programme"] },
+    { "slug": "team", "title": "Meet the team", "nav": "team", "ticker": true, "desc": "Board and leadership.",
+      "blocks": [ {"block":"marketing/page-header","content":{"eyebrow":"§ The masthead","title":"The people accountable.","lead":"Board and leadership."}}, "investor/team-masthead", "investor/governance"] },
+    { "slug": "invest", "title": "How to invest & FAQs", "nav": "invest", "ticker": true, "desc": "How to invest, capital structure, FAQs.",
+      "blocks": [ {"block":"marketing/page-header","content":{"eyebrow":"§ How to invest","title":"Everything you need to invest.","lead":"How to buy, capitalisation, raises and who to talk to."}}, "investor/calendar-agm", "investor/brokers", "investor/capital-structure", "investor/capital-raise", "marketing/contact-form", "investor/faq-widget", "investor/notification-prefs"] },
+    { "slug": "ai", "title": "AI assistant", "nav": "", "ticker": true, "desc": "AI assistant.",
+      "blocks": [ {"block":"marketing/page-header","content":{"eyebrow":"§ AI · sourced from disclosures","title":"Ask Northwind anything.","lead":"Answers generated from public disclosures and reviewed by IR."}}, "investor/ai-fullpage"] },
+    { "slug": "404", "title": "Page not found", "nav": "", "desc": "Not found.",
+      "blocks": [ {"block":"marketing/notfound","content":{"cta1_href":"investors.html","cta1_label":"Investor centre home","cta2_href":"announcements.html","cta2_label":"Announcements"}}] }
+  ]
+}

@@ -1,0 +1,14 @@
+<!-- BLOCK news-grid — 3 news/blog cards (plain, not a live widget). slots: eyebrow, heading, link_*, n1_title,n1_body … -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <div class="shead shead--row">
+      <div><p class="eyebrow">{{eyebrow|§ Newsroom}}</p><h2>{{heading|Latest from the company.}}</h2></div>
+      <a class="flink" href="{{link_href|news.html}}">{{link_label|All news}}</a>
+    </div>
+    <div class="grid grid-3">
+      <a class="card card-link" href="{{n1_href|article.html}}"><div class="ph-img" style="--ph-ar: 16 / 9;margin-bottom:var(--sp-4)" role="img" aria-label="Placeholder"><span class="ph-img__label">ARTICLE IMAGE<b>640×360</b></span></div><p class="tag">{{n1_date|[Date]}}</p><h3 style="font-size:var(--fs-h4)">{{n1_title|An article headline}}</h3><p>{{n1_body|A one-line placeholder summary of the article.}}</p></a>
+      <a class="card card-link" href="{{n2_href|article.html}}"><div class="ph-img" style="--ph-ar: 16 / 9;margin-bottom:var(--sp-4)" role="img" aria-label="Placeholder"><span class="ph-img__label">ARTICLE IMAGE<b>640×360</b></span></div><p class="tag">{{n2_date|[Date]}}</p><h3 style="font-size:var(--fs-h4)">{{n2_title|Another headline}}</h3><p>{{n2_body|A one-line placeholder summary of the article.}}</p></a>
+      <a class="card card-link" href="{{n3_href|article.html}}"><div class="ph-img" style="--ph-ar: 16 / 9;margin-bottom:var(--sp-4)" role="img" aria-label="Placeholder"><span class="ph-img__label">ARTICLE IMAGE<b>640×360</b></span></div><p class="tag">{{n3_date|[Date]}}</p><h3 style="font-size:var(--fs-h4)">{{n3_title|A third headline}}</h3><p>{{n3_body|A one-line placeholder summary of the article.}}</p></a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,55 @@
+<footer class="ftr ftr--compact section--dark">
+  <div class="gutter">
+    <div class="ftr__top">
+      <div>
+        <a class="brand" href="index.html" aria-label="{{COMPANY}} — home">
+          <span class="brand__mark" aria-hidden="true">{{MONO}}</span>
+          <span>{{COMPANY}}</span>
+        </a>
+        <p class="tag">Listed as {{TICKER}} · {{EXCHANGE}}</p>
+      </div>
+      <div>
+        <h4>Navigate</h4>
+        <ul class="ftr__links">
+          {{FOOTER_LINKS}}
+        </ul>
+      </div>
+      <div>
+        <h4>Talk to us</h4>
+        <ul class="ftr__links">
+          <li><a href="{{PHONE_HREF}}">{{PHONE_LABEL}}</a></li>
+          <li><a href="mailto:{{EMAIL}}">{{EMAIL}}</a></li>
+        </ul>
+      </div>
+    </div>
+    <form class="wframe card--flat ftr__subscribe" id="subscribe" data-diolog-subscribe action="/api/public/subscribe/{{COMPANY_ID}}" method="post" novalidate>
+      <div>
+        <p class="wframe__eyebrow">Stay informed</p>
+        <h4 class="wframe__title">Get announcements by email</h4>
+      </div>
+      <div>
+        <div class="ftr__sub">
+          <label class="sr-only" for="ftr-name">Your name</label>
+          <input id="ftr-name" name="name" type="text" placeholder="Your name" autocomplete="name">
+          <label class="sr-only" for="ftr-email">Email address</label>
+          <input id="ftr-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </div>
+        <label class="subform__consent" for="ftr-consent">
+          <input id="ftr-consent" name="privacyConsent" type="checkbox" required>
+          <span>Email me announcements and investor updates. I can unsubscribe at any time.</span>
+        </label>
+        <label class="sr-only" for="ftr-company">Company</label>
+        <input class="sr-only" id="ftr-company" name="honeypot" type="text" tabindex="-1" autocomplete="off">
+        <p class="wframe__note" data-subscribe-status role="status" aria-live="polite">Announcements are released to the market first. Email is a convenience, not the official channel.</p>
+      </div>
+    </form>
+    <div class="ftr__disclaimer">
+      This portal is information, not financial advice. Market data may be delayed. Verify every figure against the company's official disclosures before acting on it.
+      <div class="ftr__legal">
+        <span class="tag" style="text-transform:none;letter-spacing:0">© <span class="mono">{{YEAR}}</span> {{COMPANY}}. All rights reserved.</span>
+        <span class="tag powered">Powered by Diolog</span>
+      </div>
+    </div>
+  </div>
+</footer>

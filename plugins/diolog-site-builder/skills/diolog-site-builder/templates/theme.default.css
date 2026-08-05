@@ -1,0 +1,24 @@
+/* theme.default.css — the DEFAULT (plain) theme layer.
+ *
+ * This file is the DESIGN.md hook. base.css already ships plain, brand-neutral
+ * token defaults, so the default theme is intentionally empty. To brand a build,
+ * the skill's theming step generates a replacement theme (a `:root { … }` block
+ * overriding the THEME-HOOK tokens) from a company DESIGN.md, and passes it to
+ * build.mjs via spec.theme (inline CSS) or spec.themeFile (a path). It is injected
+ * in a <style data-theme-overrides> AFTER base.css, so its :root overrides win.
+ *
+ * A generated brand theme overrides only the hook tokens, e.g.:
+ *
+ *   :root {
+ *     --font-display: "Fraunces", Georgia, serif;
+ *     --font-sans: "Inter", system-ui, sans-serif;
+ *     --accent: #0b5d3b;  --accent-ink: #ffffff;  --accent-soft: #e6f1eb;
+ *     --surface-0: #fbfaf7;  --ink: #14231c;  --line: #e2e8e3;
+ *   }
+ *   .section--dark, .band--dark, .ftr, .dlg__brand {
+ *     --accent: #7fd4a8;  --accent-ink: #0b1f16;  --surface-0: #0d1a13;
+ *   }
+ *
+ * Widgets are themed separately: DESIGN.md also maps to the Diolog PortalTheme
+ * record (--portal-* tokens) so the server-rendered widgets match the site.
+ */

@@ -1,0 +1,26 @@
+<!-- BLOCK announcement-reader → announcementReader (full) w/ sticky rail. slots: title -->
+<section class="band band--tight">
+  <div class="wrap">
+    <a class="flink reveal" href="{{back_href|announcements.html}}" style="flex-direction:row-reverse">{{back_label|Back to announcements}}</a>
+    <div class="doclayout mt-6 reveal">
+      <aside class="sticky">
+        <span class="badge">Announcement</span>
+        <p class="tag mt-4" style="text-transform:none;letter-spacing:0">Category, date and file size<br>are served live.</p>
+        <div class="wf-bar mt-4" style="width:80%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:60%"></div>
+        <div class="mt-6" style="display:grid;gap:8px"><button class="btn btn-ghost btn-block" type="button">Download PDF</button><button class="btn btn-ghost btn-block" type="button">Share</button></div>
+      </aside>
+      <div>
+        <h1 style="max-width:20ch">{{title|Announcement title is served live.}}</h1>
+        <!-- diolog-widget: {"kind":"announcementReader","variant":"full","config":{"showAiSummary":true,"showCitation":true,"showPdfEmbed":true,"dropCap":true},"styleOverrides":{},"note":"Full announcement body + AI summary + PDF, served live. Never fabricated."} -->
+        <div class="wframe mt-6">
+          <div class="wmarker" data-diolog-widget="announcementReader" data-widget-variant="full" aria-label="Announcement reader">
+            <div class="callout"><p class="callout__label">AI summary · generated, then reviewed by IR</p><div class="wf-bar" style="width:94%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:88%"></div><div class="wf-bar wf-bar--sm" style="width:80%"></div><p class="wframe__note" style="margin-top:var(--sp-3)">Refer to the original PDF. Verified when published.</p></div>
+            <div class="mt-8"><div class="wf-bar wf-bar--sm" style="width:96%"></div><div class="wf-bar wf-bar--sm" style="width:92%"></div><div class="wf-bar wf-bar--sm" style="width:97%"></div><div class="wf-bar wf-bar--sm" style="width:70%"></div><div class="wf-bar wf-bar--sm mt-6" style="width:94%"></div><div class="wf-bar wf-bar--sm" style="width:89%"></div></div>
+            <div class="ph-img mt-8" style="--ph-ar: 1 / 1.3" role="img" aria-label="Placeholder PDF preview"><span class="ph-img__label">PDF PREVIEW<b>the disclosure document renders here</b></span></div>
+            <span class="wframe__note">The full text, summary and citation are served live.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

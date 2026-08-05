@@ -1,0 +1,12 @@
+<!-- BLOCK video-featured → videoLibrary (featured). slots: eyebrow, heading, link_* -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <div class="shead shead--row"><div><p class="eyebrow">{{eyebrow|§ From the boardroom}}</p><h2>{{heading|Watch the latest update.}}</h2></div><a class="flink" href="{{link_href|videos.html}}">{{link_label|All videos}}</a></div>
+    <!-- diolog-widget: {"kind":"videoLibrary","variant":"featured","config":{"showDuration":true},"styleOverrides":{},"note":"Featured video, served live."} -->
+    <div class="wframe">
+      <div class="wmarker" data-diolog-widget="videoLibrary" data-widget-variant="featured" aria-label="Featured video">
+        <div class="split2"><div class="ph-img" style="--ph-ar: 16 / 9" role="img" aria-label="Placeholder video thumbnail"><span class="ph-img__label">VIDEO THUMBNAIL<b>1280×720</b></span><span class="ph-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8 5v14l11-7z"/></svg></span></div><div><p class="wframe__eyebrow">Featured · live</p><h3 class="wframe__title" style="margin:var(--sp-2) 0 var(--sp-4)">Video title is served live</h3><div class="wf-bar" style="width:88%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:70%"></div><p class="wframe__note">Duration and category are served by the video widget.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>

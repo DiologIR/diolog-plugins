@@ -1,0 +1,15 @@
+<!-- BLOCK hero-photo — editorial split hero with a real source image. slots: eyebrow, headline, accent_word, headline_tail, lead, cta1_label, cta1_href, cta2_label, cta2_href, image_url, image_alt, image_width, image_height -->
+<section class="band hero">
+  <div class="gutter hero__grid">
+    <div class="reveal">
+      <p class="eyebrow">{{eyebrow|Company overview}}</p>
+      <h1>{{headline|Built for the work that }} <span class="accent-word">{{accent_word|matters}}</span>{{headline_tail|.}}</h1>
+      <p class="lead">{{lead|Replace this line with a grounded statement of what the company does and who it serves.}}</p>
+      <div class="hero__cta">
+        <a class="btn btn-primary btn-lg" href="{{cta1_href|investors.html}}">{{cta1_label|Investor centre}}</a>
+        <a class="btn btn-ghost btn-lg" href="{{cta2_href|#subscribe}}">{{cta2_label|Stay informed}}</a>
+      </div>
+    </div>
+    <img class="hero-photo reveal" src="{{image_url|data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'%3E%3Crect width='1600' height='900' fill='%23e6e3db'/%3E%3C/svg%3E}}" alt="{{image_alt|Company source photograph}}" width="{{image_width|1600}}" height="{{image_height|900}}">
+  </div>
+</section>

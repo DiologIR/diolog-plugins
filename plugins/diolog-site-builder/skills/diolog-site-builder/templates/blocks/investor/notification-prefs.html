@@ -1,0 +1,21 @@
+<!-- BLOCK notification-prefs → notificationPreferences. slots: eyebrow, heading -->
+<section class="band section--dark reveal" id="subscribe">
+  <div class="wrap">
+    <p class="eyebrow" style="justify-content:center">{{eyebrow|§ Alerts}}</p>
+    <h2 class="measure center" style="margin-inline:auto">{{heading|Choose what you hear about.}}</h2>
+    <!-- diolog-widget: {"kind":"notificationPreferences","variant":"default","config":{"heading":"Choose what you hear about"},"styleOverrides":{},"note":"Alert preferences, served live."} -->
+    <div class="wframe mt-8" style="max-width:640px;margin-inline:auto">
+      <div class="wmarker" data-diolog-widget="notificationPreferences" data-widget-variant="default" aria-label="Notification preferences">
+        <div class="wf-rows">
+          <div class="wf-row"><span>Price-sensitive announcements</span><div class="wf-box" style="width:44px;height:26px;border-radius:var(--r-pill)"></div></div>
+          <div class="wf-row"><span>All announcements</span><div class="wf-box" style="width:44px;height:26px;border-radius:var(--r-pill)"></div></div>
+          <div class="wf-row"><span>Reports &amp; presentations</span><div class="wf-box" style="width:44px;height:26px;border-radius:var(--r-pill)"></div></div>
+          <div class="wf-row"><span>Events &amp; webcasts</span><div class="wf-box" style="width:44px;height:26px;border-radius:var(--r-pill)"></div></div>
+        </div>
+        <div class="field mt-6"><label for="np-email">Email address</label><input id="np-email" type="email" placeholder="you@example.com"></div>
+        <button class="btn btn-primary btn-block" type="button">Save preferences</button>
+        <span class="wframe__note">Preferences and delivery are served live. Unsubscribe at any time.</span>
+      </div>
+    </div>
+  </div>
+</section>

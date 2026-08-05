@@ -1,0 +1,22 @@
+<!-- BLOCK resource-digest — announcements and reports in one dense two-column value surface (NO widget). slots: eyebrow, heading, announcements_heading, reports_heading, announcements_empty, reports_empty, announcements_link_*, reports_link_* -->
+<section class="band band--tight reveal" id="latest">
+  <div class="gutter">
+    <div class="shead"><p class="eyebrow">{{eyebrow|§ On the record}}</p><h2>{{heading|Disclosures, results and governance.}}</h2></div>
+    <div class="resource-digest">
+      <section aria-labelledby="resource-announcements">
+        <div class="shead shead--row"><h3 id="resource-announcements">{{announcements_heading|Latest announcements}}</h3><a class="flink" href="{{announcements_link_href|#latest}}">{{announcements_link_label|Official announcements}}</a></div>
+        <div class="grid" data-diolog-value="announcements.recent" data-value-args='{"limit":4,"dateFormat":"dMMMyyyy"}'>
+          <template><a class="card card--pad-sm card-link" href="{{url}}"><div class="shead shead--row"><span class="chip">{{category}}</span><time class="eyebrow eyebrow--plain">{{dateLabel}}</time></div><h3>{{title}}</h3><p class="resource-digest__summary">{{summary}}</p></a></template>
+          <div class="resource-empty card card--flat card--pad-sm"><strong>No announcement feed is available here.</strong><p>{{announcements_empty|Use the official exchange record for the company's latest market releases.}}</p><a class="flink" href="{{announcements_link_href|https://www.asx.com.au/markets/company/{{TICKER}}}}">Open the official record</a></div>
+        </div>
+      </section>
+      <section id="reports" aria-labelledby="resource-reports">
+        <div class="shead shead--row"><h3 id="resource-reports">{{reports_heading|Reports and documents}}</h3><a class="flink" href="{{reports_link_href|#reports}}">{{reports_link_label|Official documents}}</a></div>
+        <div class="grid" data-diolog-value="documents.recent" data-value-args='{"limit":4}'>
+          <template><a class="card card--pad-sm card-link" href="{{url}}"><div class="shead shead--row"><span class="chip">{{category}}</span><time class="eyebrow eyebrow--plain">{{date}}</time></div><h3>{{title}}</h3></a></template>
+          <div class="resource-empty card card--flat card--pad-sm" aria-label="Published documents availability"><strong>Reports and governance documents are published on the official record.</strong><p>{{reports_empty|Open the official document register for current annual reports, results and governance materials.}}</p><a class="flink" href="{{reports_link_href|https://www.asx.com.au/markets/company/{{TICKER}}}}">Open the document register</a></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>

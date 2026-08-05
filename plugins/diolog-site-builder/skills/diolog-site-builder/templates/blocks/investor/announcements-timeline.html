@@ -1,0 +1,20 @@
+<!-- BLOCK announcements-timeline → announcements (timeline). slots: eyebrow, heading -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <!-- diolog-widget: {"kind":"announcements","variant":"timeline","config":{"itemsToShow":20,"groupBy":"year","highlightFilings":true,"showAiSummary":true},"styleOverrides":{},"note":"Full announcements chronicle, served live. Configure grouping via portal editor."} -->
+    <div class="wframe">
+      <div class="wframe__head"><div><p class="wframe__eyebrow">{{eyebrow|§ The record}}</p><h2 class="wframe__title" style="font-size:var(--fs-h3)">{{heading|Every disclosure, in order}}</h2></div><span class="live-tag">Live</span></div>
+      <div class="wmarker" data-diolog-widget="announcements" data-widget-variant="timeline" aria-label="Announcements timeline">
+        <div class="chron">
+          <div class="chron__year">[Most recent year]</div>
+          <div class="chron__item"><span class="tag">[Date]</span><div class="wf-bar mt-4" style="width:52%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:84%"></div><div class="wf-bar wf-bar--sm" style="width:70%"></div></div>
+          <div class="chron__item"><span class="badge badge--flag">Price-sensitive</span><div class="wf-bar mt-4" style="width:46%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:78%"></div></div>
+          <div class="chron__year">[Earlier year]</div>
+          <div class="chron__item"><span class="tag">[Date]</span><div class="wf-bar mt-4" style="width:50%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:82%"></div></div>
+        </div>
+        <span class="wframe__note">Titles, dates, AI summaries and PDFs are served live.</span>
+      </div>
+      <div class="mt-8"><a class="flink" href="{{detail_href|announcement.html}}">{{detail_label|Open a sample announcement}}</a></div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,21 @@
+<!-- BLOCK brokers — value-UI broker / analyst coverage cards (NO widget) from brokers.list; each card fills per resolved item ({{name}}, {{descriptor}}, {{cost}}) and the list falls back to the empty note. slots: eyebrow, heading, empty_text -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <div class="shead">
+      <p class="eyebrow">{{eyebrow|§ How to invest}}</p>
+      <h2>{{heading|Coverage &amp; where to trade.}}</h2>
+    </div>
+    <div class="grid grid-3" data-diolog-value="brokers.list" data-value-args='{"limit":9}'>
+      <template>
+        <div class="card card--pad-sm">
+          <div class="shead shead--row">
+            <h3>{{name}}</h3>
+            <span class="chip">{{cost}}</span>
+          </div>
+          <p>{{descriptor}}</p>
+        </div>
+      </template>
+      <p class="card card--flat card--pad-sm">{{empty_text|Broker and analyst coverage will appear here.}}</p>
+    </div>
+  </div>
+</section>

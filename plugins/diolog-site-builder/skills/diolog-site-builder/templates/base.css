@@ -1,0 +1,692 @@
+/* ============================================================================
+   BASE DESIGN SYSTEM — plain, token-driven, themeable foundation
+   ----------------------------------------------------------------------------
+   Every colour, type, space, radius, elevation and motion value flows from a
+   :root custom property with a PLAIN, brand-neutral default. To re-brand this
+   site, a DESIGN.md only needs to override the tokens in the ":root — THEME
+   HOOKS" block below (fonts, --accent, the neutral ramp) — nothing downstream
+   is hard-coded. Components are context-safe: a dark context (.section--dark,
+   the footer) re-maps the same tokens, so every component re-themes with it.
+
+   This file is authored ONCE and stamped byte-identically into every page.
+   ========================================================================== */
+
+@layer base, components, utilities;
+
+/* ---------------------------------------------------------------------------
+   :root — THEME HOOKS (override these in a company DESIGN.md to re-brand)
+   ------------------------------------------------------------------------- */
+:root {
+  /* — type families — the brand's fonts plug in here. Plain system stacks by
+       default so the base is font-agnostic; point --font-display at a serif or
+       a brand display face to change the whole personality. */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* — the single accent (the primary brand hook). Plain near-ink by default so
+       the base is un-branded; set this to the brand colour to theme CTAs,
+       focus rings, links-on-hover and live-dot accents in one move. */
+  --accent: #2b2a24;
+  --accent-ink: #ffffff;         /* text colour that sits ON the accent */
+  --accent-soft: #f0efe9;        /* a tint of the accent for quiet fills */
+
+  /* — neutral ramp (warm greys). The surface + ink scale the whole UI reads
+       against. Kept subtly toned (never pure #000/#fff). */
+  --surface-0: #faf9f6;          /* page background */
+  --surface-1: #ffffff;          /* raised cards / header / inputs */
+  --surface-2: #f3f1ec;          /* recessed wells / hovers */
+  --ink:   #1b1a16;              /* primary text (near-black, not pure) */
+  --ink-2: #524f47;              /* secondary text */
+  --ink-3: #6a675d;              /* muted meta / captions (AA on surface-0) */
+  --line:  #e6e3db;              /* hairline borders */
+  --line-2:#d8d4c9;             /* stronger dividers */
+
+  /* — semantic state colours (paired with a non-colour cue in components) — */
+  --up:      #1f7a4d;
+  --down:    #b23b3b;
+  --warning: #9a6a1a;
+  --focus:   var(--accent);
+
+  /* — placeholder-image hatch tones (the honest asset placeholder) — */
+  --ph-a: #ece9e1;
+  --ph-b: #f5f3ee;
+}
+
+/* ---------------------------------------------------------------------------
+   :root — SCALES (spacing / type / radii / elevation / motion / layout).
+   These are the system's rhythm; theme them only for a deliberate density or
+   shape change.
+   ------------------------------------------------------------------------- */
+:root {
+  /* spacing scale (4px base) */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
+  --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px; --sp-10: 128px;
+
+  /* type scale */
+  --fs-eyebrow: 0.75rem;
+  --fs-meta: 0.8125rem;
+  --fs-body: 1rem;
+  --fs-body-lg: 1.125rem;
+  --fs-h4: 1.125rem;
+  --fs-h3: 1.375rem;
+  --fs-h2: clamp(1.6rem, 1.1rem + 2.2vw, 2.4rem);
+  --fs-h1: clamp(2.1rem, 1.3rem + 3.6vw, 3.4rem);
+  --fs-display: clamp(2.4rem, 1.2rem + 5vw, 4.2rem);
+
+  /* radii */
+  --r-1: 6px;  --r-2: 10px; --r-3: 16px; --r-pill: 999px;
+
+  /* elevation (one tight, one lifted — no per-card variants) */
+  --el-1: 0 1px 2px rgba(24,22,16,.05), 0 1px 1px rgba(24,22,16,.04);
+  --el-2: 0 6px 20px rgba(24,22,16,.08), 0 2px 6px rgba(24,22,16,.05);
+  --el-pop: 0 24px 60px rgba(24,22,16,.22), 0 6px 16px rgba(24,22,16,.14);
+
+  /* motion */
+  --dur-1: .16s; --dur-2: .24s; --dur-3: .4s;
+  --ease: cubic-bezier(.2, .7, .3, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+
+  /* layout */
+  --wrap: 1080px;      /* reading / content column */
+  --gutter: 1320px;    /* header + wide sections (spans the outer gutter) */
+  --pad-x: clamp(16px, 4vw, 40px);
+  --header-h: 68px;
+}
+
+/* ===========================================================================
+   BASE LAYER — reset + element defaults (layered so components win the cascade)
+   =========================================================================== */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--surface-0);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  img, svg, video { max-width: 100%; display: block; }
+  h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.1; margin: 0; color: var(--ink); letter-spacing: -0.01em; }
+  h1 { font-size: var(--fs-h1); font-weight: 900; letter-spacing: -0.02em; }
+  h2 { font-size: var(--fs-h2); font-weight: 900; letter-spacing: -0.015em; }
+  h3 { font-size: var(--fs-h3); font-weight: 700; }
+  h4 { font-size: var(--fs-h4); font-weight: 700; }
+  p  { margin: 0 0 1em; color: var(--ink-2); text-wrap: pretty; max-width: 68ch; }
+  /* base links scoped OUT of components so a global rule never repaints a .btn */
+  a:not([class]) { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+  a:not([class]):hover { text-decoration-color: var(--accent); }
+  ul, ol { margin: 0 0 1em; padding-left: 1.2em; color: var(--ink-2); }
+  button { font: inherit; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 3px; }
+  ::selection { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+}
+
+/* ===========================================================================
+   COMPONENTS LAYER
+   =========================================================================== */
+@layer components {
+
+  /* — layout primitives — */
+  .wrap   { width: 100%; max-width: var(--wrap);   margin-inline: auto; padding-inline: var(--pad-x); }
+  .gutter { width: 100%; max-width: var(--gutter); margin-inline: auto; padding-inline: var(--pad-x); }
+  .band   { padding-block: clamp(56px, 8vw, 112px); }
+  .band--tight { padding-block: clamp(40px, 5vw, 64px); }
+  .stack > * + * { margin-top: var(--sp-4); }
+  .stack-lg > * + * { margin-top: var(--sp-6); }
+
+  /* a dark context re-maps the tokens; every component below re-themes with it */
+  .section--dark, .band--dark, .ftr, .dlg__brand {
+    --surface-0: #17160f;
+    --surface-1: #201e15;
+    --surface-2: #2a2820;
+    --ink:   #f6f4ec;
+    --ink-2: #cbc7b8;
+    --ink-3: #a29d8c;
+    --line:  rgba(246, 244, 236, .16);
+    --line-2:rgba(246, 244, 236, .28);
+    --accent: #efeadd;
+    --accent-ink: #1b1a16;
+    --accent-soft: rgba(246, 244, 236, .10);
+    /* A branded accent can lose non-text contrast on a dark ground. Focus uses
+       the remapped foreground instead, which stays visible in every theme. */
+    --focus: var(--ink);
+    --ph-a: #26241b;
+    --ph-b: #2f2c22;
+    background: var(--surface-0);
+    color: var(--ink);
+  }
+
+  /* — eyebrow / section label — */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-eyebrow); font-weight: 500;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-3); margin: 0 0 var(--sp-3);
+  }
+  .eyebrow::before { content: ""; width: 18px; height: 1px; background: var(--line-2); }
+  .eyebrow--plain::before { display: none; }
+
+  .lead { font-size: var(--fs-body-lg); color: var(--ink-2); max-width: 60ch; }
+  .measure { max-width: 62ch; }
+
+  /* — buttons (context-safe via tokens; primary/dark carry their own fill) — */
+  .btn {
+    --btn-py: 11px; --btn-px: 20px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: var(--btn-py) var(--btn-px);
+    font-size: var(--fs-meta); font-weight: 600; line-height: 1;
+    white-space: nowrap; border-radius: var(--r-pill);
+    border: 1px solid transparent; cursor: pointer; text-decoration: none;
+    transition: transform var(--dur-1) var(--ease), background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { box-shadow: var(--el-2); }
+  .btn-dark { background: var(--ink); color: var(--surface-1); }
+  .btn-dark:hover { box-shadow: var(--el-2); }
+  .btn-ghost { background: var(--surface-1); color: var(--ink); border-color: var(--line-2); }
+  .btn-ghost:hover { background: var(--surface-2); border-color: var(--ink-3); }
+  .btn-quiet { background: transparent; color: var(--ink); padding-inline: 6px; }
+  .btn-quiet:hover { color: var(--accent); }
+  .btn-lg { --btn-py: 15px; --btn-px: 28px; font-size: var(--fs-body); }
+  .btn-block { width: 100%; }
+
+  /* an inline "forward" text link with an arrow (the directional affordance) */
+  /* WCAG 2.2 AA target size: the label alone is 21px tall. */
+  .flink { display: inline-flex; align-items: center; min-height: 24px; gap: 6px; font-weight: 600; font-size: var(--fs-meta); color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .flink::after { content: "\2192"; transition: transform var(--dur-1) var(--ease); }
+  .flink:hover { color: var(--accent); }
+  .flink:hover::after { transform: translateX(3px); }
+
+  /* — badges / tags / pills — */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    font-family: var(--font-mono); font-size: var(--fs-eyebrow); font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: var(--r-pill);
+    border: 1px solid var(--line-2); color: var(--ink-2); background: var(--surface-1);
+  }
+  .badge--flag { color: var(--down); border-color: color-mix(in srgb, var(--down) 40%, var(--line)); }
+  .tag {
+    display: inline; font-size: var(--fs-eyebrow); letter-spacing: .04em; text-transform: uppercase;
+    color: var(--ink-3); font-family: var(--font-mono);
+  }
+
+  /* — cards / panels — */
+  .card {
+    background: var(--surface-1); border: 1px solid var(--line);
+    border-radius: var(--r-3); padding: var(--sp-6);
+    box-shadow: var(--el-1);
+  }
+  .card--flat { box-shadow: none; }
+  .card--pad-sm { padding: var(--sp-5); }
+  .card-link { display: block; text-decoration: none; color: inherit; transition: transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
+  .card-link:hover { transform: translateY(-3px); box-shadow: var(--el-2); border-color: var(--line-2); }
+
+  /* generic responsive grids */
+  .grid { display: grid; gap: var(--sp-5); }
+  .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .grid-auto { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+
+  /* — investor editorial hero / thesis rail — */
+  .thesis-rail { padding: var(--sp-6); }
+  .thesis-list { list-style: none; margin-top: var(--sp-4); }
+  .thesis-item {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: var(--sp-4);
+    padding: var(--sp-4) 0;
+    border-top: 1px solid var(--line);
+  }
+  .thesis-num { font: 600 var(--fs-meta)/1 var(--font-mono); color: var(--accent); }
+  .thesis-item h2 { font-size: var(--fs-h4); overflow-wrap: anywhere; }
+  .thesis-item p { margin-top: var(--sp-1); color: var(--ink-3); overflow-wrap: anywhere; }
+
+  /* — one contained assistant entry point — */
+  .ai-callout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, .8fr);
+    gap: var(--sp-10);
+    align-items: end;
+    padding: clamp(var(--sp-8), 6vw, var(--sp-10));
+    border-radius: var(--r-3);
+  }
+  .ai-callout__actions { display: grid; gap: var(--sp-6); justify-items: start; }
+  .prompt-list { list-style: none; display: grid; gap: var(--sp-2); }
+  .prompt-list li { color: var(--ink-3); }
+  .prompt-list li::before { content: "↳"; color: var(--accent); margin-right: var(--sp-2); }
+
+  /* — stat tiles (values are numeric; stat-numeric gate) — */
+  .stats { display: grid; gap: var(--sp-5); grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .stat { border-top: 2px solid var(--ink); padding-top: var(--sp-3); }
+  .stat__v { font-family: var(--font-mono); font-weight: 700; font-size: clamp(1.9rem, 1.3rem + 2vw, 2.6rem); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .stat__v[data-diolog-value] { font-size: clamp(1.15rem, 1rem + .55vw, 1.5rem); line-height: 1.15; white-space: normal; overflow-wrap: anywhere; }
+  .stat__k { display: block; margin-top: var(--sp-2); font-size: var(--fs-meta); color: var(--ink-3); }
+
+  /* — placeholder image (honest asset placeholder: hatch + mono descriptor) — */
+  .ph-img {
+    position: relative; display: grid; place-items: center; padding: var(--sp-4);
+    aspect-ratio: var(--ph-ar, 16 / 9);
+    background: repeating-linear-gradient(45deg, var(--ph-a) 0 11px, var(--ph-b) 11px 22px);
+    border: 1px solid var(--line); border-radius: var(--r-2); overflow: hidden; isolation: isolate;
+  }
+  .ph-img--cover { aspect-ratio: auto; height: 100%; min-height: 160px; }
+  .ph-img__label {
+    font-family: var(--font-mono); font-size: 11.5px; line-height: 1.45; font-weight: 500;
+    letter-spacing: .02em; text-transform: uppercase; text-align: center;
+    color: var(--ink-2); background: var(--surface-1);
+    padding: 7px 11px; border-radius: var(--r-pill); border: 1px solid var(--line);
+    max-width: 88%; box-shadow: var(--el-1);
+  }
+  .ph-img__label b { display: block; color: var(--ink-3); font-weight: 500; text-transform: none; letter-spacing: 0; margin-top: 2px; }
+  .ph-ico { position: absolute; top: 10px; left: 10px; color: var(--ink-3); }
+
+  /* — widget frame: the labelled, sized skeleton every marker sits inside — */
+  .wframe {
+    background: var(--surface-1); border: 1px solid var(--line);
+    border-radius: var(--r-3); padding: var(--sp-5); box-shadow: var(--el-1);
+  }
+  .wframe__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-4); margin-bottom: var(--sp-4); }
+  .wframe__eyebrow { font-family: var(--font-mono); font-size: var(--fs-eyebrow); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 var(--sp-1); }
+  .wframe__title { font-family: var(--font-display); font-size: var(--fs-h4); font-weight: 650; margin: 0; }
+  .wframe__note { font-size: var(--fs-eyebrow); color: var(--ink-3); letter-spacing: .02em; margin-top: var(--sp-4); display: block; }
+  .wmarker { display: block; } /* legacy empty injection point */
+
+  /* honest "live data" affordance (a dot, never a fake value) */
+  .live-tag { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; font-family: var(--font-mono); font-size: var(--fs-eyebrow); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+  .live-tag::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+
+  /* skeleton primitives — named with "bar"/"wf-" so the audit's overlay probe
+     recognises them as sized skeletons, not a bare marker */
+  .wf-bar { position: relative; overflow: hidden; border-radius: var(--r-1); height: 12px; background: color-mix(in srgb, var(--ink) 8%, transparent); }
+  .wf-bar + .wf-bar { margin-top: 10px; }
+  .wf-bar--lg { height: 26px; }
+  .wf-bar--sm { height: 9px; }
+  .wf-box { position: relative; overflow: hidden; border-radius: var(--r-2); background: color-mix(in srgb, var(--ink) 7%, transparent); border: 1px solid var(--line); }
+  .wf-bar::after, .wf-box::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ink) 6%, transparent), transparent);
+    transform: translateX(-100%); animation: wf-shimmer 1.6s infinite;
+  }
+  @keyframes wf-shimmer { to { transform: translateX(100%); } }
+  .wf-rows { display: grid; gap: 14px; }
+  .wf-row { display: grid; grid-template-columns: 1fr auto; gap: var(--sp-4); align-items: center; padding-block: 12px; border-bottom: 1px solid var(--line); }
+  .wf-row:last-child { border-bottom: 0; }
+
+  /* a drawn chart-shaped skeleton (axis + placeholder path — never a grey void) */
+  .wf-chart { position: relative; border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface-1); padding: var(--sp-4); }
+  .wf-chart svg { width: 100%; height: auto; display: block; }
+  .wf-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--sp-3); }
+  .wf-tab { font-family: var(--font-mono); font-size: var(--fs-eyebrow); letter-spacing: .04em; color: var(--ink-3); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 4px 10px; }
+  .wf-tab[aria-current="true"] { color: var(--ink); border-color: var(--ink); }
+  .wf-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .wf-table th, .wf-table td { text-align: right; padding: 10px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .wf-table th:first-child, .wf-table td:first-child { text-align: left; }
+  .wf-table th { font-family: var(--font-mono); font-size: var(--fs-eyebrow); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; }
+  .wf-cell { display: inline-block; height: 11px; width: 60%; border-radius: var(--r-1); background: color-mix(in srgb, var(--ink) 8%, transparent); }
+
+  /* chart-shaped skeleton parts (theme-safe; root svg carries fill="none") */
+  .wf-chartsvg { width: 100%; height: auto; display: block; }
+  .wf-grid { stroke: var(--line); stroke-width: 1; }
+  .wf-axis { stroke: var(--line-2); stroke-width: 1; }
+  .wf-line { stroke: var(--ink-3); stroke-width: 2; fill: none; }
+  .wf-area { fill: color-mix(in srgb, var(--ink) 5%, transparent); stroke: none; }
+  .wf-spark { stroke: var(--ink-3); stroke-width: 2; fill: none; stroke-linecap: round; }
+  .wf-track { stroke: var(--line-2); stroke-width: 3; stroke-linecap: round; }
+  .wf-dot { fill: var(--accent); }
+  /* a segmented breakdown bar (capital structure) — graded neutral tones, 0–100 track */
+  .wf-breakdown { display: flex; height: 16px; border-radius: var(--r-pill); overflow: hidden; border: 1px solid var(--line); }
+  .wf-breakdown span { height: 100%; }
+  .wf-breakdown span:nth-child(1) { background: color-mix(in srgb, var(--ink) 42%, transparent); }
+  .wf-breakdown span:nth-child(2) { background: color-mix(in srgb, var(--ink) 26%, transparent); }
+  .wf-breakdown span:nth-child(3) { background: color-mix(in srgb, var(--ink) 15%, transparent); }
+  .wf-breakdown span:nth-child(4) { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+
+  /* — forms (real labelled shells; ux-craft five states) — */
+  .field { display: grid; gap: 6px; margin-bottom: var(--sp-4); }
+  .field label, .field > .lbl { font-size: var(--fs-meta); font-weight: 600; color: var(--ink); }
+  .field .hint { font-size: var(--fs-eyebrow); color: var(--ink-3); }
+  input[type="text"], input[type="email"], input[type="search"], input[type="tel"], textarea, select {
+    width: 100%; font: inherit; font-size: var(--fs-meta); color: var(--ink);
+    background: var(--surface-1); border: 1px solid var(--line-2); border-radius: var(--r-2);
+    padding: 11px 13px; transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
+  }
+  textarea { min-height: 120px; resize: vertical; }
+  input::placeholder, textarea::placeholder { color: var(--ink-3); }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 22%, transparent); }
+
+  /* — header / nav — */
+  .hdr { position: sticky; top: 0; z-index: 60; background: var(--surface-1); border-bottom: 1px solid transparent; transition: border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
+  .hdr.stuck { border-bottom-color: var(--line); box-shadow: var(--el-1); }
+  .hdr__inner { display: flex; align-items: center; gap: var(--sp-5); height: var(--header-h); }
+  .brand { display: inline-flex; align-items: center; gap: 10px; min-width: 0; text-decoration: none; color: var(--ink); font-family: var(--font-display); font-weight: 700; letter-spacing: -0.01em; font-size: 1.05rem; white-space: nowrap; }
+  .brand > span:last-child { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .brand__mark { width: 26px; height: 26px; border-radius: 7px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-family: var(--font-mono); font-size: 13px; font-weight: 700; flex: none; }
+  .brand__sub { font-weight: 500; color: var(--ink-3); }
+  /* The header gutter caps at 1320px, so restoring these long investor labels
+     above a viewport breakpoint cannot create more room. Keep the compact state
+     stable across 1440/1441 instead of collapsing a long company name exactly
+     when the viewport gets wider. The full backlink remains its accessible name. */
+  .hdr .brand__sub { display: none; }
+  .backlink {
+    display: inline-grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-1);
+    font-size: 0;
+    color: var(--ink-2);
+    text-decoration: none;
+    white-space: nowrap;
+    flex: none;
+  }
+  .backlink::before { content: "\2190"; font-size: var(--fs-meta); }
+  .backlink:hover { color: var(--ink); }
+  .nav { display: flex; flex-shrink: 0; align-items: center; gap: 2px; margin-left: var(--sp-4); }
+  .nav a { text-decoration: none; color: var(--ink-2); font-size: var(--fs-meta); font-weight: 550; padding: 8px 12px; border-radius: var(--r-1); white-space: nowrap; transition: color var(--dur-1) var(--ease), background var(--dur-1) var(--ease); }
+  .nav a:hover { color: var(--ink); background: var(--surface-2); }
+  .nav a[aria-current="page"] { color: var(--ink); font-weight: 650; }
+  .hdr__spacer { flex: 1 1 auto; }
+  .hdr__actions { display: flex; flex-shrink: 0; align-items: center; gap: var(--sp-3); }
+
+  /* nav price chip → stockPrice badge (class avoids the wrap-probe pill selectors) */
+  .price-tag { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; border: 1px solid var(--line-2); border-radius: var(--r-pill); padding: 5px 10px 5px 12px; font-family: var(--font-mono); font-size: var(--fs-eyebrow); letter-spacing: .04em; color: var(--ink-2); background: var(--surface-1); text-decoration: none; }
+  .price-tag .code { color: var(--ink); font-weight: 600; }
+  .price-tag__value { color: var(--ink-2); }
+  .price-tag .wf-bar { width: 52px; height: 11px; }
+
+  /* Ask-AI / ⌘K trigger (class "ask" so the interaction probe finds it) */
+  .ask, .ask-link { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; border: 1px solid var(--line-2); background: var(--surface-1); color: var(--ink); border-radius: var(--r-pill); padding: 8px 10px 8px 12px; font-size: var(--fs-meta); font-weight: 600; cursor: pointer; transition: border-color var(--dur-1) var(--ease), background var(--dur-1) var(--ease); }
+  .ask:hover, .ask-link:hover { border-color: var(--ink-3); background: var(--surface-2); }
+  .ask kbd { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); border: 1px solid var(--line-2); border-radius: 5px; padding: 1px 5px; background: var(--surface-0); }
+
+  .menu-toggle { display: none; align-items: center; justify-content: center; width: 42px; height: 42px; border: 1px solid var(--line-2); background: var(--surface-1); border-radius: var(--r-2); cursor: pointer; color: var(--ink); }
+
+  /* mobile nav sheet (detectable id + data-nav-sheet for the interaction probe).
+     Closed = display:none (zero layout, no off-screen-overflow risk); .open shows it. */
+  #mnav { display: none; position: fixed; inset: var(--header-h) 0 0 0; z-index: 55; background: var(--surface-0); border-top: 1px solid var(--line); padding: var(--sp-5) var(--pad-x) var(--sp-8); overflow-y: auto; }
+  #mnav.open { display: block; animation: mnav-in var(--dur-2) var(--ease-out); }
+  @keyframes mnav-in { from { opacity: 0; transform: translateY(-6px); } }
+  #mnav a { display: block; text-decoration: none; color: var(--ink); font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  #mnav .mnav__group { font-family: var(--font-mono); font-size: var(--fs-eyebrow); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin: var(--sp-5) 0 var(--sp-2); }
+  #mnav .mnav__actions { display: grid; gap: var(--sp-3); margin-top: var(--sp-6); }
+
+  /* — dialog / overlay (studio-owned shell for modal/palette widgets) — */
+  .dlg { width: min(640px, 92vw); max-height: 86vh; border: 1px solid var(--line); border-radius: var(--r-3); padding: 0; background: var(--surface-1); color: var(--ink); box-shadow: var(--el-pop); overflow: hidden; }
+  .dlg[open] { animation: dlg-in var(--dur-2) var(--ease-out); }
+  .dlg::backdrop { background: rgba(20, 18, 12, .46); backdrop-filter: blur(3px); }
+  .dlg__head { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5); border-bottom: 1px solid var(--line); }
+  .dlg__head .ttl { font-family: var(--font-display); font-weight: 650; font-size: var(--fs-h4); margin: 0; }
+  .dlg__head .sub { font-size: var(--fs-eyebrow); color: var(--ink-3); font-family: var(--font-mono); letter-spacing: .04em; }
+  .dlg__x { margin-left: auto; width: 34px; height: 34px; border: 1px solid var(--line); background: var(--surface-1); border-radius: var(--r-1); cursor: pointer; color: var(--ink-2); display: grid; place-items: center; }
+  .dlg__x:hover { background: var(--surface-2); color: var(--ink); }
+  .dlg__body { padding: var(--sp-5); overflow-y: auto; }
+  .dlg--split { width: min(860px, 94vw); }
+  .dlg--split .dlg__body { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 0; padding: 0; }
+  .dlg__brand { padding: var(--sp-6); display: flex; flex-direction: column; justify-content: space-between; gap: var(--sp-6); min-height: 320px; }
+  .dlg__form { padding: var(--sp-6); }
+  @keyframes dlg-in { from { opacity: 0; transform: translateY(8px) scale(.99); } }
+
+  .suggest { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: var(--fs-meta); color: var(--ink-2); border: 1px solid var(--line-2); border-radius: var(--r-pill); padding: 7px 12px; background: var(--surface-1); white-space: nowrap; }
+
+  /* — accordion (faqs frame) — */
+  .acc { border-top: 1px solid var(--line); }
+  .acc__item { border-bottom: 1px solid var(--line); }
+  .acc__btn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); padding: var(--sp-5) 0; background: none; border: 0; cursor: pointer; text-align: left; color: var(--ink); font-family: var(--font-display); font-size: var(--fs-h4); font-weight: 600; }
+  .acc__btn .chev { transition: transform var(--dur-2) var(--ease); color: var(--ink-3); flex: none; }
+  .acc__item.open .acc__btn .chev { transform: rotate(180deg); }
+  .acc__panel { display: none; padding: 0 0 var(--sp-5); }
+  .acc__item.open .acc__panel { display: block; }
+
+  /* — footer — */
+  .ftr { padding-block: var(--sp-9) var(--sp-7); }
+  .ftr__top { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: var(--sp-6); }
+  .ftr--compact .ftr__top { grid-template-columns: minmax(0, .9fr) minmax(0, .6fr) minmax(0, .6fr); }
+  .ftr h4:not(.wframe__title) { font-size: var(--fs-meta); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); font-family: var(--font-mono); font-weight: 500; margin-bottom: var(--sp-4); }
+  .ftr .wframe__title { font-family: var(--font-display); font-size: var(--fs-h4); font-weight: 700; color: var(--ink); text-transform: none; letter-spacing: -0.01em; margin-bottom: 0; }
+  .ftr--compact .ftr__top > :first-child > .tag { display: block; margin-top: var(--sp-3); }
+  .ftr__links { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  /* WCAG 2.2 AA target size: the link text alone is ~16px tall. Pad the anchor
+     to a 24px minimum box without changing the visual rhythm. */
+  .ftr__links a { display: inline-flex; align-items: center; min-height: 24px; padding-block: 4px; color: var(--ink-2); text-decoration: none; font-size: var(--fs-meta); }
+  .ftr__links a:hover { color: var(--ink); }
+  .ftr__sub { display: flex; gap: 8px; flex-wrap: wrap; margin-top: var(--sp-3); }
+  .ftr__sub input { flex: 1 1 180px; }
+  .ftr__subscribe { display: grid; grid-template-columns: minmax(12rem, .55fr) minmax(0, 1.45fr); gap: var(--sp-7); align-items: start; margin-top: var(--sp-8); padding: var(--sp-6); }
+  .subform__consent { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; margin-top: var(--sp-3); color: var(--ink-2); font-size: var(--fs-meta); line-height: 1.45; }
+  .subform__consent input { margin-top: .18em; width: 18px; height: 18px; flex-shrink: 0; }
+  .ftr__disclaimer { margin-top: var(--sp-8); padding-top: var(--sp-5); border-top: 1px solid var(--line); font-size: var(--fs-eyebrow); color: var(--ink-3); line-height: 1.7; }
+  .ftr__legal { display: flex; flex-wrap: wrap; gap: var(--sp-5) var(--sp-6); align-items: center; justify-content: space-between; margin-top: var(--sp-5); }
+  .ftr__legal .powered { font-family: var(--font-mono); letter-spacing: .04em; }
+
+  /* — ticker tape strip (static skeleton band; Diolog's live widget scrolls it).
+       Fitted to 100% width with the overflowing cells clipped + edge-masked, so it
+       reads as "a tape, more scrolls when live" without tripping the overflow probe. */
+  .ticker { border-block: 1px solid var(--line); background: var(--surface-1); overflow: hidden; padding-block: 12px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 92%, transparent); }
+  .ticker__row { display: flex; gap: var(--sp-7); align-items: center; width: 100%; }
+  .ticker__cell { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--ink-2); }
+  .ticker__cell .code { color: var(--ink); font-weight: 600; }
+  .ticker__cell .wf-bar { width: 46px; }
+
+  /* — hero — */
+  .hero { padding-block: clamp(56px, 9vw, 128px) clamp(40px, 6vw, 88px); }
+  .hero__grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(24px, 5vw, 72px); align-items: center; }
+  .hero--investor { padding-top: clamp(48px, 6vw, 80px); }
+  .hero--investor .hero__grid { align-items: stretch; }
+  /* The rail column sets the row height, so a shorter left column leaves a
+     trailing void under its last element. Distribute the slack between the
+     groups instead of pooling it all at the bottom. */
+  .hero--investor .hero__grid > :first-child { display: flex; flex-direction: column; justify-content: space-between; gap: var(--sp-6); }
+  .hero--investor .hero__grid > :first-child > :last-child { margin-top: auto; }
+  .hero h1 { max-width: 15ch; margin-bottom: var(--sp-5); }
+  .hero .accent-word { font-style: italic; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-6); }
+  .hero-photo {
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+    height: auto;
+    width: 100%;
+    object-fit: cover;
+    border-radius: var(--r-3);
+  }
+
+  /* Real-image editorial grids. Image dimensions remain authored facts while the
+     slot uses one deliberate crop ratio, so source orientation is preserved. */
+  .photo-grid { display: grid; gap: var(--sp-4); }
+  .photo-grid--six { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .photo-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .project-band { background: var(--surface-2); }
+  .project-photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-photo-grid .photo-card:first-child { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(18rem, .45fr); }
+  .project-photo-grid .photo-card:first-child > img { height: 100%; min-height: 20rem; aspect-ratio: auto; object-position: center top; }
+  /* Sibling cards in a repeated row share one baseline. `align-items: start`
+     sizes each card to its own copy, so a shorter body leaves that card's
+     bottom edge floating above its siblings — the repeated-panel defect. */
+  .values-grid { align-items: stretch; }
+  .values-grid > .card { height: 100%; }
+  .photo-card { overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-3); background: var(--surface-1); }
+  .photo-card > img { width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; display: block; }
+  .photo-card--wide > img { aspect-ratio: 3 / 2; }
+  .photo-card__body { padding: var(--sp-5); }
+  .photo-card__body h3 { font-size: var(--fs-h4); margin-bottom: var(--sp-2); }
+  .photo-card__body p:last-child { color: var(--ink-2); }
+  .photo-card__body p:empty { display: none; }
+
+  .portal-map { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-3); }
+  .portal-map__num { display: block; margin-bottom: var(--sp-5); font-family: var(--font-mono); font-size: var(--fs-eyebrow); color: var(--accent); }
+  /* A single long route word (`Announcements`) is wider than a narrow map cell
+     at 375px and clips. Let it wrap and, in the last resort, break. */
+  .portal-map h3 { font-size: var(--fs-h4); overflow-wrap: anywhere; hyphens: auto; }
+
+  .resource-digest { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-7); align-items: start; }
+  .resource-digest > section { min-width: 0; }
+  .resource-digest__summary {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+  .resource-empty { display: grid; gap: var(--sp-3); }
+  .resource-empty p { margin: 0; }
+  .document-list { display: grid; border-top: 1px solid var(--line-2); }
+  .document-row { display: flex; justify-content: space-between; gap: var(--sp-4); align-items: center; padding: var(--sp-4) 0; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+  .document-row span:first-child { display: grid; gap: var(--sp-1); }
+  .document-row small { color: var(--ink-3); font-size: var(--fs-meta); }
+  .document-row:hover { color: var(--accent); }
+
+  .market-band { padding-top: clamp(28px, 3vw, 44px); }
+  .market-panel { display: grid; grid-template-columns: minmax(11rem, .75fr) minmax(15rem, 1fr) minmax(18rem, 1.2fr); gap: var(--sp-6); align-items: center; padding: clamp(var(--sp-6), 4vw, var(--sp-8)); box-shadow: var(--el-2); }
+  .market-panel__identity { display: grid; gap: var(--sp-2); }
+  .market-panel__identity .eyebrow { margin: 0; color: var(--accent); }
+  .market-panel__identity strong { font-size: var(--fs-h3); line-height: 1.2; }
+  .market-live { list-style: none; margin: 0; padding: 0 var(--sp-6); display: grid; gap: var(--sp-3); border-inline: 1px solid var(--line); }
+  .market-live li { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-1) var(--sp-3); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--line); }
+  .market-live li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .market-live__k { flex: 0 0 8.5rem; font-family: var(--font-mono); font-size: var(--fs-eyebrow); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .market-live__v { min-width: 0; color: var(--ink-2); font-size: var(--fs-meta); line-height: 1.5; }
+  .market-panel__action { display: grid; gap: var(--sp-4); justify-items: start; }
+  .market-panel__action p { margin: 0; color: var(--ink-2); font-size: var(--fs-meta); }
+  .media-split { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(18rem, .85fr); gap: clamp(24px, 5vw, 72px); align-items: center; }
+  .media-split__image { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--r-3); }
+  .fact-list { margin-top: var(--sp-6); border-top: 1px solid var(--line); }
+  .fact-list > div { display: grid; grid-template-columns: minmax(5rem, .35fr) 1fr; gap: var(--sp-4); padding-block: var(--sp-3); border-bottom: 1px solid var(--line); }
+  .fact-list dt { font-family: var(--font-mono); font-size: var(--fs-eyebrow); color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+  .fact-list dd { margin: 0; color: var(--ink-2); }
+
+  /* a numbered manifesto / thesis list */
+  .manifesto { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-4); counter-reset: m; }
+  .manifesto li { counter-increment: m; display: grid; grid-template-columns: auto 1fr; gap: var(--sp-4); padding-bottom: var(--sp-4); border-bottom: 1px solid var(--line); color: var(--ink-2); font-size: var(--fs-meta); }
+  .manifesto li::before { content: counter(m, decimal-leading-zero); font-family: var(--font-mono); color: var(--ink-3); font-size: var(--fs-eyebrow); padding-top: 3px; }
+
+  /* section header block */
+  .shead { max-width: 60ch; margin-bottom: var(--sp-7); }
+  .shead h2 + .lead, .shead h3 + .lead { margin-top: var(--sp-3); }
+  .shead--row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-5); max-width: none; }
+
+  /* timeline (announcements chronicle frame) */
+  .chron { position: relative; margin-left: 6px; padding-left: var(--sp-6); border-left: 2px solid var(--line); display: grid; gap: var(--sp-6); }
+  .chron__year { font-family: var(--font-mono); font-size: var(--fs-eyebrow); letter-spacing: .12em; color: var(--ink-3); text-transform: uppercase; margin-left: calc(-1 * var(--sp-6) - 8px); }
+  .chron__item { position: relative; }
+  .chron__item::before { content: ""; position: absolute; left: calc(-1 * var(--sp-6) - 7px); top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--surface-0); border: 2px solid var(--ink-3); }
+
+  /* two-up editorial split (list/detail, q&a) */
+  .split2 { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
+  .sticky { position: sticky; top: calc(var(--header-h) + var(--sp-5)); }
+
+  /* document + sticky meta rail (announcement reader). The rail is intentionally
+     shorter than the body and follows the scroll, so a height imbalance here is by
+     design, not dead space. */
+  .doclayout { display: grid; grid-template-columns: 240px 1fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
+  .doclayout--aside { grid-template-columns: 1fr 300px; }
+  /* A short nav column beside a long document leaves a 1500px+ void. Stick it to
+     the viewport so the space stays useful while the body scrolls past. */
+  @media (min-width: 861px) {
+    .doclayout > :first-child,
+    .doclayout--aside > :last-child { position: sticky; top: calc(var(--header-h) + var(--sp-5)); }
+  }
+  @media (max-width: 860px) { .doclayout, .doclayout--aside { grid-template-columns: 1fr; } }
+
+  /* dropcap for a document body's first paragraph */
+  .dropcap::first-letter { float: left; font-family: var(--font-display); font-weight: 650; font-size: 3.4em; line-height: .8; padding: 4px 10px 0 0; color: var(--ink); }
+  .dotlead { flex: 1; height: 0; align-self: flex-end; margin: 0 12px 5px; border-bottom: 1px dotted var(--line-2); }
+
+  /* prose callout / dropcap for announcement reader frame */
+  .callout { border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface-2); padding: var(--sp-5); }
+  .callout__label { font-family: var(--font-mono); font-size: var(--fs-eyebrow); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: var(--sp-3); }
+
+  /* skip link (a11y) */
+  .skip { position: absolute; left: 8px; top: -60px; z-index: 100; background: var(--ink); color: var(--surface-1); padding: 10px 14px; border-radius: var(--r-1); text-decoration: none; transition: top var(--dur-1) var(--ease); }
+  .skip:focus { top: 8px; }
+
+  /* reveal-on-scroll — DOUBLE-gated: behind no-preference (reduced-motion shows
+     at rest) AND behind the `js` class app.js stamps on <html> as its first act.
+     Without the js gate, any script-stripped rendering context (the portal
+     editor/live tree render, SEO crawlers, reader modes) hides every revealed
+     section PERMANENTLY — content must be visible with no JS at all. */
+  @media (prefers-reduced-motion: no-preference) {
+    html.js .reveal { opacity: 0; transform: translateY(14px); transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out); }
+    html.js .reveal.in { opacity: 1; transform: none; }
+  }
+}
+
+/* ===========================================================================
+   UTILITIES LAYER
+   =========================================================================== */
+@layer utilities {
+  .center { text-align: center; }
+  .mono { font-family: var(--font-mono); }
+  .muted { color: var(--ink-3); }
+  .mt-0 { margin-top: 0; }
+  .mt-4 { margin-top: var(--sp-4); }
+  .mt-6 { margin-top: var(--sp-6); }
+  .mt-8 { margin-top: var(--sp-8); }
+  .hide { display: none !important; }
+  .u-nowrap { white-space: nowrap; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+}
+
+/* ===========================================================================
+   RESPONSIVE
+   =========================================================================== */
+@media (max-width: 1366px) {
+  .hdr__inner { gap: var(--sp-3); }
+  .nav { margin-left: 0; }
+  .nav a { padding-inline: 8px; }
+  .hdr__actions { gap: var(--sp-2); }
+}
+@media (max-width: 1200px) {
+  /* The full six-link nav no longer fits alongside a real company name and
+     the required investor actions. Preserve every destination in the existing
+     responsive sheet instead of letting the header overflow. */
+  .nav { display: none; }
+  .menu-toggle { display: inline-flex; }
+}
+@media (max-width: 1024px) {
+  .ftr__top { grid-template-columns: 1fr 1fr; }
+  .backlink { display: none; }
+}
+@media (max-width: 860px) {
+  .ai-callout { grid-template-columns: 1fr; gap: var(--sp-8); }
+  .hero-photo { min-height: 0; }
+  .hero__grid { grid-template-columns: 1fr; }
+  .photo-grid--six, .photo-grid--three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-photo-grid .photo-card:first-child { display: block; }
+  .project-photo-grid .photo-card:first-child > img { height: auto; min-height: 0; aspect-ratio: 16 / 9; }
+  .portal-map { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .resource-digest { grid-template-columns: 1fr; }
+  .market-panel { grid-template-columns: 1fr; }
+  .market-live { padding: var(--sp-5) 0; border-inline: 0; border-block: 1px solid var(--line); }
+  .ftr__subscribe { grid-template-columns: 1fr; gap: var(--sp-5); }
+  .media-split { grid-template-columns: 1fr; }
+  .grid-3, .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .split2 { grid-template-columns: 1fr; }
+  .dlg--split .dlg__body { grid-template-columns: 1fr; }
+  .dlg__brand { min-height: 0; }
+  .shead--row { flex-direction: column; align-items: flex-start; }
+  .hdr__actions :is(.ask, .ask-link) .lbl, .hdr__actions .price-tag, .hdr__actions .btn-subscribe, .brand__sub { display: none; }
+}
+@media (max-width: 720px) {
+  /* collapse the header actions to logo + Ask shortcut + the menu toggle */
+  .menu-toggle { display: inline-flex; }
+  .ftr__top { grid-template-columns: minmax(0, 1fr); }
+  /* Use a zero-floor track for the generic grids. A bare `1fr` is
+     `minmax(auto, 1fr)`, whose floor is the
+     item's MIN-CONTENT width — so a nested grid/flex child (for example a stat list)
+     silently widens the track past the viewport and the page scrolls sideways. The desktop rules
+     above already guard this way; the mobile collapse must too. Measured: a portal `company` page
+     overflowed to scrollWidth 481 at a 375px viewport (a `.callout` track sized to 465px), which
+     the render-audit gate rejected with 7 overflow errors. */
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: minmax(0, 1fr); }
+  .photo-grid--six, .photo-grid--three { grid-template-columns: 1fr; }
+}

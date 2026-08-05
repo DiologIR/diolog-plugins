@@ -1,0 +1,19 @@
+<!-- BLOCK snapshot-tiles → companySnapshot (tiles). slots: eyebrow, heading -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <p class="eyebrow">{{eyebrow|§01 Live snapshot}}</p>
+    <h2 class="measure">{{heading|Key figures, served live.}}</h2>
+    <!-- diolog-widget: {"kind":"companySnapshot","variant":"tiles","config":{"showLiveSharesOnIssue":true,"facts":[]},"styleOverrides":{},"note":"Live snapshot tiles. Configure facts/thesis via portal editor."} -->
+    <div class="wframe mt-8">
+      <div class="wmarker" data-diolog-widget="companySnapshot" data-widget-variant="tiles" aria-label="Company snapshot">
+        <div class="grid grid-4">
+          <div><p class="wframe__eyebrow">Last price</p><div class="wf-bar wf-bar--lg" style="width:70%"></div></div>
+          <div><p class="wframe__eyebrow">Market cap</p><div class="wf-bar wf-bar--lg" style="width:80%"></div></div>
+          <div><p class="wframe__eyebrow">Shares on issue</p><div class="wf-bar wf-bar--lg" style="width:76%"></div></div>
+          <div><p class="wframe__eyebrow">52-week range</p><svg class="wf-chartsvg" viewBox="0 0 200 30" fill="none" height="30" aria-hidden="true"><line class="wf-track" x1="10" y1="15" x2="190" y2="15"/><line class="wf-axis" x1="10" y1="9" x2="10" y2="21"/><line class="wf-axis" x1="190" y1="9" x2="190" y2="21"/><circle class="wf-dot" cx="120" cy="15" r="5"/></svg></div>
+        </div>
+        <span class="wframe__note">Delayed at least 20 minutes · past performance is not indicative of future performance.</span>
+      </div>
+    </div>
+  </div>
+</section>

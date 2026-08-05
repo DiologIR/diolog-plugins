@@ -1,0 +1,18 @@
+<!-- BLOCK price-chart-compact → stockChart (compact). slots: eyebrow, heading -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <!-- diolog-widget: {"kind":"stockChart","variant":"compact","config":{"period":"3M","showAnnouncementMarkers":false},"styleOverrides":{},"note":"Compact price chart for macro context, served live."} -->
+    <div class="wframe">
+      <div class="wframe__head"><div><p class="wframe__eyebrow">{{eyebrow|§ For context}}</p><h2 class="wframe__title" style="font-size:var(--fs-h4)">{{heading|Price, over the same period}}</h2></div><span class="live-tag">Live</span></div>
+      <div class="wmarker" data-diolog-widget="stockChart" data-widget-variant="compact" aria-label="Price chart">
+        <div class="wf-chart">
+          <svg class="wf-chartsvg" viewBox="0 0 640 160" fill="none" height="160" role="img" aria-label="Placeholder price chart">
+            <line class="wf-grid" x1="10" y1="40" x2="630" y2="40"/><line class="wf-grid" x1="10" y1="90" x2="630" y2="90"/><line class="wf-axis" x1="10" y1="130" x2="630" y2="130"/>
+            <path class="wf-area" d="M10 100 C 120 70, 200 118, 300 84 S 470 44, 560 74 S 620 50, 630 62 L630 130 L10 130 Z"/>
+            <path class="wf-line" d="M10 100 C 120 70, 200 118, 300 84 S 470 44, 560 74 S 620 50, 630 62"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

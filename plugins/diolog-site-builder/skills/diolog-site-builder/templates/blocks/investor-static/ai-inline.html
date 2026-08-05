@@ -1,0 +1,25 @@
+<!-- BLOCK ai-inline — contained disclosure-grounded assistant entry point (NO widget). slots: eyebrow, heading, body, question{1..3}, cta_href, cta_label -->
+<section class="band reveal" id="ask">
+  <div class="gutter">
+    <div class="ai-callout section--dark">
+      <div>
+        <p class="eyebrow">{{eyebrow|AI · sourced from disclosures}}</p>
+        <h2>{{heading|Ask the record, not the rumour.}}</h2>
+        <p class="lead">
+          {{body|Explore public company information with source-labelled answers
+          and links back to the underlying disclosures.}}
+        </p>
+      </div>
+      <div class="ai-callout__actions">
+        <ul class="prompt-list" aria-label="Example questions">
+          <li>{{question1|What changed in the latest result?}}</li>
+          <li>{{question2|How is the company funded?}}</li>
+          <li>{{question3|What are the principal risks?}}</li>
+        </ul>
+        <a class="btn btn-primary btn-lg" href="{{cta_href|ai.html}}"
+          >{{cta_label|Ask a question}}</a
+        >
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+<!-- BLOCK company-feature — source-photography investor story feature (NO widget). Supply a real source URL and natural dimensions; never invent an asset. slots: eyebrow, heading, body, image_url, image_alt, image_width, image_height, fact{1..3}_{label,value} -->
+<section class="band band--tight reveal">
+  <div class="gutter media-split">
+    <img class="media-split__image" src="{{image_url|data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'%3E%3Crect width='1600' height='900' fill='%23e6e3db'/%3E%3C/svg%3E}}" alt="{{image_alt|Company source photograph}}" width="{{image_width|1600}}" height="{{image_height|900}}">
+    <div>
+      <p class="eyebrow">{{eyebrow|§ The operating company}}</p>
+      <h2>{{heading|The work behind the ticker.}}</h2>
+      <p class="lead">{{body|A grounded link between the listed entity, its people and its operating assets.}}</p>
+      <dl class="fact-list">
+        <div><dt>{{fact1_label|Proof}}</dt><dd>{{fact1_value|A source-derived fact}}</dd></div>
+        <div><dt>{{fact2_label|Proof}}</dt><dd>{{fact2_value|A source-derived fact}}</dd></div>
+        <div><dt>{{fact3_label|Proof}}</dt><dd>{{fact3_value|A source-derived fact}}</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>

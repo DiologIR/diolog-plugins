@@ -1,0 +1,28 @@
+<!-- BLOCK calendar-agm → calendar (list) + agm. slots: eyebrow, heading -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <p class="eyebrow">{{eyebrow|§ Diary}}</p>
+    <h2 class="measure">{{heading|Key dates.}}</h2>
+    <div class="grid grid-2 mt-8">
+      <!-- diolog-widget: {"kind":"calendar","variant":"list","config":{"displayFormat":"list","monthsAhead":12},"styleOverrides":{},"note":"Investor calendar, served live."} -->
+      <div class="wframe">
+        <div class="wframe__head"><div><p class="wframe__eyebrow">Investor calendar</p><h3 class="wframe__title">Upcoming events</h3></div><span class="live-tag">Live</span></div>
+        <div class="wmarker" data-diolog-widget="calendar" data-widget-variant="list" aria-label="Investor calendar">
+          <div class="wf-rows">
+            <div class="wf-row"><div style="display:flex;gap:var(--sp-4);align-items:center;flex:1"><div class="wf-box" style="width:52px;height:52px;flex:none"></div><div style="flex:1"><div class="wf-bar" style="width:60%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:40%"></div></div></div></div>
+            <div class="wf-row"><div style="display:flex;gap:var(--sp-4);align-items:center;flex:1"><div class="wf-box" style="width:52px;height:52px;flex:none"></div><div style="flex:1"><div class="wf-bar" style="width:54%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:44%"></div></div></div></div>
+          </div>
+        </div>
+      </div>
+      <!-- diolog-widget: {"kind":"agm","variant":"default","config":{},"styleOverrides":{},"note":"Next AGM panel, served live."} -->
+      <div class="wframe">
+        <div class="wframe__head"><div><p class="wframe__eyebrow">Annual General Meeting</p><h3 class="wframe__title">Next AGM</h3></div></div>
+        <div class="wmarker" data-diolog-widget="agm" data-widget-variant="default" aria-label="Annual general meeting">
+          <div class="wf-rows"><div class="wf-row"><span class="tag">Date &amp; time</span><span class="wf-cell" style="width:120px"></span></div><div class="wf-row"><span class="tag">Venue</span><span class="wf-cell" style="width:140px"></span></div></div>
+          <div class="mt-5" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-ghost" type="button">Notice of meeting</button><button class="btn btn-ghost" type="button">Add to calendar</button></div>
+          <span class="wframe__note">Meeting date, venue and documents are served live.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

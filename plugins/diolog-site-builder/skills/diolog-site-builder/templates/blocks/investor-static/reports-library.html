@@ -1,0 +1,24 @@
+<!-- BLOCK reports-library — value-UI reports / documents library (NO widget) from `documents.recent`; the <template> row fills per resolved item ({{title}}, {{category}}, {{date}}, {{url}}) and the list falls back to the empty note when there are none. slots: eyebrow, heading, link_label, link_href, empty_text -->
+<section class="band band--tight reveal" id="reports">
+  <div class="gutter">
+    <div class="shead shead--row">
+      <div>
+        <p class="eyebrow">{{eyebrow|§ Library}}</p>
+        <h2>{{heading|Reports &amp; presentations.}}</h2>
+      </div>
+      <a class="flink" href="{{link_href|reports.html}}">{{link_label|All documents}}</a>
+    </div>
+    <div class="grid grid-2" data-diolog-value="documents.recent" data-value-args='{"limit":8}'>
+      <template>
+        <a class="card card--pad-sm card-link" href="{{url}}">
+          <div class="shead shead--row">
+            <span class="chip">{{category}}</span>
+            <time class="eyebrow eyebrow--plain">{{date}}</time>
+          </div>
+          <h3>{{title}}</h3>
+        </a>
+      </template>
+      <p class="card card--flat card--pad-sm" style="grid-column:1 / -1">{{empty_text|Published reports and presentations will appear here.}}</p>
+    </div>
+  </div>
+</section>

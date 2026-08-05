@@ -1,0 +1,26 @@
+<!-- BLOCK inv-hero — investor hero + live price card (stockPrice). slots: eyebrow, headline, accent_word, lead, cta1_*, cta2_label -->
+<section class="band hero">
+  <div class="gutter">
+    <div class="hero__grid">
+      <div class="reveal">
+        <p class="eyebrow">{{eyebrow|Investor portal · updated live}}</p>
+        <h1>{{headline|A company in its }} <span class="accent-word">{{accent_word|own}}</span>{{headline_tail| words.}}</h1>
+        <p class="lead">{{lead|A plain placeholder line that states one grounded, headline fact about the company. Keep it factual, never advisor-framing.}}</p>
+        <div class="hero__cta">
+          <a class="btn btn-primary btn-lg" href="{{cta1_href|announcements.html}}">{{cta1_label|Latest announcements}}</a>
+          <button class="btn btn-ghost btn-lg" type="button" data-open="palette">{{cta2_label|Ask a question}}</button>
+        </div>
+      </div>
+      <div class="reveal">
+        <!-- diolog-widget: {"kind":"stockPrice","variant":"card","config":{"showMarketCap":true,"showDayRange":true,"showFiftyTwoWeekRange":false},"styleOverrides":{},"note":"Live price readout. Figures served live; configure via portal editor."} -->
+        <div class="wframe">
+          <div class="wframe__head"><div><p class="wframe__eyebrow">Share price · <span class="code">{{TICKER}}</span></p><h2 class="wframe__title" style="font-size:var(--fs-h4)">Live quote</h2></div><span class="live-tag">Live</span></div>
+          <div class="wmarker" data-diolog-widget="stockPrice" data-widget-variant="card" aria-label="Live share price">
+            <div class="wf-bar wf-bar--lg" style="width:52%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:34%"></div>
+          </div>
+          <span class="wframe__note">Delayed at least 20 minutes. Not financial advice.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

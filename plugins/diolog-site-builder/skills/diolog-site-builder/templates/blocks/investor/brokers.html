@@ -1,0 +1,22 @@
+<!-- BLOCK brokers → brokers (numbered-list). slots: eyebrow, question, intent, intro -->
+<section class="band band--tight reveal">
+  <div class="wrap">
+    <div class="doclayout">
+      <div class="sticky"><p class="eyebrow eyebrow--plain">{{eyebrow|Question № 01}}</p><h3>{{question|How do I buy {{TICKER}}?}}</h3><p class="tag" style="text-transform:none;letter-spacing:0;font-style:italic">·{{intent|the practical bit}}</p></div>
+      <div>
+        <p>{{intro|The ticker, secondary listings and settlement details are grounded prose in the real page. The how-to-invest list below is served live.}}</p>
+        <!-- diolog-widget: {"kind":"brokers","variant":"numbered-list","config":{"brokers":[],"intro":"","footnote":"We don't endorse any provider."},"styleOverrides":{},"note":"How-to-invest broker list, served live. Configure brokers via portal editor."} -->
+        <div class="wframe mt-5">
+          <div class="wmarker" data-diolog-widget="brokers" data-widget-variant="numbered-list" aria-label="How to invest">
+            <ol style="list-style:none;padding:0;margin:0;display:grid;gap:var(--sp-4)">
+              <li style="display:grid;grid-template-columns:auto 1fr;gap:var(--sp-4);align-items:center"><span class="tag">01</span><div style="flex:1"><div class="wf-bar" style="width:38%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:64%"></div></div></li>
+              <li style="display:grid;grid-template-columns:auto 1fr;gap:var(--sp-4);align-items:center"><span class="tag">02</span><div style="flex:1"><div class="wf-bar" style="width:42%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:58%"></div></div></li>
+              <li style="display:grid;grid-template-columns:auto 1fr;gap:var(--sp-4);align-items:center"><span class="tag">03</span><div style="flex:1"><div class="wf-bar" style="width:36%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:60%"></div></div></li>
+            </ol>
+            <span class="wframe__note">We don't endorse any provider. The broker list is served live.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

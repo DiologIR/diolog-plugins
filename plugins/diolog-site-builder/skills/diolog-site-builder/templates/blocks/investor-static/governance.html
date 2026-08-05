@@ -1,0 +1,22 @@
+<!-- BLOCK governance — value-UI board & leadership roster (NO widget) from team.members; each card fills per resolved item ({{name}}, {{title}}, {{role}}) and the roster falls back to the empty note. slots: eyebrow, heading, link_label, link_href, empty_text -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <div class="shead shead--row">
+      <div>
+        <p class="eyebrow">{{eyebrow|§ Board}}</p>
+        <h2>{{heading|The people accountable.}}</h2>
+      </div>
+      <a class="flink" href="{{link_href|team.html}}">{{link_label|Full board &amp; leadership}}</a>
+    </div>
+    <div class="grid grid-3" data-diolog-value="team.members" data-value-args='{"limit":9}'>
+      <template>
+        <div class="card card--pad-sm">
+          <span class="chip">{{role}}</span>
+          <h3>{{name}}</h3>
+          <p>{{title}}</p>
+        </div>
+      </template>
+      <p class="card card--flat card--pad-sm">{{empty_text|Board and leadership profiles will appear here.}}</p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,14 @@
+<!-- BLOCK ai-inline → chatAssistant (inline) callout band. slots: eyebrow, heading -->
+<section class="band section--dark reveal">
+  <div class="wrap">
+    <!-- diolog-widget: {"kind":"chatAssistant","variant":"inline","config":{"promptPlaceholder":"Ask a question about the company…","showCitations":true,"suggestedQuestions":"How do I buy shares?|Latest results|Capital structure"},"styleOverrides":{},"note":"Inline AI assistant, served live. Configure prompts via portal editor."} -->
+    <div class="wframe">
+      <div class="wframe__head"><div><p class="wframe__eyebrow">{{eyebrow|{{COMPANY}} AI}}</p><h2 class="wframe__title" style="font-size:var(--fs-h3)">{{heading|Answers, grounded in the record.}}</h2></div></div>
+      <div class="wmarker" data-diolog-widget="chatAssistant" data-widget-variant="inline" aria-label="AI assistant">
+        <div class="field"><label class="sr-only" for="inline-ask">Ask a question</label><input id="inline-ask" type="search" placeholder="Ask a question about the company…"></div>
+        <div class="suggest"><span class="chip">How do I buy shares?</span><span class="chip">Latest results</span><span class="chip">Capital structure</span></div>
+        <span class="wframe__note">Answers are AI-generated from public disclosures and reviewed by IR, with numbered citations.</span>
+      </div>
+    </div>
+  </div>
+</section>

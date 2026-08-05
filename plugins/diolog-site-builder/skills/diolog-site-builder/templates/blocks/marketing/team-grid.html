@@ -1,0 +1,21 @@
+<!-- BLOCK team-grid — leadership grid → teamProfiles widget (grid). slots: eyebrow, heading, link_* -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <div class="shead shead--row">
+      <div><p class="eyebrow">{{eyebrow|§ Leadership}}</p><h2>{{heading|The people accountable.}}</h2></div>
+      <a class="flink" href="{{link_href|team.html}}">{{link_label|Meet the whole team}}</a>
+    </div>
+    <!-- diolog-widget: {"kind":"teamProfiles","variant":"grid","config":{"showGovernanceStats":false,"alternatePortraitSide":false},"styleOverrides":{},"note":"Leadership grid. People served live; configure via portal editor. Never invents a person."} -->
+    <div class="wframe">
+      <div class="wmarker" data-diolog-widget="teamProfiles" data-widget-variant="grid" aria-label="Leadership grid">
+        <div class="grid grid-4">
+          <div><div class="ph-img" style="--ph-ar: 1 / 1;margin-bottom:var(--sp-4)" role="img" aria-label="Placeholder portrait"><span class="ph-img__label">PORTRAIT<b>600×600</b></span></div><p class="tag">Chair</p><div class="wf-bar mt-4" style="width:70%"></div></div>
+          <div><div class="ph-img" style="--ph-ar: 1 / 1;margin-bottom:var(--sp-4)" role="img" aria-label="Placeholder portrait"><span class="ph-img__label">PORTRAIT<b>600×600</b></span></div><p class="tag">Managing Director</p><div class="wf-bar mt-4" style="width:66%"></div></div>
+          <div><div class="ph-img" style="--ph-ar: 1 / 1;margin-bottom:var(--sp-4)" role="img" aria-label="Placeholder portrait"><span class="ph-img__label">PORTRAIT<b>600×600</b></span></div><p class="tag">Non-Executive Director</p><div class="wf-bar mt-4" style="width:72%"></div></div>
+          <div><div class="ph-img" style="--ph-ar: 1 / 1;margin-bottom:var(--sp-4)" role="img" aria-label="Placeholder portrait"><span class="ph-img__label">PORTRAIT<b>600×600</b></span></div><p class="tag">Chief Financial Officer</p><div class="wf-bar mt-4" style="width:64%"></div></div>
+        </div>
+        <span class="wframe__note">Names and biographies are served live. Real people only, never invented.</span>
+      </div>
+    </div>
+  </div>
+</section>

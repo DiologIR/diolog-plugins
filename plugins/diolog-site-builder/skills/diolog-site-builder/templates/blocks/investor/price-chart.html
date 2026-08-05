@@ -1,0 +1,22 @@
+<!-- BLOCK price-chart → stockChart (full). slots: eyebrow, heading -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <!-- diolog-widget: {"kind":"stockChart","variant":"full","config":{"period":"1M","showAnnouncementMarkers":true,"priceSensitiveRing":true},"styleOverrides":{},"note":"Full price chart with range selector + announcement markers, served live. Configure default period via portal editor."} -->
+    <div class="wframe">
+      <div class="wframe__head"><div><p class="wframe__eyebrow">{{eyebrow|§ Price & volume}}</p><h2 class="wframe__title" style="font-size:var(--fs-h3)">{{heading|Share price over time}}</h2></div><span class="live-tag">Live</span></div>
+      <div class="wmarker" data-diolog-widget="stockChart" data-widget-variant="full" aria-label="Share price chart">
+        <div class="wf-tabs" role="tablist" aria-label="Range"><span class="wf-tab" aria-current="true">1M</span><span class="wf-tab">3M</span><span class="wf-tab">6M</span><span class="wf-tab">YTD</span><span class="wf-tab">1Y</span></div>
+        <div class="wf-chart">
+          <svg class="wf-chartsvg" viewBox="0 0 640 260" fill="none" height="260" role="img" aria-label="Placeholder price chart">
+            <line class="wf-grid" x1="44" y1="40" x2="620" y2="40"/><line class="wf-grid" x1="44" y1="100" x2="620" y2="100"/><line class="wf-grid" x1="44" y1="160" x2="620" y2="160"/>
+            <line class="wf-axis" x1="44" y1="24" x2="44" y2="220"/><line class="wf-axis" x1="44" y1="220" x2="620" y2="220"/>
+            <path class="wf-area" d="M44 178 C 130 130, 190 196, 270 150 S 430 92, 512 126 S 600 82, 620 104 L620 220 L44 220 Z"/>
+            <path class="wf-line" d="M44 178 C 130 130, 190 196, 270 150 S 430 92, 512 126 S 600 82, 620 104"/>
+          </svg>
+        </div>
+        <table class="wf-table mt-6"><thead><tr><th>Date</th><th>Open</th><th>High</th><th>Low</th><th>VWAP</th><th>Vol</th></tr></thead><tbody><tr><td><span class="wf-cell" style="width:70%"></span></td><td><span class="wf-cell"></span></td><td><span class="wf-cell"></span></td><td><span class="wf-cell"></span></td><td><span class="wf-cell"></span></td><td><span class="wf-cell"></span></td></tr></tbody></table>
+        <span class="wframe__note">Chart, markers and data are served live. Placeholder path shown until data loads.</span>
+      </div>
+    </div>
+  </div>
+</section>

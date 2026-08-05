@@ -1,0 +1,18 @@
+<!-- BLOCK ai-fullpage → chatAssistant (fullpage). slots: eyebrow, heading -->
+<section class="band band--tight reveal">
+  <div class="wrap">
+    <!-- diolog-widget: {"kind":"chatAssistant","variant":"fullpage","config":{"promptPlaceholder":"Ask a question about the company…","showCitations":true,"suggestedQuestions":"How do I buy shares?|What were the latest results?|Who is on the board?|How is the company capitalised?"},"styleOverrides":{},"note":"Full-page AI assistant, served live."} -->
+    <div class="wframe" style="min-height:420px;display:flex;flex-direction:column">
+      <div class="wframe__head"><div><p class="wframe__eyebrow">{{eyebrow|{{COMPANY}} AI}}</p><h2 class="wframe__title" style="font-size:var(--fs-h3)">{{heading|Ask a question}}</h2></div><span class="live-tag">Live</span></div>
+      <div class="wmarker" data-diolog-widget="chatAssistant" data-widget-variant="fullpage" aria-label="AI assistant" style="flex:1;display:flex;flex-direction:column">
+        <div style="flex:1">
+          <p class="muted">Try one of these to get started:</p>
+          <div class="suggest mt-4"><span class="chip">How do I buy shares?</span><span class="chip">What were the latest results?</span><span class="chip">Who is on the board?</span><span class="chip">How is the company capitalised?</span></div>
+          <div class="wf-rows mt-8" aria-hidden="true"><div><div class="wf-bar" style="width:30%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:92%"></div><div class="wf-bar wf-bar--sm" style="width:86%"></div><div class="wf-bar wf-bar--sm" style="width:74%"></div></div></div>
+        </div>
+        <div class="field mt-8" style="margin-bottom:0"><label class="sr-only" for="ai-input">Ask a question</label><input id="ai-input" type="search" placeholder="Ask a question about the company…"></div>
+        <span class="wframe__note">Answers are AI-generated from public disclosures and reviewed by IR. If there's no confident match, the assistant says so rather than guessing.</span>
+      </div>
+    </div>
+  </div>
+</section>

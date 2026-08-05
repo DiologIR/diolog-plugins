@@ -1,0 +1,1457 @@
+{
+  "_generated": "by gen-manifest.mjs from the block library — do not hand-edit",
+  "widgetConfigCommentFormat": "<!-- diolog-widget: {\"kind\",\"variant\",\"config\":{…},\"styleOverrides\":{…},\"note\"} --> placed immediately before each <div data-diolog-widget> marker. Read by the final pass / portal editor to configure the widget instance in the DB (config beyond variant is not read from the marker at render time).",
+  "tokens": {
+    "brand": [
+      "COMPANY",
+      "MONO",
+      "TICKER",
+      "EXCHANGE",
+      "YEAR",
+      "COMPANY_SITE_URL"
+    ],
+    "slot": "{{name}} or {{name|default text}} — per-block content; the |default renders the plain-template copy when unfilled"
+  },
+  "partials": [
+    "footer.compact",
+    "footer.full",
+    "footer.investor",
+    "header.compact",
+    "header.full",
+    "header.investor",
+    "overlays",
+    "overlays.none",
+    "ticker"
+  ],
+  "presets": [
+    {
+      "name": "full-site",
+      "mode": "full-site",
+      "pages": [
+        "index",
+        "about",
+        "services",
+        "contact",
+        "investors",
+        "announcements",
+        "announcement",
+        "reports",
+        "videos",
+        "team",
+        "invest",
+        "ai",
+        "404"
+      ]
+    },
+    {
+      "name": "investor-centre",
+      "mode": "investor-centre",
+      "pages": [
+        "investors",
+        "announcements",
+        "announcement",
+        "reports",
+        "videos",
+        "team",
+        "invest",
+        "ai",
+        "404"
+      ]
+    },
+    {
+      "name": "two-page-portal",
+      "mode": "full-site",
+      "pages": [
+        "index",
+        "investors"
+      ]
+    }
+  ],
+  "widgetIndex": {
+    "chatAssistant": [
+      "investor/ai-fullpage",
+      "investor/ai-inline"
+    ],
+    "announcementReader": [
+      "investor/announcement-reader",
+      "investor/announcements-feed"
+    ],
+    "announcements": [
+      "investor/announcements-feed",
+      "investor/announcements-timeline"
+    ],
+    "brokers": [
+      "investor/brokers"
+    ],
+    "calendar": [
+      "investor/calendar-agm"
+    ],
+    "agm": [
+      "investor/calendar-agm"
+    ],
+    "capitalRaise": [
+      "investor/capital-raise"
+    ],
+    "capitalStructure": [
+      "investor/capital-structure"
+    ],
+    "faqs": [
+      "investor/faq-widget"
+    ],
+    "companySnapshot": [
+      "investor/governance",
+      "investor/snapshot-tiles"
+    ],
+    "stockPrice": [
+      "investor/inv-hero"
+    ],
+    "notificationPreferences": [
+      "investor/notification-prefs"
+    ],
+    "stockChart": [
+      "investor/price-chart",
+      "investor/price-chart-compact"
+    ],
+    "documentsLibrary": [
+      "investor/reports-library"
+    ],
+    "teamProfiles": [
+      "investor/team-masthead",
+      "marketing/team-grid"
+    ],
+    "videoLibrary": [
+      "investor/video-featured",
+      "investor/video-programme"
+    ],
+    "contactForm": [
+      "marketing/contact-form"
+    ]
+  },
+  "blocks": {
+    "chrome": [],
+    "investor": [
+      {
+        "id": "investor/ai-fullpage",
+        "desc": "fullpage → chatAssistant (fullpage). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "chatAssistant",
+            "variant": "fullpage"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "chatAssistant",
+            "variant": "fullpage",
+            "config": {
+              "promptPlaceholder": "Ask a question about the company…",
+              "showCitations": true,
+              "suggestedQuestions": "How do I buy shares?|What were the latest results?|Who is on the board?|How is the company capitalised?"
+            },
+            "styleOverrides": {},
+            "note": "Full-page AI assistant, served live."
+          }
+        ]
+      },
+      {
+        "id": "investor/ai-inline",
+        "desc": "inline → chatAssistant (inline) callout band. slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "chatAssistant",
+            "variant": "inline"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "chatAssistant",
+            "variant": "inline",
+            "config": {
+              "promptPlaceholder": "Ask a question about the company…",
+              "showCitations": true,
+              "suggestedQuestions": "How do I buy shares?|Latest results|Capital structure"
+            },
+            "styleOverrides": {},
+            "note": "Inline AI assistant, served live. Configure prompts via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "investor/announcement-reader",
+        "desc": "reader → announcementReader (full) w/ sticky rail. slots: title",
+        "slots": [
+          "back_href",
+          "back_label",
+          "title"
+        ],
+        "widgets": [
+          {
+            "kind": "announcementReader",
+            "variant": "full"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "announcementReader",
+            "variant": "full",
+            "config": {
+              "showAiSummary": true,
+              "showCitation": true,
+              "showPdfEmbed": true,
+              "dropCap": true
+            },
+            "styleOverrides": {},
+            "note": "Full announcement body + AI summary + PDF, served live. Never fabricated."
+          }
+        ]
+      },
+      {
+        "id": "investor/announcements-feed",
+        "desc": "feed → announcements (featured) + announcementReader (summary). slots: eyebrow, heading, link_*",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "link_href",
+          "link_label"
+        ],
+        "widgets": [
+          {
+            "kind": "announcementReader",
+            "variant": "summary-only"
+          },
+          {
+            "kind": "announcements",
+            "variant": "featured"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "announcementReader",
+            "variant": "summary-only",
+            "config": {
+              "showAiSummary": true,
+              "showCitation": true
+            },
+            "styleOverrides": {},
+            "note": "Featured announcement AI summary, served live."
+          },
+          {
+            "kind": "announcements",
+            "variant": "featured",
+            "config": {
+              "itemsToShow": 4,
+              "highlightFilings": true,
+              "showAiSummary": true
+            },
+            "styleOverrides": {},
+            "note": "Recent announcements list, served live."
+          }
+        ]
+      },
+      {
+        "id": "investor/announcements-timeline",
+        "desc": "timeline → announcements (timeline). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "detail_href",
+          "detail_label"
+        ],
+        "widgets": [
+          {
+            "kind": "announcements",
+            "variant": "timeline"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "announcements",
+            "variant": "timeline",
+            "config": {
+              "itemsToShow": 20,
+              "groupBy": "year",
+              "highlightFilings": true,
+              "showAiSummary": true
+            },
+            "styleOverrides": {},
+            "note": "Full announcements chronicle, served live. Configure grouping via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "investor/brokers",
+        "desc": "",
+        "slots": [
+          "eyebrow",
+          "question",
+          "intent",
+          "intro"
+        ],
+        "widgets": [
+          {
+            "kind": "brokers",
+            "variant": "numbered-list"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "brokers",
+            "variant": "numbered-list",
+            "config": {
+              "brokers": [],
+              "intro": "",
+              "footnote": "We don't endorse any provider."
+            },
+            "styleOverrides": {},
+            "note": "How-to-invest broker list, served live. Configure brokers via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "investor/calendar-agm",
+        "desc": "agm → calendar (list) + agm. slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "calendar",
+            "variant": "list"
+          },
+          {
+            "kind": "agm",
+            "variant": "default"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "calendar",
+            "variant": "list",
+            "config": {
+              "displayFormat": "list",
+              "monthsAhead": 12
+            },
+            "styleOverrides": {},
+            "note": "Investor calendar, served live."
+          },
+          {
+            "kind": "agm",
+            "variant": "default",
+            "config": {},
+            "styleOverrides": {},
+            "note": "Next AGM panel, served live."
+          }
+        ]
+      },
+      {
+        "id": "investor/capital-raise",
+        "desc": "raise → capitalRaise (card-form). slots: eyebrow, question, intent, intro",
+        "slots": [
+          "eyebrow",
+          "question",
+          "intent",
+          "intro"
+        ],
+        "widgets": [
+          {
+            "kind": "capitalRaise",
+            "variant": "card-form"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "capitalRaise",
+            "variant": "card-form",
+            "config": {
+              "lastRaise": [],
+              "body": "",
+              "collectIndicativeInterest": true
+            },
+            "styleOverrides": {},
+            "note": "Capital raise stats + register-interest form, served live. Non-binding."
+          }
+        ]
+      },
+      {
+        "id": "investor/capital-structure",
+        "desc": "structure → capitalStructure (table). slots: eyebrow, question, intent, intro",
+        "slots": [
+          "eyebrow",
+          "question",
+          "intent",
+          "intro"
+        ],
+        "widgets": [
+          {
+            "kind": "capitalStructure",
+            "variant": "table"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "capitalStructure",
+            "variant": "table",
+            "config": {
+              "showLiveSharesOnIssue": true,
+              "rows": [],
+              "footnote": ""
+            },
+            "styleOverrides": {},
+            "note": "Capital structure table + breakdown, served live. Configure rows/footnote via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "investor/faq-widget",
+        "desc": "widget → faqs (accordion) widget. slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "faqs",
+            "variant": "accordion"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "faqs",
+            "variant": "accordion",
+            "config": {},
+            "styleOverrides": {},
+            "note": "FAQ accordion, served live. Questions/answers configured via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "investor/governance",
+        "desc": "",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "companySnapshot",
+            "variant": "split"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "companySnapshot",
+            "variant": "split",
+            "config": {
+              "facts": []
+            },
+            "styleOverrides": {},
+            "note": "Governance snapshot, served live."
+          }
+        ]
+      },
+      {
+        "id": "investor/hub-nav",
+        "desc": "link grid to every investor page (reachable detail). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor/inv-hero",
+        "desc": "investor hero + live price card (stockPrice). slots: eyebrow, headline, accent_word, lead, cta1_*, cta2_label",
+        "slots": [
+          "eyebrow",
+          "headline",
+          "accent_word",
+          "headline_tail",
+          "lead",
+          "cta1_href",
+          "cta1_label",
+          "cta2_label"
+        ],
+        "widgets": [
+          {
+            "kind": "stockPrice",
+            "variant": "card"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "stockPrice",
+            "variant": "card",
+            "config": {
+              "showMarketCap": true,
+              "showDayRange": true,
+              "showFiftyTwoWeekRange": false
+            },
+            "styleOverrides": {},
+            "note": "Live price readout. Figures served live; configure via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "investor/notification-prefs",
+        "desc": "prefs → notificationPreferences. slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "notificationPreferences",
+            "variant": "default"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "notificationPreferences",
+            "variant": "default",
+            "config": {
+              "heading": "Choose what you hear about"
+            },
+            "styleOverrides": {},
+            "note": "Alert preferences, served live."
+          }
+        ]
+      },
+      {
+        "id": "investor/price-chart-compact",
+        "desc": "compact → stockChart (compact). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "stockChart",
+            "variant": "compact"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "stockChart",
+            "variant": "compact",
+            "config": {
+              "period": "3M",
+              "showAnnouncementMarkers": false
+            },
+            "styleOverrides": {},
+            "note": "Compact price chart for macro context, served live."
+          }
+        ]
+      },
+      {
+        "id": "investor/price-chart",
+        "desc": "chart → stockChart (full). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "stockChart",
+            "variant": "full"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "stockChart",
+            "variant": "full",
+            "config": {
+              "period": "1M",
+              "showAnnouncementMarkers": true,
+              "priceSensitiveRing": true
+            },
+            "styleOverrides": {},
+            "note": "Full price chart with range selector + announcement markers, served live. Configure default period via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "investor/reports-library",
+        "desc": "library → documentsLibrary (featured-index). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "documentsLibrary",
+            "variant": "featured-index"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "documentsLibrary",
+            "variant": "featured-index",
+            "config": {
+              "showAskAi": true,
+              "showFileMeta": true,
+              "groupBy": "year"
+            },
+            "styleOverrides": {},
+            "note": "Reports & decks library, served live. Configure grouping via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "investor/snapshot-tiles",
+        "desc": "tiles → companySnapshot (tiles). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "companySnapshot",
+            "variant": "tiles"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "companySnapshot",
+            "variant": "tiles",
+            "config": {
+              "showLiveSharesOnIssue": true,
+              "facts": []
+            },
+            "styleOverrides": {},
+            "note": "Live snapshot tiles. Configure facts/thesis via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "investor/team-masthead",
+        "desc": "masthead → teamProfiles (masthead). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "teamProfiles",
+            "variant": "masthead"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "teamProfiles",
+            "variant": "masthead",
+            "config": {
+              "alternatePortraitSide": true,
+              "showGovernanceStats": false
+            },
+            "styleOverrides": {},
+            "note": "Board & leadership masthead. People served live, never invented."
+          }
+        ]
+      },
+      {
+        "id": "investor/video-featured",
+        "desc": "featured → videoLibrary (featured). slots: eyebrow, heading, link_*",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "link_href",
+          "link_label"
+        ],
+        "widgets": [
+          {
+            "kind": "videoLibrary",
+            "variant": "featured"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "videoLibrary",
+            "variant": "featured",
+            "config": {
+              "showDuration": true
+            },
+            "styleOverrides": {},
+            "note": "Featured video, served live."
+          }
+        ]
+      },
+      {
+        "id": "investor/video-programme",
+        "desc": "programme → videoLibrary (programme). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "videoLibrary",
+            "variant": "programme"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "videoLibrary",
+            "variant": "programme",
+            "config": {
+              "showDuration": true,
+              "videos": []
+            },
+            "styleOverrides": {},
+            "note": "Video programme, served live. Configure videos via portal editor."
+          }
+        ]
+      }
+    ],
+    "investor-static": [
+      {
+        "id": "investor-static/ai-inline",
+        "desc": "contained disclosure-grounded assistant entry point (NO widget). slots: eyebrow, heading, body, question{1..3}, cta_href, cta_label",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "body",
+          "question1",
+          "question2",
+          "question3",
+          "cta_href",
+          "cta_label"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/announcements-feed",
+        "desc": "value-UI ASX announcement summary cards (NO widget) from `announcements.recent`; the <template> card fills per resolved item ({{title}}, {{summary}}, {{category}}, {{dateLabel}}, {{url}}) and the whole grid falls back to the empty note when there are none. slots: eyebrow, heading, link_label, link_href, empty_text",
+        "slots": [
+          "title",
+          "summary",
+          "category",
+          "url",
+          "eyebrow",
+          "heading",
+          "link_href",
+          "link_label",
+          "empty_text"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/brokers",
+        "desc": "value-UI broker / analyst coverage cards (NO widget) from brokers.list; each card fills per resolved item ({{name}}, {{descriptor}}, {{cost}}) and the list falls back to the empty note. slots: eyebrow, heading, empty_text",
+        "slots": [
+          "name",
+          "descriptor",
+          "cost",
+          "eyebrow",
+          "heading",
+          "empty_text"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/capital-structure",
+        "desc": "value-UI capital-structure table (NO widget) from capital.structure; each row fills per resolved item ({{label}}, {{value}}) and the list falls back to the empty note. slots: eyebrow, heading, empty_text",
+        "slots": [
+          "label",
+          "value",
+          "eyebrow",
+          "heading",
+          "empty_text"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/company-feature",
+        "desc": "source-photography investor story feature (NO widget). Supply a real source URL and natural dimensions; never invent an asset. slots: eyebrow, heading, body, image_url, image_alt, image_width, image_height, fact{1..3}_{label,value}",
+        "slots": [
+          "image_url",
+          "image_alt",
+          "image_width",
+          "image_height",
+          "eyebrow",
+          "heading",
+          "body",
+          "fact1_label",
+          "fact1_value",
+          "fact2_label",
+          "fact2_value",
+          "fact3_label",
+          "fact3_value"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/governance",
+        "desc": "value-UI board & leadership roster (NO widget) from team.members; each card fills per resolved item ({{name}}, {{title}}, {{role}}) and the roster falls back to the empty note. slots: eyebrow, heading, link_label, link_href, empty_text",
+        "slots": [
+          "name",
+          "title",
+          "role",
+          "eyebrow",
+          "heading",
+          "link_href",
+          "link_label",
+          "empty_text"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/inv-hero",
+        "desc": "editorial investor hero + four-line grounded thesis rail (NO widget). slots: eyebrow, headline, accent_word, headline_tail, lead, cta1_*, cta2_*, thesis{1..4}_{title,body}",
+        "slots": [
+          "eyebrow",
+          "headline",
+          "accent_word",
+          "headline_tail",
+          "lead",
+          "cta1_href",
+          "cta1_label",
+          "cta2_href",
+          "cta2_label",
+          "thesis_eyebrow",
+          "thesis1_title",
+          "thesis1_body",
+          "thesis2_title",
+          "thesis2_body",
+          "thesis3_title",
+          "thesis3_body",
+          "thesis4_title",
+          "thesis4_body"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/portal-map",
+        "desc": "compact anchor navigation for a two-page investor portal (NO widget). All destinations are same-page anchors. slots: eyebrow, heading, market_label, latest_label, reports_label, ask_label",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "market_label",
+          "latest_label",
+          "reports_label",
+          "ask_label"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/price-snapshot",
+        "desc": "focused market identity panel (NO widget) with two optional live scalar focal values and one honest availability statement. slots: eyebrow, heading, listing_note, price_fallback, change_fallback, availability, cta_label, cta_href",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "listing_note",
+          "price_fallback",
+          "change_fallback",
+          "availability",
+          "cta_href",
+          "cta_label"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/reports-library",
+        "desc": "value-UI reports / documents library (NO widget) from `documents.recent`; the <template> row fills per resolved item ({{title}}, {{category}}, {{date}}, {{url}}) and the list falls back to the empty note when there are none. slots: eyebrow, heading, link_label, link_href, empty_text",
+        "slots": [
+          "title",
+          "category",
+          "date",
+          "url",
+          "eyebrow",
+          "heading",
+          "link_href",
+          "link_label",
+          "empty_text"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "investor-static/resource-digest",
+        "desc": "announcements and reports in one dense two-column value surface (NO widget). slots: eyebrow, heading, announcements_heading, reports_heading, announcements_empty, reports_empty, announcements_link_*, reports_link_*",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "announcements_heading",
+          "announcements_link_href",
+          "announcements_link_label",
+          "url",
+          "category",
+          "title",
+          "summary",
+          "announcements_empty",
+          "reports_heading",
+          "reports_link_href",
+          "reports_link_label",
+          "date",
+          "reports_empty"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      }
+    ],
+    "marketing": [
+      {
+        "id": "marketing/article-body",
+        "desc": "a blog/news article. slots: eyebrow, title, date, body1, body2",
+        "slots": [
+          "back_href",
+          "back_label",
+          "eyebrow",
+          "date",
+          "title",
+          "body1",
+          "body2"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/capability-photo-grid",
+        "desc": "six real-image capability cards for a dense company overview. Supply source URLs and natural dimensions; never invent an asset. slots: eyebrow, heading, lead, c{1..6}_{image_url,image_alt,image_width,image_height,title,body}",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "lead",
+          "c1_image_url",
+          "c1_image_alt",
+          "c1_image_width",
+          "c1_image_height",
+          "c1_title",
+          "c1_body",
+          "c2_image_url",
+          "c2_image_alt",
+          "c2_image_width",
+          "c2_image_height",
+          "c2_title",
+          "c2_body",
+          "c3_image_url",
+          "c3_image_alt",
+          "c3_image_width",
+          "c3_image_height",
+          "c3_title",
+          "c3_body",
+          "c4_image_url",
+          "c4_image_alt",
+          "c4_image_width",
+          "c4_image_height",
+          "c4_title",
+          "c4_body",
+          "c5_image_url",
+          "c5_image_alt",
+          "c5_image_width",
+          "c5_image_height",
+          "c5_title",
+          "c5_body",
+          "c6_image_url",
+          "c6_image_alt",
+          "c6_image_width",
+          "c6_image_height",
+          "c6_title",
+          "c6_body"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/case-study-grid",
+        "desc": "3 case study cards. slots: eyebrow, heading, c1_title,c1_body …",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "c1_href",
+          "c1_tag",
+          "c1_title",
+          "c1_body",
+          "c2_href",
+          "c2_tag",
+          "c2_title",
+          "c2_body",
+          "c3_href",
+          "c3_tag",
+          "c3_title",
+          "c3_body"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/contact-form",
+        "desc": "form → contactForm widget (real labelled shell). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [
+          {
+            "kind": "contactForm",
+            "variant": "default"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "contactForm",
+            "variant": "default",
+            "config": {
+              "showCategories": true,
+              "categories": [
+                "General enquiry",
+                "Investor relations",
+                "Media",
+                "Careers"
+              ],
+              "requirePhone": false,
+              "successMessage": "Thanks — we'll be in touch."
+            },
+            "styleOverrides": {},
+            "note": "Live contact form. The widget wires submission + validation + states; configure categories via portal editor."
+          }
+        ]
+      },
+      {
+        "id": "marketing/cta-band",
+        "desc": "dark call-to-action band. slots: eyebrow, heading, lead, cta1_*, cta2_*",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "lead",
+          "cta1_href",
+          "cta1_label",
+          "cta2_href",
+          "cta2_label"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/cta-split",
+        "desc": "two action cards (Ask AI + Subscribe). slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "c1_title",
+          "c1_body",
+          "c2_title",
+          "c2_body"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/faq",
+        "desc": "plain interactive accordion (no widget). slots: eyebrow, heading, q1,a1 … q4,a4",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "q1",
+          "a1",
+          "q2",
+          "a2",
+          "q3",
+          "a3"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/feature-grid",
+        "desc": "3 feature cards w/ labelled images. slots: eyebrow, heading, link_label, link_href, f1_title,f1_body … f3_*",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "link_href",
+          "link_label",
+          "f1_img",
+          "f1_meta",
+          "f1_title",
+          "f1_body",
+          "f1_href",
+          "f1_link",
+          "f2_img",
+          "f2_meta",
+          "f2_title",
+          "f2_body",
+          "f2_href",
+          "f2_link",
+          "f3_img",
+          "f3_meta",
+          "f3_title",
+          "f3_body",
+          "f3_href",
+          "f3_link"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/feature-rows",
+        "desc": "3 alternating image/text rows. slots: eyebrow, heading, r1_title,r1_body,r1_img …",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "r1_img",
+          "r1_title",
+          "r1_body",
+          "r1_href",
+          "r1_link",
+          "r2_title",
+          "r2_body",
+          "r2_href",
+          "r2_link",
+          "r2_img",
+          "r3_img",
+          "r3_title",
+          "r3_body",
+          "r3_href",
+          "r3_link"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/hero-centered",
+        "desc": "centered statement + two CTAs. slots: eyebrow, headline, accent_word, lead, cta1_*, cta2_*",
+        "slots": [
+          "eyebrow",
+          "headline",
+          "accent_word",
+          "headline_tail",
+          "lead",
+          "cta1_href",
+          "cta1_label",
+          "cta2_href",
+          "cta2_label"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/hero-photo",
+        "desc": "editorial split hero with a real source image. slots: eyebrow, headline, accent_word, headline_tail, lead, cta1_label, cta1_href, cta2_label, cta2_href, image_url, image_alt, image_width, image_height",
+        "slots": [
+          "eyebrow",
+          "headline",
+          "accent_word",
+          "headline_tail",
+          "lead",
+          "cta1_href",
+          "cta1_label",
+          "cta2_href",
+          "cta2_label",
+          "image_url",
+          "image_alt",
+          "image_width",
+          "image_height"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/hero-split",
+        "desc": "text + labelled placeholder image. slots: eyebrow, headline, accent_word, lead, cta1_label, cta1_href, cta2_label, cta2_href, img_label, img_meta, img_ar",
+        "slots": [
+          "eyebrow",
+          "headline",
+          "accent_word",
+          "headline_tail",
+          "lead",
+          "cta1_href",
+          "cta1_label",
+          "cta2_href",
+          "cta2_label",
+          "img_ar",
+          "img_label",
+          "img_meta"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/hero-statement",
+        "desc": "big display headline + numbered thesis manifesto (2-col). slots: eyebrow, headline, accent_word, lead, m1..m4",
+        "slots": [
+          "eyebrow",
+          "headline",
+          "accent_word",
+          "headline_tail",
+          "lead",
+          "cta1_href",
+          "cta1_label",
+          "thesis_label",
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/legal-body",
+        "desc": "policy / legal prose. slots: eyebrow, title, updated, body1, body2, body3",
+        "slots": [
+          "eyebrow",
+          "title",
+          "updated",
+          "h1",
+          "body1",
+          "h2",
+          "body2",
+          "h3",
+          "body3"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/logo-wall",
+        "desc": "partner/client logo placeholders. slots: eyebrow, heading",
+        "slots": [
+          "eyebrow",
+          "heading"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/news-grid",
+        "desc": "3 news/blog cards (plain, not a live widget). slots: eyebrow, heading, link_*, n1_title,n1_body …",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "link_href",
+          "link_label",
+          "n1_href",
+          "n1_date",
+          "n1_title",
+          "n1_body",
+          "n2_href",
+          "n2_date",
+          "n2_title",
+          "n2_body",
+          "n3_href",
+          "n3_date",
+          "n3_title",
+          "n3_body"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/notfound",
+        "desc": "404. slots: title, body",
+        "slots": [
+          "eyebrow",
+          "title",
+          "body",
+          "cta1_href",
+          "cta1_label",
+          "cta2_href",
+          "cta2_label"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/offices",
+        "desc": "3 office cards w/ map placeholders. slots: eyebrow, heading, o1_name,o1_addr …",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "o1_name",
+          "o1_addr",
+          "o2_name",
+          "o2_addr",
+          "o3_name",
+          "o3_addr"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/page-header",
+        "desc": "simple page hero (title + lead). slots: eyebrow, title, lead",
+        "slots": [
+          "eyebrow",
+          "title",
+          "lead"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/pricing-tiers",
+        "desc": "3 plan cards. slots: eyebrow, heading, t1_name,t1_price,t1_body,t1_cta … (price non-currency to stay figure-gate-safe, or a real number)",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "t1_name",
+          "t1_price",
+          "t1_body",
+          "t1_href",
+          "t1_cta",
+          "t2_name",
+          "t2_price",
+          "t2_body",
+          "t2_href",
+          "t2_cta",
+          "t3_name",
+          "t3_price",
+          "t3_body",
+          "t3_href",
+          "t3_cta"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/process-steps",
+        "desc": "numbered manifesto. slots: eyebrow, heading, p1..p4",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "p1",
+          "p2",
+          "p3",
+          "p4"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/project-photo-grid",
+        "desc": "three wide real-image proof cards. Supply source URLs and natural dimensions; never invent an asset. slots: eyebrow, heading, lead, p{1..3}_{image_url,image_alt,image_width,image_height,kicker,title,body}",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "lead",
+          "p1_image_url",
+          "p1_image_alt",
+          "p1_image_width",
+          "p1_image_height",
+          "p1_kicker",
+          "p1_title",
+          "p1_body",
+          "p2_image_url",
+          "p2_image_alt",
+          "p2_image_width",
+          "p2_image_height",
+          "p2_kicker",
+          "p2_title",
+          "p2_body",
+          "p3_image_url",
+          "p3_image_alt",
+          "p3_image_width",
+          "p3_image_height",
+          "p3_kicker",
+          "p3_title",
+          "p3_body"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/section-lead",
+        "desc": "a reusable section header. slots: eyebrow, heading, lead",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "lead"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/stat-band",
+        "desc": "4 numeric stat tiles. slots: eyebrow, heading, s1_v,s1_k … (values MUST be numeric)",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "s1_v",
+          "s1_k",
+          "s2_v",
+          "s2_k",
+          "s3_v",
+          "s3_k",
+          "s4_v",
+          "s4_k"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/team-grid",
+        "desc": "leadership grid → teamProfiles widget (grid). slots: eyebrow, heading, link_*",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "link_href",
+          "link_label"
+        ],
+        "widgets": [
+          {
+            "kind": "teamProfiles",
+            "variant": "grid"
+          }
+        ],
+        "widgetConfigs": [
+          {
+            "kind": "teamProfiles",
+            "variant": "grid",
+            "config": {
+              "showGovernanceStats": false,
+              "alternatePortraitSide": false
+            },
+            "styleOverrides": {},
+            "note": "Leadership grid. People served live; configure via portal editor. Never invents a person."
+          }
+        ]
+      },
+      {
+        "id": "marketing/testimonial",
+        "desc": "a single quote. slots: quote, attribution, role",
+        "slots": [
+          "eyebrow",
+          "quote",
+          "attribution",
+          "role"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      },
+      {
+        "id": "marketing/values-grid",
+        "desc": "3 value cards. slots: eyebrow, heading, v1_title,v1_body …",
+        "slots": [
+          "eyebrow",
+          "heading",
+          "v1_title",
+          "v1_body",
+          "v2_title",
+          "v2_body",
+          "v3_title",
+          "v3_body"
+        ],
+        "widgets": [],
+        "widgetConfigs": []
+      }
+    ]
+  }
+}

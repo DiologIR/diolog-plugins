@@ -1,0 +1,16 @@
+/* brand.css — a DESIGN.md-derived theme for a fictional brand "Verdant Resources"
+ * (deep-green + serif display). Overrides ONLY the base.css hook tokens. */
+:root {
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --accent: #0b5d3b;  --accent-ink: #ffffff;  --accent-soft: #e7f1ec;
+  --surface-0: #fbfaf6;  --surface-1: #ffffff;  --surface-2: #f1efe8;
+  --ink: #16231d;  --ink-2: #45564e;  --ink-3: #6a7a72;  --line: #e3e8e3;  --line-2: #d3dad3;
+}
+.section--dark, .band--dark, .ftr, .dlg__brand {
+  --accent: #86dcae;  --accent-ink: #06231a;  --accent-soft: rgba(238,244,240,.10);
+  --surface-0: #0c1a13;  --surface-1: #15271d;  --surface-2: #1d3327;
+  --ink: #eef4f0;  --ink-2: #c2d0c8;  --ink-3: #93a49a;
+  --line: rgba(238,244,240,.16);  --line-2: rgba(238,244,240,.28);
+}

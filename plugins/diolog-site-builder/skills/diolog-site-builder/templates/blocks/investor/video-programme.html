@@ -1,0 +1,16 @@
+<!-- BLOCK video-programme → videoLibrary (programme). slots: eyebrow, heading -->
+<section class="band band--tight reveal">
+  <div class="gutter">
+    <!-- diolog-widget: {"kind":"videoLibrary","variant":"programme","config":{"showDuration":true,"videos":[]},"styleOverrides":{},"note":"Video programme, served live. Configure videos via portal editor."} -->
+    <div class="wframe">
+      <div class="wframe__head"><div><p class="wframe__eyebrow">{{eyebrow|§ Now showing}}</p><h2 class="wframe__title" style="font-size:var(--fs-h3)">{{heading|The video programme}}</h2></div><span class="live-tag">Live</span></div>
+      <div class="wmarker" data-diolog-widget="videoLibrary" data-widget-variant="programme" aria-label="Video programme">
+        <div class="stack-lg">
+          <article class="split2" style="align-items:center"><div class="ph-img" style="--ph-ar: 16 / 9" role="img" aria-label="Placeholder video thumbnail"><span class="ph-img__label">CHAPTER I<b>1280×720</b></span><span class="ph-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8 5v14l11-7z"/></svg></span></div><div><p class="wframe__eyebrow">Chapter I · live</p><div class="wf-bar mt-4" style="width:70%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:88%"></div><div class="mt-6"><button class="btn btn-ghost" type="button">Watch chapter</button></div></div></article>
+          <article class="split2" style="align-items:center"><div><p class="wframe__eyebrow">Chapter II · live</p><div class="wf-bar mt-4" style="width:66%"></div><div class="wf-bar wf-bar--sm mt-4" style="width:82%"></div><div class="mt-6"><button class="btn btn-ghost" type="button">Watch chapter</button></div></div><div class="ph-img" style="--ph-ar: 16 / 9" role="img" aria-label="Placeholder video thumbnail"><span class="ph-img__label">CHAPTER II<b>1280×720</b></span><span class="ph-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8 5v14l11-7z"/></svg></span></div></article>
+        </div>
+        <span class="wframe__note">Titles, durations and categories are served live.</span>
+      </div>
+    </div>
+  </div>
+</section>

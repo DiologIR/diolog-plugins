@@ -1,0 +1,17 @@
+<!-- BLOCK faq-widget → faqs (accordion) widget. slots: eyebrow, heading -->
+<section class="band band--tight reveal">
+  <div class="wrap">
+    <p class="eyebrow">{{eyebrow|§ FAQs}}</p>
+    <h2 class="measure">{{heading|Common questions.}}</h2>
+    <!-- diolog-widget: {"kind":"faqs","variant":"accordion","config":{},"styleOverrides":{},"note":"FAQ accordion, served live. Questions/answers configured via portal editor."} -->
+    <div class="wframe mt-8" style="padding-top:var(--sp-3)">
+      <div class="wmarker" data-diolog-widget="faqs" data-widget-variant="accordion" aria-label="Frequently asked questions">
+        <div class="acc">
+          <div class="acc__item"><button class="acc__btn" type="button" aria-expanded="false"><span>Where are the latest results?</span><span class="chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button><div class="acc__panel"><p>Placeholder answer. Point to the announcements and reports pages. Served live.</p></div></div>
+          <div class="acc__item"><button class="acc__btn" type="button" aria-expanded="false"><span>How do I get announcement alerts?</span><span class="chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button><div class="acc__panel"><p>Placeholder answer. Subscribe below to get every disclosure by email.</p></div></div>
+          <div class="acc__item"><button class="acc__btn" type="button" aria-expanded="false"><span>Who is the share registry?</span><span class="chev" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button><div class="acc__panel"><p>Placeholder answer. The registry details are on the contact page.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

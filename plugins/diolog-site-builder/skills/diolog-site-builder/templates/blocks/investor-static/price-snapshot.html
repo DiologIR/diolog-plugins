@@ -1,0 +1,23 @@
+<!-- BLOCK price-snapshot — focused market identity panel (NO widget) with two optional live scalar focal values and one honest availability statement. slots: eyebrow, heading, listing_note, price_fallback, change_fallback, availability, cta_label, cta_href -->
+<section class="band band--tight market-band reveal" id="market">
+  <div class="gutter">
+    <div class="shead">
+      <p class="eyebrow">{{eyebrow|§ Market}}</p>
+      <h2>{{heading|Market information.}}</h2>
+    </div>
+    <div class="market-panel card">
+      <div class="market-panel__identity">
+        <span class="eyebrow eyebrow--plain">{{TICKER}} · {{EXCHANGE}}</span>
+        <strong>{{listing_note|Official market listing}}</strong>
+      </div>
+      <ul class="market-live" aria-label="Latest available market values">
+        <li><span class="market-live__k">Share price</span><span class="market-live__v" data-diolog-value="market.price" data-value-format="currency" data-value-args='{"format":"currency"}'>{{price_fallback|Via the ASX record}}</span></li>
+        <li><span class="market-live__k">Daily change</span><span class="market-live__v" data-diolog-value="market.change">{{change_fallback|Via the ASX record}}</span></li>
+      </ul>
+      <div class="market-panel__action">
+        <p>{{availability|Live market values are not available in this portal. Use the official exchange record for current information.}}</p>
+        <a class="btn btn-primary" href="{{cta_href|https://www.asx.com.au/markets/company/{{TICKER}}}}">{{cta_label|View the official market record}}</a>
+      </div>
+    </div>
+  </div>
+</section>

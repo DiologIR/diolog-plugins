@@ -1,0 +1,18 @@
+{
+  "mode": "full-site",
+  "brand": { "COMPANY": "Verdant Resources", "MONO": "V", "TICKER": "VRD", "EXCHANGE": "[Exchange]", "YEAR": "2026" },
+  "themeFile": "brand.css",
+  "pages": [
+    { "slug": "index", "title": "Home", "nav": "home", "ticker": true, "desc": "Verdant Resources — home.",
+      "blocks": [ {"block":"marketing/hero-split","content":{"eyebrow":"§ Verdant Resources","headline":"Responsible resources for the ","accent_word":"long term","headline_tail":".","lead":"A placeholder positioning line for Verdant Resources. Describe the company's work in one or two grounded sentences.","img_label":"HERO IMAGE","img_meta":"flagship operation · landscape · 1600×1200"}}, "marketing/feature-grid", "marketing/stat-band", "investor/ai-inline", "marketing/cta-band"] },
+    { "slug": "about", "title": "About", "nav": "about", "desc": "About Verdant Resources.",
+      "blocks": [ {"block":"marketing/page-header","content":{"eyebrow":"§ About","title":"Our story, told plainly.","lead":"Who Verdant Resources is and why it exists."}}, "marketing/values-grid", "marketing/team-grid", "marketing/cta-band"] },
+    { "slug": "investors", "title": "Investor portal", "nav": "investors", "ticker": true, "desc": "Investor portal.",
+      "blocks": ["investor/inv-hero", "investor/snapshot-tiles", "investor/price-chart", "investor/announcements-feed", "investor/hub-nav", "investor/ai-inline"] },
+    { "slug": "invest", "title": "How to invest & FAQs", "nav": "investors", "ticker": true, "desc": "How to invest.",
+      "blocks": [ {"block":"marketing/page-header","content":{"eyebrow":"§ How to invest","title":"Everything you need to invest.","lead":"How to buy, capitalisation, raises and who to talk to."}}, "investor/calendar-agm", "investor/brokers", "investor/capital-structure", "investor/faq-widget", "investor/notification-prefs"] },
+    { "slug": "contact", "title": "Contact", "nav": "contact", "desc": "Contact.",
+      "blocks": [ {"block":"marketing/page-header","content":{"eyebrow":"§ Contact","title":"Ready when you are.","lead":"Get in touch with the right team."}}, "marketing/contact-form", "marketing/cta-split"] },
+    { "slug": "404", "title": "Page not found", "nav": "", "desc": "Not found.", "blocks": ["marketing/notfound"] }
+  ]
+}

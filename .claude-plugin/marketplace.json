@@ -217,6 +217,17 @@
       "category": "productivity"
     },
     {
+      "name": "diolog-site-builder",
+      "description": "Build or extend a company website or standalone investor centre by composing gate-tested HTML blocks, theming them from DESIGN.md, filling copy from VOICE.md, and wiring Diolog live-data markers. Use for a marketing site, investor portal, site artifact, site structure + design + voice conversion, or when adding pages, sections, images, and explicit custom workspace blocks. Prefer this over hand-writing whole pages because the shared chrome, responsive system, and stock blocks already pass the Studio gates. Triggers include \"build the company site\", \"generate the investor centre\", \"scaffold a marketing site\", \"make a site from this DESIGN.md/VOICE.md\", \"add a pricing page\", and \"theme this template to the brand\".",
+      "version": "1.0.0",
+      "author": {
+        "name": "DiologIR",
+        "email": "luke@diolog.com.au"
+      },
+      "source": "./plugins/diolog-site-builder",
+      "category": "development"
+    },
+    {
       "name": "diolog-tasks-pipeline",
       "description": "Three native skills that run the Diolog Tasks issue pipeline — triage, plan, and worker — entirely inside your interactive Claude Code session (no Agent SDK, so usage draws from your standard interactive allowance, not the separate Agent SDK credit). Formerly linear-issue-pipeline; now targets the diolog-tasks MCP (mcp.diolog.com.au). tasks-triage runs a technical + Specification Sentinel product review and posts a non-technical readiness comment; tasks-plan classifies a tier, investigates the codebase, writes docs/plans/{id}.md and comments the repo-relative path (no file upload); tasks-worker implements a planned issue in an isolated worktree via dynamic ultracode workflows (understand → implement → rebase → acceptance review → resolve), with no remote PR. The plan and worker fan out parallel subagents via the Workflow tool to speed up large investigations. Recalibrated for current-model behaviour (Anthropic's Claude Opus 5 prompting guidance), ported from the generalized twin: tasks-worker's per-phase gate is explicitly a conformance check (evidence-shaped — the clause, the file:line, the gate you ran) rather than a second correctness review stacked on a phase that already reviewed itself; adversarial finding-verification is aimed at Criticals, structural fixes, and locked-decision reversals rather than blanket 1:1, and no reviewer is briefed to be conservative; the completion comment keeps to tables/counts/drops/gates rather than narrating the phases; and tasks-triage/tasks-plan gain the effort dial plus length budgets. All three point at the twin's new pipeline-wide canonical feature-spec-pipeline/skills/work/references/model-and-effort.md.",
       "version": "2.3.0",
