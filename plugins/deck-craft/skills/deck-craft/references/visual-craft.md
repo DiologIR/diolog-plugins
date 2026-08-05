@@ -19,6 +19,14 @@ Only when none of that exists do you author a direction from scratch (§2). If a
 
 Mocking a deck without committing to an aesthetic is the fastest path to template output. Pin down the subject, the audience, and the deck's single job — then mine the *subject's own world* for the design language. A mining company's deck can take its palette from ore and steel; a legal-tech deck from paper stock and rule lines. Subject-derived choices are where distinctiveness actually comes from; generic "modern, professional" is where it dies.
 
+**Name the rut before you shortlist.** Two things are ruled out before any candidate: the deck this occasion always ships, and its predictable opposite. "Board pack → navy, grey, Arial" is the first; "board pack but not navy → near-black with one accent" is the second, and it is exactly as reflexive. Write both down and keep both off the list. If the brief paints its own picture — a company name, a campaign line, a governing metaphor — its literal reading joins the rut: spend at most one candidate on it.
+
+Then derive several candidates from the audience's own world, and check the spread: **the candidates must span at least three material families**. The audience's world includes its graphic and screen traditions, not only its physical objects — the notation, filings, publications, instruments and identity programs it reads daily. A drilling-services audience knows core trays, survey plots, hi-vis, and the AS/NZS spec sheet; that is four families, and a list of four ore-coloured palettes is one. Near-duplicates count once.
+
+**Then don't take your top-ranked candidate by default.** Rank them, and treat the top one with suspicion: it is what every run on this brief produces, which is the outcome the whole procedure exists to avoid. Build a lower-ranked one unless the top is forced by product truth or an explicit brief constraint, and say which rank you took. Taste is never grounds for climbing back up; a factual failure — it can't carry the subject, the assets don't exist — is.
+
+`direction-index.md` is evidence for this step, not a menu to shop: shortlist against the candidates you derived, don't let the table generate them.
+
 Commit on three axes and state them:
 
 - **Scheme** — light paper / dark canvas. Not "dark because tools look cool dark". Write one sentence of physical scene: who is watching this, in what room, on what screen, at what time. If the sentence doesn't force the answer, add detail until it does.
@@ -27,7 +35,25 @@ Commit on three axes and state them:
 
 Then declare two things and hold them: **one signature element** (the thing the deck will be remembered by — a full-bleed section break, a recurring rule, a distinctive numeral treatment) and **one justified risk**. Spend the boldness there and keep everything around it quiet. Not taking a risk is itself a risk: "competent but anonymous" is the failure mode of every deck that got no complaints and changed no minds.
 
-**The swap test.** Imagine a neighbouring brief — a different company in the same sector. Would your direction fit it unchanged? Any axis that transfers untouched is a default, not a choice. Revise that axis.
+**The swap test.** Imagine a neighbouring brief — a different company in the same sector. Would your direction fit it unchanged? Any axis that transfers untouched is a default, not a choice. Revise that axis. Then run it one tier deeper: could someone guess your direction from the occasion *plus the rut you named*? That is the second-order reflex, and it is still a reflex.
+
+### The standing exit — the convention, played straight
+
+Every direction round carries one permanent alternative: **the category standard, executed at full fidelity.** The conventional board deck. The house results template. It is the user's door and never your recommendation — don't argue for it, don't weigh it against the committed direction, don't let it soften the other options.
+
+This matters more for decks than for most artifacts. Board, regulatory and results audiences legitimately want the convention, and without an explicit door they have to fight the anti-slop rules to ask for it. When they take it, convention *becomes* the commitment: ask once for two or three decks this should sit alongside, make their craft level the bar, and execute the canon at full fidelity — no irony, no smuggled quirk, no "elevated" version of it.
+
+### Write the direction down where the build can see it
+
+A direction declared only in conversation drifts by slide 9. Write it into the artifact as five short blocks, ≤150 words — an HTML comment at the top of the file for an HTML deck, `x.diolog.direction` for a JSON one:
+
+- **THESIS** — the one idea this deck owns, and the occasion's default arrangement it refuses.
+- **OWN-WORLD** — palette, type ramp and surface language, specific enough to recognise with all content removed. Real values, not adjectives.
+- **STORY** — what the audience understands, believes, and does.
+- **COVER** — the exact composition of slide 1: what is where, at what scale.
+- **FORM** — the candidate taken, its rank on your list, and why that one.
+
+If a block reads like a mood, the direction isn't decided yet. "Serious and confident" is not an OWN-WORLD; `#12171C` ground, bone paper, one signal-orange accent, Söhne over a condensed grotesk, hairline rules and no radius is. `deck-review.md`'s delivery pass audits the finished deck against these blocks promise by promise, so a block that can't be checked is a block that won't be.
 
 ## 3. Typography
 
@@ -86,6 +112,9 @@ Each rule leads with the move to make; the trailing clause names what to avoid.
 - **Flat colour by default.** If a gradient is needed: two stops, low contrast, same hue family. Avoid rainbow, neon-on-neon, and 3+ stop gradients — and the purple-to-pink hero especially.
 - **No emoji** unless the brand uses them or the emoji is functional. 🚀 📈 ✅ sprinkled for colour is the single fastest way to make a deck look generated.
 - **Real photography, professional illustration, or an established icon set** (Feather, Material, Phosphor, Heroicons). Avoid hand-drawn SVG of people, scenes, or abstract concepts. With no asset, use an honest placeholder — a striped ground with a monospace label naming the asset and its dimensions. A placeholder shows intent; a weak illustration shows you didn't have the asset.
+- **This bans SVG imitating pictures; it never bans SVG doing geometry.** Rules, hairlines, drawn marks, flat shape systems, diagrams with countable elements, and the accent devices `layout-specs.md` specifies are first-class deck material. The line: geometry is what you can specify exactly; a shaded, perspectived or figure-bearing drawing is a *picture* even in line-art style, and pictures get sourced, generated, or honestly placeheld.
+- **No imitation material.** CSS bevels, embossing, faux letterpress, fake foil, stamped-metal and chalk effects standing in for a material the slide never actually renders read as machine-made faster than any other tell — and decks reach for them more than web pages do, usually on a cover. Either the material is a real asset or the surface is honestly flat. A gradient standing where a texture belongs ships the gradient.
+- **Depth with an offset and a soft blur, from one light source.** A zero-offset coloured halo is paint, not elevation; a hard offset block shadow (`4px 4px 0`) is a costume that only a genuinely neobrutalist direction earns.
 - **Backgrounds with intent.** A flat toned ground, one photograph, or one geometric device. Avoid the default corporate wash: blue-purple gradient, faint hex grid, floating translucent circles.
 - **Card discipline.** Separate with a thin all-round border, a subtle shadow, or background contrast. Reserve `border-left: 4px solid` for real semantic emphasis — as a default card it reads as SaaS template.
 - **Charts show the point.** Cut every series and column that doesn't support the slide's claim. Avoid 3D, avoid gratuitous legends where direct labels work, and never truncate a value axis on a comparison — that's a defect, not a style.

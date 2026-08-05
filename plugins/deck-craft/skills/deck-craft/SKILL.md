@@ -47,7 +47,11 @@ Either way the deck commits on three axes. Name all three before drawing, and va
 - **Formality** — boardroom ↔ zine.
 - **Density** — airy manifesto ↔ data-heavy working deck.
 
-`references/direction-index.md` is the bundled index of 34 complete style systems, with the two further libraries on this machine and the progressive read rule. Shortlist from the index on formality and scheme; read one system's full `design.md` only after the choice. Never mix two systems in one deck.
+**Name the rut before you shortlist.** The deck this occasion always ships, *and* its predictable opposite, are both ruled out before any candidate — "board pack → navy and grey" and "board pack but not navy → near-black with one accent" are the same reflex one tier apart. Derive candidates from the audience's own world instead, spanning at least three material families, and don't take your top-ranked one by default: it's what every run on this brief produces. Full procedure in `visual-craft.md` §2, which also carries the **standing exit** — the convention played straight, always offered, never recommended, and executed at full fidelity when the user takes it. Board and regulatory audiences legitimately want it, and they shouldn't have to argue past the anti-slop rules to get it.
+
+`references/direction-index.md` is the bundled index of 34 complete style systems, with the two further libraries on this machine and the progressive read rule. It is evidence for the shortlist, not the thing that generates your candidates. Shortlist on formality and scheme; read one system's full `design.md` only after the choice. Never mix two systems in one deck.
+
+**Write the direction down where the build can see it.** A direction declared only in conversation drifts by slide 9 — commit it to the artifact as the five-block contract in `visual-craft.md` §2 (THESIS / OWN-WORLD / STORY / COVER / FORM), an HTML comment at the top of the file or `x.diolog.direction` in JSON. The delivery pass audits the finished deck against those blocks promise by promise.
 
 When the user wants options, show **three title slides**: one restrained, one bold, one wildcard — as real title slides for *their* deck, never labelled "option A" or showing a template name. For board, regulatory, healthcare, or investor decks, make the restrained option genuinely restrained and the bold one authoritative rather than decorative.
 
@@ -75,6 +79,8 @@ Then read the sequence back and cut the AI-isms that mark a deck as generated: p
 
 **Real content, real states.** No lorem ipsum, no invented figures, no "Company X". Every number traces to the source material; a figure you can't ground is a figure you don't put on a slide. In regulated investor contexts this is compliance, not preference — an unsourced number on a results slide is a defect regardless of how good the slide looks.
 
+**Medium before treatment.** What a region *shows* decides what it's made of, before any question of how to style it. A photograph, a site, a figure, or a named texture is raster whatever the stack; rules, hairlines, drawn marks, flat shape systems and diagrams are authored SVG or CSS. A gradient standing where the direction promised a photograph isn't a treatment choice — it's the design quietly deleted. `html-deck.md` Phase 5 carries the gate and the honest-placeholder alternative.
+
 **Cut the filler slides.** "Why choose us", "About this deck", "Agenda" on a 6-slide deck, a thank-you slide with no contact details. Each costs the audience attention and returns nothing.
 
 **Charts show the point, not the dataset.** Cut every series and column that doesn't support the slide's one idea. A chart nobody can read at distance is decoration with error bars.
@@ -86,6 +92,8 @@ Then read the sequence back and cut the AI-isms that mark a deck as generated: p
 A named slide count is a contract. Twelve slides means twelve, each gated. If you genuinely must stop early, say "8 of 12 complete, resuming at 9" — never silently compress twelve slides' content into eight, and never pad eight slides' content into twelve. Padding is the more common failure and the harder one to see: it produces a deck where three slides say what one slide said.
 
 Gate each slide as you finish it, before starting the next — a mistake on slide 2 otherwise propagates into every slide that copies its layout. The per-slide gate and the delivery review are in `references/deck-review.md`.
+
+**Gate the first slide hardest.** The cover carries the run's ambition and every slide after it inherits whatever it fell short of. Judge scale, density and material as *quantities* rather than impressions — a texture at a tenth of its intended coverage, or display type at half its intended weight, is a different deck however similar the structure looks. A retry here costs minutes; the same shortfall found at delivery costs a rebuild.
 
 ## 7. Working posture
 

@@ -32,6 +32,13 @@ Once, before handing over. Walk the whole deck.
 
 **The argument.** Read the titles in sequence — do they carry the whole thing? Is the grammatical style consistent? Are there filler slides to cut? Does slide 9 restate what a listener needs from slide 3 rather than assuming they held it?
 
+**The direction, promise by promise.** Inventory what the deck actually shows in your own words *first*, then reread the direction contract (`visual-craft.md` §2) and walk its five blocks — THESIS, OWN-WORLD, STORY, COVER, FORM. Doing it in that order matters: a review anchored on the contract inherits whatever the contract's abstraction already dropped. Classify each committed element **match / acceptable adaptation / missing / contradicted**. Two rows are mandatory:
+
+- **TYPE** — the display lettering's character, width, weight and contrast against what OWN-WORLD committed to. A face of a different character is *contradicted* however well the slides are laid out.
+- **MATERIAL** — a surface rendered as flat colour or a CSS gradient where the direction committed to a photograph, a texture, or a real asset is *contradicted* regardless of composition. The medium is part of the promise, and faked physicality (see `visual-craft.md` §6) counts as contradicted on its face.
+
+An adaptation is intentional only when it cites the thing that forced it — a user answer, a brand constraint, a validator cap, a missing asset. An uncited deviation is a defect, and a missing signature element outranks every craft point below.
+
 **Consistency between slides.** Palette drift (a second blue that's 5% off the first is worse than a clearly different colour — it reads as almost-right and therefore wrong), type-scale drift, spacing drift, a footer that wanders, section headers that don't match each other.
 
 **Overflow and collision.** Nothing escaping its slide bounds; no unintended overlap; long words and URLs wrapped; ellipses appearing where truncation was designed. In HTML, check at several viewport sizes — the stage should letterbox, never re-layout. In an absolute-geometry format, check every element's box against the canvas: `x + w > canvas.w` is off-slide and `y > canvas.h` renders nothing at all, silently.
@@ -62,10 +69,28 @@ Not checked: the PDF export, the chart's empty state
 
 The first line is what a machine asserts. The second is what *you* assert, and it's true only for captures you opened. The third is never empty — if you think it is, you've confused the scope of your checks with the scope of the deck.
 
-## Convergence
+## Convergence and the disposition
 
-Treat fix-then-recheck as rounds, up to three. Each round's findings should be shorter than the last; a round producing more text than the previous one is churning rather than converging. If round three still doesn't clear the bar, deliver the best version and say so plainly — "ships with two open items: …" — rather than iterating forever or quietly lowering the bar.
+Treat fix-then-recheck as rounds, up to three. Each round's findings should be shorter than the last; a round producing more text than the previous one is churning rather than converging. **Stop the moment a round resolves nothing** — the round after it won't either.
+
+Close every review with one computed word, not a felt one:
+
+- **`rebuild`** — the rebuild condition below fired.
+- **`fix`** — findings remain open.
+- **`ship`** — nothing material is open.
+
+Report that word verbatim. A deck with open material findings is never announced as a pass, and never under a softer label than the review produced — softening it is the one move that turns a review into theatre. If round three still doesn't clear the bar, deliver the best version under an honest word: "ships with two open items: …".
+
+**The rebuild condition.** When the direction is contradicted across the deck rather than on a slide or two — the wrong type character throughout, the committed material absent everywhere, the cover carrying a different world than the body — the first fix is a **rebuild directive** naming the slides to re-derive and the assets to produce, not a list of cosmetic repairs. A patch list against a deck that failed wholesale launders the rejection into an approval, and on a twelve-slide deck it costs more than the rebuild. Where a fix requires *producing* something — a real photograph, a texture, a drawn icon set — say so explicitly ("produce: cover photograph, site at scale"), never phrased as a style adjustment that will get answered with a gradient.
+
+## The verdict pass — score the fixes, don't re-hunt
+
+After a repair batch, the job is scoring, not finding. For each item from the previous round, one line: **resolved**, **partial**, or **unresolved**, tied to what the new capture visibly shows.
+
+**Your account of what you fixed is not evidence.** A fix you cannot see in the recapture is unresolved however confident the edit felt — the same rule as "rendering an image is not seeing one", applied one step later. A fix answered mechanically, where the element moved but the quality the finding named is still absent, is partial at best.
+
+Then name at most three regressions the batch itself introduced, and nothing else. No new checks, no reopened hunt. Recompute the disposition against what stays open: unresolved or partial material findings can never recompute to `ship`.
 
 ## The summary
 
-Short. What the deck is, then: caveats (placeholder imagery still needed, figures the source didn't support), open decisions the user should sign off (the direction, an aggressive hierarchy call), and what you didn't check. Not a slide-by-slide recap of what they watched you build.
+Short. What the deck is, then: the disposition word, caveats (placeholder imagery still needed, figures the source didn't support), open decisions the user should sign off (the direction, an aggressive hierarchy call), and what you didn't check. Not a slide-by-slide recap of what they watched you build.

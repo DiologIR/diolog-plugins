@@ -121,9 +121,20 @@ Keep one in-flow wrapper per slide; a second top-level element (page number, cor
 
 ## Phase 5: Imagery
 
-View every image before placing it and choose its treatment deliberately. Full-bleed photographs may aspect-fill; screenshots and diagrams must aspect-fit and are rarely overlaid; transparent or aspect-fit images sit on a contrasting ground. Text over an image needs protection — a card, a gradient, a blur — matched to how the brand does it elsewhere rather than invented per slide.
+**Decide the medium before the treatment.** The medium is set by what the region *shows*, never by what feels buildable in a `<style>` block:
 
-With no real assets, use honest placeholders and say so: a striped background with a monospace label naming the asset and its dimensions. A placeholder shows intent; a hand-drawn SVG of a person or an abstract concept shows you didn't have the asset.
+- A photograph, a site, a product in use, a human figure, machinery — **raster**, whatever the stack.
+- A texture named as one — paper grain, woven cloth, concrete, brushed metal, ore — **raster**. It needs no depth argument to qualify, and "layered CSS gradients" is not a texture medium.
+- Rules, hairlines, drawn marks, flat shape systems, diagrams with countable elements, and the accent devices in `layout-specs.md` — **authored SVG or CSS**. That is where code belongs, and choosing it there is craft rather than economy.
+- Anything with shading, perspective or figure drawing is *illustration* however line-drawn it looks, and no build session authors illustration by hand.
+
+Writing a gradient where the direction committed to a photograph is not a treatment choice; it is the quiet deletion of the design, and it is how a cover promising a mine site ships as a blue wash. **A field or texture also carries a quantity commitment** — write down its rough density and coverage before building ("dense stipple over the top third, fading out by the title") because a field rebuilt at a tenth of its density passes every check and still isn't the design.
+
+Then choose the treatment. View every image before placing it. Full-bleed photographs may aspect-fill; screenshots and diagrams must aspect-fit and are rarely overlaid; transparent or aspect-fit images sit on a contrasting ground. Text over an image needs protection — a card, a gradient, a blur — matched to how the brand does it elsewhere rather than invented per slide.
+
+**Check the composite, not the asset.** A texture buried under a near-opaque colour wash ships the wash, and an image at low opacity behind other paint is a compliance token rather than a material. Judge every asset in the rendered capture beside what it was meant to be.
+
+With no real assets, use honest placeholders and say so: a striped background with a monospace label naming the asset and its dimensions. A placeholder shows intent; a hand-drawn SVG of a person or an abstract concept shows you didn't have the asset, and a gradient standing in for a photograph shows it while pretending otherwise.
 
 ## Phase 6: Speaker notes (only when asked)
 
