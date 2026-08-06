@@ -1,0 +1,2324 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alfabs Australia Limited (ASX:AAL) - Investor Portal</title>
+<meta name="description" content="Investor portal for Alfabs Australia Limited (ASX:AAL), a Hunter Valley heavy engineering group: steel fabrication, mining equipment, protective coatings and transport. Share price, announcements, capital structure and how to invest.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="Alfabs Australia Limited (ASX:AAL) - Investor Portal">
+<meta property="og:description" content="Share price, announcements, capital structure and how to invest in Alfabs Australia Limited.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400..900;1,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   SWAPPABLE LAYER - the subject company's DESIGN.md. Replace this block to
+   re-skin every company section. The Diolog layer below it never changes.
+   Source: ALFABS/DESIGN-NEW.md (Alfabs Group - Refined)
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root{
+  --primary:#D72229; --primary-hover:#B91D23; --primary-pressed:#9E1318;
+  --primary-tint:#FBE9E9; --on-primary:#FFFFFF; --link:#C0202A;
+  --ink:#1C1B1B; --ink-body:#3A3A3A; --ink-muted:#6E6968;
+  --canvas:#F7F6F5; --surface:#FDFCFC; --surface-sunken:#EFEDEC;
+  --surface-dark:#2E2B2B; --surface-dark-raised:#3C3939; --surface-footer:#181717;
+  --scrim:rgba(12,11,11,.86);
+  --on-dark:#FDFCFC; --on-dark-muted:#B7B2B1;
+  --border:#E2DFDD; --border-strong:#8F8983; --focus-ring:#D72229;
+  --primary-on-dark:#FF6B6E;   /* the accent, lifted for AA on the scrim and dark bands */
+  --success:#1F8A3B; --success-tint:#E8F3EB; --success-ink:#146129;
+  --warning:#E8A317; --warning-tint:#FCF3E0; --warning-ink:#8A5F04;
+  --danger:#D72229;
+  --font-display:"Figtree",-apple-system,system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+  --font-body:"Figtree",-apple-system,system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:28px; --r-full:9999px;
+  --s-2xs:4px; --s-xs:8px; --s-sm:12px; --s-md:16px; --s-lg:24px; --s-xl:32px;
+  --s-2xl:48px; --s-3xl:64px; --s-4xl:96px; --s-5xl:128px;
+  --gutter:24px; --container:1240px; --prose:68ch;
+  --e-sm:0 1px 2px rgba(28,27,27,.06), 0 1px 3px rgba(28,27,27,.10);
+  --e-md:0 4px 6px -1px rgba(28,27,27,.08), 0 2px 4px -2px rgba(28,27,27,.06);
+  --e-lg:0 12px 20px -6px rgba(28,27,27,.12), 0 4px 8px -4px rgba(28,27,27,.08);
+  --e-xl:0 24px 48px -12px rgba(28,27,27,.18);
+  --hover-lift:-3px;
+}
+/* ══════════════════════════ END SWAPPABLE LAYER ══════════════════════════ */
+
+/* Diolog brand layer - fixed across every company this template serves.
+   Source: diolog-team-files/website/DESIGN-Website.md */
+:root{
+  --d-navy:#0A1733; --d-navy-deep:#050B1F; --d-accent:#1F3FA6; --d-accent-deep:#142A78;
+  --d-accent-soft:#E6EEF9; --d-accent-bright:#6E8EF5;
+  --d-fg-on-dark:#E8EEF8; --d-fg-on-dark-muted:#9AA8C4; --d-border-on-dark:rgba(255,255,255,.10);
+  --d-fg-primary:#0F1A2E; --d-fg-secondary:#3D4A66;
+  --d-on-accent:#FDFDFD;
+  --d-serif:"Newsreader",ui-serif,Georgia,serif;
+  --d-sans:"Inter",-apple-system,system-ui,sans-serif;
+  --d-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+
+/* motion vocabulary */
+:root{
+  --t-press:120ms; --t-hover:150ms; --t-menu:200ms; --t-panel:260ms; --t-reveal:650ms;
+  --ease-out:cubic-bezier(.22,.61,.36,1);
+  --ease-in-out:cubic-bezier(.77,0,.175,1);
+  --ease-spring:cubic-bezier(.2,.8,.2,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-padding-top:104px; overflow-x:hidden}
+body{
+  margin:0; background:var(--canvas); color:var(--ink-body);
+  font-family:var(--font-body); font-size:17px; line-height:1.65;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+::selection{background:var(--primary); color:var(--on-primary)}
+:focus-visible{outline:3px solid var(--focus-ring); outline-offset:3px; border-radius:3px}
+img{max-width:100%; display:block}
+a{color:var(--link); text-underline-offset:3px; text-decoration-thickness:1px}
+a:hover{color:var(--primary-pressed)}
+h1,h2,h3,h4{font-family:var(--font-display); color:var(--ink); margin:0; text-wrap:balance}
+p{margin:0}
+button{font:inherit}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:var(--surface-sunken)}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:var(--r-full); border:3px solid var(--surface-sunken)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-muted)}
+
+/* ── type primitives ────────────────────────────────────────────────────── */
+.overline{font-family:var(--font-display); font-size:13px; font-weight:700; line-height:1.4; letter-spacing:.14em; text-transform:uppercase}
+.display{font-size:clamp(38px,5.4vw,64px); font-weight:900; line-height:1.03; letter-spacing:-.03em}
+.h-xl{font-size:clamp(29px,3.6vw,44px); font-weight:900; line-height:1.08; letter-spacing:-.022em}
+.h-lg{font-size:clamp(26px,3vw,36px); font-weight:800; line-height:1.12; letter-spacing:-.015em}
+.h-md{font-size:clamp(21px,2.1vw,27px); font-weight:800; line-height:1.2; letter-spacing:-.01em}
+.h-sm{font-size:20px; font-weight:800; line-height:1.32; letter-spacing:-.005em}
+.lead{font-size:19px; font-weight:500; line-height:1.58}
+.small{font-size:15px; line-height:1.6}
+.caption{font-size:13px; font-weight:500; line-height:1.5; color:var(--ink-muted)}
+.data{font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-feature-settings:"tnum"}
+.prose{max-width:var(--prose)}
+.wrap{max-width:var(--container); margin-inline:auto; padding-inline:var(--gutter)}
+
+/* ── Diolog droplet mark ────────────────────────────────────────────────── */
+.dio{flex:none; height:1em; width:1.086em; --dio-a:var(--d-navy); --dio-b:var(--d-accent)}
+.dio--on-dark{--dio-a:var(--d-fg-on-dark); --dio-b:var(--d-accent-bright)}
+.dio--quiet{--dio-a:#9A9391; --dio-b:#7E7876}
+.dlock{display:inline-flex; align-items:center; gap:7px}
+
+/* ── Diolog sticky banner ───────────────────────────────────────────────── */
+.dbanner{
+  position:sticky; top:0; z-index:70; background:var(--d-navy); color:var(--d-fg-on-dark);
+  border-bottom:1px solid var(--d-border-on-dark);
+}
+.dbanner__in{
+  display:flex; align-items:center; gap:var(--s-md); justify-content:space-between;
+  height:34px;
+}
+.dbanner__left{display:flex; align-items:center; gap:var(--s-sm); min-width:0}
+.dmark{
+  font-family:var(--d-serif); font-size:15px; line-height:1; color:var(--d-fg-on-dark);
+  letter-spacing:-.01em; flex:none;
+}
+.dbanner__sep{width:1px; height:16px; background:var(--d-border-on-dark); flex:none}
+.dbanner__txt{
+  font-family:var(--d-mono); font-size:11px; font-weight:400; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--d-fg-on-dark-muted); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; min-width:0;
+}
+/* a quiet link, not a second filled pill 40px above the red one */
+.dbanner__cta{
+  flex:none; display:inline-flex; align-items:center; gap:6px; min-height:24px; text-decoration:none;
+  color:var(--d-fg-on-dark); font-family:var(--d-mono); font-size:11px;
+  font-weight:500; letter-spacing:.09em; text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,.28); padding-bottom:1px;
+  transition:color var(--t-menu) var(--ease-out), border-color var(--t-menu) var(--ease-out);
+}
+.dbanner__cta:hover{color:var(--d-accent-bright); border-bottom-color:var(--d-accent-bright)}
+.dbanner__cta svg{transition:transform var(--t-menu) var(--ease-out)}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .dbanner__cta:hover{transform:translateY(-1px)}
+  .dbanner__cta:hover svg{transform:translateX(3px)}
+}
+.dbanner__cta:focus-visible{outline-color:var(--d-accent-bright)}
+
+/* ── company header ─────────────────────────────────────────────────────── */
+.site-head{
+  position:sticky; top:34px; z-index:60; background:rgba(247,246,245,.86);
+  backdrop-filter:blur(12px); border-bottom:1px solid transparent;
+  transition:background var(--t-panel) var(--ease-out), border-color var(--t-panel) var(--ease-out), box-shadow var(--t-panel) var(--ease-out);
+}
+.site-head.is-stuck{background:rgba(253,252,252,.94); border-bottom-color:var(--border); box-shadow:var(--e-sm)}
+.site-head__in{display:flex; align-items:center; gap:var(--s-md); min-height:56px}
+.brand{display:flex; align-items:center; gap:var(--s-sm); text-decoration:none; flex:none}
+.brand__mark{
+  display:grid; place-items:center; width:34px; height:34px; border-radius:var(--r-full);
+  background:var(--primary); color:var(--on-primary);
+  font-family:var(--font-display); font-size:13px; font-weight:900; letter-spacing:-.02em;
+}
+.brand__name{display:block; font-family:var(--font-display); font-size:21px; font-weight:900; color:var(--ink); letter-spacing:-.025em; line-height:1}
+.brand__sub{display:block; font-family:var(--font-mono); font-size:9.5px; font-weight:500; line-height:1; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-muted); margin-top:2px}
+/* the quote is data, not a control: no capsule, just a ruled-off reading */
+.quote-badge{
+  display:inline-flex; align-items:baseline; gap:8px; padding-left:var(--s-md);
+  border-left:1px solid var(--border); margin-left:var(--s-2xs);
+  font-family:var(--font-mono); font-size:12.5px; font-weight:500; white-space:nowrap;
+  color:var(--ink-muted);
+}
+.quote-badge b{font-weight:600; color:var(--ink)}
+.quote-badge .up{display:inline-flex; align-items:center; gap:4px; color:var(--success-ink)}
+.site-nav{display:flex; gap:var(--s-md); margin-left:auto; margin-right:var(--s-2xs)}
+.site-nav a{
+  position:relative; padding:8px 2px; text-decoration:none; color:var(--ink-body);
+  font-family:var(--font-display); font-size:14.5px; font-weight:600; white-space:nowrap;
+  transition:color var(--t-hover) var(--ease-out);
+}
+.site-nav a::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--primary);
+  transform:scaleX(0); transform-origin:left; transition:transform var(--t-menu) var(--ease-out);
+}
+.site-nav a:hover{color:var(--primary)}
+.site-nav a:hover::after,.site-nav a[aria-current="true"]::after{transform:scaleX(1)}
+.site-nav a[aria-current="true"]{color:var(--primary)}
+.head-cta{
+  flex:none; display:inline-flex; align-items:center; gap:8px; padding:8px 16px;
+  border-radius:var(--r-full); background:var(--primary); color:var(--on-primary);
+  text-decoration:none; font-family:var(--font-display); font-size:14.5px; font-weight:600;
+  box-shadow:var(--e-sm);
+  transition:background var(--t-hover) var(--ease-out), transform var(--t-menu) var(--ease-spring), box-shadow var(--t-menu) var(--ease-out);
+}
+.head-cta:hover{background:var(--primary-hover); color:var(--on-primary); box-shadow:var(--e-md)}
+.head-cta:active{background:var(--primary-pressed); transform:scale(.98)}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  /* :not(:active) so the press scale is not overridden by the hover lift */
+  .head-cta:hover:not(:active){transform:translateY(var(--hover-lift))}
+}
+@media (max-width:1080px){ .site-nav{display:none} }
+@media (max-width:600px){ .quote-badge{display:none} }
+
+/* ── ticker rail ────────────────────────────────────────────────────────── */
+.ticker{
+  background:var(--surface-dark); color:var(--on-dark); overflow:hidden;
+}
+.ticker__track{display:flex; width:max-content; will-change:transform}
+.ticker:hover .ticker__track,.ticker:focus-within .ticker__track{animation-play-state:paused}
+.ticker__grp{display:flex; flex:none; animation:tick 68s linear infinite}
+@keyframes tick{from{transform:translateX(0)} to{transform:translateX(-100%)}}
+.tick{
+  display:inline-flex; align-items:baseline; gap:9px; padding:9px 22px; flex:none;
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.04em; white-space:nowrap;
+  border-right:1px solid rgba(253,252,252,.09);
+}
+.tick__mkt{color:var(--on-dark-muted); font-size:11px}
+.tick__code{color:var(--on-dark); font-weight:600}
+.tick__px{color:var(--on-dark)}
+.tick__ch{display:inline-flex; align-items:center; gap:3px}
+.tick__ch.up{color:#6FD08C} .tick__ch.dn{color:#F2A5A8}
+@media (prefers-reduced-motion:reduce){ .ticker__grp{animation:none} .ticker__track{width:100%} }
+
+/* ── hero ───────────────────────────────────────────────────────────────── */
+.hero{position:relative; background:var(--surface-dark); color:var(--on-dark); overflow:hidden}
+.hero__img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  object-position:56% 60%; filter:saturate(.66) contrast(1.04);
+}
+.hero__veil{position:absolute; inset:0; background:linear-gradient(100deg, var(--scrim) 0%, rgba(12,11,11,.82) 40%, rgba(12,11,11,.34) 100%)}
+.hero__in{position:relative; display:grid; grid-template-columns:1.55fr 1fr; gap:var(--s-3xl); padding-block:clamp(56px,7vw,92px) clamp(72px,9vw,108px)}
+.hero .overline{color:#F0A9AC}
+.hero h1{color:var(--on-dark); margin-top:var(--s-md); max-width:15ch}
+.hero h1 em{font-style:italic; color:#F5B9BC}
+.hero__lead{margin-top:var(--s-lg); max-width:52ch; color:#E3DFDE; font-size:19px; font-weight:500; line-height:1.6}
+.hero__ctas{display:flex; flex-wrap:wrap; gap:var(--s-sm); margin-top:var(--s-xl)}
+.btn{
+  display:inline-flex; align-items:center; gap:9px; padding:13px 24px; border-radius:var(--r-full);
+  font-family:var(--font-display); font-size:15px; font-weight:600; text-decoration:none;
+  border:2px solid transparent; cursor:pointer;
+  transition:background var(--t-hover) var(--ease-out), color var(--t-hover) var(--ease-out), transform var(--t-menu) var(--ease-spring), box-shadow var(--t-menu) var(--ease-out), border-color var(--t-hover) var(--ease-out);
+}
+.btn svg{flex:none; transition:transform var(--t-menu) var(--ease-out)}
+.btn--primary{background:var(--primary); color:var(--on-primary); box-shadow:var(--e-sm)}
+.btn--primary:hover{background:var(--primary-hover); color:var(--on-primary); box-shadow:var(--e-md)}
+.btn--primary:active{background:var(--primary-pressed); transform:scale(.98)}
+.btn--ghost-dark{border-color:rgba(253,252,252,.5); color:var(--on-dark)}
+.btn--ghost-dark:hover{background:rgba(253,252,252,.1); color:var(--on-dark); border-color:var(--on-dark)}
+.btn--ghost{border-color:var(--border-strong); color:var(--ink)}
+.btn--ghost:hover{border-color:var(--primary); color:var(--primary)}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .btn:hover:not(:active){transform:translateY(var(--hover-lift))}
+  .btn:hover svg{transform:translateX(4px)}
+}
+.thesis{border-left:1px solid rgba(253,252,252,.2); padding-left:var(--s-xl)}
+.thesis .overline{color:var(--on-dark-muted)}
+.thesis ol{list-style:none; margin:var(--s-lg) 0 0; padding:0; display:grid; gap:var(--s-md)}
+.thesis li{display:grid; grid-template-columns:auto 1fr; gap:var(--s-md); align-items:baseline}
+.thesis .n{font-family:var(--font-mono); font-size:13px; font-weight:600; color:var(--primary-on-dark); letter-spacing:.04em}
+.thesis .t{font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--on-dark); line-height:1.4}
+@media (max-width:900px){
+  .hero__in{grid-template-columns:1fr; gap:var(--s-2xl)}
+  .thesis{border-left:0; border-top:1px solid rgba(253,252,252,.2); padding-left:0; padding-top:var(--s-xl)}
+}
+
+/* ── sections ───────────────────────────────────────────────────────────── */
+.band{padding-block:var(--s-5xl)}
+.band--sunken{background:var(--surface-sunken)}
+.band--dark{background:var(--surface-dark); color:var(--on-dark)}
+.band--dark h2,.band--dark h3{color:var(--on-dark)}
+.sec__head{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:var(--s-md) var(--s-lg); margin-bottom:var(--s-2xl)}
+.sec__head > div{max-width:var(--prose)}
+.sec__num{display:block; font-family:var(--font-mono); font-size:13px; font-weight:600; letter-spacing:.08em; color:var(--primary); margin-bottom:var(--s-xs)}
+.sec__head p{margin-top:var(--s-sm); color:var(--ink-muted)}
+.band--dark .sec__head p{color:var(--on-dark-muted)}
+.seclink{
+  display:inline-flex; align-items:center; gap:7px; text-decoration:none; white-space:nowrap;
+  font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--link);
+}
+.seclink svg{transition:transform var(--t-menu) var(--ease-out)}
+.seclink:hover svg{transform:translateX(4px)}
+@media (min-width:900px){ .band{padding-block:var(--s-5xl)} }
+@media (max-width:900px){ .band{padding-block:var(--s-3xl)} }
+
+/* ── snapshot ───────────────────────────────────────────────────────────── */
+/* ── chart ──────────────────────────────────────────────────────────────── */
+.chart-card{background:var(--surface); border-radius:var(--r-md); box-shadow:var(--e-md); overflow:hidden}
+.chart-bar{display:flex; flex-wrap:wrap; align-items:center; gap:var(--s-sm) var(--s-md); padding:var(--s-md) var(--s-lg); border-bottom:1px solid var(--border)}
+.ranges{display:flex; gap:4px; margin-left:auto}
+.ranges button{
+  padding:6px 13px; border-radius:var(--r-full); border:1px solid var(--border); background:none;
+  font-family:var(--font-mono); font-size:12px; font-weight:500; color:var(--ink-muted); cursor:pointer;
+  transition:background var(--t-hover) var(--ease-out), color var(--t-hover) var(--ease-out), border-color var(--t-hover) var(--ease-out);
+}
+.ranges button{position:relative}
+.ranges button::after{content:""; position:absolute; inset:-9px -4px}
+.ranges button:hover{border-color:var(--border-strong); color:var(--ink)}
+.ranges button[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:var(--surface)}
+.toggle{display:inline-flex; align-items:center; gap:8px; min-height:44px; font-size:14px; color:var(--ink-body); cursor:pointer; user-select:none}
+.toggle input{position:absolute; opacity:0; width:0; height:0}
+.toggle__box{
+  width:34px; height:20px; border-radius:var(--r-full); background:var(--border-strong); position:relative;
+  transition:background var(--t-menu) var(--ease-out);
+}
+.toggle__box::after{
+  content:""; position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:var(--r-full);
+  background:var(--surface); transition:transform var(--t-menu) var(--ease-spring);
+}
+.toggle input:checked + .toggle__box{background:var(--primary)}
+.toggle input:checked + .toggle__box::after{transform:translateX(14px)}
+.toggle input:focus-visible + .toggle__box{outline:3px solid var(--focus-ring); outline-offset:3px}
+.chart-wrap{position:relative; padding:var(--s-lg)}
+#chart{display:block; width:100%; height:260px; overflow:visible; touch-action:pan-y}
+.chart-line{fill:none; stroke:var(--primary); stroke-width:2; stroke-linejoin:round; stroke-linecap:round}
+.chart-area{fill:url(#chartFade)}
+.chart-grid line{stroke:var(--border); stroke-width:1}
+.chart-ax{font-family:var(--font-mono); font-size:11px; fill:var(--ink-muted)}
+.mk{fill:var(--surface); stroke:var(--primary); stroke-width:2; cursor:pointer}
+.mk:focus-visible{outline:3px solid var(--focus-ring); outline-offset:3px}
+.mk-ring{fill:none; stroke:var(--primary); stroke-width:2.2; opacity:.7}
+.crosshair{stroke:var(--ink-muted); stroke-width:1; stroke-dasharray:3 3; opacity:0}
+.cursor-dot{fill:var(--primary); opacity:0}
+.chart-tip{
+  position:absolute; pointer-events:none; opacity:0; z-index:5; min-width:170px; max-width:280px;
+  padding:var(--s-sm) var(--s-md); border-radius:var(--r-sm); background:var(--ink); color:var(--surface);
+  font-size:13px; line-height:1.45; box-shadow:var(--e-lg);
+  transition:opacity var(--t-hover) var(--ease-out);
+}
+.chart-tip > span{display:block}
+.chart-tip .d{font-family:var(--font-mono); font-size:11px; color:#B7B2B1; letter-spacing:.04em}
+.chart-tip .p{font-family:var(--font-mono); font-size:19px; font-weight:600; line-height:1.2; margin-top:3px; letter-spacing:-.01em}
+.chart-tip .v{font-family:var(--font-mono); font-size:11px; color:#B7B2B1; margin-top:2px}
+.chart-tip .a{margin-top:8px; padding-top:8px; border-top:1px solid rgba(253,252,252,.2); font-size:12.5px; line-height:1.4}
+.chart-table{width:100%; border-collapse:collapse; font-size:14px}
+.chart-table th,.chart-table td{padding:11px var(--s-lg); text-align:left; border-top:1px solid var(--border)}
+.chart-table th{font-family:var(--font-display); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted)}
+.chart-table td{font-family:var(--font-mono); color:var(--ink); font-variant-numeric:tabular-nums}
+.chart-table tr td:first-child,.chart-table tr th:first-child{padding-left:var(--s-lg)}
+
+/* ── announcements ──────────────────────────────────────────────────────── */
+.latest{display:grid; grid-template-columns:2fr 1fr; gap:var(--s-lg)}
+.ann-feat{background:var(--surface); border-radius:var(--r-md); box-shadow:var(--e-md); padding:var(--s-xl); display:flex; flex-direction:column}
+.tagrow{display:flex; flex-wrap:wrap; align-items:center; gap:var(--s-xs)}
+.tag{padding:4px 12px; border-radius:var(--r-full); background:var(--surface-sunken); color:var(--ink-muted); font-family:var(--font-display); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+.tag--ps{background:var(--primary-tint); color:var(--primary-pressed); display:inline-flex; align-items:center; gap:6px}
+.tag--ps .dot{width:6px; height:6px; border-radius:var(--r-full); background:var(--primary)}
+@media (prefers-reduced-motion:no-preference){ .tag--ps .dot{animation:pulse 2.4s var(--ease-out) infinite} }
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(215,34,41,.5)} 60%{box-shadow:0 0 0 6px rgba(215,34,41,0)}}
+.ann-date{font-family:var(--font-mono); font-size:12px; color:var(--ink-muted); margin-left:auto}
+.ann-feat h3{margin-top:var(--s-md); font-size:clamp(21px,2.1vw,27px); font-weight:800; letter-spacing:-.01em; line-height:1.2}
+.ann-feat > p{margin-top:var(--s-sm); color:var(--ink-body)}
+.aisum{margin-top:var(--s-lg); padding:var(--s-md) var(--s-lg); border-radius:var(--r-sm); background:var(--surface-sunken)}
+.aisum__h{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted)}
+.aisum__h svg{color:var(--primary)}
+.aisum ul{margin:var(--s-xs) 0 0; padding-left:18px; font-size:15px; color:var(--ink-body)}
+.aisum li + li{margin-top:5px}
+.ann-foot{display:flex; flex-wrap:wrap; align-items:center; gap:var(--s-md); margin-top:auto; padding-top:var(--s-lg)}
+.ann-foot .meta{font-family:var(--font-mono); font-size:12px; color:var(--ink-muted)}
+.recent{display:grid; gap:var(--s-xs); align-content:start}
+.recent h3{font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted); margin-bottom:var(--s-xs)}
+.rrow{
+  display:grid; grid-template-columns:1fr auto; gap:var(--s-xs) var(--s-md); align-items:center;
+  padding:var(--s-md); background:var(--surface); border-radius:var(--r-sm); box-shadow:var(--e-sm);
+  text-decoration:none; color:var(--ink);
+  transition:box-shadow var(--t-panel) var(--ease-out), transform var(--t-panel) var(--ease-spring);
+}
+@media (hover:hover) and (pointer:fine){ .rrow:hover{box-shadow:var(--e-lg); color:var(--ink)} }
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .rrow:hover{transform:translateY(-2px)}
+  .rrow:hover .rrow__go{transform:translateX(3px)}
+}
+.rrow__m{grid-column:1; font-family:var(--font-mono); font-size:11px; color:var(--ink-muted); letter-spacing:.04em}
+.rrow__t{grid-column:1; font-family:var(--font-display); font-size:15px; font-weight:700; line-height:1.35}
+.rrow__go{grid-column:2; grid-row:1 / span 2; align-self:center; color:var(--border-strong); transition:transform var(--t-menu) var(--ease-out)}
+.rrow:hover .rrow__go{color:var(--primary)}
+@media (max-width:900px){ .latest{grid-template-columns:1fr} }
+
+/* ── video ──────────────────────────────────────────────────────────────── */
+.vids{display:grid; grid-template-columns:2fr 1fr; gap:var(--s-lg)}
+.vfeat{background:var(--surface-dark-raised); border-radius:var(--r-md); overflow:hidden; box-shadow:var(--e-md)}
+.vthumb{position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--surface-sunken)}
+.vthumb img{width:100%; height:100%; object-fit:cover; transition:transform var(--t-reveal) var(--ease-out)}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .vfeat:hover .vthumb img,.vsmall:hover .vthumb img{transform:scale(1.04)}
+}
+.vplay{
+  position:absolute; inset:0; display:grid; place-items:center; border:0; background:none; cursor:pointer;
+  color:var(--on-dark);
+}
+.vplay span{
+  display:grid; place-items:center; width:62px; height:62px; border-radius:var(--r-full);
+  background:rgba(28,27,27,.62); backdrop-filter:blur(4px); border:1.5px solid rgba(253,252,252,.5);
+  transition:background var(--t-menu) var(--ease-out), transform var(--t-menu) var(--ease-spring);
+}
+.vplay:hover span{background:var(--primary); border-color:var(--primary)}
+@media (prefers-reduced-motion:no-preference){ .vplay:hover span{transform:scale(1.07)} }
+.vdur{
+  position:absolute; right:10px; bottom:10px; padding:3px 8px; border-radius:var(--r-xs);
+  background:rgba(12,11,11,.78); color:var(--on-dark); font-family:var(--font-mono); font-size:11.5px;
+}
+.vfeat__body{padding:var(--s-lg)}
+.vfeat__body .tag{background:rgba(253,252,252,.12); color:var(--on-dark-muted)}
+.vfeat__body h3{margin-top:var(--s-sm); color:var(--on-dark); font-size:20px; font-weight:800; letter-spacing:-.005em; line-height:1.32}
+.vfeat__body p{margin-top:var(--s-xs); color:var(--on-dark-muted); font-size:15px; max-width:60ch}
+.vlist{display:grid; gap:var(--s-sm); align-content:start}
+.vsmall{
+  display:grid; grid-template-columns:132px 1fr; gap:var(--s-md); align-items:center;
+  background:var(--surface); border-radius:var(--r-sm); overflow:hidden; box-shadow:var(--e-sm);
+  text-decoration:none; color:var(--ink); padding-right:var(--s-md);
+  transition:box-shadow var(--t-panel) var(--ease-out), transform var(--t-panel) var(--ease-spring);
+}
+@media (hover:hover) and (pointer:fine){ .vsmall:hover{box-shadow:var(--e-lg); color:var(--ink)} }
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){ .vsmall:hover{transform:translateY(-2px)} }
+.vsmall .vthumb{border-radius:0}
+.vsmall__cat{display:block; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted)}
+.vsmall__t{display:block; margin-top:3px; font-family:var(--font-display); font-size:15px; font-weight:700; line-height:1.3}
+@media (max-width:900px){ .vids{grid-template-columns:1fr} }
+
+/* ── group / capability tiles ───────────────────────────────────────────── */
+.tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-md)}
+.tile{
+  padding:var(--s-xl); background:var(--surface); border-radius:var(--r-md); box-shadow:var(--e-sm);
+  text-decoration:none; color:var(--ink); display:flex; flex-direction:column;
+  transition:box-shadow var(--t-panel) var(--ease-out), transform var(--t-panel) var(--ease-spring);
+}
+@media (hover:hover) and (pointer:fine){ .tile:hover{box-shadow:var(--e-lg); color:var(--ink)} }
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .tile:hover{transform:translateY(var(--hover-lift))}
+  .tile:hover .tile__go{transform:translateX(4px)}
+}
+.tile__icon{
+  display:grid; place-items:center; width:44px; height:44px; border-radius:var(--r-sm);
+  background:var(--surface-sunken); color:var(--ink-muted); margin-bottom:var(--s-md);
+  transition:background var(--t-hover) var(--ease-out), color var(--t-hover) var(--ease-out);
+}
+.tile:hover .tile__icon{background:var(--primary-tint); color:var(--primary)}
+.tile h3{font-size:19px; font-weight:800; letter-spacing:-.01em}
+.tile p{margin-top:var(--s-xs); font-size:15px; color:var(--ink-body)}
+.tile__stat{margin-top:var(--s-md); padding-top:var(--s-md); border-top:1px solid var(--border); font-family:var(--font-mono); font-size:12px; color:var(--ink-muted); display:flex; align-items:center; justify-content:space-between; gap:var(--s-sm)}
+.tile__go{color:var(--border-strong); transition:transform var(--t-menu) var(--ease-out)}
+.tile:hover .tile__go{color:var(--primary)}
+@media (max-width:900px){ .tiles{grid-template-columns:1fr} }
+
+/* ── stats strip ────────────────────────────────────────────────────────── */
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-lg); margin-top:var(--s-2xl)}
+.stat__v{font-family:var(--font-mono); font-size:clamp(30px,3.4vw,42px); font-weight:600; letter-spacing:-.025em; color:var(--primary); line-height:1; font-variant-numeric:tabular-nums}
+.band--dark .stat__v{color:#F5B9BC}
+.stat__k{margin-top:var(--s-sm); font-size:15px; color:var(--ink-body)}
+.band--dark .stat__k{color:var(--on-dark-muted)}
+@media (max-width:760px){ .stats{grid-template-columns:1fr 1fr} }
+
+/* ── FAQ ────────────────────────────────────────────────────────────────── */
+.faq{display:grid; gap:var(--s-md)}
+.qa{background:var(--surface); border-radius:var(--r-md); box-shadow:var(--e-sm); overflow:hidden}
+.qa > summary{
+  display:grid; grid-template-columns:auto 1fr auto; gap:var(--s-md); align-items:baseline;
+  padding:var(--s-lg); cursor:pointer; list-style:none;
+  transition:background var(--t-hover) var(--ease-out);
+}
+.qa > summary::-webkit-details-marker{display:none}
+.qa > summary:hover{background:var(--surface-sunken)}
+.qa__n{font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--ink-muted); letter-spacing:.04em}
+.qa__q{font-family:var(--font-display); font-size:clamp(19px,1.8vw,23px); font-weight:800; letter-spacing:-.014em; line-height:1.3; color:var(--ink); max-width:34ch}
+.qa .caret{align-self:center; color:var(--ink-muted); transition:transform var(--t-menu) var(--ease-out)}
+.qa[open] > summary{background:var(--surface-sunken)}
+.qa[open] .caret{transform:rotate(180deg)}
+.reveal{display:grid; grid-template-rows:0fr; transition:grid-template-rows var(--t-panel) var(--ease-in-out)}
+.qa[open] .reveal{grid-template-rows:1fr}
+.reveal > div{overflow:hidden; min-height:0}
+.qa__a{padding:var(--s-lg); border-top:1px solid var(--border)}
+.qa__intent{font-style:italic; color:var(--ink-muted); font-size:16px; margin-bottom:var(--s-md)}
+.qa__a > p{max-width:var(--prose)}
+.captable{width:100%; border-collapse:collapse; margin-top:var(--s-lg); font-size:15px}
+.captable td{padding:10px 0; border-top:1px solid var(--border)}
+.captable td:first-child{width:34px; font-family:var(--font-mono); font-size:12px; color:var(--ink-muted)}
+.captable td:last-child{text-align:right; font-family:var(--font-mono); font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums}
+.footnote{margin-top:var(--s-md); font-size:13px; color:var(--ink-muted); max-width:var(--prose)}
+
+/* ── contact via Diolog ─────────────────────────────────────────────────── */
+.contact{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-lg)}
+.ccard{padding:var(--s-xl); border-radius:var(--r-md); background:var(--surface); box-shadow:var(--e-md); display:flex; flex-direction:column}
+.ccard--d{background:var(--surface); border:1px solid var(--d-accent-soft)}
+.ccard__eye{font-family:var(--font-mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted)}
+.ccard h3{margin-top:var(--s-xs); font-size:20px; font-weight:800; letter-spacing:-.005em; line-height:1.32}
+.ccard p{margin-top:var(--s-sm); color:var(--ink-body); font-size:15.5px}
+.ccard form{margin-top:var(--s-lg); display:grid; gap:var(--s-sm)}
+.field{display:grid; gap:6px}
+.field label{font-family:var(--font-display); font-size:11.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted)}
+.field input,.field select,.field textarea{
+  width:100%; padding:12px 14px; border-radius:var(--r-sm); border:1px solid var(--border-strong);
+  background:var(--surface); color:var(--ink); font-family:var(--font-body); font-size:15px;
+  transition:border-color var(--t-hover) var(--ease-out), box-shadow var(--t-hover) var(--ease-out);
+}
+.field textarea{resize:vertical; min-height:92px}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(215,34,41,.45);
+}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-sm)}
+.form-note{margin-top:var(--s-sm); font-size:12.5px; color:var(--ink-muted)}
+.field__note{margin-top:2px; font-size:13px; line-height:1.5; color:var(--ink-muted)}
+.ir-lines__note{display:block; margin-top:2px; font-size:13px; color:var(--ink-muted)}
+.routed{
+  display:flex; align-items:center; gap:9px; margin-top:auto; padding-top:var(--s-lg);
+  font-family:var(--d-mono); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-muted);
+}
+
+.ir-lines{list-style:none; margin:var(--s-lg) 0 0; padding:0; display:grid; gap:var(--s-sm)}
+.ir-lines li{display:grid; grid-template-columns:auto 1fr; gap:var(--s-md); align-items:start; padding-top:var(--s-sm); border-top:1px solid var(--border)}
+.ir-lines .ic{display:grid; place-items:center; width:34px; height:34px; border-radius:var(--r-full); background:var(--primary); color:var(--on-primary)}
+.ir-lines .k{display:block; font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted)}
+.ir-lines .v{display:block; margin-top:2px; font-size:16px; color:var(--ink)}
+.ir-lines a{color:var(--ink); text-decoration:none; border-bottom:1px solid var(--border-strong)}
+.ir-lines a:hover{color:var(--primary); border-color:var(--primary)}
+.form-ok{
+  display:none; align-items:flex-start; gap:10px; margin-top:var(--s-md); padding:var(--s-md);
+  border-radius:var(--r-sm); background:var(--warning-tint); color:var(--warning-ink); font-size:14.5px; line-height:1.5; font-weight:500;
+}
+.form-ok svg{flex:none; margin-top:3px}
+.form-ok.is-on{display:flex}
+@media (max-width:900px){ .contact{grid-template-columns:1fr} .field-row{grid-template-columns:1fr} }
+
+/* ── Diolog app band ────────────────────────────────────────────────────── */
+.dband{position:relative; background:var(--d-navy); color:var(--d-fg-on-dark); overflow:hidden; isolation:isolate}
+.dband__bg{position:absolute; inset:0; z-index:0; background:radial-gradient(120% 90% at 22% 12%, #12234A 0%, var(--d-navy) 42%, var(--d-navy-deep) 100%)}
+.dband__grid{
+  position:absolute; inset:0; z-index:0; opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:72px 72px;
+}
+#dfield{position:absolute; inset:0; z-index:1; width:100%; height:100%; display:block}
+/* keep the point field off the copy: it is texture, not a background for text */
+.dband__scrim{position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(96deg, rgba(5,11,31,.95) 0%, rgba(5,11,31,.9) 40%, rgba(5,11,31,.55) 62%, rgba(5,11,31,.1) 100%)}
+.dband__in{position:relative; z-index:2; display:grid; grid-template-columns:1fr auto; gap:clamp(40px,6vw,96px); align-items:center; padding-block:clamp(64px,7vw,88px)}
+.dband .eyebrow{font-family:var(--d-mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--d-fg-on-dark-muted)}
+.dband h2{
+  font-family:var(--d-serif); font-weight:400; font-size:clamp(32px,4vw,50px); line-height:1.08;
+  letter-spacing:-.024em; color:var(--d-fg-on-dark); margin-top:var(--s-md); max-width:18ch;
+}
+.dband h2 em{font-style:italic; color:var(--d-accent-bright)}
+.dband__lede{margin-top:var(--s-md); max-width:52ch; font-family:var(--d-sans); font-size:17px; line-height:1.62; color:var(--d-fg-on-dark-muted)}
+.dband__pts{margin-top:var(--s-xl); display:grid; gap:var(--s-md); max-width:56ch}
+.dband__pts > div{padding-top:var(--s-md); border-top:1px solid var(--d-border-on-dark)}
+.dband__pts dt{font-family:var(--d-sans); font-size:14.5px; font-weight:600; letter-spacing:-.005em; color:var(--d-fg-on-dark)}
+.dband__pts dd{margin:4px 0 0; font-family:var(--d-sans); font-size:14.5px; line-height:1.6; color:var(--d-fg-on-dark-muted)}
+.dband__free{margin-top:var(--s-md); font-family:var(--d-mono); font-size:11.5px; letter-spacing:.06em; color:var(--d-fg-on-dark-muted)}
+.dbtns{display:flex; flex-wrap:wrap; gap:var(--s-sm); margin-top:var(--s-xl)}
+.storebtn{
+  display:inline-flex; align-items:center; gap:11px;
+  padding:10px 20px 10px 16px; border-radius:var(--r-sm);
+  background:var(--d-fg-on-dark); color:var(--d-navy); text-decoration:none;
+  box-shadow:0 12px 26px -16px rgba(0,0,0,.75);
+  transition:background var(--t-hover) var(--ease-out), box-shadow var(--t-hover) var(--ease-out), transform var(--t-press) var(--ease-out);
+}
+.storebtn:hover{background:#F5F8FE; box-shadow:0 16px 32px -16px rgba(0,0,0,.8)}
+.storebtn:active{transform:scale(.985)}
+.storebtn svg{flex:none; color:var(--d-navy)}
+.storebtn > span{display:flex; flex-direction:column; text-align:left}
+.storebtn__k{display:block; font-family:var(--d-sans); font-size:10.5px; font-weight:500; letter-spacing:.03em; line-height:1.2; color:#3F4D66}
+.storebtn__n{display:block; font-family:var(--d-sans); font-size:15px; font-weight:600; letter-spacing:-.012em; line-height:1.2; color:var(--d-navy)}
+/* the product, as the product: a phone holding one real screen */
+.phone{justify-self:center; perspective:1400px}
+.phone__shell{
+  width:302px; padding:11px; border-radius:42px;
+  background:linear-gradient(168deg, #2B3651 0%, #131C33 60%);
+  box-shadow:0 34px 70px -18px rgba(0,0,0,.72), 0 0 0 1px rgba(255,255,255,.09) inset;
+}
+.phone__screen{
+  position:relative; min-height:596px; border-radius:32px; overflow:hidden; background:#FDFDFD;
+  color:var(--d-fg-primary); font-family:var(--d-sans);
+  font-size:13px; line-height:1.4; letter-spacing:-.006em;
+}
+.phone__screen p{margin:0; max-width:none}
+.phone__status{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 20px 4px; font-size:12px; font-weight:600; color:var(--d-fg-primary);
+}
+.phone__bars{display:inline-flex; align-items:flex-end; gap:2px}
+.phone__bars i{width:3px; background:var(--d-fg-primary); border-radius:1px}
+.phone__bars i:nth-child(1){height:4px} .phone__bars i:nth-child(2){height:6px}
+.phone__bars i:nth-child(3){height:8px} .phone__bars i:nth-child(4){height:10px}
+.phone__nav{
+  display:flex; align-items:center; gap:8px; padding:6px 18px 10px;
+  border-bottom:1px solid rgba(15,26,46,.08); color:#5E6A82;
+}
+.phone__ttl{font-family:var(--d-mono); font-size:11px; letter-spacing:.06em; color:var(--d-fg-primary)}
+.phone__body{padding:13px 16px 16px}
+/* the list runs past the frame, so it fades rather than being cut mid-row */
+.phone__fade{position:absolute; left:0; right:0; bottom:0; height:56px; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(253,253,253,0), #FDFDFD 78%)}
+.phone__chips{display:flex; gap:6px}
+.pchip{
+  padding:3px 9px; border-radius:5px; background:#F1F4F9; color:#5E6A82;
+  font-family:var(--d-mono); font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
+}
+.pchip--ps{background:#FBE6E3; color:#C2362A}
+.phone__h{
+  margin-top:14px; font-family:var(--d-serif); font-size:16px; line-height:1.22;
+  letter-spacing:-.016em; color:var(--d-fg-primary);
+}
+.phone__date{margin-top:5px; font-size:10.5px; color:#9CA0AC; letter-spacing:.03em}
+.phone__sum{margin-top:11px; padding:11px 12px; border-radius:9px; background:#F5F7FB}
+.phone__sum-k{
+  display:flex; align-items:center; gap:5px; font-family:var(--d-mono); font-size:9.5px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--d-accent);
+}
+.phone__sum-l{margin-top:6px; font-size:11.5px; line-height:1.4; color:#3D4A66}
+.phone__sum-l b{font-weight:600; color:var(--d-fg-primary)}
+.phone__src{margin-top:9px; padding-top:8px; border-top:1px solid rgba(15,26,46,.08); font-family:var(--d-mono); font-size:9px; letter-spacing:.04em; color:#9CA0AC}
+.phone__lbl{
+  margin-top:14px; font-family:var(--d-mono); font-size:9.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:#9CA0AC;
+}
+.phone__lbl:first-child{margin-top:0}
+
+/* conversation */
+.bub{margin-top:9px; padding:11px 12px; border-radius:11px; font-size:11.5px; line-height:1.45}
+.bub--you{background:#F1F4F9; color:#3D4A66; border-bottom-right-radius:4px}
+.bub--ir{background:#FDFDFD; border:1px solid rgba(15,26,46,.11); border-bottom-left-radius:4px; color:#3D4A66}
+.bub__who{
+  display:flex; align-items:center; gap:7px; margin-bottom:9px;
+  font-size:10.5px; font-weight:600; color:var(--d-fg-primary);
+}
+.bub__av{
+  display:grid; place-items:center; width:17px; height:17px; border-radius:50%;
+  background:#D72229; color:#FDFDFD; font-size:7.5px; font-weight:700; letter-spacing:.02em;
+}
+.bub__t{margin-top:9px; font-size:8.5px; color:#9CA0AC; letter-spacing:.03em}
+.cite{margin-top:11px; padding-top:9px; border-top:1px solid rgba(15,26,46,.08)}
+.cite__k{font-family:var(--d-mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--d-accent)}
+.cite__l{
+  display:flex; align-items:center; gap:6px; margin-top:5px;
+  font-size:9.5px; color:#5E6A82;
+}
+.cite__l svg{flex:none; color:var(--d-accent)}
+
+/* composer */
+.pask{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  margin-top:14px; padding:9px 10px 9px 12px; border-radius:999px;
+  border:1px solid rgba(15,26,46,.13); background:#F5F7FB;
+}
+.pask__ph{font-size:11px; color:#9CA0AC}
+.pask__go{
+  display:grid; place-items:center; width:22px; height:22px; border-radius:50%;
+  background:var(--d-accent); color:#FDFDFD; flex:none;
+}
+.prow{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:9px 0;
+}
+.prow + .prow{border-top:1px solid rgba(15,26,46,.08)}
+.prow__t{font-size:12px; font-weight:500; color:var(--d-fg-primary)}
+.prow__t .data{font-family:var(--d-mono); font-size:9.5px; color:#9CA0AC; margin-left:3px}
+.pst{
+  padding:3px 8px; border-radius:5px; background:#F1F4F9; color:#5E6A82;
+  font-family:var(--d-mono); font-size:9px; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap;
+}
+.pst--live{background:var(--d-accent-soft); color:var(--d-accent)}
+.pask{margin-top:9px; padding:11px 12px; border-radius:9px; border:1px solid rgba(15,26,46,.1)}
+.pask__q{font-size:12px; font-weight:600; color:var(--d-fg-primary)}
+.pask__m{margin-top:3px; font-family:var(--d-mono); font-size:9px; letter-spacing:.03em; color:#9CA0AC}
+.pask__a{margin-top:8px; padding-top:8px; border-top:1px solid rgba(15,26,46,.08); font-size:11.5px; line-height:1.4; color:#3D4A66}
+.pask__a b{color:#1F8A5B; font-weight:600}
+.pst--ok{background:#E2F4EC; color:#1F8A5B}
+
+@media (max-width:900px){
+  .dband__in{grid-template-columns:1fr; gap:var(--s-2xl)}
+  .phone{justify-self:start}
+}
+@media (max-width:420px){ .phone__shell{width:100%; max-width:302px} }
+
+/* ── footer ─────────────────────────────────────────────────────────────── */
+.site-foot{background:var(--surface-footer); color:var(--on-dark-muted); padding-block:var(--s-3xl) var(--s-xl)}
+.foot-top{display:grid; grid-template-columns:1.4fr 1fr 1fr 1.2fr; gap:var(--s-xl); padding-bottom:var(--s-xl); border-bottom:1px solid rgba(253,252,252,.14)}
+.foot-top h3{font-family:var(--font-display); font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--on-dark); margin-bottom:var(--s-sm)}
+.foot-top ul{list-style:none; margin:0; padding:0; display:grid; gap:4px; font-size:14.5px}
+.foot-top li a{display:inline-flex; align-items:center; min-height:24px}
+.foot-top a{color:var(--on-dark-muted); text-decoration:none}
+.foot-top a:hover{color:var(--on-dark)}
+.foot-brand .brand__name{color:var(--on-dark); font-size:23px}
+.foot-brand p{margin-top:var(--s-sm); font-size:14.5px; max-width:36ch}
+.foot-codes{display:flex; gap:var(--s-sm); margin-top:var(--s-md); font-family:var(--font-mono); font-size:12px; color:var(--on-dark)}
+.foot-codes span{padding:4px 10px; border:1px solid rgba(253,252,252,.2); border-radius:var(--r-xs)}
+.foot-addr{font-size:14px; line-height:1.6}
+.foot-addr b{color:var(--on-dark); font-weight:600; display:block}
+.foot-addr .data{font-size:12.5px}
+.disclaim{
+  margin-top:var(--s-lg); padding:var(--s-lg); border-radius:var(--r-sm);
+  background:rgba(253,252,252,.05); font-size:13px; line-height:1.6; color:var(--on-dark-muted);
+}
+.disclaim b{color:var(--on-dark)}
+.foot-bot{display:flex; flex-wrap:wrap; justify-content:space-between; gap:var(--s-sm); margin-top:var(--s-lg); font-size:12.5px}
+.powered{display:inline-flex; align-items:center; gap:7px; font-family:var(--d-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#948D8B}
+
+.powered a{color:#9A9391; text-decoration:none}
+.powered__d{font-family:var(--d-serif); font-size:15px; letter-spacing:-.01em; text-transform:none}
+.powered a:hover{color:var(--on-dark)}
+@media (max-width:900px){ .foot-top{grid-template-columns:1fr 1fr} }
+@media (max-width:600px){ .foot-top{grid-template-columns:1fr} }
+
+/* ── source lines ──────────────────────────────────────────────────────── */
+.thesis__src{margin-top:var(--s-lg); padding-top:var(--s-md); border-top:1px solid rgba(253,252,252,.16); font-family:var(--font-mono); font-size:11.5px; color:var(--on-dark-muted)}
+.asat{flex:none; font-family:var(--font-mono); font-size:12px; color:var(--ink-muted); text-align:right}
+.seclink--dark{color:#F5B9BC}
+.seclink--dark:hover{color:#FBD3D5}
+
+/* ── facts: three lead figures, then the reference table ────────────────── */
+.facts__lead{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-lg); margin-bottom:var(--s-xl)}
+.facts__lead > div{padding-left:var(--s-lg); border-left:1px solid var(--border)}
+.facts__lead > div:first-child{padding-left:0; border-left:0}
+.facts__lead dt{font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted)}
+.facts__lead dd{margin:0}
+.facts__lead dd.data{margin-top:var(--s-xs); font-size:clamp(28px,3.2vw,38px); font-weight:600; letter-spacing:-.025em; line-height:1.05; color:var(--primary)}
+.facts__lead-w{color:var(--ink) !important}   /* red marks the figures, not a status word */
+.facts__lead-m{margin-top:6px !important; font-size:13px; color:var(--ink-muted)}
+@media (max-width:760px){
+  .facts__lead{grid-template-columns:1fr; gap:var(--s-md)}
+  .facts__lead > div{padding-left:0; border-left:0; padding-top:var(--s-md); border-top:1px solid var(--border)}
+  .facts__lead > div:first-child{padding-top:0; border-top:0}
+}
+
+/* ── facts table ────────────────────────────────────────────────────────── */
+.facts{background:var(--surface); border-radius:var(--r-md); box-shadow:var(--e-md); overflow:hidden}
+.facts__t{width:100%; border-collapse:collapse}
+.facts__t caption{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+.facts__t th[scope=col]{
+  padding:var(--s-md) var(--s-lg); text-align:left; border-bottom:1px solid var(--border-strong);
+  font-family:var(--font-display); font-size:11px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--primary); white-space:nowrap;
+}
+.facts__t th[scope=row]{
+  padding:var(--s-md) var(--s-lg); text-align:left; vertical-align:top; width:29%;
+  font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--ink-body);
+  border-top:1px solid var(--border);
+}
+.facts__t td{padding:var(--s-md) var(--s-lg); vertical-align:top; border-top:1px solid var(--border)}
+.facts__t tbody tr:hover th[scope=row],.facts__t tbody tr:hover td{background:var(--surface-sunken)}
+.fv{font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--ink)}
+.fv.data{font-family:var(--font-mono); font-weight:600; letter-spacing:-.01em}
+.fu{font-size:13.5px; color:var(--ink-muted)}
+.c-date{width:12%; white-space:nowrap; font-family:var(--font-mono); font-size:13px; color:var(--ink-muted)}
+.c-src{width:24%; font-size:13.5px; color:var(--ink-muted)}
+.c-src a{color:var(--ink-muted); text-decoration-color:var(--border-strong)}
+.c-src a:hover{color:var(--primary)}
+.facts__foot{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:var(--s-md);
+  padding:var(--s-md) var(--s-lg); border-top:1px solid var(--border); background:var(--surface-sunken);
+}
+.facts__foot p{font-size:13px; color:var(--ink-muted); max-width:62ch}
+.copybtn{
+  flex:none; display:inline-flex; align-items:center; gap:8px; padding:8px 15px; border-radius:var(--r-full);
+  border:1px solid var(--border-strong); background:var(--surface); color:var(--ink-body); cursor:pointer;
+  font-family:var(--font-display); font-size:13.5px; font-weight:600;
+  transition:border-color var(--t-hover) var(--ease-out), color var(--t-hover) var(--ease-out), transform var(--t-press) var(--ease-out);
+}
+.copybtn{position:relative}
+.copybtn::after{content:""; position:absolute; inset:-7px -4px}
+.copybtn:hover{border-color:var(--primary); color:var(--primary)}
+.copybtn:active{transform:scale(.97)}
+@media (max-width:860px){
+  /* the table stacks into labelled blocks; a 4-column grid cannot hold at 390px */
+  .facts__t,.facts__t tbody,.facts__t tr{display:block; width:100%}
+  .facts__t thead{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+  .facts__t tr{padding:var(--s-md) var(--s-lg); border-top:1px solid var(--border)}
+  .facts__t tr:first-child{border-top:0}
+  .facts__t th[scope=row]{
+    display:block; width:auto; padding:0; border-top:0;
+    font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted);
+  }
+  .facts__t td{display:block; width:auto; padding:0; border-top:0}
+  .facts__t td.c-val{margin-top:4px}
+  .facts__t td.c-date,.facts__t td.c-src{display:inline-block; margin-top:6px; font-size:12px}
+  .facts__t td.c-date::after{content:" \00b7"; color:var(--border-strong)}
+  .facts__t td.c-src{margin-left:5px}
+  .facts__t tbody tr:hover th[scope=row],.facts__t tbody tr:hover td{background:none}
+  .asat{flex:1 1 100%; text-align:left; white-space:normal; overflow-wrap:anywhere}
+}
+@media (max-width:700px){
+  /* the banner keeps the mark and the action; the sentence is not worth four lines */
+  .dbanner__txt{display:none}
+  .dbanner__sep{display:none}
+  .dbanner__in{height:34px}
+}
+
+/* ── MAP provenance + AI summary footer ─────────────────────────────────── */
+.map{display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--success-ink)}
+.aisum__f{margin-top:var(--s-sm); padding-top:var(--s-sm); border-top:1px solid var(--border); font-size:12.5px; color:var(--ink-muted)}
+.vfeat__src{margin-top:var(--s-md) !important; font-family:var(--font-mono); font-size:11.5px; color:var(--on-dark-muted) !important}
+
+/* ── 52-week range indicator ────────────────────────────────────────────── */
+.rangebar{position:relative; display:block; height:5px; margin-top:var(--s-sm); border-radius:var(--r-full); background:var(--surface-sunken)}
+.rangebar__fill{position:absolute; inset:0 auto 0 0; background:var(--border-strong); border-radius:var(--r-full)}
+.rangebar__pin{position:absolute; top:-4px; width:3px; height:13px; border-radius:2px; background:var(--primary)}
+
+/* ── price block ────────────────────────────────────────────────────────── */
+.price{margin-top:var(--s-2xl); background:var(--surface); border-radius:var(--r-md); box-shadow:var(--e-md); overflow:hidden}
+.price__head{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:var(--s-sm) var(--s-md); padding:var(--s-md) var(--s-lg); border-bottom:1px solid var(--border)}
+.price__note{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-muted)}
+.price__body{display:grid; grid-template-columns:280px minmax(0,1fr)}
+.price__now{padding:var(--s-lg); border-right:1px solid var(--border)}
+.price__last{font-family:var(--font-mono); font-size:40px; font-weight:600; letter-spacing:-.03em; color:var(--ink); line-height:1}
+.price__ch{margin-top:6px; font-family:var(--font-mono); font-size:13px}
+.price__ch .up{color:var(--success-ink); display:inline-flex; align-items:center; gap:4px}
+.price__grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-sm) var(--s-md); margin:var(--s-lg) 0 0}
+.price__grid div{min-width:0}
+.price__grid dt{font-family:var(--font-display); font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted)}
+.price__grid dd{margin:2px 0 0; font-size:14px; color:var(--ink); font-variant-numeric:tabular-nums}
+.price__chart{min-width:0}
+@media (max-width:900px){
+  .price__body{grid-template-columns:1fr}
+  .price__now{border-right:0; border-bottom:1px solid var(--border)}
+}
+
+/* ── governance ─────────────────────────────────────────────────────────── */
+.gov{display:grid; grid-template-columns:1.25fr 1fr; gap:var(--s-lg)}
+.gov > div{padding:var(--s-xl); background:var(--surface); border-radius:var(--r-md); box-shadow:var(--e-md)}
+.doclist{list-style:none; margin:var(--s-md) 0 0; padding:0}
+.doclist li + li{border-top:1px solid var(--border)}
+.doclist a{
+  display:flex; align-items:baseline; justify-content:space-between; gap:var(--s-md);
+  padding:11px 0; text-decoration:none; color:var(--ink);
+  transition:color var(--t-hover) var(--ease-out), padding-left var(--t-menu) var(--ease-out);
+}
+@media (hover:hover) and (pointer:fine){ .doclist a:hover{color:var(--primary); padding-left:6px} }
+.doclist__t{font-family:var(--font-display); font-size:15.5px; font-weight:600}
+.doclist__m{flex:none; font-family:var(--font-mono); font-size:11.5px; color:var(--ink-muted); letter-spacing:.04em}
+.people{list-style:none; margin:var(--s-md) 0 0; padding:0; display:grid; gap:var(--s-sm)}
+.people li{display:grid; grid-template-columns:auto 1fr; gap:var(--s-md); align-items:center; padding-top:var(--s-sm); border-top:1px solid var(--border)}
+.people__in{
+  display:grid; place-items:center; width:42px; height:42px; border-radius:var(--r-sm);
+  background:var(--surface-sunken); color:var(--ink-muted);
+  font-family:var(--font-mono); font-size:14px; font-weight:600; letter-spacing:.02em;
+}
+.people__n{display:block; font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--ink)}
+.people__r{display:block; margin-top:1px; font-size:13.5px; color:var(--ink-muted)}
+.gov__note{margin-top:var(--s-lg); font-size:13px; color:var(--ink-muted)}
+@media (max-width:900px){ .gov{grid-template-columns:1fr} }
+
+/* ── HIN / SRN ──────────────────────────────────────────────────────────── */
+.hinsrn{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-md); margin-top:var(--s-lg)}
+.hinsrn__c{padding:var(--s-md) var(--s-lg); border-radius:var(--r-sm); background:var(--surface-sunken)}
+.hinsrn__k{font-family:var(--font-mono); font-size:19px; font-weight:600; color:var(--primary); letter-spacing:.02em}
+.hinsrn__t{margin-top:var(--s-xs); font-size:15px; font-weight:600; color:var(--ink)}
+.hinsrn__b{margin-top:var(--s-xs); font-size:14px; color:var(--ink-body)}
+@media (max-width:760px){ .hinsrn{grid-template-columns:1fr} }
+
+/* ── reveal (CSS baseline, GSAP upgrades it) ────────────────────────────── */
+@media (prefers-reduced-motion:no-preference){
+  .js .rv{opacity:0; transform:translateY(16px); transition:opacity var(--t-reveal) var(--ease-out), transform var(--t-reveal) var(--ease-out)}
+  .js .rv.is-in{opacity:1; transform:none}
+  .js .rv.gs{transition:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important}
+}
+
+@media print{
+  .dbanner,.site-head,.ticker,#dfield,.vplay,.ranges,.toggle{display:none}
+  body{background:var(--surface)}
+  .band{padding-block:var(--s-lg)}
+  .qa .reveal{grid-template-rows:1fr !important}
+  .qa .reveal > div{overflow:visible}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="dio-mark" viewBox="0 0 264 243">
+    <path fill="var(--dio-a)" d="M93.562 0C42.0867 0 0.323744 41.4391 0 92.9143V187.447H94.5332C146.008 187.124 187.448 145.361 187.448 93.8855C187.448 42.0866 145.361 0 93.562 0Z"/>
+    <path fill="var(--dio-a)" d="M0 220.469C1.29498 213.346 1.29498 207.195 11.9785 197.483C21.6908 188.742 31.4032 187.447 34.6406 187.447H0V220.469Z"/>
+    <path fill="var(--dio-b)" d="M251.649 46.4479C242.272 55.3 232.896 56.6114 229.771 56.6114H263.212V23.1701C261.962 30.3829 261.962 36.6122 251.649 46.4479Z"/>
+    <path fill="var(--dio-b)" d="M168.994 55.0365C117.519 55.3602 76.0797 97.1231 76.0797 148.598C76.0797 200.397 118.166 242.16 169.642 242.16C221.117 242.16 262.88 200.721 263.204 149.246V55.0365H168.994Z"/>
+  </symbol>
+</defs></svg>
+
+<!-- ═══ DIOLOG BANNER ══════════════════════════════════════════════════════ -->
+<div class="dbanner">
+  <div class="wrap dbanner__in">
+    <div class="dbanner__left">
+      <span class="dlock"><svg class="dio dio--on-dark" style="font-size:17px" role="img" aria-label="Diolog"><use href="#dio-mark"/></svg><span class="dmark">diolog</span></span>
+      <span class="dbanner__sep" aria-hidden="true"></span>
+      <p class="dbanner__txt">A direct line to the companies you own</p>
+    </div>
+    <a class="dbanner__cta" href="#get-the-app">
+      Get the app
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- ═══ HEADER ═════════════════════════════════════════════════════════════ -->
+<header class="site-head" id="siteHead">
+  <div class="wrap site-head__in">
+    <a class="brand" href="#top">
+      <span class="brand__mark" aria-hidden="true">AE</span>
+      <span>
+        <span class="brand__name">Alfabs</span>
+        <span class="brand__sub">Investor portal</span>
+      </span>
+    </a>
+    <span class="quote-badge">
+      ASX&#8202;:&#8202;AAL <b>A$0.385</b>
+      <span class="up"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 15 7-7 7 7"/></svg>3.21%</span>
+    </span>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="#facts">Facts</a>
+      <a href="#disclosures">Disclosures</a>
+      <a href="#group">The business</a>
+      <a href="#video">Video</a>
+      <a href="#governance">Governance</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <a class="head-cta" href="#contact">
+      Contact IR
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══════════════════════════════════════════════════════════════ -->
+<main id="top">
+<section class="hero">
+  <img class="hero__img" id="heroImg" src="imgs/01-hero-fabrication-floor.jpg" width="2200" height="1257" style="height:100%"
+       alt="Interior of the Alfabs fabrication workshop: half-built plate girders under a gantry crane, two workers in hi-vis in the distance.">
+  <div class="hero__veil"></div>
+  <div class="wrap hero__in">
+    <div>
+      <p class="overline" data-hero>
+Last updated <time datetime="2026-07-15">15 July 2026</time>
+      </p>
+      <h1 class="display" data-hero>Mining and engineering services in the <em>Hunter Valley</em> region.</h1>
+      <p class="hero__lead" data-hero>Alfabs Australia Limited fabricates structural steel, builds and hires underground mining equipment, coats it and transports it. Family founded in the 1950s, listed in June 2024, over 300 people across five sites in NSW and Queensland.</p>
+      <div class="hero__ctas" data-hero>
+        <a class="btn btn--primary" href="#facts">
+          Company facts
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a class="btn btn--ghost-dark" href="#disclosures">Latest disclosures</a>
+      </div>
+    </div>
+    <div class="thesis" data-hero>
+      <p class="overline">The business &middot; in four lines</p>
+      <ol>
+        <li><span class="n">01</span><span class="t">Design to delivery in one group: fabricate, coat, transport, install.</span></li>
+        <li><span class="n">02</span><span class="t">Mining equipment in almost every underground coal mine in Australia.</span></li>
+        <li><span class="n">03</span><span class="t">Stone dust in 90% of NSW underground mines, 20,000 bags a week.</span></li>
+        <li><span class="n">04</span><span class="t">Founder led, family majority owned, listed June 2024 as ASX&#8202;:&#8202;AAL.</span></li>
+      </ol>
+      <p class="thesis__src">Source: Alfabs Group company profile and FY25 Annual Report.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TICKER (under the hero, not stacked in the header)  ═════════════════════════════════════════════════════════════ -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track" id="tickTrack"></div>
+</div>
+
+<!-- ═══ §01 COMPANY FACTS ══════════════════════════════════════════════════ -->
+<section class="band" id="facts">
+  <div class="wrap">
+    <div class="sec__head rv">
+      <div>
+        <span class="sec__num">§&#8202;01</span>
+        <h2 class="h-lg">Company facts</h2>
+        <p>Every number below carries the date it was true and the disclosure it came from. This is the authoritative version. Where a third party reports a different figure, this one governs.</p>
+      </div>
+      <p class="asat">All figures as at the dates shown &middot; last reviewed <time datetime="2026-07-15">15 Jul 2026</time></p>
+    </div>
+
+    <dl class="facts__lead rv">
+      <div>
+        <dt>Net debt</dt>
+        <dd class="data">A$36.6M</dd>
+        <dd class="facts__lead-m">at <time datetime="2026-06-30">30 Jun 2026</time>, from A$38.9M at 31 Mar</dd>
+      </div>
+      <div>
+        <dt>Shares on issue</dt>
+        <dd class="data">292.0M</dd>
+        <dd class="facts__lead-m">at <time datetime="2026-06-30">30 Jun 2026</time>, ordinary fully paid</dd>
+      </div>
+      <div>
+        <dt>Dividend</dt>
+        <dd class="data facts__lead-w">Suspended</dd>
+        <dd class="facts__lead-m">maiden dividend paid <time datetime="2025-02">Feb 2025</time></dd>
+      </div>
+    </dl>
+
+    <div class="facts rv">
+      <table class="facts__t">
+        <caption>Alfabs Australia Limited key facts, with the as-at date and source disclosure for each.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Fact</th>
+            <th scope="col" class="c-val">Value</th>
+            <th scope="col" class="c-date">As at</th>
+            <th scope="col" class="c-src">Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Legal name</th>
+            <td class="c-val"><span class="fv">Alfabs Australia Limited</span></td>
+            <td class="c-date"><time datetime="2024-06">Jun 2024</time></td>
+            <td class="c-src">ASX admission</td>
+          </tr>
+          <tr>
+            <th scope="row">ASX code</th>
+            <td class="c-val"><span class="fv data">AAL</span> <span class="fu">one listing, no secondary</span></td>
+            <td class="c-date"><time datetime="2024-06">Jun 2024</time></td>
+            <td class="c-src">ASX admission</td>
+          </tr>
+          <tr>
+            <th scope="row">Ordinary shares on issue</th>
+            <td class="c-val"><span class="fv data">292,043,118</span></td>
+            <td class="c-date"><time datetime="2026-06-30">30 Jun 2026</time></td>
+            <td class="c-src"><a href="#disclosures">Q4 FY26 quarterly update</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Net debt</th>
+            <td class="c-val"><span class="fv data">A$36.6M</span> <span class="fu">from A$38.9M at 31 Mar 2026</span></td>
+            <td class="c-date"><time datetime="2026-06-30">30 Jun 2026</time></td>
+            <td class="c-src"><a href="#disclosures">Q4 FY26 quarterly update</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Dividend status</th>
+            <td class="c-val"><span class="fv">Suspended</span> <span class="fu">maiden dividend paid Feb 2025</span></td>
+            <td class="c-date"><time datetime="2026-06-30">30 Jun 2026</time></td>
+            <td class="c-src">Half year result and maiden dividend</td>
+          </tr>
+          <tr>
+            <th scope="row">Employees</th>
+            <td class="c-val"><span class="fv data">300+</span> <span class="fu">including apprentices and trainees</span></td>
+            <td class="c-date"><time datetime="2026-06-30">30 Jun 2026</time></td>
+            <td class="c-src">FY25 Annual Report</td>
+          </tr>
+          <tr>
+            <th scope="row">Board</th>
+            <td class="c-val"><span class="fv data">5 directors</span> <span class="fu">Matthew Torrance is CEO and a director</span></td>
+            <td class="c-date"><time datetime="2026-04-24">24 Apr 2026</time></td>
+            <td class="c-src"><a href="#governance">Changes to Board and KMP</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Company secretary</th>
+            <td class="c-val"><span class="fv">Clayton Freeman</span></td>
+            <td class="c-date"><time datetime="2026-04-24">24 Apr 2026</time></td>
+            <td class="c-src"><a href="#governance">Changes to Board and KMP</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Registered office</th>
+            <td class="c-val"><span class="fv">152 Mitchell Avenue, Kurri Kurri NSW 2327</span></td>
+            <td class="c-date"><time datetime="2024-06">Jun 2024</time></td>
+            <td class="c-src">ASX admission</td>
+          </tr>
+          <tr>
+            <th scope="row">Share registry</th>
+            <td class="c-val"><span class="fv">Computershare Investor Services</span></td>
+            <td class="c-date"><time datetime="2024-06">Jun 2024</time></td>
+            <td class="c-src">ASX admission</td>
+          </tr>
+          <tr>
+            <th scope="row">Financial year end</th>
+            <td class="c-val"><span class="fv">30 June</span></td>
+            <td class="c-date"><time datetime="2024-06">Jun 2024</time></td>
+            <td class="c-src">Company constitution</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="facts__foot">
+        <p>Figures are drawn from disclosures already released through the ASX Market Announcements Platform. Nothing on this page is released here first.</p>
+        <button class="copybtn" type="button" id="copyFacts">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          <span id="copyLabel">Copy as text</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ §02 DISCLOSURES ════════════════════════════════════════════════════ -->
+<section class="band band--sunken" id="disclosures">
+  <div class="wrap">
+    <div class="sec__head rv">
+      <div>
+        <span class="sec__num">§&#8202;02</span>
+        <h2 class="h-lg">Latest disclosures</h2>
+        <p>Every item is published here only after the ASX Market Announcements Platform has confirmed release to the market, as Listing Rule 15.7 requires.</p>
+      </div>
+      <a class="seclink" href="#">Full announcement archive
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="latest">
+      <article class="ann-feat rv">
+        <div class="tagrow">
+          <span class="tag">Quarterly</span>
+          <span class="tag tag--ps"><span class="dot" aria-hidden="true"></span>Price sensitive</span>
+          <time class="ann-date" datetime="2026-07-15T10:03+10:00">15 Jul 2026, 10:03 AEST</time>
+        </div>
+        <h3>Q4 FY26 Quarterly Operational and Strategic Update</h3>
+        <p>Net debt reduced to A$36.6M, Mining daily hire rates up 7% on Q2 FY26, and the workshop consolidation into Kurri Kurri completed. Engineering conditions remain subdued.</p>
+        <div class="aisum">
+          <p class="aisum__h">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>
+            AI summary
+          </p>
+          <ul>
+            <li>Net debt fell to A$36.6M from A$38.9M at 31 March 2026, and the quarter was free cash flow positive.</li>
+            <li>Mining average daily hire rate reached A$81.4k, up 0.9% on the prior quarter and about 7% on Q2 FY26.</li>
+            <li>Engineering contracted work in hand fell to A$11.6M from A$15.4M in Q2 FY26.</li>
+          </ul>
+          <p class="aisum__f">Generated from the announcement, then reviewed by Alfabs before publication. <a href="#">Read the source PDF</a> for the authoritative version.</p>
+        </div>
+        <div class="ann-foot">
+          <span class="meta">PDF &middot; 267&nbsp;KB &middot; 14 pages</span>
+          <span class="map">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12 5.5 5.5L20 7"/></svg>
+            Released via ASX MAP
+          </span>
+        </div>
+      </article>
+
+      <div class="recent rv">
+        <h3>Earlier</h3>
+        <a class="rrow" href="#">
+          <span class="rrow__m"><time datetime="2026-06-18">18 Jun 2026</time> &middot; Presentation</span>
+          <span class="rrow__t">Investor Day update presentation and acquisition update</span>
+          <svg class="rrow__go" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a class="rrow" href="#">
+          <span class="rrow__m"><time datetime="2026-04-24">24 Apr 2026</time> &middot; Corporate</span>
+          <span class="rrow__t">Organisational restructure and debt refinancing update</span>
+          <svg class="rrow__go" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a class="rrow" href="#">
+          <span class="rrow__m"><time datetime="2026-04-08">08 Apr 2026</time> &middot; Financial</span>
+          <span class="rrow__t">Appendix 4D and interim financial report</span>
+          <svg class="rrow__go" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a class="rrow" href="#">
+          <span class="rrow__m"><time datetime="2025-09-30">30 Sep 2025</time> &middot; Annual</span>
+          <span class="rrow__t">FY25 Annual Report</span>
+          <svg class="rrow__go" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a class="rrow" href="#">
+          <span class="rrow__m"><time datetime="2025-08-28">28 Aug 2025</time> &middot; Financial</span>
+          <span class="rrow__t">Appendix 4E and FY25 financial statements</span>
+          <svg class="rrow__go" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- price, as context under the disclosures rather than above them -->
+    <div class="price rv">
+      <div class="price__head">
+        <h3 class="h-sm">Share price</h3>
+        <p class="price__note">Delayed by at least 20 minutes. Past performance is not an indicator of future performance.</p>
+      </div>
+      <div class="price__body">
+        <div class="price__now">
+          <p class="price__last data">A$0.385</p>
+          <p class="price__ch"><span class="up"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 15 7-7 7 7"/></svg>+A$0.012 (+3.21%)</span></p>
+          <dl class="price__grid">
+            <div><dt>Volume</dt><dd class="data">1,284,900</dd></div>
+            <div><dt>Market cap</dt><dd class="data">A$112.4M</dd></div>
+            <div><dt>52-week range</dt><dd class="data">A$0.215 - A$0.545</dd></div>
+            <div><dt>VWAP</dt><dd class="data">A$0.382</dd></div>
+          </dl>
+          <p class="rangebar" role="img" aria-label="Last price A$0.385 sits 52% of the way through the 52-week range of A$0.215 to A$0.545.">
+            <span class="rangebar__fill" style="width:52%"></span>
+            <span class="rangebar__pin" style="left:calc(52% - 1.5px)"></span>
+          </p>
+        </div>
+        <div class="price__chart">
+          <div class="chart-bar">
+            <label class="toggle">
+              <input type="checkbox" id="mkToggle" checked>
+              <span class="toggle__box" aria-hidden="true"></span>
+              <span>Announcements</span>
+            </label>
+            <div class="ranges" role="group" aria-label="Chart time range">
+              <button type="button" data-range="1" aria-pressed="false">1M</button>
+              <button type="button" data-range="3" aria-pressed="false">3M</button>
+              <button type="button" data-range="6" aria-pressed="false">6M</button>
+              <button type="button" data-range="12" aria-pressed="true">1Y</button>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <svg id="chart" viewBox="0 0 1000 260"
+                 role="img" aria-labelledby="chartDesc"><desc id="chartDesc">Line chart of the Alfabs Australia Limited daily closing share price over the past year, ranging from A$0.215 to A$0.545 and ending at A$0.385, with a marker on each announcement date. The key figures are listed in the facts table above.</desc>
+              <defs>
+                <linearGradient id="chartFade" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#D72229" stop-opacity=".16"/>
+                  <stop offset="100%" stop-color="#D72229" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <g class="chart-grid" id="grid"></g>
+              <g id="axis"></g>
+              <path class="chart-area" id="area" d=""></path>
+              <path class="chart-line" id="line" d=""></path>
+              <g id="markers"></g>
+              <line class="crosshair" id="xh" y1="0" y2="220"></line>
+              <circle class="cursor-dot" id="cdot" r="4.5"></circle>
+            </svg>
+            <div class="chart-tip" id="tip" role="status" aria-live="polite"></div>
+          </div>
+          <span class="phone__fade" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ §03 THE GROUP ══════════════════════════════════════════════════════ -->
+<section class="band" id="group">
+  <div class="wrap">
+    <div class="sec__head rv">
+      <div>
+        <span class="sec__num">§&#8202;03</span>
+        <h2 class="h-lg">Where the revenue comes from</h2>
+        <p>Five business units on one model: fabricate it, coat it, transport it, install it, and hire the equipment that works it.</p>
+      </div>
+    </div>
+
+    <div class="tiles">
+      <a class="tile rv" href="#">
+        <span class="tile__icon" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg></span>
+        <h3>Engineering</h3>
+        <p>Heavy structural steel, pipe and duct fabrication, plus onsite construction and maintenance crews. CC3-certified to AS/NZS 5131.</p>
+        <span class="tile__stat">3,000&nbsp;sqm workshop &middot; 150t sections
+          <svg class="tile__go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </span>
+      </a>
+      <a class="tile rv" href="#">
+        <span class="tile__icon" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="2.5"/><circle cx="17" cy="18" r="2.5"/><path d="M4 18V9l5-3h6l4 5v7"/><path d="M9.5 18h5"/></svg></span>
+        <h3>Mining equipment</h3>
+        <p>Design, manufacture, hire and service of underground equipment: LHDs, shuttle cars, pods and secondary support.</p>
+        <span class="tile__stat">A$81.4k avg daily hire rate
+          <svg class="tile__go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </span>
+      </a>
+      <a class="tile rv" href="#">
+        <span class="tile__icon" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V9a6 6 0 0 1 12 0v11"/><path d="M9 13h6"/></svg></span>
+        <h3>Stone dust</h3>
+        <p>Fire suppression barrier products for underground mining, produced in bulk from the Hunter Valley.</p>
+        <span class="tile__stat">20,000 bags/week &middot; 90% of NSW mines
+          <svg class="tile__go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </span>
+      </a>
+      <a class="tile rv" href="#">
+        <span class="tile__icon" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15V8a2 2 0 0 1 2-2h8l4 4v5"/><path d="M4 15h16"/><path d="M8 19h8"/></svg></span>
+        <h3>Protective coatings</h3>
+        <p>Blasting and coating in a purpose-built chamber, plus onsite paint and blast and hazardous coating management.</p>
+        <span class="tile__stat">PCCP Classes 1 to 6
+          <svg class="tile__go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </span>
+      </a>
+      <a class="tile rv" href="#">
+        <span class="tile__icon" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16V7h11v9"/><path d="M13 10h4l4 3.5V16"/><circle cx="6.5" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></span>
+        <h3>Transport and logistics</h3>
+        <p>Oversize overmass movements across NSW and QLD: mobile plant, structural steel and containers.</p>
+        <span class="tile__stat">NSW and QLD &middot; OSOM accredited
+          <svg class="tile__go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </span>
+      </a>
+      <a class="tile rv" href="#">
+        <span class="tile__icon" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7 12 3 4 7v10l8 4 8-4z"/><path d="m4 7 8 4 8-4"/><path d="M12 21V11"/></svg></span>
+        <h3>Consumables and store</h3>
+        <p>Parts and consumables supply to worksites, run alongside the equipment and service business.</p>
+        <span class="tile__stat">Five sites &middot; NSW and QLD
+          <svg class="tile__go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+        </span>
+      </a>
+    </div>
+
+    <div class="stats rv">
+      <div><p class="stat__v" data-count="300" data-suffix="+">300+</p><p class="stat__k">People across the group, including apprentices and trainees</p></div>
+      <div><p class="stat__v" data-count="5">5</p><p class="stat__k">Sites: Kurri Kurri, Unanderra, Mackay, Narrabri, Parramatta</p></div>
+      <div><p class="stat__v">1950s</p><p class="stat__k">Founded as Alfabs Engineers, family run since 1986</p></div>
+      <div><p class="stat__v">Jun&nbsp;2024</p><p class="stat__k">Listed on the ASX as Alfabs Australia Limited</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ §04 VIDEO ══════════════════════════════════════════════════════════ -->
+<section class="band band--dark" id="video">
+  <div class="wrap">
+    <div class="sec__head rv">
+      <div>
+        <span class="sec__num">§&#8202;04</span>
+        <h2 class="h-lg">From the CEO</h2>
+        <p>Matthew Torrance on the quarter, the restructure, and what the Kurri Kurri consolidation means.</p>
+      </div>
+      <a class="seclink seclink--dark" href="#">All videos
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="vids">
+      <article class="vfeat rv">
+        <div class="vthumb">
+          <img src="imgs/03-md-update.jpg" width="1200" height="675" style="height:100%" alt="An empty meeting room in a regional industrial office at dusk, printed reports squared on the table.">
+          <button class="vplay" type="button" aria-label="Play: CEO update on Q4 FY26, 4 minutes 42 seconds">
+            <span><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+          </button>
+          <span class="vdur">4:42</span>
+        </div>
+        <div class="vfeat__body">
+          <span class="tag">CEO update</span>
+          <h3>Q4 FY26 in four minutes</h3>
+          <p>Where the A$8M of annualised cash benefits comes from, why Engineering is still soft, and what the Shell Program build schedule looks like into FY27.</p>
+          <p class="vfeat__src">Recorded 16 Jul 2026, after the quarterly update was released to the market.</p>
+        </div>
+      </article>
+
+      <div class="vlist rv">
+        <a class="vsmall" href="#">
+          <span class="vthumb">
+            <img src="imgs/02-site-tour.jpg" width="1200" height="675" style="height:100%" alt="Mining equipment workshop with a partially assembled continuous miner shell on stands.">
+            <span class="vdur">8:14</span>
+          </span>
+          <span>
+            <span class="vsmall__cat">Site tour</span>
+            <span class="vsmall__t">Inside the Kurri Kurri workshop</span>
+          </span>
+        </a>
+        <a class="vsmall" href="#">
+          <span class="vthumb">
+            <img src="imgs/04-coatings.jpg" width="1200" height="675" style="height:100%" alt="Protective coatings bay with a large steel structure half-coated on an overhead rail.">
+            <span class="vdur">3:06</span>
+          </span>
+          <span>
+            <span class="vsmall__cat">Explainer</span>
+            <span class="vsmall__t">What PCCP Class 1 to 6 accreditation means</span>
+          </span>
+        </a>
+        <a class="vsmall" href="#">
+          <span class="vthumb">
+            <img src="imgs/05-investor-day.jpg" width="1200" height="675" style="height:100%" alt="An empty conference room set for an investor presentation: rows of chairs facing a blank projection screen and a lectern.">
+            <span class="vdur">47:08</span>
+          </span>
+          <span>
+            <span class="vsmall__cat">Webinar</span>
+            <span class="vsmall__t">Investor Day replay, June 2026</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ §05 GOVERNANCE ═════════════════════════════════════════════════════ -->
+<section class="band" id="governance">
+  <div class="wrap">
+    <div class="sec__head rv">
+      <div>
+        <span class="sec__num">§&#8202;05</span>
+        <h2 class="h-lg">Corporate governance</h2>
+        <p>The corporate governance statement is published at this URL under Listing Rule 4.10.3, and a copy is lodged with ASX under Listing Rule 4.7.4. The Appendix 4G below keys each recommendation to where it is disclosed.</p>
+      </div>
+      <p class="asat">Statement effective <time datetime="2025-09-30">30 Sep 2025</time> &middot; approved by the Board</p>
+    </div>
+
+    <div class="gov rv">
+      <div class="gov__docs">
+        <h3 class="h-sm">Charters and policies</h3>
+        <ul class="doclist">
+          <li><a href="#"><span class="doclist__t">Corporate governance statement</span><span class="doclist__m">FY25 &middot; PDF</span></a></li>
+          <li><a href="#"><span class="doclist__t">Appendix 4G key to disclosures</span><span class="doclist__m">FY25 &middot; PDF</span></a></li>
+          <li><a href="#"><span class="doclist__t">Board charter</span><span class="doclist__m">Jul 2024 &middot; PDF</span></a></li>
+          <li><a href="#"><span class="doclist__t">Board skills matrix</span><span class="doclist__m">May 2026 &middot; PDF</span></a></li>
+          <li><a href="#"><span class="doclist__t">Audit and risk committee charter</span><span class="doclist__m">Jul 2024 &middot; PDF</span></a></li>
+          <li><a href="#"><span class="doclist__t">Diversity policy</span><span class="doclist__m">Jul 2024 &middot; PDF</span></a></li>
+          <li><a href="#"><span class="doclist__t">Whistleblower policy</span><span class="doclist__m">Jul 2024 &middot; PDF</span></a></li>
+          <li><a href="#"><span class="doclist__t">Continuous disclosure policy</span><span class="doclist__m">Jul 2024 &middot; PDF</span></a></li>
+          <li><a href="#"><span class="doclist__t">Securities trading policy</span><span class="doclist__m">Jul 2024 &middot; PDF</span></a></li>
+        </ul>
+      </div>
+      <div class="gov__people">
+        <h3 class="h-sm">Who signs the disclosures</h3>
+        <ul class="people">
+          <li>
+            <span class="people__in" aria-hidden="true">MT</span>
+            <span>
+              <span class="people__n">Matthew Torrance</span>
+              <span class="people__r">Chief Executive Officer, Director of the Board</span>
+            </span>
+          </li>
+          <li>
+            <span class="people__in" aria-hidden="true">PW</span>
+            <span>
+              <span class="people__n">Peter White</span>
+              <span class="people__r">Chief Financial Officer</span>
+            </span>
+          </li>
+          <li>
+            <span class="people__in" aria-hidden="true">CF</span>
+            <span>
+              <span class="people__n">Clayton Freeman</span>
+              <span class="people__r">Head of Corporate Governance, Company Secretary</span>
+            </span>
+          </li>
+        </ul>
+        <p class="gov__note">Directors' interest notices and changes to key management personnel are lodged with ASX and appear in the announcement archive.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ §06 QUESTIONS ══════════════════════════════════════════════════════ -->
+<section class="band band--sunken" id="questions">
+  <div class="wrap">
+    <div class="sec__head rv">
+      <div>
+        <span class="sec__num">§&#8202;06</span>
+        <h2 class="h-lg">Five questions, answered plainly</h2>
+        <p>What new shareholders ask most. Each answer names the disclosure it comes from.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <details class="qa rv" open>
+        <summary>
+          <span class="qa__n">01</span>
+          <span class="qa__q">How do I buy AAL on the ASX?</span>
+          <svg class="caret" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </summary>
+        <div class="reveal"><div><div class="qa__a">
+          <p class="qa__intent">Through any broker with ASX access, under the code AAL.</p>
+          <p class="prose">Alfabs Australia Limited trades on the Australian Securities Exchange as AAL. There is no secondary listing on any other exchange. A CHESS-sponsored broker holds the shares under your own Holder Identification Number, which keeps the holding in your name on the register. A custodial broker holds them on your behalf, which is usually cheaper and one step further removed. Alfabs does not endorse any broker.</p>
+        </div></div></div>
+      </details>
+
+      <details class="qa rv">
+        <summary>
+          <span class="qa__n">02</span>
+          <span class="qa__q">How is Alfabs capitalised?</span>
+          <svg class="caret" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </summary>
+        <div class="reveal"><div><div class="qa__a">
+          <p class="qa__intent">Equity plus bank debt, with the founding family holding the majority.</p>
+          <p class="prose">The group listed in June 2024 following a restructure and remains founder led, with the family holding a majority of the shares on issue. Phase 1 of the debt refinancing completed during Q4 FY26. The capital structure as at 30 June 2026:</p>
+          <table class="captable">
+            <tbody>
+              <tr><td>01</td><td>Ordinary shares on issue</td><td>292,043,118</td></tr>
+              <tr><td>02</td><td>Performance rights, unlisted</td><td>6,100,000</td></tr>
+              <tr><td>03</td><td>Options, unlisted</td><td>2,400,000</td></tr>
+              <tr><td>04</td><td>Top 20 holders</td><td>68.4%</td></tr>
+              <tr><td>05</td><td>Substantial holders above 5%</td><td>3</td></tr>
+              <tr><td>06</td><td>Net debt</td><td>A$36.6M</td></tr>
+            </tbody>
+          </table>
+          <p class="footnote">Source: Q4 FY26 Quarterly Operational and Strategic Update, released 15 July 2026. Substantial holder positions are disclosed via Form 604 within five business days of a material change.</p>
+        </div></div></div>
+      </details>
+
+      <details class="qa rv">
+        <summary>
+          <span class="qa__n">03</span>
+          <span class="qa__q">When does the dividend come back?</span>
+          <svg class="caret" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </summary>
+        <div class="reveal"><div><div class="qa__a">
+          <p class="qa__intent">No date has been given. A net-debt milestone has.</p>
+          <p class="prose">Alfabs paid a maiden dividend in February 2025 and subsequently suspended distributions while the group refinanced and restructured. At the Investor Day held on 11 June 2026, the Board set out the condition for reconsidering distributions: net debt below 2x EBITDA, targeted for the second half of FY27. That presentation was released to the market on 18 June 2026. Net debt has moved from A$38.9M at 31 March 2026 to A$36.6M at 30 June 2026.</p>
+          <div class="stats" style="margin-top:var(--s-lg)">
+            <div><p class="stat__v">A$36.6M</p><p class="stat__k">Net debt at 30 Jun 2026</p></div>
+            <div><p class="stat__v">&lt;2x</p><p class="stat__k">Net debt to EBITDA condition</p></div>
+            <div><p class="stat__v">H2 FY27</p><p class="stat__k">Period the company is targeting</p></div>
+            <div><p class="stat__v">Feb&nbsp;2025</p><p class="stat__k">Last dividend paid</p></div>
+          </div>
+          <p class="footnote"><b>This is a forward-looking statement.</b> It reflects the Board's expectations at the date of the disclosures cited, and the assumptions behind it are set out in the FY25 Annual Report and in the Investor Day presentation. Actual outcomes may differ. No commitment to pay a dividend has been made and none should be inferred. Sources: Investor Day update presentation, released 18 June 2026; Q4 FY26 Quarterly Update, released 15 July 2026.</p>
+        </div></div></div>
+      </details>
+
+      <details class="qa rv">
+        <summary>
+          <span class="qa__n">04</span>
+          <span class="qa__q">I already hold AAL. Where do I change my details?</span>
+          <svg class="caret" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </summary>
+        <div class="reveal"><div><div class="qa__a">
+          <p class="qa__intent">At the share registry, not here. Which route depends on how you hold.</p>
+          <p class="prose">Alfabs does not hold or maintain the register. Computershare Investor Services does. What you can do depends on whether your holding is broker sponsored or issuer sponsored, and the identifier on your statement tells you which:</p>
+          <div class="hinsrn">
+            <div class="hinsrn__c">
+              <p class="hinsrn__k data">HIN</p>
+              <p class="hinsrn__t">Starts with X. CHESS sponsored, held through your broker.</p>
+              <p class="hinsrn__b">Address and bank detail changes go through your broker, not the registry.</p>
+            </div>
+            <div class="hinsrn__c">
+              <p class="hinsrn__k data">SRN</p>
+              <p class="hinsrn__t">Starts with I. Issuer sponsored, held directly on the register.</p>
+              <p class="hinsrn__b">Changes go to <a href="https://www-au.computershare.com/investor/">Computershare Investor Centre</a>, using your SRN and registered postcode.</p>
+            </div>
+          </div>
+          <p class="prose" style="margin-top:var(--s-lg)">The registry handles address changes, bank and payment instructions, annual report elections, tax file number or ABN notification, communication preferences, and lost holding statements. Your HIN or SRN is printed on any holding statement or dividend advice.</p>
+          <p class="footnote">Overseas holders verify with their country rather than a postcode. Alfabs cannot look up or change a holding on your behalf.</p>
+        </div></div></div>
+      </details>
+
+      <details class="qa rv">
+        <summary>
+          <span class="qa__n">05</span>
+          <span class="qa__q">Who can I talk to at the company?</span>
+          <svg class="caret" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </summary>
+        <div class="reveal"><div><div class="qa__a">
+          <p class="qa__intent">Investor relations, through the form in the next section.</p>
+          <p class="prose">Questions about the company go to investor relations. They arrive in the Diolog workspace behind this page, so the question and the answer stay with the rest of the record. Answers can only draw on material already released to the market. If a question would require disclosing something that has not been released, Alfabs will say so rather than answer it, because Listing Rule 15.7 does not permit selective release.</p>
+        </div></div></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ §07 CONTACT ════════════════════════════════════════════════════════ -->
+<section class="band" id="contact">
+  <div class="wrap">
+    <div class="sec__head rv">
+      <div>
+        <span class="sec__num">§&#8202;07</span>
+        <h2 class="h-lg">Ask investor relations</h2>
+        <p>Questions arrive in the Diolog workspace, are answered by the Alfabs IR team, and are kept with the rest of the record.</p>
+      </div>
+    </div>
+
+    <div class="contact">
+      <div class="ccard ccard--d rv">
+        <p class="ccard__eye">Answered by a person &middot; within one business day</p>
+        <h3>Send a question</h3>
+        <p>For company matters. For anything about your own holding, use the registry details opposite.</p>
+        <form id="irForm" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label for="f-name">Full name</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="f-email">Email</label>
+              <input id="f-email" name="email" type="email" autocomplete="email" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-seg">I am</label>
+            <select id="f-seg" name="segment" required>
+              <option value="">Select one</option>
+              <option>An existing shareholder</option>
+              <option>Considering an investment</option>
+              <option>An analyst</option>
+              <option>A fund manager</option>
+              <option>Media</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-q">Question</label>
+            <textarea id="f-q" name="question" aria-describedby="f-q-note" required></textarea>
+            <p class="field__note" id="f-q-note">Alfabs cannot give financial advice, and cannot discuss anything that has not been released to the market.</p>
+          </div>
+          <button class="btn btn--primary" type="submit" style="justify-self:start">
+            Send to investor relations
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </form>
+        <p class="form-ok" id="formOk">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+          Not sent. This form is a demonstration and is not connected to Alfabs investor relations. On the live site it would reach the team, which replies within one business day.
+        </p>
+        <p class="routed"><svg class="dio" style="font-size:15px" role="img" aria-label="Diolog"><use href="#dio-mark"/></svg> Routed and recorded through Diolog</p>
+      </div>
+
+      <div class="ccard rv">
+        <p class="ccard__eye">Direct lines</p>
+        <h3>Registry, office and phone</h3>
+        <p>Holdings, payments and address changes are handled by the share registry, not by Alfabs.</p>
+        <ul class="ir-lines">
+          <li>
+            <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg></span>
+            <span><span class="k">Investor relations</span><span class="v"><a href="mailto:investors@alfabs.com.au">investors@alfabs.com.au</a></span></span>
+          </li>
+          <li>
+            <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c0 8.3 6.7 15 15 15v-3.5l-4-1.8-2 2a13 13 0 0 1-5.7-5.7l2-2L7.5 5z"/></svg></span>
+            <span><span class="k">Head office</span><span class="v"><a href="tel:1300253227">1300 253 227</a></span></span>
+          </li>
+          <li>
+            <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+            <span><span class="k">Registered office</span><span class="v">152 Mitchell Avenue, Kurri Kurri NSW 2327</span></span>
+          </li>
+          <li>
+            <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V6h12v14"/><path d="M10 10h4M10 14h4"/></svg></span>
+            <span><span class="k">Share registry</span><span class="v">Computershare Investor Services<br><a href="https://www-au.computershare.com/investor/">Investor Centre</a><br><span class="ir-lines__note">For an SRN holding. A HIN holding changes through your broker.</span></span></span>
+          </li>
+          <li>
+            <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8v8l9 5 9-5V8z"/><path d="M12 21V11"/><path d="m3 8 9 3 9-3"/></svg></span>
+            <span><span class="k">Company secretary</span><span class="v">Clayton Freeman</span></span>
+          </li>
+        </ul>
+        <p class="gov__note" style="margin-top:auto; padding-top:var(--s-lg)">Alfabs announcements are released through the ASX Market Announcements Platform first. Nothing appears on this page before the market has it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DIOLOG APP BAND ════════════════════════════════════════════════════ -->
+<section class="dband" id="get-the-app">
+  <div class="dband__bg" aria-hidden="true"></div>
+  <div class="dband__grid" aria-hidden="true"></div>
+  <canvas id="dfield" aria-hidden="true"></canvas>
+  <div class="dband__scrim" aria-hidden="true"></div>
+  <div class="wrap dband__in">
+    <div class="dband__copy">
+      <p class="eyebrow dlock"><svg class="dio dio--on-dark" style="font-size:14px" role="img" aria-label="Diolog"><use href="#dio-mark"/></svg>Diolog for investors</p>
+      <h2>Answers without <em>the run-around</em>.</h2>
+      <p class="dband__lede">See every announcement in one place and ask the company’s investor relations team a question directly. Answers come from the source, not from a switchboard.</p>
+      <dl class="dband__pts">
+        <div>
+          <dt>Ask them directly</dt>
+          <dd>A plain-English question goes to the investor relations team. No switchboard, no generic inbox.</dd>
+        </div>
+        <div>
+          <dt>Everything in one place</dt>
+          <dd>Announcements, replies and AGM dates in a single feed built around your portfolio.</dd>
+        </div>
+        <div>
+          <dt>Answers you can trust</dt>
+          <dd>Every reply points back to its source document. Specific, and checkable.</dd>
+        </div>
+      </dl>
+      <div class="dbtns">
+        <a class="storebtn" href="https://diolog.com.au/for-investors" aria-label="Download Diolog on the App Store">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.7c0-2.2 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.7-1.4-.1-2.7.8-3.4.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.9.9-3.6 2.2-1.6 2.7-.4 6.7 1.1 8.9.8 1.1 1.6 2.3 2.8 2.2 1.1 0 1.5-.7 2.9-.7 1.3 0 1.7.7 2.9.7 1.2 0 2-1.1 2.7-2.1.9-1.2 1.2-2.4 1.2-2.4s-2.4-.9-2.4-3.7zM14.2 5.9c.6-.8 1-1.8.9-2.9-.9 0-2 .6-2.6 1.3-.6.7-1.1 1.7-.9 2.7 1 .1 2-.5 2.6-1.1z"/></svg>
+          <span><span class="storebtn__k">Download on the</span><span class="storebtn__n">App Store</span></span>
+        </a>
+        <a class="storebtn" href="https://diolog.com.au/for-investors" aria-label="Get Diolog on Google Play">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3c-.3.3-.5.8-.5 1.4v16.6c0 .6.2 1.1.5 1.4l.1.1 9.3-9.3v-.2L3.6 2.3zM16.2 15.1l-3.1-3.1v-.2l3.1-3.1.1.1 3.7 2.1c1 .6 1 1.6 0 2.2l-3.8 2zM15.6 15.7L12.4 12.5 3.6 21.3c.3.4.9.4 1.5.1l10.5-5.7M15.6 8.3L5.1 2.6c-.6-.3-1.2-.3-1.5.1l8.8 8.8 3.2-3.2z"/></svg>
+          <span><span class="storebtn__k">Get it on</span><span class="storebtn__n">Google Play</span></span>
+        </a>
+      </div>
+      <p class="dband__free">Free for investors &middot; companies pay to be on the platform</p>
+    </div>
+
+    <div class="phone rv">
+      <div class="phone__shell">
+        <div class="phone__screen" role="img" aria-label="The Diolog app showing a shareholder question to Alfabs investor relations and the reply, which cites the Q4 FY26 quarterly update and the Investor Day presentation, above the list of followed companies.">
+          <div class="phone__status">
+            <span class="data">9:41</span>
+            <span class="phone__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          </div>
+          <div class="phone__nav">
+            <span class="phone__back" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m14 6-6 6 6 6"/></svg>
+            </span>
+            <span class="phone__ttl">Alfabs Australia &middot; ASX&#8202;:&#8202;AAL</span>
+          </div>
+          <div class="phone__body">
+            <p class="phone__lbl">Your question</p>
+            <div class="bub bub--you">
+              <p>The Q4 update says the restructuring targets about A$8m of annualised cash benefits. Earlier commentary mentioned about A$2m of cost savings. How do those reconcile?</p>
+              <p class="bub__t data">Today, 9:24 am</p>
+            </div>
+
+            <div class="bub bub--ir">
+              <p class="bub__who">
+                <span class="bub__av" aria-hidden="true">AE</span>
+                Alfabs investor relations
+              </p>
+              <p>The A$8m figure is total annualised pre-tax cash benefits, which includes recurring cost savings together with avoided capital expenditure and working-capital efficiencies. The earlier A$2m referred to recurring cost savings only.</p>
+              <div class="cite">
+                <p class="cite__k">Cited</p>
+                <p class="cite__l"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Q4 FY26 Quarterly Update &middot; p4</p>
+                <p class="cite__l"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Investor Day presentation &middot; slide 11</p>
+              </div>
+              <p class="bub__t data">Today, 9:43 am</p>
+            </div>
+
+            <p class="phone__lbl">Following</p>
+            <div class="prow">
+              <span class="prow__t">Alfabs Australia <span class="data">AAL</span></span>
+              <span class="pst pst--live" id="sliceStatus">Replied</span>
+            </div>
+            <div class="prow">
+              <span class="prow__t">Northfield Resources <span class="data">NF1</span></span>
+              <span class="pst">FY26 results</span>
+            </div>
+            <div class="prow">
+              <span class="prow__t">Tyne Capital <span class="data">TYN</span></span>
+              <span class="pst">AGM 22 Oct</span>
+            </div>
+
+            <div class="pask">
+              <p class="pask__ph">Ask one of your companies&hellip;</p>
+              <span class="pask__go" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </div>
+          </div>
+          <span class="phone__fade" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═════════════════════════════════════════════════════════════ -->
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <span class="brand__name">Alfabs Australia Limited</span>
+        <p>Heavy steel fabrication, mining equipment, protective coatings and transport, from the Hunter Valley.</p>
+        <p class="foot-codes"><span>ASX&#8202;:&#8202;AAL</span><span class="data">ABN 42 451 123 887</span></p>
+      </div>
+      <div>
+        <h3>Investor portal</h3>
+        <ul>
+          <li><a href="#facts">Company facts</a></li>
+          <li><a href="#disclosures">Disclosures</a></li>
+          <li><a href="#video">Video</a></li>
+          <li><a href="#questions">How to invest</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Corporate</h3>
+        <ul>
+          <li><a href="https://alfabs.com.au">Company website</a></li>
+          <li><a href="#">Board charter</a></li>
+          <li><a href="#">Corporate governance</a></li>
+          <li><a href="#">Constitution</a></li>
+          <li><a href="#">Whistleblower policy</a></li>
+        </ul>
+      </div>
+      <div class="foot-addr">
+        <h3>Registered office</h3>
+        <p><b>Alfabs Australia Limited</b>152 Mitchell Avenue<br>Kurri Kurri NSW 2327<br><span class="data">ABN 42 451 123 887</span></p>
+        <h3 style="margin-top:var(--s-lg)">Share registry</h3>
+        <p>Computershare Investor Services<br>Perth WA</p>
+      </div>
+    </div>
+
+    <p class="disclaim">
+      <b>This page is an illustrative demonstration.</b> It was built to show how an investor portal can be assembled from a company's design system, and the market data, announcements, videos and figures on it are sample content rather than Alfabs Australia Limited's actual disclosures. Nothing here is financial advice and it does not take account of your objectives, financial situation or needs. Market data would be delayed by at least 20 minutes in a live deployment. Past performance is not an indicator of future performance. Forward-looking statements are subject to the risks and assumptions described in the most recent Annual Report.
+    </p>
+
+    <div class="foot-bot">
+      <span>&copy; 2026 Alfabs Australia Limited. All rights reserved.</span>
+      <span class="powered"><svg class="dio dio--quiet" style="font-size:14px" role="img" aria-label="Diolog"><use href="#dio-mark"/></svg> Powered by <a class="powered__d" href="https://diolog.com.au">diolog</a></span>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Corporation",
+      "@id": "https://alfabs.diolog.com.au/#org",
+      "name": "Alfabs Australia Limited",
+      "alternateName": "Alfabs Group",
+      "legalName": "Alfabs Australia Limited",
+      "tickerSymbol": "XASX AAL",
+      "url": "https://alfabs.com.au",
+      "sameAs": ["https://au.linkedin.com/company/alfabs-group", "https://www.facebook.com/alfabsgroup"],
+      "foundingDate": "1950",
+      "description": "Hunter Valley heavy engineering group providing steel fabrication, construction and maintenance, mining equipment supply and hire, stone dust, protective coatings, and transport and logistics. Listed on the ASX in June 2024.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "152 Mitchell Avenue",
+        "addressLocality": "Kurri Kurri",
+        "addressRegion": "NSW",
+        "postalCode": "2327",
+        "addressCountry": "AU"
+      },
+      "telephone": "+61 1300 253 227",
+      "numberOfEmployees": { "@type": "QuantitativeValue", "minValue": 300 },
+      "contactPoint": [{
+        "@type": "ContactPoint",
+        "contactType": "investor relations",
+        "email": "investors@alfabs.com.au",
+        "telephone": "+61 1300 253 227",
+        "areaServed": "AU",
+        "availableLanguage": "en"
+      }]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://alfabs.diolog.com.au/#page",
+      "name": "Alfabs Australia Limited (ASX:AAL) investor portal",
+      "about": { "@id": "https://alfabs.diolog.com.au/#org" },
+      "datePublished": "2026-08-05",
+      "dateModified": "2026-07-15",
+      "isPartOf": { "@id": "https://alfabs.diolog.com.au/#org" },
+      "publisher": { "@id": "https://alfabs.diolog.com.au/#org" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I buy AAL on the ASX?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Alfabs Australia Limited trades on the Australian Securities Exchange as AAL. There is no secondary listing on any other exchange. A CHESS-sponsored broker holds the shares under your own Holder Identification Number, which keeps the holding in your name on the register. A custodial broker holds them on your behalf. Alfabs does not endorse any broker."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many shares does Alfabs Australia Limited have on issue?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "292,043,118 ordinary shares on issue as at 30 June 2026, plus 6,100,000 unlisted performance rights and 2,400,000 unlisted options. Net debt was A$36.6M at the same date. Source: Q4 FY26 Quarterly Operational and Strategic Update, released 15 July 2026."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "When does the Alfabs dividend come back?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No date has been given. Alfabs paid a maiden dividend in February 2025 and suspended distributions while the group refinanced and restructured. At the Investor Day held on 11 June 2026, the Board set the condition for reconsidering distributions as net debt below 2x EBITDA, targeted for the second half of FY27. That presentation was released to the market on 18 June 2026. This is a forward-looking statement and no commitment to pay a dividend has been made."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where do I change my Alfabs shareholding details?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "At the share registry, Computershare Investor Services, not at Alfabs. If your holding has a HIN starting with X it is CHESS sponsored and changes go through your broker. If it has an SRN starting with I it is issuer sponsored and changes go to Computershare using your SRN and registered postcode."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who do I contact at Alfabs Australia Limited about the company?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Alfabs investor relations, at investors@alfabs.com.au or 1300 253 227, which replies within one business day. Answers can only draw on material already released to the market, because ASX Listing Rule 15.7 does not permit selective release."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+document.documentElement.classList.add('js');
+(function(){
+  'use strict';
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── ticker ───────────────────────────────────────────────────────────── */
+  var TICKS = [
+    ['ASX','AAL','0.385',3.21],['ASX','XAO','8,412.6',0.34],['ASX','XSO','3,168.2',-0.21],
+    ['ASX','MND','16.42',1.08],['ASX','SRG','1.94',-0.51],['ASX','NWH','3.31',0.61],
+    ['ASX','EHL','0.545',-0.91],['ASX','LYL','15.88',2.04],['FX','AUDUSD','0.6612',0.12],
+    ['CMDTY','COAL','118.40',-1.42],['CMDTY','STEEL HRC','642.00',0.88]
+  ];
+  var track = document.getElementById('tickTrack');
+  if (track) {
+    var html = TICKS.map(function(t){
+      var up = t[3] >= 0, arrow = up ? 'm5 15 7-7 7 7' : 'm5 9 7 7 7-7';
+      return '<span class="tick"><span class="tick__mkt">' + t[0] + '</span>' +
+        '<span class="tick__code">' + t[1] + '</span>' +
+        '<span class="tick__px">' + t[2] + '</span>' +
+        '<span class="tick__ch ' + (up ? 'up' : 'dn') + '">' +
+        '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="' + arrow + '"/></svg>' +
+        (up ? '+' : '') + t[3].toFixed(2) + '%</span></span>';
+    }).join('');
+    track.innerHTML = '<div class="ticker__grp">' + html + '</div><div class="ticker__grp">' + html + '</div>';
+  }
+
+  /* ── sticky header state ──────────────────────────────────────────────── */
+  var head = document.getElementById('siteHead');
+  var onScroll = function(){ head.classList.toggle('is-stuck', window.scrollY > 24); };
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  /* ── nav scrollspy ────────────────────────────────────────────────────── */
+  var navLinks = [].slice.call(document.querySelectorAll('.site-nav a'));
+  var navSecs = navLinks.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  if ('IntersectionObserver' in window) {
+    var seen = new Set();
+    var navIO = new IntersectionObserver(function(es){
+      es.forEach(function(e){ e.isIntersecting ? seen.add(e.target) : seen.delete(e.target); });
+      var top = navSecs.filter(function(s){ return seen.has(s); })[0];
+      navLinks.forEach(function(a,i){ a.setAttribute('aria-current', navSecs[i] === top ? 'true' : 'false'); });
+    }, {rootMargin:'-120px 0px -70% 0px'});
+    navSecs.forEach(function(s){ if (s) navIO.observe(s); });
+  }
+
+  /* ── CSS reveal baseline ──────────────────────────────────────────────── */
+  var revealEls = [].slice.call(document.querySelectorAll('.rv'));
+  if ('IntersectionObserver' in window && !reduced) {
+    var rio = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('is-in'); rio.unobserve(e.target); }
+      });
+    }, {threshold:.15, rootMargin:'0px 0px -8% 0px'});
+    revealEls.forEach(function(el){ rio.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('is-in'); });
+  }
+
+  /* ── price chart ──────────────────────────────────────────────────────── */
+  // the viewBox tracks the rendered width, so circles stay round
+  var W = 1000, H = 260, PAD_L = 46, PAD_R = 14, PAD_T = 12, PAD_B = 34;
+  var ANN = [
+    {i:  8, t:'FY25 Annual Report', ps:false},
+    {i: 46, t:'Results of 2025 AGM', ps:false},
+    {i: 92, t:'Half year result and maiden dividend', ps:true},
+    {i:140, t:'Appendix 4D and interim financial report', ps:false},
+    {i:168, t:'Organisational restructure and debt refinancing update', ps:true},
+    {i:196, t:'Change in substantial holding', ps:false},
+    {i:222, t:'Investor Day update presentation', ps:true},
+    {i:246, t:'Q4 FY26 quarterly operational and strategic update', ps:true}
+  ];
+  // deterministic sample series (illustrative, not market data)
+  function series(){
+    var n = 252, out = [], px = 0.268, seed = 20240612;
+    function rnd(){ seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+    for (var i = 0; i < n; i++) {
+      var drift = 0.00055 + Math.sin(i / 41) * 0.0016;
+      px = px * (1 + drift + (rnd() - 0.5) * 0.031);
+      for (var k = 0; k < ANN.length; k++) if (ANN[k].i === i && ANN[k].ps) px *= (rnd() > .45 ? 1.055 : 0.965);
+      px = Math.max(0.215, Math.min(0.545, px));
+      var d = new Date(2025, 6, 14); d.setDate(d.getDate() + Math.round(i * 1.448));
+      out.push({p:+px.toFixed(3), d:d, v:Math.round(400000 + rnd() * 2600000)});
+    }
+    out[n-1].p = 0.385;
+    return out;
+  }
+  var DATA = series();
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var svg = document.getElementById('chart');
+  var elLine = document.getElementById('line'), elArea = document.getElementById('area');
+  var elGrid = document.getElementById('grid'), elAxis = document.getElementById('axis');
+  var elMk = document.getElementById('markers'), elXh = document.getElementById('xh'), elDot = document.getElementById('cdot');
+  var tip = document.getElementById('tip');
+  var state = {months:12, markers:true, view:[], x0:0};
+
+  function fmtDate(d){ return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(); }
+
+  function sizeViewBox(){
+    var w = Math.round(svg.getBoundingClientRect().width);
+    if (w > 0 && w !== W) { W = w; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); return true; }
+    return false;
+  }
+
+  function draw(animate){
+    sizeViewBox();
+    var n = DATA.length;
+    var count = Math.max(8, Math.round(n * state.months / 12));
+    state.x0 = n - count;
+    var view = DATA.slice(state.x0);
+    state.view = view;
+    var lo = Math.min.apply(null, view.map(function(d){ return d.p; }));
+    var hi = Math.max.apply(null, view.map(function(d){ return d.p; }));
+    var pad = (hi - lo) * 0.14 || 0.01; lo -= pad; hi += pad;
+    var innerW = W - PAD_L - PAD_R, innerH = H - PAD_T - PAD_B;
+    var X = function(i){ return PAD_L + (view.length < 2 ? 0 : i / (view.length - 1) * innerW); };
+    var Y = function(p){ return PAD_T + (1 - (p - lo) / (hi - lo)) * innerH; };
+    state.X = X; state.Y = Y;
+
+    var d = view.map(function(pt,i){ return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(pt.p).toFixed(1); }).join(' ');
+    elLine.setAttribute('d', d);
+    elArea.setAttribute('d', d + ' L' + X(view.length-1).toFixed(1) + ' ' + (H - PAD_B) + ' L' + PAD_L + ' ' + (H - PAD_B) + ' Z');
+
+    var g = '', a = '';
+    for (var s = 0; s <= 4; s++) {
+      var p = lo + (hi - lo) * s / 4, y = Y(p);
+      g += '<line x1="' + PAD_L + '" x2="' + (W - PAD_R) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>';
+      a += '<text class="chart-ax" x="' + (PAD_L - 8) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="end">' + p.toFixed(2) + '</text>';
+    }
+    var steps = Math.min(6, view.length);
+    for (var t = 0; t < steps; t++) {
+      var idx = Math.round(t / (steps - 1) * (view.length - 1));
+      var dt = view[idx].d;
+      a += '<text class="chart-ax" x="' + X(idx).toFixed(1) + '" y="' + (H - PAD_B + 20) + '" text-anchor="middle">' +
+           MONTHS[dt.getMonth()] + ' ' + String(dt.getFullYear()).slice(2) + '</text>';
+    }
+    elGrid.innerHTML = g; elAxis.innerHTML = a;
+
+    var m = '';
+    if (state.markers) {
+      ANN.forEach(function(an){
+        var vi = an.i - state.x0;
+        if (vi < 0 || vi >= view.length) return;
+        var cx = X(vi).toFixed(1), cy = Y(view[vi].p).toFixed(1);
+        if (an.ps) m += '<circle class="mk-ring" cx="' + cx + '" cy="' + cy + '" r="9"/>';
+        m += '<circle class="mk" cx="' + cx + '" cy="' + cy + '" r="4.5" data-i="' + vi + '"' +
+             ' tabindex="0" role="button" aria-label="' +
+             fmtDate(view[vi].d) + ', A$' + view[vi].p.toFixed(3) + '. ' + an.t +
+             (an.ps ? '. Price sensitive.' : '') + '">' +
+             '<title>' + an.t + '</title></circle>';
+      });
+    }
+    elMk.innerHTML = m;
+
+    if (animate && !reduced && elLine.getTotalLength) {
+      var len = elLine.getTotalLength();
+      elLine.style.strokeDasharray = len; elLine.style.strokeDashoffset = len;
+      elLine.getBoundingClientRect();
+      elLine.style.transition = 'stroke-dashoffset 1100ms cubic-bezier(.22,.61,.36,1)';
+      elLine.style.strokeDashoffset = '0';
+      elArea.style.opacity = '0';
+      elArea.animate([{opacity:0},{opacity:1}], {duration:900, delay:320, fill:'forwards', easing:'ease-out'});
+      elMk.style.opacity = '0';
+      elMk.animate([{opacity:0},{opacity:1}], {duration:400, delay:900, fill:'forwards'});
+    }
+  }
+
+  function annAt(vi){
+    for (var k = 0; k < ANN.length; k++) if (ANN[k].i - state.x0 === vi) return ANN[k];
+    return null;
+  }
+  function moveTip(ev){
+    var r = svg.getBoundingClientRect();
+    var px = (ev.clientX - r.left) / r.width * W;
+    var innerW = W - PAD_L - PAD_R;
+    var i = Math.round((px - PAD_L) / innerW * (state.view.length - 1));
+    showAt(i);
+  }
+  function showAt(i){
+    var r = svg.getBoundingClientRect();
+    var view = state.view;
+    i = Math.max(0, Math.min(view.length - 1, i));
+    var pt = view[i];
+    var cx = state.X(i), cy = state.Y(pt.p);
+    elXh.setAttribute('x1', cx); elXh.setAttribute('x2', cx);
+    elXh.setAttribute('y2', H - PAD_B); elXh.style.opacity = '.65';
+    elDot.setAttribute('cx', cx); elDot.setAttribute('cy', cy); elDot.style.opacity = '1';
+    var an = state.markers ? annAt(i) : null;
+    tip.innerHTML = '<span class="d">' + fmtDate(pt.d) + '</span>' +
+      '<span class="p">A$' + pt.p.toFixed(3) + '</span>' +
+      '<span class="v">Volume ' + pt.v.toLocaleString('en-AU') + '</span>' +
+      (an ? '<span class="a">' + an.t + '</span>' : '');
+    var wrapR = svg.parentElement.getBoundingClientRect();
+    var leftPx = (cx / W) * r.width + (r.left - wrapR.left);
+    tip.style.opacity = '1';
+    var tw = tip.offsetWidth;
+    tip.style.left = Math.max(8, Math.min(wrapR.width - tw - 8, leftPx - tw / 2)) + 'px';
+    tip.style.top = Math.max(8, (cy / H) * r.height + (r.top - wrapR.top) - tip.offsetHeight - 14) + 'px';
+  }
+  function hideTip(){ tip.style.opacity = '0'; elXh.style.opacity = '0'; elDot.style.opacity = '0'; }
+  svg.addEventListener('pointermove', moveTip);
+  svg.addEventListener('pointerleave', hideTip);
+  // keyboard equivalent for the announcement markers
+  svg.addEventListener('focusin', function(e){
+    var i = e.target && e.target.dataset && e.target.dataset.i;
+    if (i != null) showAt(+i);
+  });
+  svg.addEventListener('focusout', hideTip);
+  svg.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') { hideTip(); e.target.blur(); }
+  });
+
+  [].forEach.call(document.querySelectorAll('.ranges button'), function(b){
+    b.addEventListener('click', function(){
+      [].forEach.call(document.querySelectorAll('.ranges button'), function(o){ o.setAttribute('aria-pressed','false'); });
+      b.setAttribute('aria-pressed','true');
+      state.months = +b.dataset.range;
+      hideTip(); draw(true);
+    });
+  });
+  document.getElementById('mkToggle').addEventListener('change', function(e){
+    state.markers = e.target.checked; draw(false);
+  });
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  draw(false);
+  var reW = null;
+  window.addEventListener('resize', function(){
+    clearTimeout(reW);
+    reW = setTimeout(function(){ hideTip(); draw(false); }, 150);
+  }, {passive:true});
+  if (!reduced && 'IntersectionObserver' in window) {
+    var cio = new IntersectionObserver(function(es){
+      if (es[0].isIntersecting) { draw(true); cio.disconnect(); }
+    }, {threshold:.3});
+    cio.observe(svg);
+  }
+
+  /* ── FAQ deep links open the target ───────────────────────────────────── */
+  function revealHash(){
+    var el = location.hash && document.getElementById(location.hash.slice(1));
+    while (el) { if (el.tagName === 'DETAILS') el.open = true; el = el.parentElement; }
+  }
+  window.addEventListener('hashchange', revealHash); revealHash();
+
+  /* ── contact form ─────────────────────────────────────────────────────── */
+  var form = document.getElementById('irForm');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    // Nothing is transmitted. The message says so rather than claiming a send.
+    document.getElementById('formOk').classList.add('is-on');
+  });
+
+  /* ── product slice loop ───────────────────────────────────────────────── */
+  var slice = document.getElementById('sliceStatus');
+  if (slice && !reduced && 'IntersectionObserver' in window) {
+    var states = [['Live','pst pst--live'],['Reading…','pst'],['Summarised','pst pst--ok']];
+    var si = 0, timer = null;
+    var loop = function(){
+      si = (si + 1) % states.length;
+      slice.style.opacity = '0';
+      setTimeout(function(){
+        slice.textContent = states[si][0];
+        slice.className = states[si][1];
+        slice.style.opacity = '1';
+      }, 200);
+    };
+    slice.style.transition = 'opacity 200ms linear';
+    var sio = new IntersectionObserver(function(es){
+      if (es[0].isIntersecting) { if (!timer) timer = setInterval(loop, 3400); }
+      else if (timer) { clearInterval(timer); timer = null; }
+    }, {threshold:.4});
+    sio.observe(slice);
+  }
+
+  /* ── copy the facts table as plain text ───────────────────────────────── */
+  var copyBtn = document.getElementById('copyFacts');
+  if (copyBtn && navigator.clipboard) {
+    copyBtn.addEventListener('click', function(){
+      var rows = [].slice.call(document.querySelectorAll('.facts__t tbody tr'));
+      var txt = 'Alfabs Australia Limited (ASX:AAL) key facts\n\n' + rows.map(function(tr){
+        var k = tr.querySelector('th').textContent.trim();
+        var v = tr.querySelector('.c-val').textContent.replace(/\s+/g,' ').trim();
+        var d = tr.querySelector('.c-date').textContent.trim();
+        var src = tr.querySelector('.c-src').textContent.trim();
+        return k + ': ' + v + ' (as at ' + d + ', source: ' + src + ')';
+      }).join('\n');
+      navigator.clipboard.writeText(txt).then(function(){
+        var lbl = document.getElementById('copyLabel'), was = lbl.textContent;
+        lbl.textContent = 'Copied';
+        setTimeout(function(){ lbl.textContent = was; }, 1800);
+      });
+    });
+  } else if (copyBtn) {
+    copyBtn.hidden = true;
+  }
+
+  if (!reduced) document.documentElement.style.scrollBehavior = 'smooth';
+  window.__alfabs = {reduced:reduced};
+})();
+</script>
+
+<!-- GSAP and three.js are progressive upgrades. If either CDN fails the page
+     is complete without it: reveals fall back to the CSS/IntersectionObserver
+     system above, and the navy band keeps its CSS radial texture. -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js" integrity="sha384-5UGTcMIxVUKFeJH0zOS3lqMAZNBG+fCXJbi3UglUq6ABO4MQJu6rxNa+MPP+qtwq" crossorigin="anonymous" defer></script>
+<script defer>
+window.addEventListener('load', function(){
+  var reduced = (window.__alfabs || {}).reduced;
+
+  /* ── GSAP layer ───────────────────────────────────────────────────────── */
+  if (window.gsap && !reduced) {
+    gsap.registerPlugin(ScrollTrigger);
+    var mm = gsap.matchMedia();
+
+    mm.add('(prefers-reduced-motion: no-preference)', function(){
+      // hero cascade
+      var heroBits = gsap.utils.toArray('[data-hero]');
+      gsap.set(heroBits, {opacity:0, y:18});
+      gsap.to(heroBits, {opacity:1, y:0, duration:.75, ease:'power3.out', stagger:.09, delay:.12});
+
+      // hero image drift as the hero leaves
+      gsap.to('#heroImg', {
+        yPercent: 9, ease:'none',
+        scrollTrigger:{trigger:'.hero', start:'top top', end:'bottom top', scrub:true}
+      });
+
+      // section reveals, taking over from the CSS baseline
+      gsap.utils.toArray('.rv').forEach(function(el){
+        el.classList.add('gs');
+        gsap.fromTo(el, {opacity:0, y:18}, {
+          opacity:1, y:0, duration:.7, ease:'power3.out',
+          scrollTrigger:{trigger:el, start:'top 88%', once:true}
+        });
+      });
+
+      // count-up numerals; the final value is already in the HTML for no-JS
+      gsap.utils.toArray('[data-count]').forEach(function(el){
+        var end = +el.dataset.count, suffix = el.dataset.suffix || '', final = el.textContent;
+        var obj = {v:0};
+        ScrollTrigger.create({
+          trigger: el, start:'top 90%', once:true,
+          onEnter: function(){
+            gsap.to(obj, {
+              v: end, duration:.9, ease:'power2.out',
+              onUpdate: function(){ el.textContent = Math.round(obj.v) + suffix; },
+              onComplete: function(){ el.textContent = final; }
+            });
+          }
+        });
+      });
+    });
+
+    mm.add('(hover: hover) and (pointer: fine)', function(){
+      // magnetic pull on the two primary CTAs
+      gsap.utils.toArray('.btn--primary, .storebtn').forEach(function(b){
+        var xTo = gsap.quickTo(b, 'x', {duration:.4, ease:'power3'});
+        var yTo = gsap.quickTo(b, 'y', {duration:.4, ease:'power3'});
+        b.addEventListener('pointermove', function(e){
+          var r = b.getBoundingClientRect();
+          xTo(gsap.utils.clamp(-8, 8, (e.clientX - (r.left + r.width/2)) * .28));
+          yTo(gsap.utils.clamp(-6, 6, (e.clientY - (r.top + r.height/2)) * .28));
+        });
+        b.addEventListener('pointerleave', function(){ xTo(0); yTo(0); });
+      });
+    });
+  }
+
+  /* ── three.js point field on the Diolog band ──────────────────────────── */
+  var cv = document.getElementById('dfield');
+  if (!cv || reduced || !window.THREE) return;
+  var gl = cv.getContext('webgl2') || cv.getContext('webgl');
+  if (!gl) return;
+
+  var band = cv.parentElement;
+  var renderer, scene, camera, pts, raf = null, running = false;
+  var pointer = {x:0, y:0, tx:0, ty:0};
+
+  try {
+    renderer = new THREE.WebGLRenderer({canvas:cv, alpha:true, antialias:false});
+  } catch (err) { return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(52, 1, 0.1, 100);
+  camera.position.set(0, 1.6, 7.2);
+  camera.lookAt(0, 0.2, 0);
+
+  var COLS = 132, ROWS = 68, N = COLS * ROWS;
+  var pos = new Float32Array(N * 3), col = new Float32Array(N * 3), base = new Float32Array(N * 2);
+  var cDeep = new THREE.Color('#16305F'), cCrest = new THREE.Color('#6E8EF5'), cSpark = new THREE.Color('#E8EEF8');
+  var i3 = 0, i2 = 0;
+  for (var r = 0; r < ROWS; r++) {
+    for (var c = 0; c < COLS; c++) {
+      var x = (c / (COLS - 1) - 0.5) * 17;
+      var z = (r / (ROWS - 1) - 0.5) * 13 - 1.5;
+      base[i2] = x; base[i2 + 1] = z; i2 += 2;
+      pos[i3] = x; pos[i3 + 1] = 0; pos[i3 + 2] = z;
+      col[i3] = cDeep.r; col[i3 + 1] = cDeep.g; col[i3 + 2] = cDeep.b;
+      i3 += 3;
+    }
+  }
+  var geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  var mat = new THREE.PointsMaterial({
+    size: 0.038, vertexColors: true, transparent: true, opacity: 0.95,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
+  });
+  pts = new THREE.Points(geo, mat);
+  scene.add(pts);
+
+  function resize(){
+    var w = band.clientWidth, h = band.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  band.addEventListener('pointermove', function(e){
+    var r = band.getBoundingClientRect();
+    pointer.tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+    pointer.ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+  });
+  band.addEventListener('pointerleave', function(){ pointer.tx = 0; pointer.ty = 0; });
+
+  var t0 = null;
+  function frame(ts){
+    if (t0 === null) t0 = ts;
+    var t = (ts - t0) / 1000;
+    pointer.x += (pointer.tx - pointer.x) * 0.055;
+    pointer.y += (pointer.ty - pointer.y) * 0.055;
+
+    var p = geo.attributes.position.array, cc = geo.attributes.color.array;
+    var px = pointer.x * 8.5, pz = pointer.y * 3.0 - 1.0;
+    for (var i = 0, j = 0, k = 0; i < N; i++, j += 2, k += 3) {
+      var bx = base[j], bz = base[j + 1];
+      var wave = Math.sin(bx * 0.42 + t * 0.55) * 0.34
+               + Math.sin(bz * 0.61 - t * 0.38) * 0.26
+               + Math.sin((bx + bz) * 0.27 + t * 0.21) * 0.18;
+      var dx = bx - px, dz = bz - pz;
+      var d2 = dx * dx + dz * dz;
+      var lift = Math.exp(-d2 * 0.085) * 1.15;
+      var y = wave + lift;
+      p[k + 1] = y;
+
+      var edge = 1 - Math.min(1, Math.abs(bx) / 8.5);
+      var h = Math.min(1, Math.max(0, (y + 0.75) / 2.1));
+      var mixC = h < 0.62 ? h / 0.62 : 1;
+      var rr = cDeep.r + (cCrest.r - cDeep.r) * mixC;
+      var gg = cDeep.g + (cCrest.g - cDeep.g) * mixC;
+      var bb = cDeep.b + (cCrest.b - cDeep.b) * mixC;
+      if (h > 0.72) {
+        var s = (h - 0.72) / 0.28;
+        rr += (cSpark.r - rr) * s; gg += (cSpark.g - gg) * s; bb += (cSpark.b - bb) * s;
+      }
+      var fade = edge * (0.42 + 0.58 * Math.min(1, (bz + 8) / 12));
+      cc[k] = rr * fade; cc[k + 1] = gg * fade; cc[k + 2] = bb * fade;
+    }
+    geo.attributes.position.needsUpdate = true;
+    geo.attributes.color.needsUpdate = true;
+
+    pts.rotation.z = pointer.x * 0.02;
+    camera.position.x = pointer.x * 0.35;
+    camera.position.y = 1.6 - pointer.y * 0.22;
+    camera.lookAt(0, 0.2, 0);
+
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(frame);
+  }
+  function start(){ if (!running) { running = true; t0 = null; raf = requestAnimationFrame(frame); } }
+  function stop(){ if (running) { running = false; cancelAnimationFrame(raf); } }
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){ es[0].isIntersecting ? start() : stop(); }, {threshold:.05}).observe(band);
+  } else { start(); }
+  document.addEventListener('visibilitychange', function(){ document.hidden ? stop() : start(); });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "create-investor-portal-free",
+  "version": "1.0.0",
+  "description": "Build a complete, single-page public investor portal for a listed company from its DESIGN.md design-token file and a company overview markdown file, branded entirely in that company's own tokens with a Diolog banner, app band and footer credit layered on top. Use this whenever someone wants an investor portal, investor page, investor relations page, IR site, shareholder page or \"investor hub\" built for a specific company, wants the Alfabs investor portal rebuilt for a different issuer, hands over a DESIGN.md plus a company overview and asks for a site or landing page from them, or asks for an investor-facing page that search engines and AI assistants can cite - even if they only say \"make ACME an investor page from these two files\" or \"do what we did for Alfabs but for this company\". Orders the page on research into what search-referred and LLM-referred investors actually need (dated sourced company facts first, disclosures second, share price demoted beneath both, governance as required ASX furniture), emits Corporation structured data and a crawler-permissive robots.txt, and carries the ASX Listing Rule 15.7, Listing Rule 4.10.3 and section 769C constraints that shape the build. Not for a disclosure-consistency audit page (use create-disclosure-consistency-page), a Diolog-brand marketing page (design-craft), or a DESIGN.md extracted from a site (design-md-from-website).",
+  "author": {
+    "name": "DiologIR",
+    "email": "luke@diolog.com.au"
+  }
+}
