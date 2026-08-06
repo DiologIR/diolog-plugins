@@ -44,6 +44,23 @@ appeared in the source. If the source does not say it, the page does not either.
 progressive disclosure and copy that carries the source's meaning in plainer words are all
 yours. The constraint is on facts, not on form.
 
+## The artifact is a record now
+
+A disclosure-consistency page is the **`report` category** of the investor-portal platform: the
+same validated record shape, the same generic renderer, the same section mechanism. You author
+`sections[]` — `reportMasthead`, `decisionPanel`, `coverageBar`, `executiveAnalysis`,
+`resolveBeforeRelease`, `auditCoverage`, `supportingRecord`, `releasePrep`, `nextSteps` — not
+markup. `assets/reference-build.html` remains the visual reference.
+
+Two consequences that matter more here than on a marketing surface:
+
+- **The contract rejects an illustrative value in a `report` outright.** It will not parse. This
+  is the sole-source-of-truth rule from below, enforced by the schema rather than by care.
+- **The category cannot place a section it does not own**, so an audit artifact cannot
+  accidentally acquire a share-price block or a lead-capture panel.
+
+The contract is `libs/shared/src/investor-portal/portal-contract.ts` in the dAIolog repo.
+
 ## Read as you go
 
 - `references/report-structure.md` - the section order and what each carries

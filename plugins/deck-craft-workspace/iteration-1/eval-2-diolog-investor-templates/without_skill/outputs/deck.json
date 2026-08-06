@@ -1,0 +1,536 @@
+{
+  "schema": "lecturn.deck/1",
+  "id": "alfabs-investor-update-9",
+  "title": "Alfabs Australia Limited — Investor update",
+  "canvas": { "w": 1280, "h": 720 },
+  "theme": {
+    "tokens": {
+      "color": {
+        "background": "#FFFFFF",
+        "surface": "#F5F5F5",
+        "ground": "#3C3939",
+        "groundAlt": "#2B2929",
+        "text": "#333333",
+        "textInverse": "#FFFFFF",
+        "textMuted": "#5A5A5D",
+        "textMutedInverse": "#B9B4B4",
+        "accent": "#D72229",
+        "accentText": "#FFFFFF",
+        "border": "#D9D6D6",
+        "borderInverse": "#5A5A5D"
+      },
+      "typography": {
+        "fontFamily": "Figtree, sans-serif",
+        "headingFamily": "Figtree, sans-serif",
+        "monoFamily": "Figtree, sans-serif",
+        "scale": {
+          "display": 64,
+          "title": 40,
+          "heading": 28,
+          "subheading": 22,
+          "body": 17,
+          "caption": 13
+        },
+        "weight": { "regular": 400, "medium": 500, "semibold": 600, "bold": 700, "black": 900 }
+      },
+      "shape": { "radius": 0, "borderWidth": 1, "accentRuleHeight": 6 },
+      "space": { "margin": 80, "gutter": 40, "unit": 8 }
+    }
+  },
+  "slides": [
+    {
+      "id": "sld_1",
+      "elements": [
+        {
+          "id": "sld_1_bg",
+          "type": "shape",
+          "shape": "rect",
+          "layout": { "x": 0, "y": 0, "w": 1280, "h": 720, "z": 0 },
+          "fill": { "color": "#3C3939" }
+        },
+        {
+          "id": "sld_1_eyebrow",
+          "type": "text",
+          "text": "ASX: AAL — Investor update",
+          "fontSize": 18,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 600,
+          "color": "#B9B4B4",
+          "layout": { "x": 80, "y": 128, "w": 700, "h": 28, "z": 2 }
+        },
+        {
+          "id": "sld_1_rule",
+          "type": "shape",
+          "shape": "rect",
+          "layout": { "x": 80, "y": 176, "w": 88, "h": 6, "z": 1 },
+          "fill": { "color": "#D72229" }
+        },
+        {
+          "id": "sld_1_title",
+          "type": "text",
+          "text": "Alfabs Australia Limited",
+          "fontSize": 64,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 700,
+          "color": "#FFFFFF",
+          "layout": { "x": 80, "y": 210, "w": 940, "h": 86, "z": 2 }
+        },
+        {
+          "id": "sld_1_lede",
+          "type": "text",
+          "text": "A founder-led Hunter Valley group: heavy steel fabrication, underground mining equipment, protective coatings and heavy transport. Over 300 people, one design-to-delivery promise — Quality, Safety, Delivery.",
+          "fontSize": 22,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 400,
+          "color": "#E4E1E1",
+          "layout": { "x": 80, "y": 320, "w": 800, "h": 132, "z": 2 }
+        },
+        {
+          "id": "sld_1_sep",
+          "type": "shape",
+          "shape": "rect",
+          "layout": { "x": 80, "y": 548, "w": 1120, "h": 1, "z": 1 },
+          "fill": { "color": "#5A5A5D" }
+        },
+        {
+          "id": "sld_1_where_label",
+          "type": "text",
+          "text": "WHERE WE OPERATE",
+          "fontSize": 13,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 600,
+          "color": "#B9B4B4",
+          "layout": { "x": 80, "y": 574, "w": 500, "h": 20, "z": 2 }
+        },
+        {
+          "id": "sld_1_where",
+          "type": "text",
+          "text": "Kurri Kurri NSW (head offices)   ·   Unanderra NSW   ·   Narrabri NSW   ·   Parramatta NSW   ·   Paget, Mackay QLD",
+          "fontSize": 18,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 500,
+          "color": "#FFFFFF",
+          "layout": { "x": 80, "y": 606, "w": 1120, "h": 30, "z": 2 }
+        }
+      ]
+    },
+    {
+      "id": "sld_2",
+      "templateId": "cols-4-icon",
+      "slots": {
+        "title": "Four divisions, one design-to-delivery group",
+        "col.1.heading": "Alfabs Engineering",
+        "col.1.body": "Heavy structural steel fabrication, detailed pipe and duct work, and onsite construction and maintenance. CC3-certified to AS/NZS 5131 for welding, architecturally exposed structural steel and protective coatings.",
+        "col.2.heading": "Alfabs Mining Equipment",
+        "col.2.body": "Supply, manufacture, service, repair and hire of underground mining equipment across Hunter Valley, Wollongong, Narrabri and Mackay workshops. Includes Alfabs Stonedust Solutions and Alfabs Store.",
+        "col.3.heading": "Alfabs Protective Coatings",
+        "col.3.body": "Abrasive blasting and protective coatings in a purpose-built blast chamber, plus onsite paint and blast and hazardous coatings management. Accredited to PCCP Classes 1–6.",
+        "col.4.heading": "Alfabs Transport & Logistics",
+        "col.4.body": "Oversize overmass (OSOM) specialists under NHVR permits, moving mobile plant, structural steel and containers 24/7 across NSW, QLD and the eastern states."
+      }
+    },
+    {
+      "id": "sld_3",
+      "templateId": "kpi-grid-2x2",
+      "slots": {
+        "title": "Operating highlights",
+        "kpi.1": { "value": "300+", "label": "Alfabs people, including apprentices and trainees" },
+        "kpi.2": { "value": "20,000", "label": "Stone dust ‘bat bags’ produced each week at Kurri Kurri" },
+        "kpi.3": { "value": "90%", "label": "Of NSW underground mines use Alfabs bulk stone dust products" },
+        "kpi.4": { "value": "6", "label": "Operating locations across New South Wales and Queensland" }
+      }
+    },
+    {
+      "id": "sld_4",
+      "elements": [
+        {
+          "id": "sld_4_bg",
+          "type": "shape",
+          "shape": "rect",
+          "layout": { "x": 0, "y": 0, "w": 1280, "h": 720, "z": 0 },
+          "fill": { "color": "#F5F5F5" }
+        },
+        {
+          "id": "sld_4_title",
+          "type": "text",
+          "text": "The Kurri Kurri facility and fleet",
+          "fontSize": 40,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 700,
+          "color": "#333333",
+          "layout": { "x": 80, "y": 72, "w": 900, "h": 52, "z": 2 }
+        },
+        {
+          "id": "sld_4_rule",
+          "type": "shape",
+          "shape": "rect",
+          "layout": { "x": 80, "y": 140, "w": 64, "h": 4, "z": 1 },
+          "fill": { "color": "#D72229" }
+        },
+        {
+          "id": "sld_4_table",
+          "type": "table",
+          "layout": { "x": 80, "y": 190, "w": 620, "h": 336, "z": 2 },
+          "columns": [{ "w": 250 }, { "w": 370 }],
+          "rows": [
+            ["Kurri Kurri", "Capability"],
+            ["Main workshop", "3,000sqm undercover"],
+            ["Cranes", "One 30-tonne and three 15-tonne overhead, 7.2m under hook"],
+            ["Heaviest sections built", "Sections exceeding 150 tonnes"],
+            ["Hardstand", "5 acres of pre-assembly yard with crane pad"],
+            ["Coatings workshop", "2,000sqm undercover, 30-tonne lifting capacity"],
+            ["Blast chamber", "20m long × 8m wide × 5m high, doors at both ends"],
+            ["Stone dust facility", "Purpose-built, completed 2021"]
+          ]
+        },
+        {
+          "id": "sld_4_fleet_label",
+          "type": "text",
+          "text": "HIRE FLEET",
+          "fontSize": 13,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 600,
+          "color": "#5A5A5D",
+          "layout": { "x": 744, "y": 190, "w": 456, "h": 20, "z": 2 }
+        },
+        {
+          "id": "sld_4_fleet",
+          "type": "text",
+          "text": "Continuous miners · QDS BOAR bolters · Torque Titan LHDs · Feeder breakers · Auxiliary fans · Air track and multi bolters · Work platforms and accessories · Access and ventilation doors. Every unit ships with a complete Plant Safety File.",
+          "fontSize": 17,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 400,
+          "color": "#333333",
+          "layout": { "x": 744, "y": 220, "w": 456, "h": 220, "z": 2 }
+        },
+        {
+          "id": "sld_4_invest",
+          "type": "stat",
+          "value": "$3m",
+          "label": "Invested in a new Mitchell Avenue workshop — a dedicated diesel repair shop and new office space, creating at least 15 permanent local jobs",
+          "color": "#D72229",
+          "layout": { "x": 744, "y": 462, "w": 456, "h": 168, "z": 2 }
+        },
+        {
+          "id": "sld_4_note",
+          "type": "text",
+          "text": "Kurri Kurri NSW 2327: Alfabs Engineering (130 Mitchell Avenue), Protective Coatings (146) and Mining Equipment (152).",
+          "fontSize": 13,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 400,
+          "color": "#5A5A5D",
+          "layout": { "x": 80, "y": 556, "w": 620, "h": 44, "z": 2 }
+        }
+      ]
+    },
+    {
+      "id": "sld_5",
+      "elements": [
+        {
+          "id": "sld_5_bg",
+          "type": "shape",
+          "shape": "rect",
+          "layout": { "x": 0, "y": 0, "w": 1280, "h": 720, "z": 0 },
+          "fill": { "color": "#3C3939" }
+        },
+        {
+          "id": "sld_5_title",
+          "type": "text",
+          "text": "Safety and certifications",
+          "fontSize": 40,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 700,
+          "color": "#FFFFFF",
+          "layout": { "x": 80, "y": 64, "w": 900, "h": 52, "z": 2 }
+        },
+        {
+          "id": "sld_5_rule",
+          "type": "shape",
+          "shape": "rect",
+          "layout": { "x": 80, "y": 132, "w": 64, "h": 4, "z": 1 },
+          "fill": { "color": "#D72229" }
+        },
+        {
+          "id": "sld_5_statement",
+          "type": "text",
+          "text": "“Prevention before harm.” The objective is that every employee returns home safely, in the same physical and emotional condition in which they arrived.",
+          "fontSize": 28,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 600,
+          "color": "#FFFFFF",
+          "layout": { "x": 80, "y": 180, "w": 1000, "h": 120, "z": 2 }
+        },
+        {
+          "id": "sld_5_col1_label",
+          "type": "text",
+          "text": "MANAGEMENT SYSTEMS",
+          "fontSize": 13,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 600,
+          "color": "#D72229",
+          "layout": { "x": 80, "y": 344, "w": 520, "h": 20, "z": 2 }
+        },
+        {
+          "id": "sld_5_col1",
+          "type": "text",
+          "text": "ISO 9001:2015 Quality Management\nISO 45001:2018 Occupational Health & Safety\nISO 14001:2015 Environmental Management\nAS/NZS ISO/IEC 17020:2013 Conformity Assessment\nTransport for NSW (TfNSW) CC3 Prequalification",
+          "fontSize": 17,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 400,
+          "color": "#E4E1E1",
+          "layout": { "x": 80, "y": 376, "w": 520, "h": 210, "z": 2 }
+        },
+        {
+          "id": "sld_5_col2_label",
+          "type": "text",
+          "text": "PRODUCT AND PROCESS",
+          "fontSize": 13,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 600,
+          "color": "#D72229",
+          "layout": { "x": 668, "y": 344, "w": 532, "h": 20, "z": 2 }
+        },
+        {
+          "id": "sld_5_col2",
+          "type": "text",
+          "text": "Steelwork Compliance Australia (AS/NZS 5131)\nISO 3834.2 welding manufacturer certification\nSteel Sustainability Australia (Level 2)\nCSIRO Painting Contractor Certification Program\nANZEx Recognised Service Facility for Ex diesel",
+          "fontSize": 17,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 400,
+          "color": "#E4E1E1",
+          "layout": { "x": 668, "y": 376, "w": 532, "h": 210, "z": 2 }
+        },
+        {
+          "id": "sld_5_note",
+          "type": "text",
+          "text": "Protective coatings work is accredited to PCCP Classes 1–6; paint inspectors hold AMPP CIP Level 1 and Level 2.",
+          "fontSize": 13,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 400,
+          "color": "#B9B4B4",
+          "layout": { "x": 80, "y": 624, "w": 1120, "h": 24, "z": 2 }
+        }
+      ]
+    },
+    {
+      "id": "sld_6",
+      "templateId": "lead-bullets",
+      "slots": {
+        "title": "Customers",
+        "lead": "Alfabs Mining is likely to have provided a piece of equipment in every underground coal mine in Australia, and the group delivers for energy, infrastructure and construction clients across New South Wales and beyond.",
+        "bullets": [
+          "Northern Concourse Roof, Central Station Sydney — engaged early with client Laing O’Rourke, then fabricated, coated, pre-assembled, transported and installed by Alfabs teams",
+          "NCIG Shiploader Recovery; Sydney Light Rail; Parramatta Light Rail; Wickham Transport Interchange",
+          "Minimbah Reservoir Tank; Barnsley Weir Bridge; Tippler Footbridge; Moparrabah Road Beams",
+          "Bulk stone dust products used in 90% of NSW underground mines",
+          "Clients consistently score Alfabs 4 stars or more for communication"
+        ]
+      }
+    },
+    {
+      "id": "sld_7",
+      "templateId": "table-simple",
+      "slots": {
+        "title": "Financial position — the reporting record",
+        "table.rows": [
+          ["Disclosure", "Document lodged with the ASX"],
+          ["Full year", "Appendix 4E and FY25 Financial Statements; FY25 Annual Report"],
+          ["Half year", "Appendix 4D and Interim Financial Report; Half Year Results"],
+          ["Dividend", "Half Year Result and Maiden Dividend; Dividend/Distribution — AAL"],
+          ["Capital structure", "Organisational Restructure & Debt Refinancing Update"],
+          ["Governance", "Appendix 4G; Board Skills Matrix; Results of Meeting"]
+        ],
+        "footnote": "No financial figures are reproduced here: the supplied company material contains no financial statements. Read the figures in the lodged reports at alfabs.com.au/investor-information."
+      }
+    },
+    {
+      "id": "sld_8",
+      "templateId": "timeline-h",
+      "slots": {
+        "title": "Capital and outlook",
+        "events": [
+          "1950s — formed as Alfabs Engineers, the origin of the ‘AE’ ball in the logo",
+          "1986 — owned and operated by the same family, from a ute and a handful of workers",
+          "2021 — purpose-built stone dust facility completed at Kurri Kurri",
+          "June 2024 — lists on the ASX as Alfabs Australia Limited (AAL) after a restructure; founder led, family majority ownership retained",
+          "February 2025 — half-year result and maiden dividend",
+          "2026 — organisational restructure and debt refinancing update; investor day update and acquisition update released"
+        ]
+      }
+    },
+    {
+      "id": "sld_9",
+      "elements": [
+        {
+          "id": "sld_9_bg",
+          "type": "shape",
+          "shape": "rect",
+          "layout": { "x": 0, "y": 0, "w": 1280, "h": 720, "z": 0 },
+          "fill": { "color": "#3C3939" }
+        },
+        {
+          "id": "sld_9_eyebrow",
+          "type": "text",
+          "text": "ASX: AAL",
+          "fontSize": 13,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 600,
+          "color": "#B9B4B4",
+          "layout": { "x": 80, "y": 200, "w": 400, "h": 22, "z": 2 }
+        },
+        {
+          "id": "sld_9_title",
+          "type": "text",
+          "text": "Investor contact",
+          "fontSize": 56,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 700,
+          "color": "#FFFFFF",
+          "layout": { "x": 80, "y": 234, "w": 800, "h": 76, "z": 2 }
+        },
+        {
+          "id": "sld_9_rule",
+          "type": "shape",
+          "shape": "rect",
+          "layout": { "x": 80, "y": 330, "w": 88, "h": 6, "z": 1 },
+          "fill": { "color": "#D72229" }
+        },
+        {
+          "id": "sld_9_details",
+          "type": "text",
+          "text": "Alfabs Australia Limited\n130 Mitchell Avenue, Kurri Kurri NSW 2327\n1300 253 227\ninfo@alfabs.com.au",
+          "fontSize": 22,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 500,
+          "color": "#FFFFFF",
+          "layout": { "x": 80, "y": 376, "w": 560, "h": 168, "z": 2 }
+        },
+        {
+          "id": "sld_9_where",
+          "type": "text",
+          "text": "Reports, results and announcements are published at alfabs.com.au/investor-information and released to the market under ASX code AAL.",
+          "fontSize": 18,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 400,
+          "color": "#E4E1E1",
+          "layout": { "x": 700, "y": 376, "w": 500, "h": 168, "z": 2 }
+        },
+        {
+          "id": "sld_9_signoff",
+          "type": "text",
+          "text": "Quality · Safety · Delivery — People make Alfabs.",
+          "fontSize": 13,
+          "fontFamily": "Figtree, sans-serif",
+          "fontWeight": 600,
+          "color": "#B9B4B4",
+          "layout": { "x": 80, "y": 616, "w": 1120, "h": 24, "z": 2 }
+        }
+      ]
+    }
+  ],
+  "x": {
+    "diolog": {
+      "structure": [
+        {
+          "id": "sld_1",
+          "kind": "cover",
+          "label": "Who we are and where we operate",
+          "bullets": [
+            "Alfabs Australia Limited trades on the ASX as AAL",
+            "Founder-led Hunter Valley engineering and mining services group, over 300 people",
+            "Operates from Kurri Kurri, Unanderra, Narrabri, Parramatta and Paget (Mackay)",
+            "One promise across every division: Quality, Safety, Delivery"
+          ]
+        },
+        {
+          "id": "sld_2",
+          "kind": "split",
+          "label": "Four divisions, one design-to-delivery group",
+          "bullets": [
+            "Alfabs Engineering: heavy structural steel, pipe and duct, construction and maintenance",
+            "Alfabs Mining Equipment: supply, manufacture, service and hire, plus Stonedust Solutions and Store",
+            "Alfabs Protective Coatings: blasting and coatings, PCCP Classes 1–6",
+            "Alfabs Transport & Logistics: OSOM specialists under NHVR permits, 24/7"
+          ]
+        },
+        {
+          "id": "sld_3",
+          "kind": "stat",
+          "label": "Operating highlights",
+          "bullets": [
+            "Over 300 people including apprentices and trainees",
+            "About 20,000 stone dust bat bags produced each week",
+            "Bulk stone dust used in 90% of NSW underground mines",
+            "Six operating locations across NSW and Queensland"
+          ]
+        },
+        {
+          "id": "sld_4",
+          "kind": "split",
+          "label": "The Kurri Kurri facility and fleet",
+          "bullets": [
+            "3,000sqm main workshop with 30-tonne and three 15-tonne overhead cranes",
+            "Sections exceeding 150 tonnes fabricated; 5 acres of hardstand pre-assembly",
+            "2,000sqm coatings workshop and a 20m × 8m × 5m blast chamber",
+            "Hire fleet spans continuous miners, BOAR bolters, LHDs and feeder breakers",
+            "$3m invested in a new Mitchell Avenue workshop and at least 15 local jobs"
+          ]
+        },
+        {
+          "id": "sld_5",
+          "kind": "title",
+          "label": "Safety and certifications",
+          "bullets": [
+            "Prevention before harm: everyone returns home in the condition they arrived",
+            "ISO 9001, ISO 45001 and ISO 14001 management systems certified",
+            "TfNSW CC3 prequalification and Steelwork Compliance Australia to AS/NZS 5131",
+            "ISO 3834.2 welding certification, SSA Level 2 and CSIRO PCCP accreditation"
+          ]
+        },
+        {
+          "id": "sld_6",
+          "kind": "split",
+          "label": "Customers",
+          "bullets": [
+            "Likely to have supplied equipment to every underground coal mine in Australia",
+            "Laing O’Rourke partnership on the Central Station Northern Concourse Roof",
+            "Rail and infrastructure delivery: Sydney and Parramatta Light Rail, Wickham Interchange",
+            "Clients score Alfabs 4 stars or more for communication"
+          ]
+        },
+        {
+          "id": "sld_7",
+          "kind": "title",
+          "label": "Financial position — the reporting record",
+          "bullets": [
+            "Full-year disclosure: Appendix 4E and the FY25 Annual Report",
+            "Half-year disclosure: Appendix 4D and the Interim Financial Report",
+            "A maiden dividend was declared with the half-year result",
+            "Figures are not restated here — the supplied material carries no financial statements"
+          ]
+        },
+        {
+          "id": "sld_8",
+          "kind": "split",
+          "label": "Capital and outlook",
+          "bullets": [
+            "Listed on the ASX in June 2024 following a group restructure",
+            "Founder led, with the family retaining majority ownership alongside shareholders",
+            "Organisational restructure and debt refinancing update released in 2026",
+            "Investor day update and acquisition update released in 2026"
+          ]
+        },
+        {
+          "id": "sld_9",
+          "kind": "cover",
+          "label": "Investor contact",
+          "bullets": [
+            "Alfabs Australia Limited, 130 Mitchell Avenue, Kurri Kurri NSW 2327",
+            "1300 253 227 and info@alfabs.com.au",
+            "Reports and announcements at alfabs.com.au/investor-information"
+          ]
+        }
+      ]
+    }
+  }
+}

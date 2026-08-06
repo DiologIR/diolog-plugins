@@ -1,0 +1,6 @@
+{
+  "eval_id": 1,
+  "eval_name": "pptx-board-pack",
+  "prompt": "Need a 5-slide board pack as an actual .pptx I can open in PowerPoint. Topic: Q3 engineering update - shipped the new auth system, cut p95 latency from 840ms to 210ms, headcount went 14 to 17, two incidents (both resolved, 4h total downtime), Q4 is the migration off the legacy queue. Put it in /tmp/deck-eval-1/",
+  "assertions": []
+}

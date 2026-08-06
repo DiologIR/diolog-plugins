@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Deck pipeline — engineering all-hands</title>
+<style>
+  :root {
+    --ground: #16181a;
+    --ground-2: #1c1f22;
+    --panel: #212529;
+    --rule: #32383d;
+    --ink: #f4f5f6;
+    --ink-2: #a9b0b6;
+    --ink-3: #6f777d;
+    --accent: #d72229;
+    --font: Figtree, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #0d0e10;
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  #viewport {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  #stage {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    transform-origin: center center;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    background: var(--ground);
+    padding: 64px 84px 104px;
+    display: none;
+    overflow: hidden;
+  }
+  .slide[data-active] {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* ---- shared type ---- */
+  .eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+  }
+  h1 {
+    margin: 0;
+    font-size: 62px;
+    line-height: 1.04;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    margin: 0;
+    font-size: 42px;
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -0.018em;
+  }
+  p { margin: 0; }
+  .lede {
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 62ch;
+  }
+  code, .mono { font-family: var(--mono); }
+
+  .accent { color: var(--accent); }
+
+  .rule-bar {
+    width: 88px;
+    height: 6px;
+    background: var(--accent);
+  }
+
+  /* ---- slide 1: cover ---- */
+  .cover { display: flex; flex-direction: column; justify-content: center; gap: 30px; }
+  .cover-meta {
+    position: absolute;
+    left: 84px;
+    right: 84px;
+    bottom: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--rule);
+    padding-top: 20px;
+    font-size: 15px;
+    color: var(--ink-3);
+  }
+  .cover-mark {
+    position: absolute;
+    right: -120px;
+    top: -120px;
+    width: 520px;
+    height: 520px;
+    border: 40px solid var(--panel);
+    transform: rotate(0deg);
+  }
+
+  /* ---- slide 2: stats ---- */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    margin: 34px 0 30px;
+  }
+  .stat {
+    padding: 26px 30px 26px 0;
+    border-right: 1px solid var(--rule);
+  }
+  .stat:last-child { border-right: 0; padding-right: 0; }
+  .stat:not(:first-child) { padding-left: 30px; }
+  .stat .value {
+    font-size: 72px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .stat .label {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+
+  .read-order { display: flex; flex-direction: column; gap: 12px; }
+  .read-step {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 16px;
+    align-items: start;
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+  .read-step .n {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink-3);
+    padding-top: 3px;
+  }
+  .read-step b { color: var(--ink); font-weight: 700; }
+  .read-step .path { font-family: var(--mono); font-size: 15px; color: var(--ink); }
+
+  /* ---- slide 3: split ---- */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 34px;
+  }
+  .card {
+    background: var(--ground-2);
+    border: 1px solid var(--rule);
+    padding: 28px 30px 30px;
+  }
+  .card.is-focus { border-color: var(--accent); }
+  .card h3 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .card .sub { font-size: 15px; color: var(--ink-3); margin-bottom: 18px; }
+  pre {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    white-space: pre;
+  }
+  pre .k { color: var(--ink); }
+  pre .a { color: var(--accent); }
+
+  /* ---- slide 4: vocabulary ---- */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+  }
+  .chip {
+    font-family: var(--mono);
+    font-size: 20px;
+    padding: 12px 22px;
+    border: 1px solid var(--rule);
+    background: var(--ground-2);
+    color: var(--ink);
+  }
+  .chip.dropped {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: transparent;
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+  }
+  .band-label {
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink-3);
+    margin-top: 34px;
+  }
+  .band-label.warn { color: var(--accent); }
+  .footnote {
+    margin-top: 34px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 70ch;
+  }
+
+  /* ---- slide 5: rules ---- */
+  .rules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 34px;
+    margin-top: 30px;
+  }
+  .rule {
+    border-top: 2px solid var(--rule);
+    padding-top: 14px;
+  }
+  .rule.is-focus { border-top-color: var(--accent); }
+  .rule .h {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .rule .b { font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+  .example {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 15px;
+  }
+  .example > div { padding: 16px 20px; }
+  .example .bad { border-right: 1px solid var(--rule); color: var(--accent); }
+  .example .good { color: var(--ink); }
+  .example .tag {
+    display: block;
+    font-family: var(--font);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+
+  /* ---- slide 6: root + validate ---- */
+  .root-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 34px;
+    margin-top: 30px;
+    align-items: start;
+  }
+  .keylist { display: flex; flex-direction: column; }
+  .keyrow {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 18px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .keyrow:first-child { border-top: 1px solid var(--rule); }
+  .keyrow .k { font-family: var(--mono); color: var(--ink); font-size: 15px; }
+  .keyrow .v { color: var(--ink-2); }
+  .terminal {
+    background: #0d0e10;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--accent);
+    padding: 22px 24px;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink-2);
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .terminal .prompt { color: var(--ink-3); }
+  .terminal .cmd { color: var(--ink); }
+  .terminal .err { color: var(--accent); }
+  .loop {
+    margin-top: 20px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .loop b { color: var(--ink); }
+
+  /* ---- chrome ---- */
+  .slide-num {
+    position: absolute;
+    right: 84px;
+    bottom: 44px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+  .slide-title-tag {
+    position: absolute;
+    left: 84px;
+    bottom: 44px;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+  }
+
+  #progress {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--accent);
+    width: 0;
+    transition: width 180ms ease;
+    z-index: 10;
+  }
+
+  #hint {
+    position: fixed;
+    right: 14px;
+    bottom: 12px;
+    font-size: 12px;
+    color: #4a5157;
+    font-family: var(--mono);
+    z-index: 10;
+    transition: opacity 400ms ease;
+  }
+
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    html, body { overflow: visible; background: #fff; }
+    #viewport { position: static; display: block; }
+    #stage { transform: none !important; width: 1280px; height: auto; box-shadow: none; }
+    .slide {
+      position: relative;
+      display: block !important;
+      width: 1280px;
+      height: 720px;
+      break-after: page;
+      page-break-after: always;
+    }
+    #progress, #hint { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="viewport">
+  <div id="stage">
+
+    <!-- 1 — cover -->
+    <section class="slide cover" data-active>
+      <div class="cover-mark" aria-hidden="true"></div>
+      <div class="rule-bar"></div>
+      <div class="eyebrow">Engineering all-hands</div>
+      <h1>The deck pipeline,<br />end to end</h1>
+      <p class="lede">
+        One prompt in, one <code>lecturn.deck/1</code> JSON file out — nine grounded slides for
+        ALFABS Australia Limited (ASX:AAL). Here is the contract the authoring agent works to,
+        and the validator that decides whether it shipped.
+      </p>
+      <div class="cover-meta">
+        <span>Source: <code>docs/alfabs-9-slide-deck-prompt.md</code></span>
+        <span>6 slides</span>
+      </div>
+    </section>
+
+    <!-- 2 — the library -->
+    <section class="slide">
+      <div class="eyebrow">The library</div>
+      <h2>140 layouts, read on a budget</h2>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="value">140</div>
+          <div class="label">pre-built templates, one JSON file each</div>
+        </div>
+        <div class="stat">
+          <div class="value">13</div>
+          <div class="label">recipes — optional spines, indexed for matching</div>
+        </div>
+        <div class="stat">
+          <div class="value accent">~725 B</div>
+          <div class="label">per template file, carrying just its <code>slots</code></div>
+        </div>
+      </div>
+      <div class="read-order">
+        <div class="read-step">
+          <div class="n">01</div>
+          <div>
+            <b>Match at most one recipe.</b>
+            <span class="path">recipes/index.json</span> → read that single recipe file.
+            Add, drop, reorder, replace or ignore its steps.
+          </div>
+        </div>
+        <div class="read-step">
+          <div class="n">02</div>
+          <div>
+            <b>Open only plausible candidates.</b>
+            <span class="path">templates/&lt;id&gt;.json</span> — cheap, so read a handful, not the shelf.
+          </div>
+        </div>
+        <div class="read-step">
+          <div class="n">03</div>
+          <div>
+            <b>Browse only if you must.</b>
+            <span class="path">catalogue.md</span> (24 KB) or <span class="path">catalogue.json</span>
+            (68 KB) list all 140 — slower than the per-template files.
+          </div>
+        </div>
+      </div>
+      <div class="slide-title-tag">The library</div>
+      <div class="slide-num">02 / 06</div>
+    </section>
+
+    <!-- 3 — templates are a base structure -->
+    <section class="slide">
+      <div class="eyebrow">Authoring model</div>
+      <h2>A template is a base structure,<br />not a form to fill in</h2>
+      <div class="split">
+        <div class="card">
+          <h3>Use a template</h3>
+          <div class="sub">Bend it. Slots expand to geometry server-side.</div>
+<pre>{
+  <span class="k">"id"</span>: "ops-highlights",
+  <span class="k">"templateId"</span>: "kpi-grid",
+  <span class="k">"slots"</span>: {
+    "title": "FY26 highlights",
+    "kpi.1": { "value": "…" },
+    "table.rows": [ … ]
+  }
+}</pre>
+        </div>
+        <div class="card is-focus">
+          <h3>Or author from nothing</h3>
+          <div class="sub">Equally first-class. Absolute <code>layout</code> boxes.</div>
+<pre>{
+  <span class="k">"id"</span>: "kurri-kurri",
+  <span class="k">"elements"</span>: [
+    { "type": "image", … },
+    { "type": "stat",  … },
+    { "type": "text",  … }
+  ]
+}</pre>
+        </div>
+      </div>
+      <div class="footnote">
+        Both shapes mix freely inside one deck. Templates expand to geometry
+        <b class="accent">server-side at apply</b> — never expand one yourself.
+      </div>
+      <div class="slide-title-tag">Authoring model</div>
+      <div class="slide-num">03 / 06</div>
+    </section>
+
+    <!-- 4 — element vocabulary -->
+    <section class="slide">
+      <div class="eyebrow">Element vocabulary</div>
+      <h2>Seven types survive apply. Three are dropped.</h2>
+      <div class="band-label">Survives</div>
+      <div class="chips">
+        <span class="chip">text</span>
+        <span class="chip">stat</span>
+        <span class="chip">table</span>
+        <span class="chip">image</span>
+        <span class="chip">shape</span>
+        <span class="chip">line</span>
+        <span class="chip">chart</span>
+      </div>
+      <div class="band-label warn">Dropped — no deck mapping</div>
+      <div class="chips">
+        <span class="chip dropped">group</span>
+        <span class="chip dropped">widget</span>
+        <span class="chip dropped">embed</span>
+      </div>
+      <div class="footnote">
+        Authoring a dropped type is silent data loss: the slide validates, applies, and renders
+        without it. Compose with absolute <code>layout</code> boxes instead of grouping.
+      </div>
+      <div class="slide-title-tag">Element vocabulary</div>
+      <div class="slide-num">04 / 06</div>
+    </section>
+
+    <!-- 5 — validator rules -->
+    <section class="slide">
+      <div class="eyebrow">Hard rules</div>
+      <h2>What the validator refuses to pass</h2>
+      <div class="rules">
+        <div class="rule is-focus">
+          <div class="h"><code>stat.value</code> is a figure, ≤ 14 characters</div>
+          <div class="b">
+            The renderer sizes it from its box, so prose there renders enormous and covers its
+            neighbours. Words belong in <code>label</code>.
+          </div>
+        </div>
+        <div class="rule">
+          <div class="h">A value must fit its box width</div>
+          <div class="b">Legible at that size, or the figure wraps mid-number.</div>
+        </div>
+        <div class="rule">
+          <div class="h">Text must fit its box at its <code>fontSize</code></div>
+          <div class="b">No overflow, no silent clipping at apply.</div>
+        </div>
+        <div class="rule">
+          <div class="h">No overlap beyond 20%</div>
+          <div class="b">
+            Two text-bearing elements over 20% of the smaller box print one string across the
+            other. Also: no fully empty table rows.
+          </div>
+        </div>
+      </div>
+      <div class="example">
+        <div class="bad">
+          <span class="tag">Rejected</span>
+          "value": "Revenue up strongly on FY25"
+        </div>
+        <div class="good">
+          <span class="tag">Accepted</span>
+          "value": "$182.4m"<br />"label": "FY26 revenue, up on FY25"
+        </div>
+      </div>
+      <div class="slide-title-tag">Hard rules</div>
+      <div class="slide-num">05 / 06</div>
+    </section>
+
+    <!-- 6 — deck root + validate loop -->
+    <section class="slide">
+      <div class="eyebrow">Deck root &amp; the gate</div>
+      <h2>Ship it through the validator, every time</h2>
+      <div class="root-grid">
+        <div class="keylist">
+          <div class="keyrow"><div class="k">schema</div><div class="v">"lecturn.deck/1"</div></div>
+          <div class="keyrow"><div class="k">id, title</div><div class="v">non-empty strings</div></div>
+          <div class="keyrow"><div class="k">canvas</div><div class="v">{ w: 1280, h: 720 }</div></div>
+          <div class="keyrow"><div class="k">theme.tokens</div><div class="v">authored palette wins; apply fills only what's absent</div></div>
+          <div class="keyrow"><div class="k">slides[]</div><div class="v">templated or hand-authored, mixed</div></div>
+          <div class="keyrow"><div class="k">x.diolog.structure</div><div class="v">one entry per slide, same order and id — archetype, visible label, 2–5 grounded bullets</div></div>
+        </div>
+        <div>
+          <div class="terminal"><span class="prompt">$</span> <span class="cmd">node scripts/generated/diolog-slide-templates-skill/scripts/validate-deck.mjs deck.json</span>
+
+<span class="err">slides[3].elements: 'kpi-fleet' and 'footnote' overlap by 34% of the smaller box</span></div>
+          <div class="loop">
+            Fix every error it prints and <b>re-run</b>.
+            <b class="accent">Never bypass it</b>, and never downgrade a slide to satisfy it.
+          </div>
+        </div>
+      </div>
+      <div class="slide-title-tag">Deck root &amp; the gate</div>
+      <div class="slide-num">06 / 06</div>
+    </section>
+
+  </div>
+</div>
+
+<div id="progress"></div>
+<div id="hint">← → · space · f fullscreen</div>
+
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var progress = document.getElementById('progress');
+  var hint = document.getElementById('hint');
+  var i = 0;
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (s, k) {
+      if (k === i) s.setAttribute('data-active', '');
+      else s.removeAttribute('data-active');
+    });
+    progress.style.width = ((i + 1) / slides.length * 100) + '%';
+    if (location.hash !== '#' + (i + 1)) {
+      history.replaceState(null, '', '#' + (i + 1));
+    }
+  }
+
+  function fit() {
+    var pad = 48;
+    var s = Math.min((window.innerWidth - pad) / 1280, (window.innerHeight - pad) / 720);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+
+  window.addEventListener('resize', fit);
+
+  document.addEventListener('keydown', function (e) {
+    switch (e.key) {
+      case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+        e.preventDefault(); show(i + 1); break;
+      case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+        e.preventDefault(); show(i - 1); break;
+      case 'Home': e.preventDefault(); show(0); break;
+      case 'End': e.preventDefault(); show(slides.length - 1); break;
+      case 'f': case 'F':
+        if (document.fullscreenElement) document.exitFullscreen();
+        else document.documentElement.requestFullscreen();
+        break;
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    show(e.clientX < window.innerWidth / 3 ? i - 1 : i + 1);
+  });
+
+  var startX = null;
+  document.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 40) show(dx < 0 ? i + 1 : i - 1);
+    startX = null;
+  }, { passive: true });
+
+  var fromHash = parseInt((location.hash || '').slice(1), 10);
+  fit();
+  show(isNaN(fromHash) ? 0 : fromHash - 1);
+  setTimeout(function () { hint.style.opacity = '0'; }, 4000);
+})();
+</script>
+</body>
+</html>

@@ -34,6 +34,7 @@ Surface references:
 - Marketing or transactional email → `references/email-ux.md`
 - AI-powered features (prompts, agents, generation, AI trust/control) → `references/ai-product-ux.md`
 - Any user-facing words (labels, errors, empty states, subject lines) → `references/ux-writing.md`
+- Any surface where a reader will **act on a figure** (investor, financial, health, compliance, pricing) → `references/data-provenance.md`
 - Pre-ship verification of any surface → `references/checklists.md`
 
 In Advise mode, when analytics exist, start from the data-signal table in `references/review-playbook.md` (§1) — bounce/time/conversion patterns point at the failing level before you look at a single screen.
@@ -152,5 +153,6 @@ Follow `references/review-playbook.md` for the full protocol. The contract in br
 - `references/mobile-ux.md` — touch, thumb zones, platform grammar, mobile navigation and forms
 - `references/email-ux.md` — marketing + transactional email UX, client constraints, deliverability-adjacent design, compliance
 - `references/ai-product-ux.md` — AI feature patterns: inputs, wayfinding, governors, narration cadence, trust builders, tuners, identity, and the AI review lens
+- `references/data-provenance.md` — the three provenance states, why "no provenance" must be impossible rather than defaulted, why the disclosure page is generated not written, and precision as a claim
 - `references/ux-writing.md` — microcopy, tone matrix, plain language, interface typography
 - `references/checklists.md` — pre-ship checklists per surface (incl. AI features) + WCAG quick pass + severity ladder

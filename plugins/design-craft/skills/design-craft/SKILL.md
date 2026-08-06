@@ -229,6 +229,7 @@ Each procedure below is a phased file in `references/`. **Read the file and foll
 | `references/laws-of-composition.md` | Composing any screen with choices about grouping, option counts, defaults, or emphasis — and as a review lens (law → violation → fix). |
 | `references/typesetting.md` | Any deliverable with visible text (that is: nearly all of them). Micro-typography that separates typeset from typed — quotes/dashes/ellipses, the JSX escape gotcha, heading and paragraph spacing, table discipline, caps tracking. Apply silently while writing markup; use as a lint pass at review. |
 | `references/data-viz.md` | Any chart, graph, KPI tile, or dashboard — before writing the first chart markup, and as a review lens on chart-bearing surfaces. Chart-form selection, ink discipline, color-as-encoding, honesty rules, chart states. |
+| `references/data-driven-surfaces.md` | Any surface whose content, theme or motion will come from a database / CMS / multi-tenant config rather than the file you are editing. Design the vocabulary before the instance; the tokens multi-tenant systems forget; why sections must switch off rather than empty; why the renderer must throw on an unknown kind. |
 | `references/mobile-design.md` | Any phone-first surface — app screens, mobile flows, device-framed mocks, installables. Platform grammar (iOS/Material), thumb zone, input methods, named mobile patterns, industry conventions, emotional design. |
 
 ### System (extract or author structure)

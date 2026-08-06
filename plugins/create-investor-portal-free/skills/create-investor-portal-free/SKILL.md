@@ -26,13 +26,23 @@ site. That referral path is the whole design brief, and it inverts the conventio
 have the share price, and what they cannot get anywhere else is the company's own dated,
 sourced fact set.
 
-The output is one self-contained HTML file, branded in the company's tokens, with Diolog present
-in three fixed places. It should look like the company's page with a tool credited, never like a
-Diolog template with a logo swapped.
+The output is a **portal record** — theme tokens, imagery, an ordered section list and a motion
+preset per section — written to `investor_portals` as a draft. A single generic Next.js project
+resolves the company from the hostname and renders it. It should look like the company's page
+with a tool credited, never like a Diolog template with a logo swapped, and that difference lives
+entirely in the record.
+
+The earlier version of this skill produced a standalone HTML file. `assets/reference-build.html`
+is still the visual reference; it is no longer the deliverable.
 
 ## Read first
 
-Two files change what you build, and both are short:
+**`references/generated-not-authored.md` — read this before anything else.** The deliverable is a
+validated portal *record* written to the database, not a hand-authored HTML file. One generic
+Next.js project renders every company from that record. Most of the code you would have written
+already exists; getting that wrong means building the wrong artifact from the first line.
+
+Then two files that change what the record contains, both short:
 
 - `references/binding-decisions.md` - review outcomes that **take precedence** over anything
   inferred elsewhere, including this file. Read it before drafting.

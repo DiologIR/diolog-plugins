@@ -126,3 +126,20 @@ Not an add-on; on a projector it's just legibility. Contrast per §4. Never enco
 ## 8. The last look
 
 Before delivering, remove one thing. Review rounds accrete — a rule here, a badge there, a second accent that crept in. Find the element the deck doesn't need and cut it. If you genuinely can't find one, ship.
+
+
+## Provenance on a slide
+
+A deck has no place to hang a marker, so the contract has to be carried by composition. Three
+rules, all learned on an ASX-derived deck:
+
+- **Every number on a slide traces to the source document.** If it is not in the source, it is
+  not on the slide. There is no "roughly" on a slide a board will read as a statement.
+- **A generated photograph is disclosed on the artifact**, and never depicts a real named person.
+  A text card carrying someone's actual credentials beats a fabricated likeness, always.
+- **Precision is a claim.** If the source says a quarter, the slide says a quarter. Inventing a
+  date or a decimal to make a chart tidier fabricates specificity the record does not support.
+
+If a deck and a data-driven surface are built from the same material, the surface's provenance
+model is the better source: read `ux-craft/references/data-provenance.md` and carry its three
+states into what you choose to put on a slide.

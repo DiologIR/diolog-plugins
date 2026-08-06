@@ -1,0 +1,7 @@
+{
+  "env" : {
+    "ANTHROPIC_BASE_URL" : "http:\/\/127.0.0.1:8787",
+    "ANTHROPIC_CUSTOM_HEADERS" : "X-Perch-Binding: daiolog",
+    "ENABLE_TOOL_SEARCH" : "true"
+  }
+}

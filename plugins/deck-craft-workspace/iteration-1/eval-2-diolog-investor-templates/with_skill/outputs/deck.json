@@ -1,0 +1,354 @@
+{
+  "schema": "lecturn.deck/1",
+  "id": "alfabs-investor-update-fy26",
+  "title": "ALFABS Australia Limited — Investor update",
+  "canvas": { "w": 1280, "h": 720 },
+  "theme": {
+    "tokens": {
+      "color": {
+        "background": "#1C1C1E",
+        "surface": "#26262A",
+        "foreground": "#F4F4F5",
+        "muted": "#A1A1A6",
+        "accent": "#D72229",
+        "accentContrast": "#FFFFFF",
+        "border": "#3A3A3F"
+      },
+      "typography": {
+        "fontFamily": "Figtree, sans-serif",
+        "headingFamily": "Figtree, sans-serif",
+        "scale": {
+          "display": 56,
+          "title": 40,
+          "heading": 28,
+          "body": 20,
+          "caption": 15
+        },
+        "weight": { "body": 400, "label": 550, "heading": 600 },
+        "tracking": { "display": "-0.02em", "caps": "0.08em", "body": "0" },
+        "lineHeight": { "display": 1.08, "heading": 1.2, "body": 1.45 }
+      },
+      "shape": { "radius": 0, "borderWidth": 1 },
+      "spacing": { "unit": 8, "slidePaddingX": 88, "slidePaddingY": 72 }
+    }
+  },
+  "slides": [
+    {
+      "id": "sld_1",
+      "background": "#1C1C1E",
+      "elements": [
+        {
+          "id": "s1_ground",
+          "type": "shape",
+          "shape": "rect",
+          "fill": { "color": "#1C1C1E" },
+          "layout": { "x": 0, "y": 0, "w": 1280, "h": 720, "z": 0 }
+        },
+        {
+          "id": "s1_eyebrow",
+          "type": "text",
+          "text": "ALFABS AUSTRALIA LIMITED · ASX: AAL",
+          "fontSize": 20,
+          "fontWeight": 550,
+          "color": "#A1A1A6",
+          "letterSpacing": "0.08em",
+          "layout": { "x": 88, "y": 136, "w": 720, "h": 30, "z": 2 }
+        },
+        {
+          "id": "s1_rule",
+          "type": "shape",
+          "shape": "rect",
+          "fill": { "color": "#D72229" },
+          "layout": { "x": 88, "y": 190, "w": 96, "h": 6, "z": 1 }
+        },
+        {
+          "id": "s1_statement",
+          "type": "text",
+          "text": "Heavy engineering, mining services and equipment hire, run from one base at Kurri Kurri in the NSW Hunter Valley.",
+          "fontSize": 56,
+          "fontWeight": 600,
+          "color": "#F4F4F5",
+          "letterSpacing": "-0.02em",
+          "layout": { "x": 88, "y": 240, "w": 1060, "h": 300, "z": 2 }
+        },
+        {
+          "id": "s1_footer",
+          "type": "text",
+          "text": "Investor update · Prepared for holders of ALFABS Australia Limited ordinary shares",
+          "fontSize": 15,
+          "fontWeight": 400,
+          "color": "#A1A1A6",
+          "layout": { "x": 88, "y": 618, "w": 820, "h": 30, "z": 2 }
+        }
+      ]
+    },
+    {
+      "id": "sld_2",
+      "templateId": "cols-3-icon",
+      "slots": {
+        "title": "The three divisions",
+        "col.1.heading": "Engineering and fabrication",
+        "col.1.body": "Heavy steel fabrication, machining and maintenance, delivered from the Kurri Kurri workshop and on customer sites.",
+        "col.2.heading": "Mining services",
+        "col.2.body": "Crews and supervision supplied to mine sites for maintenance, shutdown and production support work.",
+        "col.3.heading": "Equipment hire",
+        "col.3.body": "An owned plant and equipment fleet hired to mining, industrial and construction customers."
+      }
+    },
+    {
+      "id": "sld_3",
+      "templateId": "lead-bullets",
+      "slots": {
+        "title": "FY26 operating highlights",
+        "lead": "All three divisions traded through the year from the single Kurri Kurri base.",
+        "bullets": [
+          "Engineering and fabrication remained the anchor division, working from the Kurri Kurri workshop.",
+          "Mining services crews stayed deployed on customer sites across the period.",
+          "The hire fleet continued to earn on both the company's own contracts and third-party hire.",
+          "Certification and safety obligations were maintained across every division."
+        ]
+      }
+    },
+    {
+      "id": "sld_4",
+      "templateId": "two-column-text",
+      "slots": {
+        "title": "The Kurri Kurri facility and fleet",
+        "left.heading": "The workshop",
+        "left.body": "Kurri Kurri holds the fabrication, machining and maintenance capability, and is the base from which crews and equipment are dispatched to customer sites.",
+        "right.heading": "The fleet",
+        "right.body": "Owned plant and equipment is deployed on the company's own contracts and hired out to third parties, so the same asset base earns across two divisions."
+      }
+    },
+    {
+      "id": "sld_5",
+      "templateId": "statement-support",
+      "slots": {
+        "statement": "Every division works to third-party certified management systems.",
+        "support": [
+          "Quality, environmental and work health and safety management systems are certified and externally audited.",
+          "Access to customer sites depends on holding those certifications and on the safety record behind them."
+        ]
+      }
+    },
+    {
+      "id": "sld_6",
+      "templateId": "hub-spoke",
+      "slots": {
+        "title": "Customers",
+        "hub": "ALFABS",
+        "spokes": [
+          "Mine site operators",
+          "Mining contractors",
+          "Industrial plant operators",
+          "Construction and infrastructure contractors",
+          "Equipment hire customers"
+        ]
+      }
+    },
+    {
+      "id": "sld_7",
+      "templateId": "three-point",
+      "slots": {
+        "title": "Financial position",
+        "point.1.heading": "Revenue base",
+        "point.1.body": "Earnings come from three divisions serving overlapping customers, so no single contract carries a whole revenue line.",
+        "point.2.heading": "Asset backing",
+        "point.2.body": "The Kurri Kurri facility and the hire fleet are owned operating assets sitting behind the balance sheet.",
+        "point.3.heading": "Reporting",
+        "point.3.body": "Statutory results are prepared under Australian Accounting Standards and lodged with the ASX."
+      }
+    },
+    {
+      "id": "sld_8",
+      "templateId": "milestone-check",
+      "slots": {
+        "title": "Capital and outlook",
+        "delivered.heading": "Established",
+        "delivered": [
+          "Listed on the ASX under the code AAL.",
+          "Three operating divisions run from a single Kurri Kurri base.",
+          "An owned facility and hire fleet supporting all three divisions."
+        ],
+        "next.heading": "Focus ahead",
+        "next": [
+          "Keep the hire fleet utilised across own work and third-party hire.",
+          "Maintain the certifications that give crews access to customer sites.",
+          "Grow the divisions from the existing base rather than duplicating it."
+        ]
+      }
+    },
+    {
+      "id": "sld_9",
+      "background": "#1C1C1E",
+      "elements": [
+        {
+          "id": "s9_ground",
+          "type": "shape",
+          "shape": "rect",
+          "fill": { "color": "#1C1C1E" },
+          "layout": { "x": 0, "y": 0, "w": 1280, "h": 720, "z": 0 }
+        },
+        {
+          "id": "s9_title",
+          "type": "text",
+          "text": "Investor contact",
+          "fontSize": 40,
+          "fontWeight": 600,
+          "color": "#F4F4F5",
+          "letterSpacing": "-0.02em",
+          "layout": { "x": 88, "y": 168, "w": 800, "h": 60, "z": 2 }
+        },
+        {
+          "id": "s9_rule",
+          "type": "shape",
+          "shape": "rect",
+          "fill": { "color": "#D72229" },
+          "layout": { "x": 88, "y": 258, "w": 96, "h": 6, "z": 1 }
+        },
+        {
+          "id": "s9_entity",
+          "type": "text",
+          "text": "ALFABS Australia Limited (ASX: AAL)",
+          "fontSize": 28,
+          "fontWeight": 550,
+          "color": "#F4F4F5",
+          "layout": { "x": 88, "y": 304, "w": 900, "h": 44, "z": 2 }
+        },
+        {
+          "id": "s9_base",
+          "type": "text",
+          "text": "Operating base — Kurri Kurri, New South Wales",
+          "fontSize": 20,
+          "fontWeight": 400,
+          "color": "#A1A1A6",
+          "layout": { "x": 88, "y": 360, "w": 900, "h": 36, "z": 2 }
+        },
+        {
+          "id": "s9_asx",
+          "type": "text",
+          "text": "Announcements are released to the ASX Market Announcements Platform under the code AAL.",
+          "fontSize": 20,
+          "fontWeight": 400,
+          "color": "#A1A1A6",
+          "layout": { "x": 88, "y": 408, "w": 900, "h": 68, "z": 2 }
+        },
+        {
+          "id": "s9_enquiries",
+          "type": "text",
+          "text": "Investor enquiries should be directed to the Company Secretary.",
+          "fontSize": 15,
+          "fontWeight": 400,
+          "color": "#A1A1A6",
+          "layout": { "x": 88, "y": 492, "w": 900, "h": 34, "z": 2 }
+        },
+        {
+          "id": "s9_footer",
+          "type": "text",
+          "text": "ALFABS Australia Limited · ASX: AAL",
+          "fontSize": 15,
+          "fontWeight": 400,
+          "color": "#A1A1A6",
+          "layout": { "x": 88, "y": 618, "w": 700, "h": 30, "z": 2 }
+        }
+      ]
+    }
+  ],
+  "x": {
+    "diolog": {
+      "structure": [
+        {
+          "id": "sld_1",
+          "kind": "cover",
+          "label": "Who we are and where we operate",
+          "bullets": [
+            "ALFABS Australia Limited, listed on the ASX under the code AAL",
+            "Heavy engineering, mining services and equipment hire",
+            "Operating from one base at Kurri Kurri in the NSW Hunter Valley"
+          ]
+        },
+        {
+          "id": "sld_2",
+          "kind": "split",
+          "label": "The three divisions",
+          "bullets": [
+            "Engineering and fabrication — steel fabrication, machining and maintenance",
+            "Mining services — crews and supervision supplied to mine sites",
+            "Equipment hire — an owned plant and equipment fleet hired to customers"
+          ]
+        },
+        {
+          "id": "sld_3",
+          "kind": "title",
+          "label": "FY26 operating highlights",
+          "bullets": [
+            "All three divisions traded through the year from the Kurri Kurri base",
+            "Mining services crews remained deployed on customer sites",
+            "The hire fleet earned on both own contracts and third-party hire",
+            "Certification and safety obligations maintained across every division"
+          ]
+        },
+        {
+          "id": "sld_4",
+          "kind": "split",
+          "label": "The Kurri Kurri facility and fleet",
+          "bullets": [
+            "The workshop holds fabrication, machining and maintenance capability",
+            "Crews and equipment are dispatched to customer sites from that base",
+            "The owned fleet earns across two divisions rather than one"
+          ]
+        },
+        {
+          "id": "sld_5",
+          "kind": "title",
+          "label": "Safety and certifications",
+          "bullets": [
+            "Quality, environmental and WHS management systems are third-party certified",
+            "Certification is externally audited rather than self-declared",
+            "Site access depends on holding those certifications"
+          ]
+        },
+        {
+          "id": "sld_6",
+          "kind": "split",
+          "label": "Customers",
+          "bullets": [
+            "Mine site operators and mining contractors",
+            "Industrial plant operators",
+            "Construction and infrastructure contractors, plus hire customers"
+          ]
+        },
+        {
+          "id": "sld_7",
+          "kind": "split",
+          "label": "Financial position",
+          "bullets": [
+            "Three divisions serving overlapping customers spread the revenue base",
+            "The facility and hire fleet are owned operating assets",
+            "Statutory results are prepared under Australian Accounting Standards and lodged with the ASX"
+          ]
+        },
+        {
+          "id": "sld_8",
+          "kind": "split",
+          "label": "Capital and outlook",
+          "bullets": [
+            "Established: ASX listing, three divisions, one owned base",
+            "Ahead: keep the hire fleet utilised across own work and third-party hire",
+            "Ahead: maintain certifications and grow from the existing base"
+          ]
+        },
+        {
+          "id": "sld_9",
+          "kind": "title",
+          "label": "Investor contact",
+          "bullets": [
+            "ALFABS Australia Limited (ASX: AAL)",
+            "Operating base at Kurri Kurri, New South Wales",
+            "Announcements released to the ASX Market Announcements Platform"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "html-deck-from-prd",
+  "prompt": "I've got a PRD at ~/Dev/dAIolog/docs/alfabs-9-slide-deck-prompt.md. Build me a 6-slide HTML deck out of it for an engineering all-hands - something I can just open in a browser and present. Save it to /tmp/deck-eval-0/deck.html",
+  "assertions": []
+}

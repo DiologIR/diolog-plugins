@@ -1,0 +1,6 @@
+{
+  "eval_id": 2,
+  "eval_name": "diolog-investor-templates",
+  "prompt": "Author the 9-slide ALFABS investor update described in ~/Dev/dAIolog/docs/alfabs-9-slide-deck-prompt.md. Work in /tmp/deck-eval-2/ and write deck.json there. The slide template library is at ~/Dev/dAIolog/scripts/generated/diolog-slide-templates-skill/",
+  "assertions": []
+}
