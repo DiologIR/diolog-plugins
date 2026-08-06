@@ -94,3 +94,30 @@ in the frame is what turned it into structure.
   whose motion never arrives must still render complete.
 - **`marquee` requires an operable pause control** — WCAG 2.2.2, Level A. `prefers-reduced-motion`
   is honoured but a media query is not a mechanism, and hover-to-pause does not exist on touch.
+
+
+## The surface set, on a dark theme
+
+`primaryOnDark` is the token everyone knows to compute. The surfaces are the ones that
+get missed, and they fail more visibly.
+
+A stylesheet's defaults are not neutral — they were authored for one theme. A DESIGN.md
+that states a dark canvas but omits `surface-sunken` therefore inherits a **light**
+default for it, and every rule keyed to that token paints a light band on a dark page.
+On a real run this was `.facts tbody tr:nth-child(even)`: white bars with invisible text
+straight across a dark company's facts table, on a page that had already passed a token
+check and a 200.
+
+So derive, rather than inherit:
+
+```js
+const isDark = luminance(canvas) < 0.2;
+surface:       stated ?? (isDark ? shift(canvas, +10) : '#FFFFFF')
+surfaceSunken: stated ?? (isDark ? shift(canvas, +18) : undefined)
+border:        stated ?? (isDark ? shift(canvas, +28) : undefined)
+ink:           stated ?? (isDark ? '#F5F5F5' : '#1C1B1B')
+```
+
+The rule generalises past colour: **the token a brand forgets is the token that breaks.**
+Compute it from what the brand did state, and a partial DESIGN.md produces a coherent
+portal rather than a half-inverted one.

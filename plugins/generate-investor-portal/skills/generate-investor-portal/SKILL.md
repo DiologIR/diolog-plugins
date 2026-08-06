@@ -27,14 +27,26 @@ Getting this wrong in the first five minutes is the expensive failure. If you fi
 writing HTML or CSS, stop — you have misread the task.
 
 ```
-DESIGN.md  +  company overview
-        │
-        ▼   structured output, validated against the contract
-   PortalRecord  ──►  investor_portals   (status: draft)
-        │
-        ▼
-   the generic renderer, resolved by hostname
+        a company URL
+            │
+   ┌────────┴────────┐
+   ▼                 ▼
+design-md-      company-overview-
+from-website    from-website          ← both are skills; run them first
+   │                 │
+   └────────┬────────┘
+            ▼   structured output, validated against the contract
+      PortalRecord  ──►  investor_portals   (status: draft)
+            │
+            ▼
+      the generic renderer, resolved by hostname
 ```
+
+**The two inputs are themselves skills.** Given only a company URL, run
+`design-md-from-website` for the measured tokens and `company-overview-from-website` for
+the crawled facts, then generate from both. Neither is optional and neither should be
+hand-written: a DESIGN.md guessed from a screenshot fabricates the brand colour, and an
+overview written rather than crawled fabricates the company.
 
 **Budget: under 10 minutes excluding image generation.** If you are past that, you are almost
 certainly authoring prose the overview already contains, or re-deriving tokens the DESIGN.md
@@ -60,11 +72,13 @@ deciding *what* goes in a section; read this skill when you are deciding *how to
 
 Ask for whichever is missing rather than guessing:
 
-1. **A DESIGN.md** with the company's tokens. If none exists and a live site does,
-   `design-md-from-website` produces one from measured computed styles — a far better starting
-   point than inventing tokens.
-2. **A company-overview markdown** — what the company does, its units, sites, leadership,
-   listing history, projects, disclosures. This is the only source of company facts.
+1. **A DESIGN.md** with the company's tokens. If none exists and a live site does, run
+   **`design-md-from-website`** — it measures computed styles rather than guessing hexes.
+   Two dialects are supported downstream (YAML front matter and a markdown token table),
+   so either output form works.
+2. **A company-overview markdown.** If none exists, run **`company-overview-from-website`**.
+   Its `references/output-contract.md` is the shape this generator parses, and every rule
+   in it exists because breaking it silently produced a broken portal.
 3. **The category**: `free`, `paid` or `report`.
 4. **The company id** in the Diolog database.
 
@@ -79,16 +93,34 @@ paragraph, the announcement list under Investor Information with real PDF URLs a
 Inventory as you read: business units, named projects, leadership names and titles, site
 addresses, certifications, the disclosure list, values, history, and **every image URL**.
 
-### 2. Lift the theme verbatim
+### 2. Lift the theme verbatim, then COMPUTE what the brand forgot
 
 Exact hex values, exact font stacks, exact spacing steps. A near-miss on a brand colour is worse
 than an obvious substitution, because nobody catches it.
 
-**Then compute `primaryOnDark`**, which almost no DESIGN.md supplies. See
-`references/tokens-and-motion.md` — this is the single most common accessibility failure in
-generated portals and it is arithmetic, not judgement.
+**Then compute what the DESIGN.md does not state.** The token a brand forgets is the token that
+breaks, and the stylesheet's defaults are not neutral — they were authored for one theme:
 
-### 3. Emit sections, not markup
+- **`primaryOnDark`.** A brand colour chosen against white usually fails AA on a dark band.
+  Arithmetic, not judgement.
+- **The whole surface set, on a dark theme.** A DESIGN.md stating a dark canvas but no
+  `surface-sunken` inherits a *light* default for it. On a real run this painted white bars with
+  invisible text straight across a dark company's facts table. Derive missing surfaces — and the
+  ink — from the canvas the brand did state.
+
+See `references/tokens-and-motion.md`.
+
+### 3. Reject the boilerplate before it becomes content
+
+A site crawl carries the company's privacy policy, terms, cookie notice and complaints
+procedure under exactly the same heading levels as its service lines. Structure cannot
+tell them apart, so subject matter must — one run rendered **"How Do We Collect Personal
+Information?"** and **"Complaints Resolution"** under *"What the group actually does"*.
+
+Exclude legal furniture, crawler scaffolding (`Source URL:`), and any heading phrased as
+a question. A business unit is something the company does.
+
+### 4. Emit sections, not markup
 
 Each page is an ordered list of `{ id, kind, enabled, order, band, divider, motion, props }`.
 `kind` comes from the contract's enumerated vocabulary. A kind the contract does not declare
@@ -97,7 +129,7 @@ cannot render, and the renderer throws rather than dropping it silently.
 **A section with nothing behind it is switched off, not emptied.** A company that publishes no
 video gets `enabled: false`, not a video band with a hole in it.
 
-### 4. Mark every figure's provenance
+### 5. Mark every figure's provenance
 
 This is the part the contract will reject you for, so do it as you emit rather than afterwards:
 
@@ -109,23 +141,39 @@ This is the part the contract will reject you for, so do it as you emit rather t
 There is no default. An omission is an error, not an assumption — because the assumption it used
 to make was "this figure is real".
 
-### 5. Imagery: find, then generate
+### 6. Imagery: find, then generate
 
 Search the overview's image URLs first. A crawled photograph of the real company beats a
 generated one every time and removes a disclosure obligation. Generate only for a genuine gap,
 and follow `references/imagery.md` — particularly the rule that no portrait of a real named
 person is ever generated.
 
-### 6. Write it, then prove it
+### 7. Write it, then LOOK AT IT
 
 ```bash
 node scripts/seed-portal.mjs record.json     # writes as status: draft
 npm start & node scripts/parity.mjs          # or the render check for a new company
 ```
 
-`references/validate-and-prove.md` has the full gate. The short version: the record is validated
-on the way into the database and again on the way out, so an invalid record never reaches a
-reader — but *valid* is not *good*, and only rendering it tells you which you have.
+```bash
+node scripts/seed-portal.mjs record.json     # writes as status: draft
+npm start & node scripts/parity.mjs          # or the render check for a new company
+```
+
+`references/validate-and-prove.md` has the full gate. The record is validated on the way into the
+database and again on the way out, so an invalid record never reaches a reader.
+
+**Then open the page and look at it.** A 200 and a matching token value are not evidence that a
+page is worth reading. On a real run those two checks passed while the portal carried a stray
+rule floating in the hero, a table column that was an em-dash in every row, "0 of 3 rows are
+illustrative" as a sentence about nothing, a one-row facts table, and business units taken from
+the privacy policy. Every one of those was visible in the first screenshot and invisible in
+everything that had been checked.
+
+The specific trap: **a section that renders nothing still occupies its own margins.** "No
+content" becomes two hundred pixels of dead space rather than an absence, so an empty container
+must not be rendered at all. Scroll the page before judging it — a full-page screenshot taken at
+load shows scroll-revealed content as blank and will make a working page look broken.
 
 ## What this skill will not do
 

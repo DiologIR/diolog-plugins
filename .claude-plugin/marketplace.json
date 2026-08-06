@@ -525,6 +525,11 @@
       "name": "generate-investor-portal",
       "source": "./plugins/generate-investor-portal",
       "description": "Generate a complete investor-portal record into the Diolog database from a DESIGN.md and company overview."
+    },
+    {
+      "name": "company-overview-from-website",
+      "source": "./plugins/company-overview-from-website",
+      "description": "Crawl a listed company's own website into the company-overview markdown the investor-portal generator reads."
     }
   ]
 }
