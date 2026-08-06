@@ -20,6 +20,8 @@ Three rules make verification real rather than ceremonial:
 
 **Rendering an image is not seeing one.** A screenshot tool returning success proves a file exists. The image enters your knowledge only when you *open* it. If you didn't open it, you didn't check it, and you may not say you did.
 
+**An element capture cannot see the frame.** Screenshotting `.stage` renders that element's own box, so a stage clipped by the window, shifted off-centre, or sitting under floating chrome all capture as flawless slides. Every claim about how the deck *sits in its window* — clipping, letterboxing, chrome overlap — has to come from a viewport capture plus the edge measurement in `html-deck.md` Phase 8. Element captures are for cropping a component you have already located.
+
 **The question you bring determines what you see.** Handed a capture and asked "do you see anything wrong with this?", you find the defect in seconds. Looking at your own render, the implicit question is "is this done?" and the answer comes back yes. Same pixels, opposite results. So ask literally: **"what is wrong with this?"** Answering "nothing" requires first naming the three most likely failure modes for that slide type — a void, a wrapped headline, a misalignment, an overlapping label, a contrast miss — and ruling each out by pointing at pixels.
 
 **Inspect crops, not whole decks.** A full slide scaled into a review thumbnail is a resolution at which a 161px void reads as generous whitespace and an orphaned label is a few ragged pixels. Judging from thumbnails is looking at an image in which the defects cannot exist and concluding there are none. Crop to the region at DPR 2–3.
@@ -42,6 +44,18 @@ An adaptation is intentional only when it cites the thing that forced it — a u
 **Consistency between slides.** Palette drift (a second blue that's 5% off the first is worse than a clearly different colour — it reads as almost-right and therefore wrong), type-scale drift, spacing drift, a footer that wanders, section headers that don't match each other.
 
 **Overflow and collision.** Nothing escaping its slide bounds; no unintended overlap; long words and URLs wrapped; ellipses appearing where truncation was designed. In HTML, check at several viewport sizes — the stage should letterbox, never re-layout. In an absolute-geometry format, check every element's box against the canvas: `x + w > canvas.w` is off-slide and `y > canvas.h` renders nothing at all, silently.
+
+**Overflow and collision are two checks, not one.** "Nothing past the stage bounds" is silent about content that runs *into* the footer, the page number, or a section band — all of which sit inside the bounds. Measure content against the chrome as well as against the edge:
+
+```js
+const footEl = stage.querySelector('.foot');
+const footTop = footEl.getBoundingClientRect().top;
+[...stage.querySelectorAll('p,li,td,figure,table,h1,h2')]
+  .filter(el => !footEl.contains(el))
+  .map(el => (el.getBoundingClientRect().bottom - footTop) / scale)   // > 0 is a collision
+```
+
+A slide that gains two lines of body copy passes the overflow gate and quietly prints its last sentence through the footer rule.
 
 **Full-bleed integrity.** Backgrounds, hero images and colour panels reach all four edges. A blank strip below a cover image means a wrapper collapsed (see `html-deck.md` Phase 4).
 

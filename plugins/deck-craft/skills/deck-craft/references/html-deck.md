@@ -34,10 +34,19 @@ Don't hand-roll scaling per slide. The shell holds every slide, scales the stage
     }
     @media print {
       html, body { overflow: visible; background: #fff; }
-      #stage { position: static; transform: none !important; width: auto; height: auto; }
-      .slide { display: block !important; page-break-after: always; }
+      /* `relative`, never `static`. #stage is the containing block for every
+         absolutely-positioned descendant — the slides themselves, and any
+         inset:0 image, scrim or pinned footer inside them. Making it static
+         re-anchors all of them to the page box, and the whole deck composites
+         onto page 1. Drop the centring, keep the positioning. */
+      #stage { position: relative; top: auto; left: auto;
+               transform: none !important; width: auto; height: auto; }
+      .slide { position: relative; inset: auto; display: block !important;
+               width: var(--slide-w); height: var(--slide-h);
+               page-break-after: always; overflow: hidden; }
       #counter { display: none; }
     }
+    @page { size: 1920px 1080px; margin: 0; }
   </style>
 </head>
 <body>
@@ -79,6 +88,18 @@ Each slide is a direct child `<section class="slide">` of `#stage`, carrying a 1
 
 Adapt freely — transitions, a progress bar, an ESC overview grid, wheel and swipe navigation. Keep the invariant: authored at fixed size, stage scales to fit, never re-layout for a narrow viewport.
 
+**Centre the stage with `left/top: 50%` and a translate, not with flex or grid centring.** The shell above does this for a reason. `place-items: center` on a container narrower than the 1920px stage does **not** centre it: CSS flex and grid *start-align* an item larger than its area rather than letting it overflow both sides. The layout box lands at `left: 0` instead of `-120px`, and a `scale()` about the element's own centre then pushes the whole deck sideways by half the overflow — a dead band down one edge and the opposite edge of every slide cut off. It looks like a margin bug and it is a centring bug. If you must use grid, place the stage with explicit half-size margins instead:
+
+```css
+.stage { position: absolute; left: 50%; top: 50%;
+         margin-left: -960px; margin-top: -540px;   /* half of 1920 × 1080 */
+         transform: scale(var(--s)); transform-origin: center center; }
+```
+
+**If the deck has persistent chrome — a control bar, a progress rail — give it its own band rather than floating it over the stage.** Reserve the space in the scaling container (`inset: 0 0 104px 0`) and compute `s` against *that* box, not the viewport. Chrome floated at `bottom: 28px` sits on slide content at every 16:9-ish window, where the letterbox is only a few dozen pixels.
+
+**Auto-hiding controls hold open on `:focus-visible`, not `document.activeElement`.** A mouse click leaves focus on the button it clicked, so an `activeElement` check re-arms the timer forever and the chrome never retires again for the rest of the session. `controls.querySelector(':focus-visible')` matches keyboard focus only, which is the case that actually needs the hold. Hidden chrome must also stay keyboard-reachable: wake it on `keydown` so the first Tab brings it back before focus resolves.
+
 **Slide visibility must not use `display`.** `.slide { display: none }` looks fine until a later layout rule sets `.slide-content { display: flex }` and every slide renders at once. Toggle with an attribute or class that controls `visibility` + `opacity` + `pointer-events`, or keep `display` toggling but assert nothing downstream overrides it. If `~/Dev/frontend-slides/viewport-base.css` is available, read it and inline its contents — it encodes this and the rest of the stage behaviour.
 
 ## Phase 2: Commit the type scale before the first slide
@@ -112,10 +133,12 @@ The shell sizes only the `<section>`. A wrapper `<div>` inside it is an ordinary
 Add once to the base styles:
 
 ```css
-.slide > *:not(img):not(picture):not(video):not(svg):not(canvas) { height: 100%; box-sizing: border-box; }
+.slide > *:not(img):not(picture):not(video):not(svg):not(canvas):not(.pinned) {
+  height: 100%; box-sizing: border-box;
+}
 ```
 
-Keep one in-flow wrapper per slide; a second top-level element (page number, corner mark) should be `position: absolute` with its own size so the rule doesn't stretch it.
+Keep one in-flow wrapper per slide. **Any other top-level element must be `position: absolute` *and* excluded from that selector** — give it a `.pinned` class and extend the `:not()` chain. Positioning it absolutely is not enough on its own: the rule still applies `height: 100%`, so a footer pinned with `bottom: 44px` becomes a 1080px-tall box growing *upward*, and its flex content renders at the top of the slide instead. The tell is a sliver of footer text along the slide's top edge and nothing at the bottom — and because the element is present and styled, every overflow and collision check passes.
 
 **Never negate a CSS function directly.** `-clamp(...)`, `-min(...)`, `-max(...)` are silently ignored — the declaration does nothing and the layout is subtly wrong with no error. Use `calc(-1 * clamp(...))`.
 
@@ -132,6 +155,13 @@ Writing a gradient where the direction committed to a photograph is not a treatm
 
 Then choose the treatment. View every image before placing it. Full-bleed photographs may aspect-fill; screenshots and diagrams must aspect-fit and are rarely overlaid; transparent or aspect-fit images sit on a contrasting ground. Text over an image needs protection — a card, a gradient, a blur — matched to how the brand does it elsewhere rather than invented per slide.
 
+**Content over a full-bleed image needs its own positioning to win the paint order.** A `position: absolute; inset: 0` photograph and its scrim paint *above* every static in-flow sibling, whatever the source order — so the slide's copy wrapper needs `position: relative` (a `z-index` is not required, and adding one invites a stacking-context fight later). Miss it and the entire text of the slide is invisible while its layout is perfect: real boxes, real sizes, correct fonts, so overflow, collision, contrast and inventory checks all pass. The confirmation is one line, and it belongs in the per-slide gate for every slide carrying an image:
+
+```js
+const r = heading.getBoundingClientRect();
+document.elementFromPoint(r.left + 10, r.top + 10);   // must be the text, not the photo
+```
+
 **Check the composite, not the asset.** A texture buried under a near-opaque colour wash ships the wash, and an image at low opacity behind other paint is a compliance token rather than a material. Judge every asset in the rendered capture beside what it was meant to be.
 
 With no real assets, use honest placeholders and say so: a striped background with a monospace label naming the asset and its dimensions. A placeholder shows intent; a hand-drawn SVG of a person or an abstract concept shows you didn't have the asset, and a gradient standing in for a photograph shows it while pretending otherwise.
@@ -144,10 +174,30 @@ Render the current note in a presenter overlay behind a key toggle. Write full c
 
 ## Phase 7: Print and PDF
 
-The `@media print` block in the shell is the floor: it un-scales the stage, forces every slide visible, and page-breaks between them. Verify by actually printing to PDF, because two things break silently — a background colour that doesn't print (`print-color-adjust: exact` on the elements that need it), and an animation frozen mid-play because the slide was authored in a hidden state. Authoring each slide in its final visible layout (SKILL.md §5) is what makes print free.
+The `@media print` block in the shell is the floor: it un-scales the stage, forces every slide visible, and page-breaks between them. Verify by actually printing to PDF, because several things break silently:
+
+- a background colour that doesn't print (`print-color-adjust: exact` on the elements that need it);
+- an animation frozen mid-play because the slide was authored in a hidden state — authoring each slide in its final visible layout (SKILL.md §5) is what makes print free;
+- **the containing-block collapse**: switching the stage or a slide to `position: static` for print re-anchors every absolutely-positioned descendant to the page box. Full-bleed photographs, scrims and pinned footers from *all* slides then pile onto page 1, while pages 2+ look correct. Use `position: relative` and reset `top`/`left`/`margin` instead. Page 1 rendering the *last* slide's photograph under the *last* slide's footer is this bug's signature.
+
+**Open the exported pages, and not just the first one.** The page count is not the check — a 12-page PDF whose page 1 is a composite of twelve slides still counts twelve pages. Open page 1, one photo-bearing slide from the middle, and the last, and confirm each carries the right content, the right image and the right page number.
 
 If a headless export is available (`~/Dev/frontend-slides/scripts/export-pdf.sh` is one), use it rather than asking the user to print by hand.
 
 ## Phase 8: Verify
 
-Serve over HTTP, never `file://` — module scripts, fetches and some fonts fail silently from the filesystem. Then walk the deck per `references/deck-review.md`.
+Serve over HTTP, never `file://` — module scripts, fetches and some fonts fail silently from the filesystem.
+
+**Capture the viewport, not the element.** An element screenshot (`page.locator('.stage').screenshot()`, `playwright-cli screenshot "#s4 .stage"`) renders the element's own box and is structurally blind to where that box actually sits: a stage shifted 120px off-centre, half of it past the right edge of the window, screenshots as a perfect slide. So does a stage sitting under a floating control bar. Element captures are for cropping a component you have already located; they can never establish that the deck fits its window.
+
+**A ratio check is not a placement check either.** `getBoundingClientRect().width / .height === 1.778` stays true when the box is the right size in the wrong place. Measure the edges against the viewport:
+
+```js
+const r = stage.getBoundingClientRect();
+({ clipL: Math.max(0, -r.left),
+   clipR: Math.max(0, r.right  - innerWidth),
+   clipT: Math.max(0, -r.top),
+   clipB: Math.max(0, r.bottom - innerHeight) });   // every one must be 0
+```
+
+Run it at several window sizes, including a few that are wider and narrower than 16:9. Then walk the deck per `references/deck-review.md`.
