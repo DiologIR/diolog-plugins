@@ -1,6 +1,12 @@
 # Crawling
 
-## The pages worth a request
+**Prefer a stored crawl.** In the Diolog platform the crawl already exists — the crawl
+worker writes every page plus a deterministic deduplicated `overviewMarkdown`, and
+`startCompanyOverview` reads it whole. Run your own crawl only when there is no stored
+one; then take every page, because the operation is a deduplication rather than a
+selection.
+
+## The pages worth a request, when you must crawl yourself
 
 | Page | What it supplies |
 |---|---|
@@ -13,13 +19,19 @@
 | Contact | Registered office and site list |
 | Projects / Case studies | Named projects and their photographs |
 
-## What to skip
+## Fetch broadly; exclude at the OUTPUT
 
-`/privacy`, `/terms`, `/cookies`, `/complaints`, `/whistleblower`, `/cart`, `/checkout`,
-`/account`, `/login`, `/search`, and paginated blog archives past the first page.
+A distinction worth keeping straight, because collapsing it loses real content:
 
-These are not judgement calls. Every one of them has arrived in a crawl looking like a
-business section, and a downstream generator cannot tell the difference.
+- **Fetching** is broad. The overview is a whole-company summary, so a page you never
+  fetched is a fact the company published and the overview denies.
+- **Emitting** is selective. `/privacy`, `/terms`, `/cookies`, `/complaints`,
+  `/whistleblower`, cart, checkout, account, login and search pages are legal furniture
+  and site machinery. They must not appear as business sections in the output.
+
+These are not judgement calls at the output stage. Every one has arrived in a crawl
+looking like a business section, and a downstream generator cannot tell the difference —
+one run rendered a company's privacy policy under "What the group actually does".
 
 ## Mechanics
 
