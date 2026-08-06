@@ -520,6 +520,11 @@
       },
       "source": "./plugins/workflow-resume",
       "category": "development"
+    },
+    {
+      "name": "generate-investor-portal",
+      "source": "./plugins/generate-investor-portal",
+      "description": "Generate a complete investor-portal record into the Diolog database from a DESIGN.md and company overview."
     }
   ]
 }
