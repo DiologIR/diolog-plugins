@@ -208,6 +208,21 @@ information, and the hierarchy inverted — the *name* in the eyebrow and a sent
 the 32px heading. If a slot has nothing of its own to say, leave it out; and **never truncate
 into a heading.** A heading is written short, not cut short.
 
+**Where the source gives you no short claim, RE-SLOT — do not cut.** Cutting is what produced
+the mid-clause headings in the first place, so the fix is not a shorter cut. The reference
+build's shape is eyebrow = the name, heading = a *claim*: "Fabrication" over *"Heavy structural
+steel, detailed pipe and duct work."* Eight words. A crawled overview rarely opens a section
+with eight words, so:
+
+- if the source states a claim under ~96 characters, it heads the section and the name is the
+  eyebrow — the reference's own shape;
+- otherwise **the unit's NAME heads the section** and the sentence goes where prose goes;
+- and drop the eyebrow whenever it would repeat the heading.
+
+96 is the reference's own longest lead plus room, chosen so the reference build does not move.
+On one run this split eight units 5 name-headed / 3 claim-headed — which is the honest ratio
+for crawled material, and it is not a failure.
+
 **A crawler artefact is not a fact about the company.** "12 photographs taken from the company's
 own site" was shipped as one of three headline facts in a hero. It is a count of what the crawler
 found. So are page counts, link counts, and anything phrased about the *record* rather than about
@@ -224,6 +239,15 @@ a **favicon** (a branded investor portal showing the generic page icon in the ta
 first thing anyone sees), and **`color-scheme`** matching the record's own canvas — a portal on
 `#0A0A0A` declaring `color-scheme: light` gets light scrollbars, light form controls and a light
 pre-paint flash.
+
+> **The favicon cannot be a file in `public/`,** and reaching for one is the reflex to unlearn:
+> `public/` is not tenant-aware, and one deployment serves every company on the platform, so a
+> file there is *the last tenant to ship one*, wearing every other tenant's address. Resolve the
+> tenant from the hostname the way every other pixel on the page is resolved, and draw the
+> record's own monogram on its own accent. Three constraints ride with that, because it is the
+> one place record data becomes **markup**: escape the monogram (a database row is not a trusted
+> source of SVG), validate the colours as hex rather than interpolating them, and give a host
+> that resolves to no tenant the *platform's* mark — never the last one that resolved.
 
 ### 6. Mark every figure's provenance
 

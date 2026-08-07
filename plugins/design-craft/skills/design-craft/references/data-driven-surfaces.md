@@ -151,6 +151,16 @@ The build-side half: **when a field is absent, emit no element rather than an em
 empty `<time>`, an empty `<nav>` and an empty list item all reserve layout and all announce
 themselves to a screen reader as something that is there.
 
+And the version of that which survives the obvious pass: **a labelled block renders only where
+the tenant holds something to put in it.** After a footer's hard-coded proper nouns were all
+found and removed, four literals were still rendering on tenant two — `ABN ᴹ` (the word, a
+space, and a lone footnote marker), a **Share registry** heading over a link to `""`, and
+`0 sites across NSW and Queensland` under a company in a different state. A heading over an
+empty value is worse than the absence, because it asserts the field exists and that *this*
+tenant has nothing for it; a derived `0` is not a fact, it is a template that did not get its
+data. None of it greps: there is no company name in any of those four strings. They were found
+by opening tenant two's footer and reading it.
+
 ## What must NOT be a token
 
 **Anything a tenant could set that breaks the layout.** Container width, base font size and

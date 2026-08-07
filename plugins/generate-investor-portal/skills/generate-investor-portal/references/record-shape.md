@@ -60,6 +60,30 @@ two invariants ride with it:
   synthesising a footer *creates* the leak rather than closing it — which is why an absent footer
   is the honest state and a wrong one is not.
 
+### The residue that survives the obvious pass, and how to see it
+
+The monogram and the PDFs get found because they are proper nouns. Four literals survived that
+pass on a real build, and every one of them was found by **opening a generated tenant's footer
+and reading it**, not by grepping for a company name:
+
+| What rendered on the second tenant | Cause |
+|---|---|
+| `ABN ᴹ` — the word, a space, and a lone illustrative-value marker | `abn: ''` rendered unconditionally |
+| a **Share registry** heading over an empty marker and a link to `""` | `registry` / `registryUrl` rendered unconditionally |
+| `© 2026 Metallium Ltd. 0 sites across NSW and Queensland.` | the reference's two *states*, hard-coded, under a Western Australian company, over a count of nothing |
+| "the document lodged with **ASX**" | a literal venue, on every NASDAQ and NYSE tenant |
+
+Two rules generalise out of them:
+
+- **A labelled block renders only where the record holds something to put in it.** A heading
+  over an empty value is worse than the absence: it asserts the field exists and that this
+  company has nothing for it. The same applies to a derived count — `0 sites` is not a fact,
+  it is a template that did not get its data.
+- **A jurisdiction, venue or regulator is read from the record, never written into the
+  component.** The listing code the footer already carries (`"ASX: AAL"` → `ASX`) is the venue;
+  taking it from there rather than adding a prop also fixes every record written before the
+  field existed.
+
 ## Sections switch off; they do not empty
 
 `enabled: false` is the mechanism for "this company has no video". A section rendered with
