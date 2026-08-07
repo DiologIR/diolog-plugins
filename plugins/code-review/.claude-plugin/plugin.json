@@ -1,6 +1,6 @@
 {
   "name": "code-review",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "High-signal code review for NestJS, Next.js (App Router)/React 19, frontend HTML/CSS/React, and React Native. Depth levels (quick/standard/deep) scale token cost; area targeting (frontend, nest, next, mobile, paths) and focus lenses (bugs, security, perf, tests, components, a11y, dead-code, debt, deps, dx) scope each run; a token-light prepush gate scans the outgoing diff. Modular checklist routing, mitigating-controls auto-discovery, parallel sharding for large diffs, independent batched Sonnet verifier fan-out with five gates (API existence, versions, mitigation-elsewhere, proportionality, reachability), and cross-run learned suppressions. Quality lenses adapted from shadcn's improve skill (MIT); noise-reduction patterns from 2025-26 AppSec research (Corgea, Aikido, ZeroPath).",
   "author": {
     "name": "DiologIR",

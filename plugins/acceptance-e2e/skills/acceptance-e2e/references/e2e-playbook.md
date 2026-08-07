@@ -81,6 +81,15 @@ Traps that bite most suites:
 
 If the backend is a shared, production-shaped DB, a mutating test must never touch
 seeded/shared records and must leave nothing behind.
+- **Select a fixture by the property under test, never by name.** A constant naming one entity
+  to stand for a whole class — `const HOUSE_TENANT = 'bhp-group-limited'` for *"a company we
+  hold no data for"* — is correct exactly until that entity changes class, and then several
+  suites go red at once in a shape that reads like a product regression rather than a stale
+  fixture. That is not hypothetical: the named company gained an entitlement and invalidated
+  three suites in one afternoon. Query for the property instead (`houseCompany()` → the first
+  record matching *holds no entitlement*), assert the query found something, and skip with a
+  stated reason when it does not. Same rule for "an empty list", "a user with no permissions",
+  "an archived record", "the largest document" — the fixture is a predicate, not a proper noun.
 - **Clone pattern:** if the feature has a cheap duplicate endpoint, clone a seeded record,
   mutate the clone, delete it in teardown. Resolve the source from a STABLE seed and
   **exclude the suite's own clones** from source-selection (match your `[E2E …]` stamp),

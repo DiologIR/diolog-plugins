@@ -86,6 +86,14 @@ Fix: either preserve user-edited rows by checking a `userModifiedAt`/`isUserModi
 
 If `createObligation` triggers `externalCalendarSync.push(...)` but `regenerateSystemObligations` only calls `Repo.create(...)` directly, regenerated rows never propagate to external calendars. The two write paths for the same entity must invoke the same side-effect set.
 
+### 1.9 An object whose members are all optional validates when it is empty — `HIGH`
+
+A shape like `chrome?: { header?: …; nav?: …; footer?: … }` makes `{}` a legal value, so the type system reports the field as *present* while every consumer renders nothing. A generator emitting the literal `chrome: {},` shipped **nine records** that validated, returned 200 on every route and passed 524 content assertions — and the portals they produced had no brand, no navigation and no footer, five pages measuring zero internal links and a single tab stop.
+
+The partial-shape form of the same defect fails quietly instead of visibly: a theme record stating `canvas` and omitting the other twelve colour tokens validates, and every unset token falls through to a stylesheet default that is the *first* tenant's brand (see 2.5).
+
+Review move: for any object whose members are all optional, ask what `{}` means downstream, and whether the schema can express *"stated partially"* at all. If the field is only meaningful complete, require the members together (a discriminated variant, a refinement, `superRefine`) and make the consumer treat an empty object as an error rather than as an absence. `Object.keys(x).length === 0` reaching a `{x && …}` render guard is the shape to grep for.
+
 ---
 
 ## 2. Multi-tenancy (cross-tenant data leak) hazards
@@ -186,6 +194,12 @@ Reviewable in the diff without any context: the source hardened, and the asserti
 ### 4.2 A test asserting a call happened rather than what it produced — `MEDIUM`
 
 `expect(render).toHaveBeenCalled()` passes when the render produced another company's data. This is the general form of a failure that has shipped repeatedly: verifying **that** something rendered rather than **what** it rendered. Real instances from one product, all with green suites over them: a privacy policy served as the list of business units, another company's price inside a chart's accessible description, and a page rendering with no header at all under 524 passing content assertions. Assert the value, and where both sides are in the same data source (an image's `alt` and the heading beside it, a section's title and its own payload), assert they agree.
+
+### 4.3 A fixture that names ONE entity to stand for a CLASS — `MEDIUM`
+
+`const HOUSE_TENANT = 'bhp-group-limited'` — a constant chosen because that record happened to have the property under test. It is correct until the record changes class, and then several suites fail at once in a shape that reads like a product regression rather than a stale fixture: one real instance invalidated three suites in an afternoon when the named company gained an entitlement.
+
+Greppable in a diff with no context at all: a **proper noun, ticker or slug in a test constant whose *name* describes a category** (`HOUSE_`, `EMPTY_`, `NO_PERMISSIONS_`, `ARCHIVED_`). Ask for a query that selects by the property, plus an assertion that the query returned something — a selector that matches nothing and a suite with nothing to find serialise identically.
 
 ---
 

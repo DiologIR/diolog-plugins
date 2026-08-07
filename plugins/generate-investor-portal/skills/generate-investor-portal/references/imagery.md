@@ -62,6 +62,27 @@ give it someone else's.
 the row and read as almost empty. An icon set generated for a light theme is not a theme-neutral
 asset; regenerate it for the record's own canvas or use a photograph.
 
+## The pipeline has to know what a slot already holds
+
+Placement is the *second* question. The first is whether the slot is empty, and a pass that
+enumerates slots without reading what is in them will spend a model call on every one of them —
+**overwriting the company's own photographs with generated approximations.** That pays money to
+make the surface worse and to add ledger entries that did not need to exist, since a crawled
+asset discloses nothing. Read the slot, skip the ones already holding a crawled asset, and
+generate only the gap.
+
+The same blindness in the other direction costs more than money. **A person's photograph is
+bound to that person, not to a position in a list.** Index-based pairing on one run put an
+identifiable employee's portrait against an unrelated business unit — a real named individual,
+on a public investor page, illustrating something they have nothing to do with. Any asset
+carrying a person is keyed by that person's own identifier or it is not placed at all.
+
+And check the far end: **a generated asset the record does not reference is spend with no
+render.** One portal's images were regenerated and written to `brand/<tenant>/…` while the live
+record still pointed every `src` at the company's old CDN — the pipeline ran, cost real money,
+and the deployed page never changed. After any generation pass, resolve the record's image URLs
+and confirm they are the assets you just produced.
+
 ## What is never generated
 
 - **A portrait of a real named person.** There is no acceptable version of this. Use initials in

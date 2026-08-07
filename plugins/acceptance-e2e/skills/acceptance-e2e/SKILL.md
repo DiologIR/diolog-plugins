@@ -34,7 +34,7 @@ read it before writing specs. If you happen to be in the Diolog web repo, the
 optional **`references/diolog-e2e-harness.md`** carries the exact recipes and two
 worked examples for that specific stack.
 
-## Operating discipline — four habits that keep the suite honest
+## Operating discipline — five habits that keep the suite honest
 
 - **Think before writing (AC-first).** Build the AC-traceability matrix *before* you
   touch the UI. If an acceptance criterion is ambiguous or has two readings, say so
@@ -51,6 +51,15 @@ worked examples for that specific stack.
 - **Surgical fixes.** When you fix a product bug the suite caught, change only the
   lines that fix it — no drive-by refactor of the code you're touching, match the
   existing style. Every changed line traces to the bug.
+- **Name the axes you did not vary.** Coverage is a cross-product, and an assertion
+  count hides which axes were held constant. One product's generator suite ran **524
+  assertions over 13 tenants** and never opened a route other than `/`, a viewport
+  under 1280px, or a build other than the reference one — so it stayed green for
+  months while every *generated* tenant shipped with no header, no navigation and no
+  footer, five pages measuring zero internal links and a single tab stop. Put the axes
+  in the AC matrix (which record/tenant, which route, which viewport, which role), and
+  where you deliberately held one fixed, say so in the report rather than letting the
+  assertion count imply a breadth it does not have.
 
 ## The method
 

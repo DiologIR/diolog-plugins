@@ -32,7 +32,18 @@ carry `primaryOnDark` as its own token, because you cannot compute it per tenant
 and you cannot ask each brand to have thought of it.
 
 **Muted-on-dark alphas.** `rgba(255,255,255,.34)` reads as "subtle" and measures 2.98:1. `.55`
-to `.62` is the honest range. Alpha is not a taste decision on a dark surface.
+to `.62` is the honest range. Alpha is not a taste decision on a dark surface. `.44` on `#181717`
+is 4.36:1 — still failing, and on one build it was carrying the *vendor's* own "Powered by …"
+byline on every page of a customer's site: the dimmest text on the surface was the one mark that
+should not look like an afterthought.
+
+**Audit the muted ramp, not the instance.** Those alphas are one authored ramp, so they fail
+together and they fix together. One review measured seven muted classes across eight surfaces at
+2.98:1, 4.22:1, 4.32:1, 4.34:1, 4.34:1, 4.36:1 and 4.41:1 — **five of them within 0.2 of
+passing** — and a single pass over the ramp would have cleared most of the site's remaining
+failures. Two consequences: file them as one finding, not seven; and note that the pass changes
+the *reference* build's computed styles, so on a system with a parity oracle over the reference
+it is a brand decision to raise, not a fix to slip into a review.
 
 **A focus-ring colour that is not the accent.** The accent-coloured ring inherits the accent's
 contrast problem exactly where a keyboard user needs it most.
@@ -71,6 +82,22 @@ company's own name, 72px — measured **2.14:1**.
 Grep for `var(--the-token)` before believing a token does anything, and when you add the rule,
 watch source order: an override at *equal* specificity placed earlier in the file loses silently,
 and looks exactly like a rule that was never written.
+
+## A variant class nothing selects is the same defect, one layer out
+
+The stylesheet form of the unread token, and this one arrives with a comment vouching for it.
+`.idx--undated` existed in a real portal's CSS with a note explaining exactly the case it was
+for — an index row whose documents carry no date — and no code path ever applied it. So all
+thirteen rows of that page rendered the dated variant with nothing to put in the date cell: an
+`<time dateTime="">` (invalid, and empty) inside a track that computed to `0px`, with the dotted
+leader stranded as a 24px stub in front of it. Every variant class gets grepped backwards to the
+selector that applies it, the same way a token gets grepped back to the rule that reads it — and
+a variant with no producer is either wired up or deleted, because a stylesheet that documents a
+state the renderer cannot reach is worse than one that never claimed to.
+
+The build-side half: **when a field is absent, emit no element rather than an empty one.** An
+empty `<time>`, an empty `<nav>` and an empty list item all reserve layout and all announce
+themselves to a screen reader as something that is there.
 
 ## What must NOT be a token
 

@@ -1,6 +1,6 @@
 {
   "name": "generate-investor-portal",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Generate a complete investor-portal record — theme tokens, content, imagery and motion — into the Diolog database from a company's DESIGN.md and company overview.",
   "author": { "name": "Diolog" }
 }
