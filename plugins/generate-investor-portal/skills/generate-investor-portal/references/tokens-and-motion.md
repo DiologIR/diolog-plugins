@@ -71,6 +71,43 @@ loses to source order and fixes only the selectors that happened to be more spec
 equal-specificity override that loses to source order is indistinguishable from a rule that was
 never written.
 
+## The other half nobody wrote: the accent as text on a LIGHT ground
+
+`primaryOnDark` covers the dark bands. Nothing covers the light ones, and the reason the gap
+survives is that the reference accent clears AA there **by luck** — `#D72229` on `#F7F6F5` is
+5.03:1 — so there is no tenant to show it on until a brand arrives one luminance step warmer.
+
+Measured on a listed company's own brand orange, `#E65400`, correctly extracted from its own
+DESIGN.md and correct as a colour:
+
+| Role | Pairing | Ratio | Needs |
+|---|---|---|---|
+| `.over` §-eyebrow, 13px/700 | accent on the record's own sunken band | **3.37:1** | 4.5 |
+| the current page in the nav | accent on white | **3.72:1** | 4.5 |
+| the brand monogram | the record's **stated** white ink, on the accent | **3.72:1** | 4.5 |
+| the header CTA | the same stated white ink | **3.72:1** | 4.5 |
+
+Four serious axe nodes, on a tier that fronts 7,404 companies, from a generator that took the
+accent straight into a text role without ever asking whether it could be read there.
+
+**The ordering trap, and it is the whole of the fix.** WCAG 1.4.3 asks 4.5:1 of body-size text
+and **3:1 of large text (≥24px, or ≥18.66px bold) and of non-text**. That orange is right as a
+button fill, right as a 72px display word, right as a rule under a heading. A blanket 4.5 floor
+over the accent rejects the brand colour in every place it belongs, and the brand colour is not
+the defect. So the rule is **role-aware**: compute a lifted variant for the small-text roles —
+the mirror of `primaryOnDark` — and leave the raw accent to the fills and the display sizes.
+
+Lift it against whichever of the record's own light grounds the accent reads **worst** on. One
+token paints the eyebrow on `surface` and on `surface-sunken` alike, and a variant that clears
+the easier of the two fails on the other.
+
+**And a stated token is not a waiver.** `onPrimary` was computed when a record left it unset and
+honoured when a record stated it — so a DESIGN.md stating `#FFFFFF` carried 3.72:1 ink all the
+way to the header CTA and the brand monogram. A theme token is a statement about a colour, never
+a statement that it can be read on the thing it sits on. **A stated value that fails its role's
+floor is replaced exactly as an absent one is**, and the replacement goes in the record's
+provenance, because a repair nobody recorded looks identical to a brand that got it right.
+
 ## Motion is a preset, not code
 
 Pick per section from the enumerated set:

@@ -114,6 +114,14 @@ that theme belongs to another company:
   alert band with white text on it, unreadable; `--focus-ring` and `--link` resolved to the other
   company's red. A themed record that states `canvas` and omits the rest does not get a partial
   theme, it gets a hybrid of two brands.
+- **The accent in a TEXT role, on the LIGHT ground as well as the dark one.** `primaryOnDark`
+  covers half of this and the other half goes unwritten because the reference accent clears AA
+  on paper by luck. Measured on a listed company's own brand orange: `#E65400` at **3.37:1** as a
+  13px §-eyebrow, **3.72:1** as the current-page nav link, and **3.72:1** under the white ink its
+  own DESIGN.md *stated*, on the header CTA and the brand monogram. Role-aware, or it rejects
+  correct usage: 4.5:1 for body-size text, 3:1 for large text and non-text — the accent stays raw
+  as a fill and as a display word. And **a stated token is not a waiver**: a stated `onPrimary`
+  that fails on the accent is replaced exactly as an absent one is, and the repair is recorded.
 
 See `references/tokens-and-motion.md`.
 

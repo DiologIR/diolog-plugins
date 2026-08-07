@@ -31,6 +31,29 @@ on the hero headline, both hero CTAs, the running ticker and the footer's only s
 carry `primaryOnDark` as its own token, because you cannot compute it per tenant at render time
 and you cannot ask each brand to have thought of it.
 
+**An on-LIGHT accent, which is the same token and almost nobody writes it.** The dark-band
+variant gets written because the failure is obvious. The light-ground one does not, because the
+*first* tenant's accent usually clears AA on paper by luck and so the gap has no instance to
+appear on. Measured on tenant two, whose `#E65400` is its real, correctly-extracted brand orange:
+**3.37:1** as a 13px eyebrow on its own sunken band, **3.72:1** as the current-page nav link on
+white, and **3.72:1** again under white ink on the header button and the brand monogram. Four
+serious violations, on a brand whose accent is right.
+
+**The rule has to be role-aware or it rejects correct usage.** WCAG 1.4.3 asks 4.5:1 of body-size
+text and 3:1 of large text (≥24px, or ≥18.66px bold) and non-text — so that orange is correct as
+a fill, correct as a 72px display word, correct as a rule, and wrong as a 13px eyebrow. A blanket
+4.5 floor over "the accent" is a rule that fires on the brand rather than on the defect. Carry
+two derived variants and let the *role* pick: the raw accent for fills and display sizes, a
+lifted one for anything at body size. Lift it against whichever ground the accent reads worst on,
+because one token paints the same class on the surface and on the sunken band.
+
+**And a stated token is not a waiver.** The same build derived `onPrimary` when a tenant left it
+unset and honoured it when a tenant stated it — so a brand stating `#FFFFFF` shipped 3.72:1 ink.
+A theme value is a statement about a colour, never a statement that it can be read on the thing
+it sits on. Validate a stated token against its role's floor and replace it where it fails,
+exactly as you would fill an absent one, and record the repair — a correction nobody logged looks
+identical to a brand that got it right.
+
 **Muted-on-dark alphas.** `rgba(255,255,255,.34)` reads as "subtle" and measures 2.98:1. `.55`
 to `.62` is the honest range. Alpha is not a taste decision on a dark surface. `.44` on `#181717`
 is 4.36:1 — still failing, and on one build it was carrying the *vendor's* own "Powered by …"
