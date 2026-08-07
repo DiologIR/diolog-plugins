@@ -61,15 +61,44 @@ with white text on it, a keyboard focus ring in the reference company's **red**,
 that turned red on press. Nothing errored, nothing warned, and every one of those is a plausible
 enough colour that a reviewer reads it as a choice.
 
-Two defences, and you want both:
+Three defences, in the order they should land:
 
-- **Derive what is genuinely derivable** from what the tenant *did* state, using relationships
-  you can verify against the reference build rather than invent. On-primary ink and a primary
-  tint are derivable; a link colour and a border colour are not.
-- **Make the schema refuse a partial theme.** A record stating `canvas` and omitting the rest
-  should fail validation. This is the only version that cannot regress, because the fallback is
-  silent by construction — there is no error, no warning, and no visual tell except on the one
-  band that happens to use the token.
+- **Derive what is genuinely derivable** from what the tenant *did* state — and *measure*
+  before you decide something is underivable. One review declared a link colour, a border
+  colour and a footer surface "an invented relationship dressed as a recovered one"; measured
+  against the reference stylesheet, every one of them is a fixed offset reproducing the
+  reference's own hand-picked value to within a unit or two per channel. The test is
+  mechanical: strip the token from tenant one's theme and check the derivation puts tenant
+  one's value back. If it does, it is recovered. If it does not, you invented it.
+- **Derive in the RENDERER, not only in the producer.** This is the one that repairs what is
+  already stored. Fixing the generator corrects the next record; every partial record already
+  in the database keeps painting tenant one until somebody reseeds, and nobody schedules that.
+- **Then make the schema refuse a partial theme — and not before.** A record stating `canvas`
+  and omitting the rest should fail validation *eventually*. Shipping that first takes
+  production down: if the renderer re-validates on the way out of the store, and every stored
+  themed record is partial (which is the finding), tightening the schema 404s all of them the
+  moment it deploys. Order: derive in the renderer → reseed → tighten the schema.
+
+Two traps inside the derivation itself:
+
+**Do not gate it on "is this the dark case".** Every derivation in one build was written
+`isDark ? … : undefined`, because the review that prompted it measured a near-black tenant and
+a light tenant feels close enough to a light reference to be safe. Measured on a warm-cream
+`#F6F3EC` canvas: the sunken surface and the body ink unset, so its sunken bands painted the
+reference's grey under a cream page. **A theme is not tenant one's because it is also light.**
+
+**Derive at the root of the chain.** A derivation keyed on a token that is itself optional
+repairs nothing when both are absent — a border-strong computed from `border`, a footer
+computed from `surface-dark`. A tenant stating only a canvas and an accent still had thirteen
+tokens on the reference's values after a fix that claimed to close this.
+
+## A state pair is derived in one direction, not twice independently
+
+Hover and pressed are a sequence, not two colours. Deriving each from the canvas separately
+produced a real defect: a brand's *stated* darker hover beside a *derived* lighter pressed, so
+the button got darker on hover and lighter on press. A tenant that states one of a pair decides
+the direction of the other; the canvas only decides it when the tenant states neither. The same
+holds for any ramp a tenant can partially supply — sizes, elevations, weights.
 
 ## A token nothing reads is not applied
 

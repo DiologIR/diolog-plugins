@@ -122,14 +122,16 @@ On a real run this was `.facts tbody tr:nth-child(even)`: white bars with invisi
 straight across a dark company's facts table, on a page that had already passed a token
 check and a 200.
 
-So derive, rather than inherit:
+So derive, rather than inherit — and note that **both branches are real**. Writing the light
+branch as `undefined` is how the same defect survived on light brands for a whole review cycle:
 
 ```js
-const isDark = luminance(canvas) < 0.2;
+const isDark = luminance(canvas) < 0.5;
 surface:       stated ?? (isDark ? shift(canvas, +10) : '#FFFFFF')
-surfaceSunken: stated ?? (isDark ? shift(canvas, +18) : undefined)
-border:        stated ?? (isDark ? shift(canvas, +28) : undefined)
+surfaceSunken: stated ?? shift(canvas, isDark ? +18 : -8)   // NOT `: undefined`
+border:        stated ?? shift(canvas, isDark ? +28 : -20)
 ink:           stated ?? (isDark ? '#F5F5F5' : '#1C1B1B')
+inkBody:       stated ?? shift(ink, isDark ? -30 : +30)
 ```
 
 The rule generalises past colour: **the token a brand forgets is the token that breaks.**
@@ -156,20 +158,86 @@ Measured on a live generated portal with a `#0A0A0A` canvas: **12 of 25 colour t
 So: **a themed record emits a complete palette.** Two mechanisms, and you want both:
 
 1. **Derive what is genuinely derivable, from relationships you can verify against the
-   reference** — never from invented ones. Two that hold: `on-primary` is whichever of white or
-   the ink colour actually contrasts with `primary`, computed; `primary-tint` is ~10% of
-   `primary` mixed into `surface`, which reproduces the reference's own hand-picked tint to
-   within one unit and follows a dark record's surface into the dark. `--link`,
-   `--border-strong` and `--surface-footer` are *not* derivable — a rule for them would be an
-   invented relationship dressed as a recovered one.
-2. **Make the schema refuse the partial record.** A record that states `canvas` and omits the
-   rest should not validate. That is the only version of this that cannot regress, because the
-   fallback is silent by construction: an unset token produces no error, no warning and no
-   visual tell except on the one band that uses it.
+   reference** — never from invented ones. *Measure before declaring a relationship
+   uninventable.* An earlier version of this file said `--link`, `--border-strong` and
+   `--surface-footer` were not derivable and a rule for them "would be an invented
+   relationship dressed as a recovered one". They were then measured against the reference
+   stylesheet and every one of them is **recovered**, to within a unit or two per channel:
 
-## `colorScheme` belongs in the token set
+   ```
+   --border-strong        #E2DFDD → #C4C0BE     −30 / −31 / −31   (border, stepped)
+   --surface-dark-raised  #2E2B2B → #3C3939     +14 / +14 / +14
+   --surface-footer       #2E2B2B → #181717     −21 / −20 / −20
+   --on-dark-muted        #FDFCFC → #B7B2B1     −72 per channel, floored at AA
+   --surface-sunken       #F7F6F5 → #EFEDEC      −8 /  −9 /  −9   (canvas, stepped away)
+   --ink-body             #1C1B1B → #3A3A3A     +30 / +31 / +31
+   --focus-ring           = --primary                identity
+   --on-dark              = --surface                identity
+   ```
+
+   `--link`, `--primary-hover` and `--primary-pressed` are not fixed offsets: they are the
+   accent adjusted **until it is readable**, which is the relationship those numbers encode,
+   so compute that. The test for "recovered, not invented" is mechanical — strip the token
+   from the reference theme and check the derivation puts the reference's own value back.
+   If it does not, you invented it. Assert that reproduction; do not write the offsets into a
+   comment and trust them.
+
+   **Do not gate the derivation on `isDark`.** Every derivation in the first version was
+   written `isDark ? … : undefined`, because the review that prompted them measured a
+   near-black tenant and a light brand feels close enough to a light reference to be safe. It
+   is not. Measured on a brand with a `#F6F3EC` warm-cream canvas: `--surface-sunken` and
+   `--ink-body` unset, so its sunken bands painted the reference's grey `#EFEDEC` under a
+   cream page and its body copy was the reference's ink. **A theme is not the reference's
+   because it is also light.**
+
+   And **derive at the root of the chain, not off another optional token.** A derivation
+   keyed on a token that is itself optional repairs nothing when both are absent:
+   `--border-strong` computed from `border`, `--surface-footer` from `surfaceDark`, and
+   `--on-dark` from either — so a record stating only `canvas` and `primary` still left
+   thirteen tokens on the reference's values.
+
+2. **Derive in the RENDERER, not only in the generator.** This is the mechanism that repairs
+   what is already in the database. A generator fix corrects the next record; the partial
+   records already stored keep painting another company until somebody reseeds them, and
+   nobody schedules that. One live tenant went from 13 emitted colour tokens to 25 by a
+   change in the renderer's variable mapping and nothing the generator did.
+
+   **The schema-refusal version comes last, not first.** An earlier version of this file
+   called "make the schema refuse a partial record" the only version that cannot regress. It
+   is the version that takes production down: the renderer re-validates every record on the
+   way *out* of the database, every stored themed record is partial (that is the finding),
+   and tightening the schema 404s all of them the moment it deploys — before any reseed. On a
+   platform where the contract file is vendored into the renderer and hash-gated by the build,
+   it is also a two-repo change that fails the build on one side until the other lands. The
+   order is: derive in the renderer → reseed every stored record → *then* make the schema
+   refuse a partial palette, in both repos, in one change.
+
+## A state pair is derived in ONE direction
+
+`hover` and `pressed` are a sequence, not two independent colours. The reference walks
+`#D72229 → #B91D23 → #9E1318` — the accent darkened, then darkened again — and on a dark
+canvas the same gesture has to go the other way or "pressed" reads as "disabled".
+
+Deriving each of them from the canvas independently produced a real defect: a brand's own
+*stated* `#D14A1E` hover (darker) beside a *derived* `#FF7E4E` pressed (lighter), so the
+button got darker on hover and lighter on press. **A brand that states one of the pair
+decides the direction of the other.** Read the direction off whichever the record gives you;
+fall back to the canvas only when it gives you neither.
+
+## `colorScheme` is DERIVED from the canvas, not added as a twenty-sixth token
 
 `color-scheme: light` hard-coded in the stylesheet is one line and it is wrong on every dark
 record. The browser-painted surfaces — scrollbars, form controls, the pre-paint canvas — stay
-light on a near-black portal. It is one token away from correct and it belongs beside the rest
-of the theme rather than in the CSS.
+light on a near-black portal.
+
+It is tempting to add it to the contract. Don't: it is not a colour the record chooses, it is a
+*consequence* of the canvas the record already states, and a twenty-sixth token is a token
+nobody remembers to set. Compute it from the canvas's relative luminance in the same place the
+rest of the palette is derived.
+
+> **And then check that something reads it, the same way you would a colour.** The first
+> version emitted `color-scheme: var(--scheme)` *inside* the `:root` block — where a
+> token-consumed gate that reads consumption from the rules **after** `:root` cannot see it,
+> and reported `--scheme is declared but nothing, directly or indirectly, reads it`. It has to
+> be a rule (`html{color-scheme:var(--scheme)}`). A token read only by the block that declares
+> it is the unread-token defect wearing a disguise.
