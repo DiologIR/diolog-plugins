@@ -93,6 +93,37 @@ No gate could catch it, because every fixture described a user who does not exis
 > makes the surface look good. If the dominant real-world case renders empty, that is the case the
 > fixture must cover — and the resulting red test is the finding.
 
+## The counter-position, stated fairly
+
+One research backend argues the opposite of this whole document:
+
+> **Hand-rolling macOS `AXUIElement` parsers is now technical debt.** Tools like `macOS-MCP`,
+> `mcp-server-macos-use`, and Apple's `xcrun mcpbridge` (Xcode 26.3) provide standardized LLM
+> interfaces for desktop control.
+
+and recommends replacing "a custom accessibility dumper and screencapture tool" with an off-the-shelf
+MCP server to "eliminate the maintenance burden of the proprietary harness".
+
+Take it seriously, and note three things before acting on it:
+
+1. **It answers a different question.** Those MCP servers give an *agent* hands to drive arbitrary
+   apps. An acceptance harness needs a repeatable pass/fail gate with stable exit codes — an agent
+   exploring a UI is not a CI check, and the industry pattern both backends describe is to *convert*
+   agent exploration into cheap deterministic assertions. Use an MCP server to explore; keep a
+   deterministic runner for the gate.
+2. **Its `mcpbridge` claim is contested by better sourcing.** A second backend reviewed Apple's own
+   documentation and reported that it does **not** establish arbitrary AX-tree inspection or GUI
+   actions through `mcpbridge` — the UI-driving features documented remain XCUIAutomation. That
+   backend cites `developer.apple.com` primary docs; the technical-debt claim's chain leans on a
+   vendor blog, which was also its single largest domain.
+3. **Neither claim was corroborated.** Across a three-backend panel on this exact question, **zero
+   claims were made by more than one backend** and source overlap was 5%. Every position here,
+   including this document's, is one backend's reading.
+
+The honest split: **if you need an agent to drive a Mac app, reach for an existing MCP server first.
+If you need a gate, own the runner.** A ~200-line shell script plus a small `AXUIElement` walker is
+not a platform, and the traps below are paid for once.
+
 ## The traps, each measured
 
 **Kill any previous instance BEFORE deleting its bundle.** A harness that does
