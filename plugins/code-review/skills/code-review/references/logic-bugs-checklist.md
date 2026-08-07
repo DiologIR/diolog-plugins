@@ -126,11 +126,72 @@ A user who is `admin` in company A and `user` in company B will be granted admin
 
 If middleware reads `req.headers['x-company-id']` and stamps it onto `req.companyId` without checking the value against the user's `companies[]`, any authenticated user can escalate to any company by setting the header. The check must be: `if (!user.companies.includes(headerCompanyId)) throw ForbiddenException`.
 
+### 2.5 A tenant-specific literal inside a shared component — `HIGH`
+
+The leak with no query in it. A component rendered for every tenant carries the *first* tenant's identity as source literals — its monogram, its listing code, its policy PDF URLs, its address:
+
+```tsx
+// BAD — Footer.tsx renders for every tenant
+<span className="mark">AE</span>
+<span className="ftr__codes">ASX: AAL</span>
+<a href="https://alfabs.com.au/…/Constitution-of-Alfabs-Australia-Limited.pdf">Constitution</a>
+```
+
+No scope filter is missing, no query is unscoped, and every multi-tenancy check above passes. This shipped latent for months because *no* tenant was rendering that component yet; the moment the generator started emitting chrome, every company's footer would have published another company's constitution under its own address.
+
+Two tells worth grepping for in any shared/`site/`/`layout` component: a **proper noun or ticker as a string literal**, and an **absolute URL whose host is not the current tenant's**. Flag both, and check the same file for a fallback that quietly substitutes the reference tenant when the record omits a field — that is the same defect one indirection deeper.
+
+The stylesheet form is the one nobody looks for: a design token left unset by tenant B falls back to the value tenant A's build authored, so tenant B renders tenant A's brand colour with no error, no warning, and no diff.
+
 ---
 
-## 3. LLM output validation
+## 3. Parsing, regex and text extraction
 
-### 3.1 LLM-emitted field persisted without schema validation — `HIGH`
+Extraction code is reviewed as if its failure mode were a crash. Its actual failure mode is **silently returning less than it matched**, which reads downstream as "the source did not contain that".
+
+### 3.1 A quantifier bound that DECIDES the match, not just caps it — `HIGH`
+
+```js
+/## Section\n([\s\S]{0,600}?)(?=\n## |$)/     // BAD
+```
+
+The lazy `{0,600}` is read as a safety cap. It is not — it is part of the match decision. The regex tries the shortest body first and expands; if the lookahead is still not satisfied at 600 characters, the whole match **fails** rather than truncating, and the section vanishes from the output entirely. A bound that can change *whether* a match happens is a correctness bug wearing a performance fix's clothes. Match unbounded and slice afterwards, or bound with an explicit `.slice(0, n)` on the captured group.
+
+Same shape: `{1,N}` on a repeated group inside an alternation, and any lazy bound followed by a required suffix.
+
+### 3.2 A word boundary that can never fire — `MEDIUM`
+
+`\b` asserts a transition between a `\w` and a non-`\w` character. It therefore **cannot sit before a literal `(`, `)`, `-`, `.` or any other non-word character** when the preceding character is also non-word:
+
+```js
+/\bPhone\b:?\s*(\(0\d\)\s*\d{4}\s*\d{4})/   // the \b before ( is unreachable
+```
+
+A dead branch in an alternation does not error; it just never matches, so the *next* alternative wins. On a real run that silently published a share registrar's phone number as the company's own. Grep changed regexes for `\b` adjacent to a non-word literal, and prove any new branch fires against a real input before trusting it.
+
+### 3.3 A parser change with no test over a real payload — `MEDIUM`
+
+Extraction rules are tuned against a sample. Assert against a *stored real document*, not a hand-written fixture that already agrees with the regex — the fixture and the pattern were written by the same person in the same minute and they agree by construction.
+
+---
+
+## 4. Tests that encode the bug
+
+### 4.1 A test updated to assert the OLD behaviour after a security or correctness fix — `HIGH`
+
+When a fix lands and its test is changed to keep passing, read which direction the change went. A test rewritten to expect the pre-fix output is a standing request to reintroduce the bug — and it will be honoured, because the next person to touch that path sees a green suite asserting the vulnerable behaviour is correct.
+
+Reviewable in the diff without any context: the source hardened, and the assertion in the same commit got *weaker* (an exact match became `toContain`, a `rejects.toThrow` became a resolved value, a `403` expectation became a `200`). Ask for the reason in the test, in a comment, or reject the assertion change.
+
+### 4.2 A test asserting a call happened rather than what it produced — `MEDIUM`
+
+`expect(render).toHaveBeenCalled()` passes when the render produced another company's data. This is the general form of a failure that has shipped repeatedly: verifying **that** something rendered rather than **what** it rendered. Real instances from one product, all with green suites over them: a privacy policy served as the list of business units, another company's price inside a chart's accessible description, and a page rendering with no header at all under 524 passing content assertions. Assert the value, and where both sides are in the same data source (an image's `alt` and the heading beside it, a section's title and its own payload), assert they agree.
+
+---
+
+## 5. LLM output validation
+
+### 5.1 LLM-emitted field persisted without schema validation — `HIGH`
 
 When a tool call returns `{ detectedDate, classification, confidence, … }` and the service persists those fields directly, the LLM is one prompt-injection away from controlling the database. Always:
 
@@ -138,27 +199,27 @@ When a tool call returns `{ detectedDate, classification, confidence, … }` and
 2. Coerce to the intended types (`z.coerce.date()`, `z.coerce.number().min(0).max(1)`).
 3. Reject + log on parse failure rather than silently storing `null`.
 
-### 3.2 Enum-valued LLM output not constrained to a known set — `HIGH`
+### 5.2 Enum-valued LLM output not constrained to a known set — `HIGH`
 
 If the model returns `classification: string` and downstream code does `switch (classification) { case 'X': … case 'Y': … }`, an unrecognized value (typo, hallucination, prompt-drift) silently falls through every branch and is stored verbatim. Use `z.enum(['X','Y','Z'])` for tool output, and add an exhaustiveness `default: assertNever(classification)` on the consuming switch.
 
-### 3.3 Heuristic classifier replaced with LLM call but old enum mapping retained — `MEDIUM`
+### 5.3 Heuristic classifier replaced with LLM call but old enum mapping retained — `MEDIUM`
 
 A common pattern: a deterministic classifier returned `'SEC_DEF14A'`, the LLM call returns `'PROXY_STATEMENT'`, and the enum mapping silently falls through to a default — breaking the downstream consumer that expected `'SEC_DEF14A'`. When the diff swaps a deterministic classifier for an LLM call, audit the consumers.
 
 ---
 
-## 4. Default-value / channel / mode bypasses
+## 6. Default-value / channel / mode bypasses
 
-### 4.1 Default value on a discriminator that bypasses validation — `HIGH`
+### 6.1 Default value on a discriminator that bypasses validation — `HIGH`
 
 When a request body has `channel: 'email' | 'inbox' | 'public-link'` and the schema sets a default of `'inbox'`, and the *only* path that requires `respondentEmail` is `channel === 'email'`, a client can claim `channel: 'inbox'` to bypass the email requirement. Validate the discriminator constraint *and* the corresponding required-field set together.
 
-### 4.2 "Anonymous mode" survey / form leaks identity via correlation token — `HIGH`
+### 6.2 "Anonymous mode" survey / form leaks identity via correlation token — `HIGH`
 
 A survey marked `isAnonymous: true` that still stores `recipientToken` on the response row, and that uses the same `recipientToken` to link back to the invite (which knows the email), can be re-identified by anyone with read access to both collections. Anonymous mode must either (a) not record any token on the response, or (b) hash the token with a per-survey salt before storing on the response.
 
-### 4.3 Public mutation accepts a "trusted" claim from the client — `HIGH`
+### 6.3 Public mutation accepts a "trusted" claim from the client — `HIGH`
 
 ```ts
 // BAD — client claims to be coming from the inbox channel, server believes it
@@ -171,13 +232,13 @@ The channel must be derived from server-trusted state (the recipient token's row
 
 ---
 
-## 5. Authorization edge cases the framework checklists don't cover
+## 7. Authorization edge cases the framework checklists don't cover
 
-### 5.1 Public route accepts the same JWT/token the private route does — `HIGH`
+### 7.1 Public route accepts the same JWT/token the private route does — `HIGH`
 
 If `RbacMiddleware` or a guard accepts an HS256 dev-impersonation token in production because the *algorithm check* passes (HS256 is allowed) but the *type check* (`payload.type === 'dev-impersonation'` → reject in prod) is missing or runs in a different layer, the impersonation token works in production. Verify both checks fire on the same code path.
 
-### 5.2 Optional shared-secret check that fails open when the secret is unset — `CRITICAL` for production paths
+### 7.2 Optional shared-secret check that fails open when the secret is unset — `CRITICAL` for production paths
 
 ```ts
 // BAD — when DEV_LOGIN_SECRET is unset (e.g. someone forgot to configure it),
@@ -190,27 +251,27 @@ if (process.env.DEV_LOGIN_SECRET) {
 
 Either the secret is *required* (throw if unset) or there is an alternative auth mechanism that always runs. Never gate auth on env-var presence.
 
-### 5.3 Constant-time comparison missing on shared-secret auth — `HIGH`
+### 7.3 Constant-time comparison missing on shared-secret auth — `HIGH`
 
 `if (provided !== expected)` on a cron secret, dev-login secret, webhook signature, or API key. Use `timingSafeEqual` with a length-pre-check. (Also covered in `security-checklist.md` A02.11; flag here only when the violation is in non-classical-auth code that might not have triggered the security-checklist routing.)
 
 ---
 
-## 6. Concurrency / claim hazards
+## 8. Concurrency / claim hazards
 
-### 6.1 Worker claim without a TTL-based stale-lock recovery — `MEDIUM`
+### 8.1 Worker claim without a TTL-based stale-lock recovery — `MEDIUM`
 
 A job-queue claim pattern (`findOneAndUpdate({ status: PENDING }, { status: SENDING, lockedBy, lockedAt })`) without a corresponding sweep that resets `SENDING` rows older than a TTL leaks the row forever when the worker crashes. Always pair the claim with a stale-lock sweep at the top of the cron.
 
-### 6.2 In-flight state change between enqueue and send — `MEDIUM`
+### 8.2 In-flight state change between enqueue and send — `MEDIUM`
 
 When an item is enqueued at T1 and processed at T2, the underlying entity (recipient unsubscribed, survey closed, company suspended) may have changed. The processor should re-check the entity's current state at T2, not trust the snapshot from T1.
 
 ---
 
-## 7. Side-effect ordering
+## 9. Side-effect ordering
 
-### 7.1 Side-effect *before* the durable write — `HIGH`
+### 9.1 Side-effect *before* the durable write — `HIGH`
 
 ```ts
 await emailSender.send(invite)         // side-effect in the world
@@ -219,13 +280,13 @@ await queue.markSent(invite.id, msgId) // record it succeeded — what if this t
 
 If `markSent` throws, the email was sent but the queue still shows `PENDING` and re-sends on the next cron run. Either: (a) wrap in a transaction with the side-effect committing last, (b) make the recipient-side handler idempotent via a server-generated message-id, or (c) record `attempted` before the send and `succeeded` after, so retries are visible.
 
-### 7.2 Side-effect *not skipped* when downstream ID is unavailable — `MEDIUM`
+### 9.2 Side-effect *not skipped* when downstream ID is unavailable — `MEDIUM`
 
 If sync to an external system requires both `accessToken` and `externalEventId` and one is missing, attempting the sync produces a confusing 4xx instead of a no-op. Guard the call with an explicit precondition check and a structured `lastSyncError` for diagnostics.
 
 ---
 
-## 8. Sources
+## 10. Sources
 
 - Authorship pattern surveyed from real-world OWASP A01 (Broken Access Control) post-mortems where the bugs evaded framework-shaped review checklists because the violations were *behavioral*, not *structural*.
 - Multi-tenancy section adapted from Tessl, Vercel, and Auth0 production-incident retrospectives.

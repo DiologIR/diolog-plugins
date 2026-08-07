@@ -46,6 +46,14 @@ Forms are where users exchange value with the product; every needless field is f
 
 **Error messages**: what went wrong + how to fix it, adjacent to the field, `aria-describedby`-linked, never color-only, never blaming. See ux-writing.md for tone.
 
+**`novalidate` removes a state machine; it does not remove the need for one.** Turning off native validation to control the styling is routine. Shipping nothing in its place is the defect, and its signature is that the *only reachable state is the terminal one*. Measured on a real contact form: submit three empty fields and you land on "Not sent — your text is still in the field above" when there is no text in any field. No field-level error, no required marker, no distinction at all between empty, invalid and submitted. Drive **empty submit** on every form as a matter of course; a form whose empty submit and valid submit produce the same screen has one state, and it is the wrong one.
+
+**A live region created at the moment of the announcement usually does not announce.** Assistive technology watches an *existing* `aria-live` / `role="status"` container for mutations. A node created carrying `role="status"` with its text already inside it commonly arrives as one atomic insertion with nothing to observe, and the message is dropped silently. Render the region empty and permanently in the DOM, then write text into it. Both versions look identical in a screenshot and identical in the final DOM — the difference is only visible if you compare the DOM before and after the submit.
+
+**An honest "not wired yet" is still a full component.** A form that is deliberately not connected is a legitimate state to ship; it is not a licence to ship one state. It still owes required-field marking, an empty-submit path that says which fields are empty, and a completion message that describes what actually happened.
+
+**A contact answer with no contact mechanism is not an answer.** "Who can I talk to?" answered with a department name — no email, no phone, no link, no form — is the comprehension failure wearing the shape of a completed section. Whatever the question promises, the answer has to carry the thing the reader came for.
+
 **Smart defaults ethics**: a default is good if ~80% of users would pick it anyway; it's manipulation if it primarily benefits the business (pre-checked marketing consent, pre-selected premium tier). GDPR makes prechecked consent illegal, not just rude.
 
 ## The state machine
@@ -97,6 +105,7 @@ Undo is a safety net that makes every other interaction feel lighter (forgivenes
 - Current location always visibly marked; primary nav placement identical on every page.
 - **Test labels cheaply**: 5-second test (show the nav; can users predict what's under each label?) and cloze test (show the contents; can they guess the label?). Format labels ("Resources", "Hub", "Library") describe containers, not contents — they force click-and-check. And mine the search logs: high-volume searches for things that should be browsable mean the IA failed; zero-result searches mean the labels don't speak the user's language.
 - **Zero results is a design problem, not an edge case**: spelling suggestions, broaden-filter offers, popular items, and a path to browse. New users browse (they lack the vocabulary to search); experts search — support both and their combinations.
+- **Chrome rendered unconditionally on a surface that has nothing for it is worse than absent chrome.** Three shapes of the same defect, all from one build: an empty `<nav aria-label="Investor portal">` that announces itself to a screen reader and holds nothing; a mobile drawer that opens onto an empty list; and a header link to a route that returns 404 on this tier, shipped across 7,404 generated pages. Each element renders only when it has content, and any link whose target is conditional must read that condition **per request**, not from a stored prop that can go stale against the page it points at.
 
 ## Hierarchy tactics while implementing (Refactoring UI, UX-relevant core)
 

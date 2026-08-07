@@ -36,6 +36,32 @@ What worked, on a run where four of four generated images were usable:
 - **Use the company overview as the prompt's context** — its own vocabulary for what it does
   produces images that look like that company's work rather than like stock industry.
 
+## An image is assigned by MEANING, not by position
+
+The cheapest way to place N images across N sections is index order, and it is wrong every time
+the two lists were built independently. On a real portal every one of seven business units
+carried an image about a different subject from its own heading:
+
+| Unit heading | `alt` on the image beside it |
+|---|---|
+| REVOLUTIONARY FLASH JOULE HEATING TECHNOLOGY | "Icon representing metal recovery and **recycling**" |
+| MINERAL EXPLORATION | "Hand holding a small glass bottle filled with gold recovered from **e-waste**" |
+| RECYCLING | "**Map of Quebec, Canada** showing the Pomme Project" |
+
+Every row off by one or more. A screen-reader user on the RECYCLING unit is told about a map.
+This is the recurring failure of generated surfaces in its purest form — present, 200,
+well-formed, and about the wrong thing — and good alt text is what makes it *provable* rather
+than what causes it.
+
+It is also **machine-checkable**, because the alt text and the heading are both fields in the
+record you are emitting. Compare them before you write, and place by subject: match the asset to
+the section whose heading names the same thing, and leave a section without an image rather than
+give it someone else's.
+
+**Line art has a scheme.** 512×512 dark line-art icons on a near-black canvas occupy a third of
+the row and read as almost empty. An icon set generated for a light theme is not a theme-neutral
+asset; regenerate it for the record's own canvas or use a photograph.
+
 ## What is never generated
 
 - **A portrait of a real named person.** There is no acceptable version of this. Use initials in

@@ -48,6 +48,31 @@ API up                               →  200
 
 The resolution carries `source: 'api' | 'seed' | 'none'` for exactly this reason.
 
+### Where every one of these gates was green while the portal was broken
+
+A full design review of 18 surfaces found three blocking defects that had survived indefinitely
+under a completely green oracle set. None of the gates was wrong; each was *narrow* in a way its
+output did not say.
+
+| The gate | What it could not see |
+|---|---|
+| `parity.mjs` — 40 named landmarks, `checks=904 diffs=0` | It loads `/` only, and `.idx` is not a landmark. Every index row of every tenant carried a spurious second grid track the whole time. **A parity oracle needs a per-page landmark set, and must print which pages it compared.** |
+| `acceptance-generate.mjs` — 524 assertions, 13 tenants | It never asked whether a generated portal had a **header**. Strong on content (*"people includes `Stephen Hall :: Chief Executive Officer`"*), silent on chrome, and silent on whether the pages link to each other. |
+| Every oracle in the set | None opened a viewport below 1280px, none ran axe, and all of them read the *reference* tenant. Adding those three found blocking defects on the first run. |
+
+Four assertions worth owning, because each one is the cheap version of a defect that shipped:
+
+1. **Chrome exists**, and its brand, nav and footer come from this record.
+2. **Every declared page is reachable** from at least one other, and its tab-stop count is above
+   what a bare document has.
+3. **No orphan route resolves 200.**
+4. **Every colour token the theme declares is set on a themed record.** An unset token silently
+   inherits the reference company's palette (see `tokens-and-motion.md`), and nothing in a 200,
+   a parse or a screenshot of the home page reports it.
+
+And the discipline that makes any of these readable: **print the denominator.** `diffs=0` on its
+own cannot be told apart from a selector list that matched nothing. `checks=904 diffs=0` can.
+
 ## Report the three claims separately
 
 ```

@@ -99,7 +99,8 @@ Exact hex values, exact font stacks, exact spacing steps. A near-miss on a brand
 than an obvious substitution, because nobody catches it.
 
 **Then compute what the DESIGN.md does not state.** The token a brand forgets is the token that
-breaks, and the stylesheet's defaults are not neutral — they were authored for one theme:
+breaks, and the stylesheet's defaults are not neutral — they were authored for one theme, and
+that theme belongs to another company:
 
 - **`primaryOnDark`.** A brand colour chosen against white usually fails AA on a dark band.
   Arithmetic, not judgement.
@@ -107,10 +108,37 @@ breaks, and the stylesheet's defaults are not neutral — they were authored for
   `surface-sunken` inherits a *light* default for it. On a real run this painted white bars with
   invisible text straight across a dark company's facts table. Derive missing surfaces — and the
   ink — from the canvas the brand did state.
+- **Every remaining colour token, for a themed record.** Not just the surfaces. Measured on a
+  live near-black portal: **12 of 25 colour tokens unset**, every one of them falling back to the
+  reference company's light palette. `--primary-tint` resolved to a pale **pink** and painted an
+  alert band with white text on it, unreadable; `--focus-ring` and `--link` resolved to the other
+  company's red. A themed record that states `canvas` and omits the rest does not get a partial
+  theme, it gets a hybrid of two brands.
 
 See `references/tokens-and-motion.md`.
 
-### 3. Reject the boilerplate before it becomes content
+### 3. Emit the chrome — a record with none renders a portal with no way out
+
+`chrome` is not optional furniture. A generator emitting a literal `chrome: {}` produced portals
+with **no brand, no navigation and no footer** on every tenant it had ever built. Measured on one
+of them: five pages with **zero internal links** and **one tab stop** — the skip link — and two
+routes that resolved 200 with nothing on the site pointing at them.
+
+None of it was visible to anything. The record validated, every page returned 200, the content
+assertions passed, and a keyboard user landing on `/leadership` reached the end of the document
+in one Tab.
+
+So, as you emit:
+
+- **Header, nav and footer come from the record**, built from `identity` and the pages the record
+  actually declares. Nothing is defaulted to a company.
+- **Every declared page is linked from at least one other.** A route nothing points at is a page
+  nobody sees, and it is indistinguishable from a working one in every per-page check.
+- **Nothing tenant-specific is hard-coded in a shared component.** A footer carrying one
+  company's monogram, listing code and policy PDFs as literals publishes that company's
+  constitution under every other tenant's address the moment chrome starts rendering.
+
+### 4. Reject the boilerplate before it becomes content
 
 A site crawl carries the company's privacy policy, terms, cookie notice and complaints
 procedure under exactly the same heading levels as its service lines. Structure cannot
@@ -120,7 +148,7 @@ Information?"** and **"Complaints Resolution"** under *"What the group actually 
 Exclude legal furniture, crawler scaffolding (`Source URL:`), and any heading phrased as
 a question. A business unit is something the company does.
 
-### 4. Emit sections, not markup
+### 5. Emit sections, not markup
 
 Each page is an ordered list of `{ id, kind, enabled, order, band, divider, motion, props }`.
 `kind` comes from the contract's enumerated vocabulary. A kind the contract does not declare
@@ -129,7 +157,40 @@ cannot render, and the renderer throws rather than dropping it silently.
 **A section with nothing behind it is switched off, not emptied.** A company that publishes no
 video gets `enabled: false`, not a video band with a hole in it.
 
-### 5. Mark every figure's provenance
+**Section COUNT is a function of how much the record holds.** A thin record must place *fewer*
+bands, not the same bands thinner. Measured on a house-tier portal built for a company we hold
+almost nothing for: four bands to convey three facts, at 36% / 48% / 61% ink fill against the
+reference build's 49–62% rhythm, with 184px / 205px / 229px of dead gap between them — and the
+payload was Legal name, Ticker and Exchange, **all three of which the page had already said in
+its own badge and H1**. A 1150px table restating the headline. One band — identity, what we
+hold, the claim CTA — is the whole page that record can honestly support.
+
+**Every slot carries different information.** The four-slot band (eyebrow / heading / body / CTA)
+invites the same string four times, and on a real run every one of seven business units did
+exactly that: eyebrow = the unit's name, heading = a truncated blurb ending mid-clause, body =
+that identical string again at 17px, CTA = the eyebrow again. Four slots, two pieces of
+information, and the hierarchy inverted — the *name* in the eyebrow and a sentence fragment as
+the 32px heading. If a slot has nothing of its own to say, leave it out; and **never truncate
+into a heading.** A heading is written short, not cut short.
+
+**A crawler artefact is not a fact about the company.** "12 photographs taken from the company's
+own site" was shipped as one of three headline facts in a hero. It is a count of what the crawler
+found. So are page counts, link counts, and anything phrased about the *record* rather than about
+the business.
+
+**`asAt` is when the fact was true, never `now()`.** A legal name from an exchange listing
+stamped with today's date reads as a live measurement of something that has not changed in
+decades, and it is the shape an em-dash fix over-corrects into. If the source does not carry a
+date, the column says so or does not exist. Same for `source`: a citation the reader cannot
+follow ("ASX listing", not a link) is a citation in appearance only.
+
+**The browser chrome is part of the theme.** Two tokens most records forget, both one line:
+a **favicon** (a branded investor portal showing the generic page icon in the tab strip is the
+first thing anyone sees), and **`color-scheme`** matching the record's own canvas — a portal on
+`#0A0A0A` declaring `color-scheme: light` gets light scrollbars, light form controls and a light
+pre-paint flash.
+
+### 6. Mark every figure's provenance
 
 This is the part the contract will reject you for, so do it as you emit rather than afterwards:
 
@@ -141,19 +202,14 @@ This is the part the contract will reject you for, so do it as you emit rather t
 There is no default. An omission is an error, not an assumption — because the assumption it used
 to make was "this figure is real".
 
-### 6. Imagery: find, then generate
+### 7. Imagery: find, then generate
 
 Search the overview's image URLs first. A crawled photograph of the real company beats a
 generated one every time and removes a disclosure obligation. Generate only for a genuine gap,
 and follow `references/imagery.md` — particularly the rule that no portrait of a real named
 person is ever generated.
 
-### 7. Write it, then LOOK AT IT
-
-```bash
-node scripts/seed-portal.mjs record.json     # writes as status: draft
-npm start & node scripts/parity.mjs          # or the render check for a new company
-```
+### 8. Write it, then LOOK AT IT
 
 ```bash
 node scripts/seed-portal.mjs record.json     # writes as status: draft
@@ -175,6 +231,11 @@ content" becomes two hundred pixels of dead space rather than an absence, so an 
 must not be rendered at all. Scroll the page before judging it — a full-page screenshot taken at
 load shows scroll-revealed content as blank and will make a working page look broken.
 
+**Open it as the tenant, not as the reference.** Every oracle on this pipeline read the reference
+company, on `/`, at 1280px, and every one of them was green while generated portals shipped with
+no header. Open a *generated* tenant, on a page that is **not** the home page, at **375px**, and
+walk it with the Tab key. Those three deviations found three blocking defects on their first run.
+
 ## What this skill will not do
 
 - **Publish.** Records are written as `draft`. Publishing is a human decision, and on an
@@ -191,6 +252,15 @@ load shows scroll-revealed content as blank and will make a working page look br
 
 Company sections use the company's own register, taken from its overview and its own site. The
 H1 comes from the company's own website language, never a positioning line written for rhythm.
+
+**A section's subject is the company, never the portal.** A generated Q&A page shipped three
+questions and every one was about Diolog's plumbing — *"Where do these figures come from?" →
+"From the company record, read at request time."* The reference company's eight are about the
+company: how to buy the stock, whether it pays a dividend, how it is capitalised, when the AGM
+is. An investor-relations Q&A whose subject is the CMS is a category error, and it is the deepest
+a generated portal goes on that page. Where the record genuinely cannot answer an investor
+question, the section is disabled — the same mechanism as everywhere else — not filled with
+answers about the system.
 
 Diolog sections use Diolog's: no em or en dashes, Australian English, sentence case, plain
 copulas, measured confidence. If `create-diolog-content` is installed, route new Diolog copy

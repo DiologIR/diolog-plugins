@@ -390,6 +390,21 @@ If the proxy explicitly opts into the edge runtime, flag use of `fs`, `child_pro
 
 Causes 431 Request Header Fields Too Large at the CDN.
 
+### 9.7 A cache-correctness header configured in `next.config` that the framework overwrites — `HIGH` on multi-tenant surfaces
+
+`headers()` in `next.config.ts` does **not** compose with the `Vary` value Next sets on app-router responses — Next *overwrites* it with its own router list rather than appending, and the config loses:
+
+```
+configured  Vary: Host
+served      vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+```
+
+Reproduces on a plain local `next start`, so it is not a CDN behaviour and no amount of edge configuration fixes it. On a host-resolved multi-tenant app the consequence is direct: any shared cache keyed on path alone may serve one tenant's page under another tenant's hostname.
+
+Two review moves, both cheap. **Read the served header, never the config** — a header that is set-and-dropped is invisible in source and obvious in one `curl -I`. And when the fix is to append from `middleware`/`proxy.ts`, that is a new file on the request path for every tenant and wants its own test, not a drive-by.
+
+The general shape, worth flagging beyond `Vary`: any response header the framework also manages (`Cache-Control`, `Content-Security-Policy`, `Link`) set declaratively in config and assumed to survive.
+
 ---
 
 ## 10. Cross-cutting Next.js conventions (low-priority — only flag in egregious cases)

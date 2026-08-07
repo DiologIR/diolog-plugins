@@ -7,12 +7,14 @@ Two loops. The **per-slide gate** runs while you build, because a mistake on sli
 After drafting each slide, before starting the next. Cheap checks first:
 
 1. **Does it say one thing?** Name the slide's single claim out loud. If that takes two sentences joined by "and", it's two slides.
-2. **Type on the scale.** Every size traces to a `--type-*` token (or the deck's declared ramp). Body at or above the distance minimum: ≥24px on a 1920 canvas, ideally 32px+.
-3. **Does the text fit its box** at its stated size, with the longest real string rather than the sample one? In an absolute-geometry format nothing shrinks to fit; in HTML nothing warns you.
-4. **Grounding.** Every figure and claim traces to the source material. A number you can't point at is a number that comes off the slide.
-5. **Accent spent once.** One thing carries the colour.
-6. **Parallel with its neighbours.** Repeated elements in the same position; section headers identical to each other.
-7. **Look at it.** Render the slide and open the capture — see below.
+2. **Does every slot say something different?** A template with kicker / title / body / caption fills easily and empties nothing. The failure shape, measured on a real generated surface: eyebrow = the item's name, title = a truncated blurb ending mid-clause, body = *that identical string again*, caption = the eyebrow once more. Four slots, two pieces of information, and the hierarchy inverted — the name demoted to a label and a sentence fragment promoted to the headline. A slot with nothing of its own to say is left empty, not filled; and **a title is written short, never cut short** — a heading ending in an ellipsis is body copy in the title slot.
+3. **Does the slide's payload restate its own title?** A three-row table under a headline that already states all three rows is a slide's worth of space carrying no information. Cut the table or cut the headline.
+4. **Type on the scale.** Every size traces to a `--type-*` token (or the deck's declared ramp). Body at or above the distance minimum: ≥24px on a 1920 canvas, ideally 32px+.
+5. **Does the text fit its box** at its stated size, with the longest real string rather than the sample one? In an absolute-geometry format nothing shrinks to fit; in HTML nothing warns you.
+6. **Grounding.** Every figure and claim traces to the source material. A number you can't point at is a number that comes off the slide. A count of what a *tool* found — images crawled, pages read, rows parsed — is not a fact about the subject and never belongs on a slide as one.
+7. **Accent spent once.** One thing carries the colour. On a dark ground, check the accent's *measured* contrast rather than assuming the brand colour carries over: an accent chosen against white typically lands near 2–3:1 on a charcoal band, and the largest text on the slide is the most likely victim.
+8. **Parallel with its neighbours.** Repeated elements in the same position; section headers identical to each other.
+9. **Look at it.** Render the slide and open the capture — see below.
 
 ## Looking is the part that gets skipped
 
@@ -25,6 +27,8 @@ Three rules make verification real rather than ceremonial:
 **The question you bring determines what you see.** Handed a capture and asked "do you see anything wrong with this?", you find the defect in seconds. Looking at your own render, the implicit question is "is this done?" and the answer comes back yes. Same pixels, opposite results. So ask literally: **"what is wrong with this?"** Answering "nothing" requires first naming the three most likely failure modes for that slide type — a void, a wrapped headline, a misalignment, an overlapping label, a contrast miss — and ruling each out by pointing at pixels.
 
 **Inspect crops, not whole decks.** A full slide scaled into a review thumbnail is a resolution at which a 161px void reads as generous whitespace and an orphaned label is a few ragged pixels. Judging from thumbnails is looking at an image in which the defects cannot exist and concluding there are none. Crop to the region at DPR 2–3.
+
+**Capture after the build-in has finished, and know that it has.** A slide with a staged reveal captures mid-animation as a slide missing half its content, and a colour measured mid-fade is not that element's colour — a contrast gate sampled 400ms into a 700ms entrance read a `#E85A2A` accent as `#6a2d18` and reported a fix making things worse. Drain `document.getAnimations()` before capturing, and if you are measuring rather than looking, record how many were still running. A measurement taken mid-animation is precise, confident and wrong, and nothing in its output says so.
 
 Do this yourself. A deck is a handful of tool calls to walk, and delegating it costs a whole context to learn what a crop would have told you.
 

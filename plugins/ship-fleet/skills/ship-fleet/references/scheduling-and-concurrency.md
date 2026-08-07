@@ -192,6 +192,12 @@ Resume state: ⟨"fresh" | "resume in .worktrees/ID on ai/id — do NOT create a
 Rules that override ship-feature's defaults:
 - STOP BEFORE MERGE. Run every stage through acceptance-e2e green, commit on the branch,
   but do not rebase-merge-push-clean; the orchestrator serializes finalization.
+- NEVER pass `-c user.email` or `-c user.name` to git. The repo's identity is configured;
+  overriding it rewrites the commit AUTHOR, and Vercel gates deployments on the author. One
+  runner doing this blocked every deployment across the whole team with TEAM_ACCESS_REQUIRED
+  until the history was rewritten. Attribution belongs in the Co-Authored-By trailer, which
+  is a message field and gates nothing. Put this line in every runner prompt verbatim — it
+  is cheaper than the outage by several orders of magnitude.
 - WORKTREE-FIRST, including design-craft: create `.worktrees/⟨ID⟩` on `ai/⟨id⟩` BEFORE any
   file edit and run EVERY phase inside it. ship-feature's design-craft stage predates the
   worktree in its default flow — override that. N concurrent runners share the main tree,

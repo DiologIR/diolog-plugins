@@ -40,6 +40,26 @@ Two different identifiers, and conflating them collides two companies:
 - **The portal slug** is `<label>-<category>`: `acme-paid`, `acme-free`. It is **globally
   unique across every company**, which is why the category is part of it.
 
+## `chrome` is load-bearing, and an empty object is not a value
+
+`chrome: {}` validates and produces a portal with no brand, no navigation and no footer. On a
+real generator that literal shipped to **every record it had ever produced** — nine of them —
+and the consequence was invisible everywhere it was checked: the records validated, every route
+returned 200, and the content assertions passed. Measured on one tenant, five pages carried
+**zero internal links** and **one tab stop**, the skip link. Two declared routes resolved 200
+with nothing on the site pointing at them.
+
+So `chrome.header` is built from `identity` plus the pages the record actually declares, and
+two invariants ride with it:
+
+- **Every declared page is reachable from at least one other.** An orphan route is
+  indistinguishable from a working one in every per-page check ever written.
+- **Nothing about a specific company lives in a shared component.** A footer with one tenant's
+  monogram, listing code and policy PDF links as literals publishes that company's constitution
+  under every other tenant's address the moment the footer starts rendering. Until that is fixed,
+  synthesising a footer *creates* the leak rather than closing it — which is why an absent footer
+  is the honest state and a wrong one is not.
+
 ## Sections switch off; they do not empty
 
 `enabled: false` is the mechanism for "this company has no video". A section rendered with

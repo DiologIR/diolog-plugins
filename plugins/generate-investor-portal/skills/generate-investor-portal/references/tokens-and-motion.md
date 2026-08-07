@@ -57,6 +57,20 @@ a lifted red is still the brand; a pink is not.
 eyeballed figures is worse than none, because the next reader trusts it. Compute, and put the
 computed values in the record's provenance note if you record them at all.
 
+**And check that something reads it.** Emitting the token is not applying it. On a real build
+`primaryOnDark` was carried by the contract, set by every record, present in the rendered HTML,
+and referenced by **no rule in the stylesheet** — so every accent word on every dark band was
+still painted in raw `--primary`, and the house tier's 72px company name sat at **2.14:1**. It
+passed every check anyone thought to run, because all of them looked for the token rather than
+for the colour on the node.
+
+Two things follow. Grep the stylesheet for `var(--primary-on-dark)` before believing the token
+does anything. And when you add the rule, **put it last in the file**: `.thesis__n` and
+`.hero h1 em` declare `color: var(--primary)` at equal specificity, so a rule placed earlier
+loses to source order and fixes only the selectors that happened to be more specific. An
+equal-specificity override that loses to source order is indistinguishable from a rule that was
+never written.
+
 ## Motion is a preset, not code
 
 Pick per section from the enumerated set:
@@ -121,3 +135,41 @@ ink:           stated ?? (isDark ? '#F5F5F5' : '#1C1B1B')
 The rule generalises past colour: **the token a brand forgets is the token that breaks.**
 Compute it from what the brand did state, and a partial DESIGN.md produces a coherent
 portal rather than a half-inverted one.
+
+## Every token, not only the surfaces — an unset token is another company's brand
+
+The derivation above covers the tokens that fail *visibly*. The ones that fail *quietly* are the
+rest of the palette, and they fail worse, because the stylesheet's defaults are not neutral
+values — they are one specific company's brand, the one the reference build was authored for.
+
+Measured on a live generated portal with a `#0A0A0A` canvas: **12 of 25 colour tokens unset.**
+
+| Token | Fell back to | What it painted |
+|---|---|---|
+| `--primary-tint` | the reference's pale **pink** | an alert band with white text on pale pink — three lines unreadable |
+| `--link` | the reference's red | a facts-table link at 3.28:1 on near-black |
+| `--focus-ring` | the reference's red | this company's keyboard focus ring is another company's brand colour |
+| `--primary-pressed` | the reference's dark red | pressing this company's orange button turns it the other company's red |
+| `--border-strong` | a light grey | near-white hairlines and arrow strokes on a black page |
+| `--on-primary` | `#FFFFFF` | every secondary button failing AA **on hover** |
+
+So: **a themed record emits a complete palette.** Two mechanisms, and you want both:
+
+1. **Derive what is genuinely derivable, from relationships you can verify against the
+   reference** — never from invented ones. Two that hold: `on-primary` is whichever of white or
+   the ink colour actually contrasts with `primary`, computed; `primary-tint` is ~10% of
+   `primary` mixed into `surface`, which reproduces the reference's own hand-picked tint to
+   within one unit and follows a dark record's surface into the dark. `--link`,
+   `--border-strong` and `--surface-footer` are *not* derivable — a rule for them would be an
+   invented relationship dressed as a recovered one.
+2. **Make the schema refuse the partial record.** A record that states `canvas` and omits the
+   rest should not validate. That is the only version of this that cannot regress, because the
+   fallback is silent by construction: an unset token produces no error, no warning and no
+   visual tell except on the one band that uses it.
+
+## `colorScheme` belongs in the token set
+
+`color-scheme: light` hard-coded in the stylesheet is one line and it is wrong on every dark
+record. The browser-painted surfaces — scrollbars, form controls, the pre-paint canvas — stay
+light on a near-black portal. It is one token away from correct and it belongs beside the rest
+of the theme rather than in the CSS.

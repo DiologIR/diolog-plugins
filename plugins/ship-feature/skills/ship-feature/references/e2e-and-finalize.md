@@ -47,6 +47,8 @@ If **any** box is unchecked or unverifiable → **STOP before the merge.** Appen
 ### Merge mechanics (gate passed)
 Work in the worktree `WT = .worktrees/<ID>`; `INT` is the integration branch you detected (`origin/staging`, else the repo default).
 
+**Never pass `-c user.email` (or `-c user.name`) to git, and never set them per-command.** The repo already has the identity configured, and overriding it rewrites the **commit author**, which is not a cosmetic field: Vercel gates deployments on it. A run that "helpfully" attributed its commits to a bot address blocked **every deployment across the whole team** with `TEAM_ACCESS_REQUIRED` until the history was rewritten — an outage caused by a flag nobody asked for. Attribution goes in the `Co-Authored-By` trailer, which is a message field and gates nothing.
+
 1. **Commit anything outstanding** on `ai/<id>` (stage only files you created/modified — never `git add .`). Use the pipeline's commit convention: `<type>(<scope>): <summary>`, a `Resolves <ID>` line (list child ids too), and the `Co-Authored-By` trailer.
 2. **Final rebase onto the fresh tip of `INT`:** `git -C "$WT" fetch origin`, then rebase `ai/<id>` onto `INT`, resolving every conflict faithfully (integrate both sides — never drop `INT`'s work or the feature's). Mandatory even if it looks clean: a stale base silently duplicates work that landed on `INT` meanwhile.
 3. **Re-run the build gates** after the rebase — the integration must compile. Any red here re-closes the gate: stop.

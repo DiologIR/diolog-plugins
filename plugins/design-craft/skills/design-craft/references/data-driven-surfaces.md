@@ -37,6 +37,41 @@ to `.62` is the honest range. Alpha is not a taste decision on a dark surface.
 **A focus-ring colour that is not the accent.** The accent-coloured ring inherits the accent's
 contrast problem exactly where a keyboard user needs it most.
 
+## The stylesheet's defaults are one tenant's brand, not neutral values
+
+This is the failure mode that only appears on tenant two, and it is worse than a missing token
+because it produces something that looks deliberate.
+
+Whatever the first tenant's values were became the stylesheet's fallbacks. So a second tenant
+that omits a token does not get a neutral default — it gets **the first tenant's brand**.
+Measured on a live near-black portal against a light-themed reference: 12 of 25 colour tokens
+unset, and the consequences were an alert band painted in the reference company's pale **pink**
+with white text on it, a keyboard focus ring in the reference company's **red**, and a button
+that turned red on press. Nothing errored, nothing warned, and every one of those is a plausible
+enough colour that a reviewer reads it as a choice.
+
+Two defences, and you want both:
+
+- **Derive what is genuinely derivable** from what the tenant *did* state, using relationships
+  you can verify against the reference build rather than invent. On-primary ink and a primary
+  tint are derivable; a link colour and a border colour are not.
+- **Make the schema refuse a partial theme.** A record stating `canvas` and omitting the rest
+  should fail validation. This is the only version that cannot regress, because the fallback is
+  silent by construction — there is no error, no warning, and no visual tell except on the one
+  band that happens to use the token.
+
+## A token nothing reads is not applied
+
+The next failure along, and it is invisible to every check that looks for the token rather than
+at the node. A multi-tenant contract carried `primaryOnDark`; every record set it; the injector
+emitted it; the rendered HTML showed it. **No CSS rule referenced it.** Every accent word on
+every dark band painted in the raw accent, and the largest text on the house-tier hero — the
+company's own name, 72px — measured **2.14:1**.
+
+Grep for `var(--the-token)` before believing a token does anything, and when you add the rule,
+watch source order: an override at *equal* specificity placed earlier in the file loses silently,
+and looks exactly like a rule that was never written.
+
 ## What must NOT be a token
 
 **Anything a tenant could set that breaks the layout.** Container width, base font size and
@@ -57,6 +92,33 @@ from position at render time rather than baked per section.
 Corollary: design the *empty* tier too. A tenant you hold nothing for still gets a page. It
 should place **fewer** sections rather than the same sections with nothing in them — an empty
 share-price block reads as broken where its absence reads as honest.
+
+Measured, on a tier built for a company almost nothing was held for: four bands to convey three
+facts, at 36% / 48% / 61% ink fill against the reference build's own 49–62% rhythm, with 184px,
+205px and 229px of ink-to-ink dead gap between them. The payload was Legal name, Ticker,
+Exchange — **all three already stated in the page's own badge and H1**. A 1150px-wide table
+restating the headline is what "the same sections, thinner" produces. The honest version of that
+page is one band.
+
+The measurement that catches it is **ink fill per band** — the union bbox of what a band actually
+paints, over the band's own box height. A box-based check reports every one of those bands as
+healthy, because their boxes are the right size; it is the content that is missing. `design-review`
+carries the probe (`probeColumnVoids`).
+
+## The chrome is part of the vocabulary
+
+Header, navigation and footer are the parts nobody enumerates, because on tenant one they were
+just there. Then a generator emits an empty `chrome` object, the layout renders
+`{header && …}`, and the tenant ships with **no brand, no navigation and no footer** — five
+pages measuring zero internal links and a single tab stop, with two routes resolving 200 that
+nothing on the site pointed at. Every content check passed.
+
+Two rules follow. **The nav is derived from the pages the tenant declares**, so a one-page tenant
+renders no `<nav>` at all rather than an empty labelled landmark and an empty drawer list — an
+empty landmark announces itself to a screen reader and holds nothing. And **no tenant-specific
+literal survives in a shared component**: a footer hard-coding one company's monogram, listing
+code and policy PDFs publishes that company's constitution under every other tenant's address the
+day chrome starts rendering.
 
 ## The renderer must fail loudly
 
