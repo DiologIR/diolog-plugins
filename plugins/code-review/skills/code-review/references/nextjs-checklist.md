@@ -401,7 +401,42 @@ served      vary: rsc, next-router-state-tree, next-router-prefetch, next-router
 
 Reproduces on a plain local `next start`, so it is not a CDN behaviour and no amount of edge configuration fixes it. On a host-resolved multi-tenant app the consequence is direct: any shared cache keyed on path alone may serve one tenant's page under another tenant's hostname.
 
-Two review moves, both cheap. **Read the served header, never the config** — a header that is set-and-dropped is invisible in source and obvious in one `curl -I`. And when the fix is to append from `middleware`/`proxy.ts`, that is a new file on the request path for every tenant and wants its own test, not a drive-by.
+**Middleware does not fix it either, and that is the load-bearing half of this entry.** The
+mechanism is one line in Next's own app-page entry:
+
+```js
+const varyHeader = routeModule.getVaryHeader(resolvedPathname, interceptionRoutePatterns);
+res.setHeader('Vary', varyHeader);      // SET, not append
+```
+
+`getVaryHeader` returns a hard-coded list and takes no configuration, and it runs when the page
+handler is invoked — **after both** places a Next app normally sets a response header: the route
+table (where `next.config.ts`'s `headers()` lands) and the middleware/proxy header set. Measured:
+a proxy that appends `Vary: Host` *and* sets `x-probe: yes` produces a page response carrying
+`x-probe` and no `Host`. So middleware runs, its headers arrive, and `Vary` alone is lost. The fix
+has to be a hook that runs in-process before any request is served and therefore after that
+`setHeader` — `instrumentation.ts` on current Next — and it must **merge** rather than replace,
+because the RSC entries are load-bearing for Next's own router cache.
+
+Three things a fix must get right, each of which reads green while broken:
+
+- **Validate it on a PAGE route.** Route handlers take a different send path and *do* keep the
+  configured header, so a fix verified on `/api/…` looks correct and ships broken on every page.
+- **Assert the existing tokens survive** and that none is duplicated — a fix that replaced the
+  list passes "contains Host" and breaks client-side navigation.
+- **Exclude `/_next/static`.** Those files are content-hashed and byte-identical under every
+  hostname; keying them on `Host` multiplies their CDN cache by the tenant count and protects
+  nothing.
+
+And **delete the config entry that never arrived**, with the reason in its place. A header that is
+declared and provably never served is worse than no header: it reads to every subsequent reviewer
+as a satisfied constraint. That is the "a token nothing reads is not applied" rule, applied to a
+response header.
+
+Two review moves, both cheap. **Read the served header off the socket, never the config** — a
+header that is set-and-dropped is invisible in source and obvious in one `curl -I`. And any test
+for this must boot the built server and read the response, because reading the config is exactly
+what proved nothing for months.
 
 The general shape, worth flagging beyond `Vary`: any response header the framework also manages (`Cache-Control`, `Content-Security-Policy`, `Link`) set declaratively in config and assumed to survive.
 
