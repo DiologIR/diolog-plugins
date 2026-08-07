@@ -58,6 +58,7 @@ every rule below exists because breaking it silently produced a broken portal. R
 | Leadership | `## Executive Leadership Team` then `Name` / `Title` lines, **or** `- ## Name` + `**_Title_**` | Both dialects are supported because real sites use both. |
 | Documents | `- [Title](url.pdf)` — absolute **or** site-relative | A date in the path (`/2026/06/`) is what places it in a chronology. |
 | Images | `![alt](https://…)` with real alt text | The alt text becomes the portal's alt text. A crawl that emits empty alts costs every image its description. |
+| Company logo | A `Company logo:` block in the preamble, above the first `##` | The single most recognisable thing a listed company owns. Without it every surface renders a two-letter monogram in its place. |
 | Contact | `### Contact Details` with address bullets | Becomes the registered-office and site list. |
 
 **Never emit the crawler's own scaffolding.** `Source URL: https://…`, cart and login
@@ -114,7 +115,42 @@ Both are the portal's raw material — a crawled photograph of the real company 
 generated one every time, and it removes a disclosure obligation rather than creating
 one. Drop none of them for tidiness.
 
-### 5. Mark what the site does not say
+### 5. Capture the company's LOGO, and four facts about it
+
+The mark is the one asset every downstream surface wants and the one the pipeline
+kept substituting a two-letter monogram for. Record it in the preamble block that
+`references/output-contract.md` specifies — the service emits that block verbatim
+from `renderCompanyLogoBlock`, so any other shape is a second dialect.
+
+Four facts, because a consumer cannot recover any of them later:
+
+- **The URL** of the mark the company actually shows a visitor.
+- **Its real pixel dimensions**, read from the decoded asset — not from the CSS
+  box it happens to be scaled into.
+- **The ground it is drawn for**, `light` or `dark`. A mark made for a dark header
+  is invisible on a light one. This is a fact about the asset, not a style
+  preference. Measure it from what is painted behind the mark; the ancestor chain
+  is the wrong chain, because a `position: fixed` masthead floats over content
+  that is not its parent. If nothing opaque is behind it — a transparent header
+  over a photograph — record `not determined`. **Never guess a ground**: a wrong
+  one puts a white mark on a white header, which is worse than no mark.
+- **The page it was found on**, so a wrong capture is diagnosable.
+
+**A favicon is not a logo, and an `og:image` is usually a social share card.**
+Neither is an acceptable substitute, and neither is a candidate. Look in the
+masthead and in the link back to the site root, at the marks the page actually
+renders. When there is no usable one, say `Company logo: none found.` — **that is
+a NORMAL outcome**, and the tenant keeps the monogram it renders today. A
+confident-looking wrong mark on a listed company's investor portal is worse than
+two letters.
+
+A mark you cannot point at a stable URL — an inline `<svg>`, a `data:` URI — is
+not capturable. Record `none found` rather than a URL that will not resolve.
+
+**The logo is a TRADEMARK.** Report it; never recolour, crop, rotate, or restyle
+it to fit a palette, and never suggest a consumer do so.
+
+### 6. Mark what the site does not say
 
 A company overview that quietly omits a leadership team looks identical to a company
 with no published leadership. End the file with a short `## Not published` section
@@ -133,6 +169,8 @@ naming what you looked for and did not find.
   furniture, and downstream they become fake business units.
 - **Guess a ticker or a legal entity.** If the site never states them, say so under
   `## Not published` and let the operator supply them.
+- **Guess a logo, or the ground it is drawn for.** A favicon, an `og:image` or an
+  unmeasured `light` are all worse than `none found`.
 
 ## Then
 

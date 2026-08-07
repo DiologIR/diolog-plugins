@@ -99,6 +99,65 @@ The alt text becomes the portal's alt text, so an empty alt costs that image its
 description on the rendered page. Keep every URL: found photographs are always preferable
 to generated ones.
 
+## Company logo
+
+The mark goes in the document PREAMBLE, above the first `##`, in exactly this
+shape. The API emits it from `renderCompanyLogoBlock`
+(`apps/api/src/modules/investor-portal/services/company-logo-overview-block.ts`),
+pinned by `company-logo-overview-block.spec.ts`. Change one and you must change
+the other — this literal IS the agreement between the two implementations.
+
+```markdown
+Company logo: https://…public-blob…/logo.png
+- Alt text: Alfabs Group: Mining & Engineering Services in the Hunter Valley Region
+- Source page: https://alfabs.com.au/contact-us/
+- Original: https://alfabs.com.au/wp-content/uploads/…/Alfabs-logo_white_crop-….png
+- Dimensions: 172x54
+- Ground: dark
+- Ground measured: rgb(0, 0, 0) via div
+```
+
+When there is no usable mark, one line and nothing else:
+
+```markdown
+Company logo: none found.
+```
+
+**Why the preamble and not a `## Company logo` heading.** Business units are read
+from `##`/`###` headings with prose under them. A heading here renders the logo
+note as a business unit — the same failure that put a privacy policy under *"what
+the group actually does"*.
+
+**Why a bare URL and not `![alt](url)`.** Image syntax puts a trademark in the
+same sweep as the site's photographs, where a generator can drop it into a scene
+slot.
+
+Field by field:
+
+| Field | Rule |
+|---|---|
+| `Company logo:` | The URL of the mark the page actually renders. Not a favicon, not an `og:image`, not an inline `<svg>` or `data:` URI (neither has a URL that resolves). |
+| `Alt text:` | The company's own alt, verbatim. `(none published)` when the site publishes none — never invented. |
+| `Source page:` | The page it was found on. This is what makes a wrong capture diagnosable. |
+| `Original:` | Where the mark lives on the company's own server. Trademark provenance. |
+| `Dimensions:` | `WIDTHxHEIGHT` of the DECODED asset, in real pixels. Not the CSS box it is scaled into — metalliuminc.com renders a 1202×188 mark in a 320×50 slot. |
+| `Ground:` | `light`, `dark`, or `not determined`. Measured from what is painted behind the mark. |
+| `Ground measured:` | The colour read, and what it was read from — or `indeterminate via <reason>`. |
+
+**The ground is the field this block exists for.** Measured on real sites:
+metalliuminc.com ships `logo_Metallium_INVERSE.png`, a white mark on a dark
+Squarespace hero; alfabs.com.au ships BOTH `Alfabs-logo.png` and
+`Alfabs-logo_white_crop.png` in one masthead. Walking the ancestor chain calls the
+Metallium mark `light`, because its `position: fixed` header is transparent and
+the walk lands on `body` — the paint stack behind the mark calls it `dark`, which
+is what the page shows. Read the paint stack.
+
+`not determined` is a legitimate answer and must be used rather than a guess.
+alfabs.com.au's HOME page floats a transparent masthead over a photograph; its
+`/contact-us/` page does not, and yields `dark` / `rgb(0, 0, 0)`. Across a whole
+crawl, a page whose ground could be measured supersedes one whose ground could
+not — a mark that cannot be placed is worth less than one that can.
+
 ## Contact
 
 ```markdown
@@ -117,6 +176,7 @@ Becomes the registered office and the site list.
 | `Source URL: https://…` | Crawler scaffolding. Reads as a business unit heading. |
 | Privacy, terms, cookies, complaints, whistleblower | Legal furniture. One run rendered **"How Do We Collect Personal Information?"** and **"Complaints Resolution"** under *"What the group actually does"*. |
 | Cart, checkout, login, account, search | Site machinery, not company facts. |
+| A favicon or `og:image` as the company logo | A favicon is an icon and an `og:image` is a share card. Either one rendered as a listed company's mark is worse than the two-letter monogram it replaced. |
 | Headings phrased as questions | A business unit is a thing a company does, not a question it answers. |
 | Newsletter and cookie modal copy | Arrives in the crawl looking like content. |
 
@@ -128,6 +188,7 @@ Becomes the registered office and the site list.
 - No leadership team is published on the site.
 - No ticker or listing is stated.
 - No lodged documents were found.
+- No usable company logo was found in the masthead.
 ```
 
 An overview that quietly omits something looks identical to a company that publishes
