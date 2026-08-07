@@ -48,6 +48,28 @@ API up                               →  200
 
 The resolution carries `source: 'api' | 'seed' | 'none'` for exactly this reason.
 
+### Prove it is reading the record you are testing
+
+The trap one layer in from the last one, and it looks exactly like a failed fix. The resolver
+tries the **API first** and the database second. So a verification run against a throwaway
+database, holding the freshly regenerated record, was answered by a local API still serving
+*production's* copy: the first screenshots showed the old unit hierarchy and seven images the
+new record does not contain. The record under test was correct the whole time.
+
+Two habits close it:
+
+- **Point every other source at a closed port** (`DIOLOG_API_URL=http://127.0.0.1:1`) so a
+  fall-through is a connection error rather than a plausible page.
+- **Fingerprint the server you are talking to before you believe it**, especially when a port
+  might be held by an earlier run: check the listener's own working directory, and read one
+  value off the page that only the record under test contains. A stale server on the right port
+  answers 200 to everything and is indistinguishable from a passing run.
+
+The same applies to the database connection: a portal server started **without** its
+`MONGODB_URI` falls back to a small built-in seed, serves a handful of tenants perfectly and
+404s the rest — which reads as "those tenants are broken" rather than "this server has no
+database". Check the row count, not the first 200.
+
 ### Where every one of these gates was green while the portal was broken
 
 A full design review of 18 surfaces found three blocking defects that had survived indefinitely
@@ -60,7 +82,7 @@ output did not say.
 | `acceptance-generate.mjs` — 524 assertions, 13 tenants | It never asked whether a generated portal had a **header**. Strong on content (*"people includes `Stephen Hall :: Chief Executive Officer`"*), silent on chrome, and silent on whether the pages link to each other. |
 | Every oracle in the set | None opened a viewport below 1280px, none ran axe, and all of them read the *reference* tenant. Adding those three found blocking defects on the first run. |
 
-Four assertions worth owning, because each one is the cheap version of a defect that shipped:
+Five assertions worth owning, because each one is the cheap version of a defect that shipped:
 
 1. **Chrome exists**, and its brand, nav and footer come from this record.
 2. **Every declared page is reachable** from at least one other, and its tab-stop count is above
@@ -69,9 +91,48 @@ Four assertions worth owning, because each one is the cheap version of a defect 
 4. **Every colour token the theme declares is set on a themed record.** An unset token silently
    inherits the reference company's palette (see `tokens-and-motion.md`), and nothing in a 200,
    a parse or a screenshot of the home page reports it.
+5. **Every accent/ground pairing clears the floor its ROLE carries** — 4.5:1 where the pairing is
+   body-size text, 3:1 where it is large text or non-text. This is a record-level gate: it reads
+   the resolved token map, so it runs with no server and no deployment and it bites on the next
+   brand rather than on the next axe run. It caught a real brand orange at 3.37:1 as an eyebrow
+   and 3.72:1 under its own stated white ink.
+
+Two of these are now real gates on this pipeline and both are worth copying in shape, not just
+in subject:
+
+- The reachability assertion **quotes the renderer's own nav filter** rather than
+  paraphrasing it, so a change to how the header is derived cannot leave the gate measuring a
+  nav nobody renders. It reports pages-reached over pages-declared, and it **fails when fewer
+  than two tenants declare more than one page** — otherwise a fixture set that drifted to
+  single-page records would pass it having asserted nothing.
+- The palette assertion **computes its token list from the reference theme** instead of listing
+  it, so a twenty-sixth colour added to the contract is covered the day it lands rather than
+  the day somebody remembers the file. Its one exclusion — the semantic conventions
+  (success / warning / danger / info), which are green-amber-red-blue rather than anybody's
+  brand — is named in the case, not silently skipped.
 
 And the discipline that makes any of these readable: **print the denominator.** `diffs=0` on its
 own cannot be told apart from a selector list that matched nothing. `checks=904 diffs=0` can.
+
+### A gate that SKIPS an unresolved input is a gate-shaped hole
+
+The sharpest version of the denominator rule, and it was found by mutating a gate that had just
+been written to enforce the rule above. The contrast gate read each token off the resolved map
+and skipped any pairing whose token was absent — deliberately, and for a good reason: the
+stylesheet's default *is* the reference company's palette, so filling from it would measure
+another company's contrast and report it as this brand's.
+
+Then the derivation under test was deleted. Every `--primary-ink` pairing became unresolved,
+every one of them was skipped, and **the suite stayed green** while the accent went raw into
+every eyebrow on the page. Two of the three mutations bit; the one aimed at the thing the case
+existed for did not.
+
+The fix is not "stop skipping". It is that **the stylesheet declares those tokens as
+`var(--primary)`**, so an unresolved token still *paints* something and that something is
+knowable. Follow the declared fallback instead of skipping it, assert that the tokens with a
+fallback are never among the skips, and print the skip list beside the count. A skip is a
+measurement you did not take, and a gate that does not say how many it did not take is reporting
+its coverage as its result.
 
 ## Report the three claims separately
 

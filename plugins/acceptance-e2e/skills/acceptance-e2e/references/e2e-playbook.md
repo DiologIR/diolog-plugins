@@ -215,6 +215,61 @@ API succeeds ⇒ the defect is the UI path, not the backend).
   after a gap.
 - A green run must mean the ACs hold — never water down an assertion to turn a real red green.
 
+### Two properties any comparison gate needs before its green is worth anything
+
+Both come from a diff oracle that read `checks=904 diffs=0` for months while a defect sat on
+every row of two pages it had never loaded.
+
+**A coverage assertion beside the count, not a printed number.** A selector set that has gone
+stale matches nothing and reports zero differences, which serialises identically to a clean run.
+Print *found / declared* per page and **fail** when most of a page's declared selectors are
+absent: *"only 1 of 4 page landmarks found on live — the selector set has gone stale, and a stale
+set cannot diff."* One real first draft declared two class names that did not exist on the page
+it was added for, and would have shipped a confident green over an unmeasured page. Read the
+selectors off the live DOM; do not write them from the component source.
+
+**An exclusion list that cannot rot.** Extending a gate usually turns it red on something known
+and not yet deployed, and a gate with no way to say that is a gate somebody switches off. Make
+each entry name the page, the selector, the property **and the exact value the other side must
+still be showing**, so:
+
+- if the other side changes, the entry stops matching and the difference is a failure again;
+- an entry that produces **no** difference **fails the run** — *"RESOLVED. Delete this entry."*;
+- every entry cites the finding it came from.
+
+That is an exclusion list with an expiry date built in, which an `ignore: []` array is not.
+
+**A `continue` on missing input is the same defect wearing a third hat.** A gate that reads a
+value and skips the assertion when the value is absent turns "the thing under test was deleted"
+into a passing run. Measured: a contrast gate over derived design tokens skipped any pairing
+whose token did not resolve — a deliberate choice, because the fallback would have been a
+*different tenant's* value and measuring that would have been worse than measuring nothing. Then
+the derivation the case existed for was deleted; every pairing became unresolved, every one was
+skipped, and the suite stayed green. Two sibling mutations bit. The one aimed at the subject did
+not.
+
+Three things fix it, and skipping less is only one of them:
+
+- **Follow the declared fallback where there is one.** Absent is rarely the same as *nothing
+  painted* — here the stylesheet declared the token as an alias of another, so an unresolved
+  token still rendered a known colour. Measure what the system would actually do.
+- **Assert that the inputs the case is about are never among the skips.** That turns the hole
+  into a failure instead of a silence.
+- **Print the skip list, not just the count.** A skip is a measurement you did not take, and a
+  gate that reports coverage as though it were a result is the denominator problem again.
+
+**And prove the extension can fail before trusting it.** Mutate one property of one
+newly-covered element and watch the gate go red. One such mutation was *prepended* to a
+declaration block whose own later declaration outranked it by source order — the gate read
+`diffs=0` and the natural conclusion was that the extension could not fail. It measured the
+original value on both sides. Replacing the declaration rather than adding one made it bite
+immediately: **an equal-specificity override that loses to source order is as easy to do to your
+own probe as to the code.**
+
+Mutate **once per mechanism the case claims to protect**, not once per case. A three-mechanism
+case (derive the value · honour the floor over a stated value · have the stylesheet read it) needs
+three mutations, and the one that does not bite is the one worth having run.
+
 ## 9. If the project has no harness yet
 
 Set up the **minimum** Playwright harness that fits the repo — don't build a framework:
