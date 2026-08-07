@@ -94,6 +94,29 @@ The partial-shape form of the same defect fails quietly instead of visibly: a th
 
 Review move: for any object whose members are all optional, ask what `{}` means downstream, and whether the schema can express *"stated partially"* at all. If the field is only meaningful complete, require the members together (a discriminated variant, a refinement, `superRefine`) and make the consumer treat an empty object as an error rather than as an absence. `Object.keys(x).length === 0` reaching a `{x && …}` render guard is the shape to grep for.
 
+### 1.10 `$set` beside `$setOnInsert`, where the guard field is the one on `$setOnInsert` — `HIGH`
+
+```js
+$set:         { …, record, updatedAt }
+$setOnInsert: { status: 'draft', … }   // "never demote a portal somebody has already published"
+```
+
+The comment describes the opposite of what the line does. `$setOnInsert` protects `status`, so an
+already-**published** row keeps `status: 'published'` — while `$set` replaces the **entire record
+body** underneath it. A regenerated artifact that no human has reviewed is therefore live at its
+public address the instant the command returns, with no version bump, and the one line of output
+that could have said so (`status=published`) is byte-identical to the safe case.
+
+Greppable shape: **an `$setOnInsert` field that is a state/approval/visibility flag, beside a
+`$set` that writes the payload that flag governs.** `$setOnInsert` means "the first write decides
+this forever", which is right for `createdAt` and wrong for anything downstream consumers treat as
+permission.
+
+Review move: ask what the *second* write means. If regeneration re-derives the payload rather than
+editing it, the write over a published row must be **refused** unless an explicit flag
+(`--republish`) is passed — and anything not literally the published state should be treated as
+overwritable, so an unrecognised future state is safe by default rather than publishable.
+
 ---
 
 ## 2. Multi-tenancy (cross-tenant data leak) hazards

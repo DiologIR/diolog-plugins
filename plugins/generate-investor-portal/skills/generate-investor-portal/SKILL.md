@@ -275,6 +275,21 @@ walk it with the Tab key. Those three deviations found three blocking defects on
 
 - **Publish.** Records are written as `draft`. Publishing is a human decision, and on an
   investor surface it is the decision that matters.
+
+  **And regeneration is not an edit.** The upsert that writes a record is the place this rule
+  actually lives, and the shape it fails in is specific: `$set: { record, updatedAt }` beside
+  `$setOnInsert: { status: 'draft' }`, with a comment reading *"never demote a portal somebody
+  has already published"*. What that does is replace the **entire record body** of a published
+  portal while `status` stays `published` — so a regenerated portal nobody has looked at is live
+  at the company's own address the instant the command returns, with no version bump, and the
+  one line that could have said so (`status=published`) reads identically to the safe case.
+  Regeneration re-derives every page from a fresh crawl; four classes of defect have shipped
+  that way with every gate green.
+
+  Absent or draft → write. **Published → refuse**, unless an explicit `--republish` is on the
+  command line, which is the whole of the difference between an accident and a decision. Treat
+  anything that is not literally `published` as overwritable, so a future review state is safe
+  by default and an unrecognised one cannot become publishable.
 - **Invent a figure to fill a section.** A section with no data is disabled. That is the whole
   mechanism.
 - **Generate a likeness of a real person**, or a photograph presented as depicting a real site,
