@@ -355,6 +355,17 @@ sweeps, guard promotion) transfers — the harness changes:
   accessibility tree (`axe describe-ui` / Maestro hierarchy / `app.debugDescription`),
   since native has no `getComputedStyle`. A green flow asserts behaviour + geometry
   only — rendered quality still goes to the fidelity/design-review layer.
+  **When XCUITest is structurally unavailable** — a SwiftPM app with no `.xcodeproj`
+  has no target to put it in — the macOS runner is the app's own **Accessibility
+  tree**, driven via System Events / `AXUIElement`, with a launch-flag fixture mode
+  for determinism (it also reaches surfaces without stealing foreground focus).
+  Read **`references/macos-ax-acceptance.md`** before writing one: it carries the
+  assert-actions-not-just-identifiers rule (an identifier can sit on a *label*, so
+  all 13 sidebar ids resolved while none could be activated), the fixture-must-match-
+  real-data rule (a spend panel passed every gate while rendering `$0` for 100% of
+  real traffic), and seven measured traps — zombie-instance activation, unbound
+  `entire contents` reading zero, App Translocation zeroing the tree under `$TMPDIR`,
+  and the rest — each of which produced a confident wrong diagnosis first.
 - **MCP servers (FastMCP/TypeScript).** The hermetic vitest tier is unit testing, not
   acceptance. Acceptance = **drive the built server through a real MCP client** — the
   Claude Agent SDK or a scripted `claude` CLI session against the stdio binary — and
@@ -422,4 +433,9 @@ recurring real-bug classes, and the run-twice discipline — read
 detection mechanics and the guard-promotion rules — read
 **`references/proactive-sweeps.md`**. For the Diolog web repo specifically, the
 optional **`references/diolog-e2e-harness.md`** gives the exact harness facts,
-auth/tenant recipe, and the worked `presentations` + `quorum` examples.
+auth/tenant recipe, and the worked `presentations` + `quorum` examples. For a
+**macOS app XCUITest cannot reach**, read
+**`references/macos-ax-acceptance.md`** — the Accessibility-tree runner, the
+fixture-mode determinism pattern (which also keeps a test run out of the
+foreground), and the measured traps that make an AX harness report a broken app
+when the harness is what is broken.
