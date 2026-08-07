@@ -156,6 +156,33 @@ Information?"** and **"Complaints Resolution"** under *"What the group actually 
 Exclude legal furniture, crawler scaffolding (`Source URL:`), and any heading phrased as
 a question. A business unit is something the company does.
 
+**Then keep that filter to the one question it answers.** The same list, reused to decide
+which PDFs reach the document shelves, dropped four **Modern Slavery Statements** filed under
+the Modern Slavery Act 2018 (Cth) — statutory disclosures, published in the same folder as the
+annual report. For the phrase "modern slavery" the two questions have opposite answers:
+
+| Question | "modern slavery" |
+|---|---|
+| *Is this a thing the company does?* — a business-unit heading | no, exclude |
+| *Does this document belong on a shelf?* — a PDF title | **yes, it is a disclosure** |
+
+One predicate cannot answer both. Split it — a heading filter and a document-title filter,
+where the second carves out exactly the statutory phrases — and guard the split with a case
+that **names the four documents and their hrefs**, because "4 documents mentioning slavery"
+passes on four copies of a policy about the topic.
+
+> **The tell that the split was already needed, visible without rendering anything.** The
+> generator's own shelf map carried a `modern slavery` term in the rule that files a document
+> under "Sustainability and ESG" — so there was a shelf named for a document class the filter
+> guaranteed could never reach it. **A codebase that contains a category nothing can be
+> assigned to is telling you a predicate is answering the wrong question.** Grep for that
+> shape before trusting any exclusion list.
+>
+> Still open on this pipeline, recorded so it is not lost: `whistle` sits in the same list
+> while `policy` is in the governance-title pattern, so a **Whistleblower Policy** — a core
+> ASX governance document, listed in the reference company's own footer — is dropped from
+> every tenant's governance page by the same mechanism.
+
 ### 5. Emit sections, not markup
 
 Each page is an ordered list of `{ id, kind, enabled, order, band, divider, motion, props }`.

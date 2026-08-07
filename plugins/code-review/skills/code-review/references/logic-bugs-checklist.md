@@ -181,6 +181,31 @@ A dead branch in an alternation does not error; it just never matches, so the *n
 
 Extraction rules are tuned against a sample. Assert against a *stored real document*, not a hand-written fixture that already agrees with the regex — the fixture and the pattern were written by the same person in the same minute and they agree by construction.
 
+### 3.4 One predicate answering two different questions — `HIGH`
+
+An exclusion list written for one question gets reused for a second one that sounds similar, and
+for some inputs the two questions have **opposite** correct answers. A `BOILERPLATE` regex written
+to keep privacy notices out of a company's *business units* — "is this a thing the company does?"
+— was also used to decide which PDFs reach its *document shelves* — "does this document belong on
+a shelf?". On the phrase "modern slavery" the answers diverge: not a business unit, and very much
+a statutory disclosure. Four Modern Slavery Statements filed under the Modern Slavery Act 2018
+(Cth) were dropped from every tenant.
+
+Greppable two ways, neither needing the domain:
+
+- **A constant named for a category, referenced from call sites that read differently.** Name the
+  question each call site is asking out loud; if the sentences differ, the predicate has to split.
+- **A category nothing can be assigned to.** The same codebase's shelf map carried a
+  `modern slavery` term in the rule filing documents under "Sustainability and ESG" — a shelf
+  named for a class the filter guaranteed could never reach it. **Code that contains an
+  unreachable category is telling you a predicate is answering the wrong question**, and it is
+  visible without running anything.
+
+Fix: split into two predicates that share the raw list, with the second carving out the
+overlapping phrases explicitly. Guard the split with a case that **names the specific documents
+and their addresses** — "4 documents mentioning slavery" passes on four copies of a policy about
+the topic — and that asserts the classes still excluded, so the carve-out cannot widen silently.
+
 ---
 
 ## 4. Tests that encode the bug
