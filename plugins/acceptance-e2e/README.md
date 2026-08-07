@@ -32,7 +32,21 @@ the skill:
    seeded records, any console-error guard intact);
 5. **runs the suite twice**, stabilises it, and where a failure exposes a **tractable
    product bug** (a missing default, a secure-context API throwing on plain HTTP),
-   **fixes the product code surgically** — and encodes deeper bugs as regression guards.
+   **fixes the product code surgically** — and encodes deeper bugs as regression guards;
+6. goes **proactive** — seven sweeps beyond the ACs (state-matrix forcing, fault
+   injection, interaction-integrity + reactivity, keyboard + axe, data-shape stress,
+   security surface, multi-user/realtime), each driven-and-asserted;
+7. hands **rendered quality to `/design-review`** (deterministic WCAG/layout gates +
+   judged craft/state/flow passes on real renders) and mock agreement to the
+   fidelity layer — behaviour in specs, judgment in the review;
+8. **promotes every sweep into a permanent guard** — wired to a named script or CI
+   step ("a gate must be invoked by something"), with new surfaces inheriting by
+   enumeration.
+
+Beyond browser apps it carries **lanes** for native apps (Maestro deep-link-first +
+XCUITest + `performAccessibilityAudit`), MCP servers (acceptance = driving the built
+server through a real MCP client, not the hermetic vitest tier), and marketing sites
+(route × viewport loads, link/heading/meta audits, claim-grounding invariants).
 
 The organising principle is that tests are derived from the acceptance criteria, not
 from poking the UI to see what renders. The AC matrix is the deliverable's spine.
@@ -56,6 +70,8 @@ acceptance-e2e/
         ├── e2e-playbook.md               # PORTABLE: selector traps, isolation, outcome-
         │                                 # assertion patterns, recurring bug classes,
         │                                 # AC-matrix template, run-twice discipline
+        ├── proactive-sweeps.md           # the seven sweeps' detection mechanics +
+        │                                 # guard-promotion rules (Phases 6 and 9)
         └── diolog-e2e-harness.md         # OPTIONAL Diolog-specific worked example
                                           # (exact recipes + presentations/quorum builds)
 ```
