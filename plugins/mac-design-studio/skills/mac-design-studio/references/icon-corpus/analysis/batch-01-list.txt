@@ -1,0 +1,50 @@
+betterzip-6-2026-07-27	BetterZip 6	2026-07-27
+cotypist-2026-07-27	Cotypist	2026-07-27
+darkroom-photo-video-editor-2026-07-27	Darkroom: Photo & Video Editor	2026-07-27
+ghostty-2026-07-27	Ghostty	2026-07-27
+mockuper-phone-frame-mockup-2026-07-27	Mockuper: Phone Frame Mockup	2026-07-27
+photo-refinery-image-upscaler-2026-07-27	Photo Refinery: Image Upscaler	2026-07-27
+stitcher-pixel-art-2026-07-27	Stitcher Pixel Art	2026-07-27
+vectorize-2-2026-07-27	Vectorize 2	2026-07-27
+text-catalyst-paste-expand-2026-07-23	Text Catalyst: Paste & Expand	2026-07-23
+past-for-ichat-2026-07-20	Past for iChat	2026-07-20
+amethyst-rss-reader-2026-07-14	Amethyst – RSS Reader	2026-07-14
+secret-folder-2026-06-23	Secret Folder	2026-06-23
+writestudio-2026-06-23	WriteStudio	2026-06-23
+cardhop-contacts-2026-06-15	Cardhop - Contacts	2026-06-15
+goodlinks-2026-06-15	GoodLinks	2026-06-15
+logoist-6-graphic-design-2026-06-15	Logoist 6 – Graphic Design	2026-06-15
+network-radar-2026-06-15	Network Radar	2026-06-15
+openmark-2026-06-15	OpenMark	2026-06-15
+planny-26-daily-planner-2026-06-15	Planny 26 • Daily Planner	2026-06-15
+quick-notes-capture-2026-06-15	Quick Notes - Capture	2026-06-15
+rocket-typist-2026-06-15	Rocket Typist	2026-06-15
+screenfloat-pro-screen-capture-2026-06-15	ScreenFloat—Pro Screen Capture	2026-06-15
+soulver-3-2026-06-15	Soulver 3	2026-06-15
+winmail-viewer-letter-opener-2026-06-15	Winmail Viewer - Letter Opener	2026-06-15
+corridorkey-by-latenite-2026-06-02	CorridorKey by LateNite	2026-06-02
+folders-file-manager-2026-05-21	Folders File Manager	2026-05-21
+googly-eyes-2026-05-21	Googly Eyes	2026-05-21
+keyframe-toolbox-2026-05-21	Keyframe Toolbox	2026-05-21
+notion-toolbox-2026-05-21	Notion Toolbox	2026-05-21
+photomill-the-image-converter-2026-05-21	PhotoMill: The Image Converter	2026-05-21
+photosweeper-2026-05-21	PhotoSweeper	2026-05-21
+prompt-3-2026-05-21	Prompt 3	2026-05-21
+scriptstar-2026-05-19	ScriptStar	2026-05-19
+apple-developer-2026-05-18	Apple Developer	2026-05-18
+bbedit-2026-05-18	BBEdit	2026-05-18
+fantastical-calendar-2026-05-18	Fantastical - Calendar	2026-05-18
+imovie-2026-05-18	iMovie	2026-05-18
+linea-link-2026-05-18	Linea Link	2026-05-18
+scapple-2026-05-18	Scapple	2026-05-18
+klack-2026-05-17	Klack	2026-05-17
+retcon-2026-05-01	Retcon	2026-05-01
+coppice-2026-04-01	Coppice	2026-04-01
+coteditor-2026-04-01	CotEditor	2026-04-01
+delete-apps-uninstaller-2026-04-01	Delete Apps: Uninstaller	2026-04-01
+disk-aid-system-cleaner-2026-04-01	Disk Aid: System Cleaner	2026-04-01
+disk-map-visualize-disk-usage-2026-04-01	Disk Map: Visualize Disk Usage	2026-04-01
+download-shuttle-speed-boost-2026-04-01	Download Shuttle: Speed Boost	2026-04-01
+extractor-unarchive-files-2026-04-01	Extractor - Unarchive Files	2026-04-01
+istatistica-2026-04-01	iStatistica	2026-04-01
+istatistica-pro-2026-04-01	iStatistica Pro	2026-04-01

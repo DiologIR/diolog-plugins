@@ -1,10 +1,30 @@
 # Icon Directions — choosable recipes for generating a mac app icon
 
-Distilled from the 134-icon corpus (`ICONS.md`) and the icon-anatomy rubric. Each **direction** is a style family made buildable: commit to ONE per icon — from this catalogue, a hybrid, or a novel composition the subject earns (declare a novel one with the same rigour: palette recipe, composition recipe, light model, #10 layering plan). Canvas is always 1024×1024 full-bleed; the system applies the squircle mask + drop shadow — design inside the mask, never bake corners or shadow.
+Distilled from **three corpora**: the original 134 macapp.supply digests (`ICONS.md`), the **500 most recent macosicongallery.com icons** (2022-02 → 2026-07), and **32 ground-truth macOS 26 "Tahoe" captures** of Apple's own system set + current-idiom third parties. Raw images + per-icon analysis: `icon-corpus/` (read `icon-corpus/analysis/SYNTHESIS.md` for the aggregate; `analysis/apple-2026.md` for the Tahoe answer key). Each **direction** is a style family made buildable: commit to ONE per icon — from this catalogue, a hybrid, or a novel composition the subject earns (declare a novel one with the same rigour: palette recipe, composition recipe, light model, #10 layering plan). Canvas is always 1024×1024 full-bleed; the system applies the squircle mask + drop shadow — design inside the mask, never bake corners or shadow.
 
 > **Calibration flags:** the corpus's template-default is the **stock-glyph-on-blue/indigo ramp** — technically clean, communicates nothing (the `sparkles`-on-indigo problem: it says "AI app", not *this* app). Blue/indigo grounds need positive justification, and the glyph must name this subject, not its category. The glyph idea comes from subject-mining (the device bank below), never from the SF Symbols default set alone.
 
 **The corpus's one load-bearing lesson (read before choosing anything):** 76% of shipping icons hard-fail variant robustness (rubric #10) because they ship a *flat pre-masked raster* — identity carried by a colour relationship that dies under Dark/Clear/Tinted. Every recipe below therefore ends in a **#10 layering clause**: author 2–4 real layers (background / mid / foreground / optional highlight), carry identity in **shape + value**, let colour be the last 10%. Do this and you beat ~88% of the field on the current era's defining gap.
+
+**The lag is confirmed at 4× the sample.** In the 500-icon gallery census, liquid-glass is 0% of 2022–2024 icons, spikes to 64% only in the Nov-2025 system-release wave (Apple's own set), and falls back to ~16% across 2026 indies. Apple has fully moved; third parties have not. Authentic Tahoe grammar remains the single cheapest way to look ahead of the shipping field.
+
+---
+
+## The Tahoe gel-glass grammar — the current era's answer key
+
+Learned from the 32 Apple/system captures (`analysis/apple-2026.md`) and confirmed by the Nov-2025 wave in the gallery (batch-03/04). These nine tells are what separates a real macOS 26 icon from a Big Sur re-tread — apply them whenever the chosen direction is current-era:
+
+1. **The tile is a cushion, not a print.** Every ground — porcelain or saturated — carries a subtle inner rim light around the perimeter and a gentle edge vignette. A dead-flat background is instantly previous-era.
+2. **Two ground registers dominate.** (a) **Porcelain near-white** (`#FAFAFB`-ish) carrying a colored gel object with a soft cast shadow — Safari, Photos, News, Slack, Find My, Home. (b) **Saturated single-hue vertical-gradient gel tile** carrying a **white frosted glyph** — Mail, App Store, Weather, Keynote. Dark charcoal is the pro/system minority register (Passwords, Icon Composer, Activity Monitor). Pick one register and commit.
+3. **Glyphs are poured, not drawn.** The default material is soft-extruded translucent gel/resin: generous rounded corners, a soft top-edge highlight, faint inner glow, small soft drop shadow. Flat brand marks get **re-materialised, not redrawn** (News N, Slack pinwheel, the iWork set) — silhouette untouched, material swapped.
+4. **White is a material.** A white glyph is frosted glass/porcelain — the ground's hue visibly bleeds through its thinner areas, with fold/emboss shading. Flat `#FFFFFF` with no ground-bounce is the batch-04 warning: *white-on-hue without translucency cues = flat Big Sur re-tread.* The cues ARE the era.
+5. **Authored overlap is the signature craft moment.** Wherever two shapes cross, hue visibly blends — multiplying darker (Photos petals) or additively lightening (QuickTime's Q, Shortcuts' diamonds, App Store's sticks, Weather's sun-through-cloud). This bleed-through is precisely what a baked flat raster cannot fake under system tinting — authoring it forces the layer discipline #10 demands.
+6. **One soft top light, zero hard speculars.** Depth = rim highlights + soft AO. The sanctioned second light is an **emissive interior under glass** (Siri orb, Tips bulb, Home's inner glow, Activity Monitor's neon trace).
+7. **3D miniatures survive, softened.** Object icons (loupe, tower, calculator, binoculars, podium) persist as toy-scale renders in matte-satin/clay with real contact shadows — never chrome-gloss, one clearly-lit object.
+8. **Sanctioned garnish:** micro diegetic engraved text as an easter egg (Mail's "Apple Park, California 95014", "PREVIEW 10×") — sub-legible, on an object, never a headline; ultra-low-contrast patterned grounds (Xcode's blueprint grid, sparkle stars); edge-bleed devices that treat the mask as a physical boundary (Contacts' index tabs, a tile-as-machine slot).
+9. **Radical flat abstraction is legal when the silhouette is iconic** (Calendar's dot-matrix, Notes, Clock) — but must still sit on a cushion tile.
+
+**Composition constants:** one focal object at ~55–65% tile width, optically centred (or a deliberate offset badge, à la Maps); concentric radii; palette economy unchanged — porcelain + one gel hue family, or saturated tile + white frost; multi-hue only when the brand/domain IS multi-hue, then quarantined inside one shape.
 
 ---
 
@@ -17,16 +37,20 @@ Distilled from the 134-icon corpus (`ICONS.md`) and the icon-anatomy rubric. Eac
 **Composition:** background = single-hue sky ramp (or flat white plate, à la waterlemon) → glyph = the app's literal object, front-facing, top-down baked soft light with a short contact shadow and a modest specular sheen → overlay = none (add a diagonal tool only if the verb is "act on files" → use Direction 7 instead). **Era:** Big Sur; **light:** top-down soft, one source.
 **When to choose:** the app has a concrete physical noun and a warm/consumer personality.
 **Do:** subject-mine the object; keep ≤2 hue families. **Don't:** float bright-on-white without a darker rim (waterlemon fails #7 at 1.4:1); don't bake gloss as your identity.
+**Tahoe-softening (to keep this direction current):** swap candy gloss for matte-satin/clay, give the object a real contact shadow, and put it on a cushion tile — the 3D-miniature idiom survives the era change only in soft materials (the loupe/tower/calculator captures; parcel, The Unarchiver). Hard gloss sweeps, lens flares, and chrome now read as instant era-markers for "old".
 **#10:** separate object / field / contact-shadow / specular into layers; make the object's silhouette + internal value read when hue flattens to a mono tint — do not let the field colour be the only thing distinguishing figure from ground.
 
-### 2. Frosted Glass Object (Liquid-Glass, the target era)
-**Essence:** a saturated translucent lens/blob floating on a frosted or near-white slab. Only 12% of the corpus wears this era's clothes, and half fake it.
-**Exemplars:** codex (glass cloud + `>_`), textsniper, dropzone, room-service, finbar, mux; AI sub-ramp: cursor, inkline, maestri.
-**Palette recipe:** one extended analogous ramp on the glass body + a near-white ground + a hue-shifted specular. AI default: violet→blue `#C3AFFE→#A091FF→#5D7CFE→#3333FF` with a *warm* pink-lavender crown bloom `#E0D1FF` (pink light on cool mass = the glass tell).
-**Composition:** background = near-white field with a faint glass rim `#FEFEFE→#F1F1F1` → glyph = a translucent glass object carrying an inlaid/knocked-out mono glyph → overlay = the knockout glyph itself (not a tool). **Era:** Liquid Glass; **light:** environmental glass, crown specular + one soft micro-shadow.
-**When to choose:** current-era hero icon; AI/dev/agent app; you want to look 2026-native.
-**Do:** genuinely separate the glass layer from its ground so tint/dark hold. **Don't:** bake it as one gradient (the trap 6/16 glass-era icons fell into); don't let a thin light-on-gradient glyph be the whole read (codex smears at 16px).
-**#10:** this is the one direction that can *actually pass* if you author it right — build the glass as its own layer with the glyph as a separate foreground plane over a swappable ground; never depend on the white field for glyph contrast.
+### 2. Tahoe Gel-Glass (Liquid-Glass, the target era — now with the answer key)
+**Essence:** the current system idiom, per the grammar section above. Two committed sub-registers plus a dark variant; all three live or die on *authored translucency*.
+**Exemplars:** system ground truth: Mail, App Store, Shortcuts, Photos, Weather, Safari, Finder, Contacts, Game Center, Configurator; third parties who got there: darkroom, elytra, mindnode, dropzone-5, multi, mercury-weather, WhisperType; earlier AI sub-ramp: codex, cursor, inkline, maestri.
+**Sub-register (a) — porcelain + gel object:** near-white cushion tile `#FEFEFE→#F1F1F1` with faint rim + vignette → one colored soft-gel object (or re-materialised brand mark) with top-edge highlight, inner glow, soft cast shadow. Where the object's shapes overlap, hues visibly blend. (Safari, News, Slack, iA Writer, CleanMyMac, copilot, parcel.)
+**Sub-register (b) — saturated tile + white frost:** single-hue vertical-gradient gel tile (e.g. blue `#4B8DF8→#2E6BF0`, violet, coral) → white **frosted** glyph whose thinner areas let the ground hue bleed through, with fold/emboss shading and a soft drop shadow. Never flat `#FFFFFF`. (Mail, App Store, Weather, Keynote, Messages formula.)
+**Sub-register (c) — dark glass:** charcoal/near-navy cushion tile → tinted translucent glass objects with strong rim light, or an emissive interior under glass. (Passwords, Icon Composer, Activity Monitor, the sticker/butterfly captures.)
+**Palette recipe:** one hue family per icon, differentiated by luminance/opacity — Apple's 26 set is strictly tone-on-tone. The AI violet→blue ramp (`#C3AFFE→#A091FF→#5D7CFE→#3333FF` with a warm crown bloom) remains legitimate but is now the *most* template-worn glass move — justify it.
+**Era:** Liquid Glass; **light:** one soft top light, rim highlights + soft AO, optional emissive interior; zero hard speculars.
+**When to choose:** any current-era hero icon; the default when the brief says "make it feel native to macOS 26".
+**Do:** author the overlap blends for real; give white objects ground-hue bounce; keep the tile a cushion. **Don't:** bake it as one gradient (the trap 6/16 glass-era icons fell into); don't ship white-on-hue with no translucency cues (batch-04's named failure); don't let a thin light-on-gradient glyph be the whole read (codex smears at 16px).
+**#10:** this direction can *actually pass* when authored right — ground slab / gel glyph / highlight+bloom as separate planes over a swappable ground. The 32 Apple captures all decompose this way; that is why they survive Dark/Clear/Tinted.
 
 ### 3. Monochrome Logomark (era-agnostic brand mark)
 **Essence:** the brand mark verbatim, zero-to-one hue, silhouette does all the work.
@@ -90,8 +114,8 @@ Distilled from the 134-icon corpus (`ICONS.md`) and the icon-anatomy rubric. Eac
 | App is… | Primary | Alt |
 |---|---|---|
 | Act-on-files / cleaner / installer | 7 Diagonal Tool | 1 Object Tile |
-| Strong existing brand mark | 3 Monochrome Logomark | 2 Frosted Glass |
-| AI / agent / dev current-era hero | 2 Frosted Glass Object | 4 Dark-Field Emissive |
+| Strong existing brand mark | 3 Monochrome Logomark | 2 Tahoe Gel-Glass (re-materialise it) |
+| AI / agent / dev current-era hero | 2 Tahoe Gel-Glass | 4 Dark-Field Emissive |
 | Menu-bar / notch / display utility | 6 Device Portrait | 4 Dark-Field Emissive |
 | Monitoring / analytics / disk / time | 8 Instrument Emblem | 4 Dark-Field Emissive |
 | Consumer with a physical noun | 1 Object Tile | 5 Character Mascot |
@@ -142,6 +166,20 @@ Draw the app's literal noun/verb before reaching for a stock category glyph. Gen
 
 Extended bank (for variety across sessions): **the app's in-product artifact at icon scale** (gauge, treemap, radar); **hardware quotation** (notch, screen, bezel as the subject); **the appliance being serviced** (draw the Mac, not "clean"); **negative-space creature** (hoolo: owl from cuts, "oo" = eyes); **material unrolling to reveal** (walltune: wallpaper peeling); **everyday prop standing in for the verb** (shake-it-on: cursor as maracas); **architectural noun** (viaduct: arch, minarah: minaret); **coin/token doubling as currency AND name** (tokens-4-breakfast).
 
+New from the 532-icon corpus (2026-08):
+
+16. **The icon performs the verb** — the composition physically enacts the app's function (CleanShot X: the page-curl IS the capture; PDF Squeezer: a machine squeezing the format; unfolder: 3D shapes in, papercraft nets out; CleanMyMac: the wiped-glass streak performs "clean").
+17. **Tile-as-machine with a diegetic aperture** — the squircle is the device, with a real slot/opening cut into it that the content emerges from (the photo-strip printer capture; The Unarchiver's drawer).
+18. **Edge-bleed physicality** — an element deliberately cut by the mask so the tile reads as a physical object (Contacts' rainbow index tabs bleeding off the right edge).
+19. **Re-materialised brand mark** — keep a flat logo's silhouette exactly, re-pour it in gel/frost (News, Slack, the iWork set; the upgrade path for any existing flat mark).
+20. **Data-as-glyph abstraction** — the content reduced to its minimal data pattern with one accent datum (Calendar's dot-matrix month with a single red "today" dot; TablePlus's facet-planes).
+21. **Overlap-as-identity** — two translucent primitives whose blend zone IS the mark (Shortcuts' diamonds, Photos' petals, Game Center's bubbles, mindnode).
+22. **Emissive interior under glass** — a glowing core inside a translucent shell as the second light source (Siri orb, Tips bulb, Home's nested glow, elytra's amber core, dropzone-5).
+23. **Fold/self-shadow ribbon** — a flat mark given 3D presence by one fold with a darker inner face (Infuse's play-ribbon).
+24. **UI-primitive-as-mark** — own one interface primitive outright (iA Writer's caret; Reminders' list-rows; copilot's arrow).
+25. **X-ray technical drawing** — monochrome line-art with translucent internals, engineering-diagram register (flighty's airliner).
+26. **Material pun** — the name/function told entirely in material physics (Couverture's chocolate drip viscosity; pasta's glossy pasta "P"; PixelGriddle's waffle-iron grid; betterzip's bound bundle).
+
 ---
 
 ## Anti-sameness rules (vary across a session)
@@ -154,3 +192,46 @@ When generating multiple icons in one session, actively diversify — the corpus
 - **Vary the ground.** Mix saturated-field, near-white-float, and near-black-emissive so a set doesn't read as one gradient family.
 - **Vary the era knowingly.** Prefer Liquid-Glass layer discipline for current-era heroes, but a deliberate Big-Sur or skeuomorphic quote is legitimate when the personality demands it — just commit, don't drift.
 - **Never repeat the diagonal-tool default** across a session — it is the single most worn move; use it once, for the one app whose verb is literally "act on files."
+
+---
+
+## Failure-mode anti-checklist (from 500 gallery icons — audit against before delivery)
+
+The ten recurring ways shipping icons fail (full evidence: `icon-corpus/analysis/SYNTHESIS.md`):
+
+1. Template genericism — saturated gradient + stock gel glyph/checkmark/magnifier/wrench, nothing ownable.
+2. White-on-hue with no translucency cues — the flat Big Sur re-tread masquerading as Tahoe.
+3. Tone-on-tone silhouette collapse — glyph hue too close to ground; dies in grayscale.
+4. Baked text, wordmarks, screenshots, data tables — dead at Dock sizes (only sub-legible diegetic engraving is sanctioned).
+5. Metaphor pile-ups — 3+ props/ideas per tile that never resolve into one object.
+6. Legacy-era drag — hard gloss sweeps, lens flares, Aqua glass, metal bevel frames, page curls, freeform overhangs.
+7. Photo texture / game key-art that bakes to mud at 32px, with zero macOS grammar.
+8. Apple-template mimicry (blueprint dev costume, iWork look) or sibling-SKU non-differentiation with nothing owned.
+9. Unearned rainbow — multi-hue without data/colour-domain semantics; when earned, quarantine it inside one shape.
+10. Flat pre-masked raster delivery — identity as a colour relationship that dies under Dark/Clear/Tinted.
+
+---
+
+## Generation pipeline — three engines, multiple variations (never ship a single take)
+
+An icon commission produces a **variation set**, not one artifact. One shared design spec, rendered through three different engines whose strengths differ — then a judged contact sheet. The spec comes first so variations are takes on one committed idea, not three random ideas.
+
+**Step 0 — the shared spec.** Direction (from this catalogue), subject-mined glyph device, silhouette description, ground register, palette hexes, light model, and the #10 layer plan (background / mid / foreground / highlight). Optionally add 1–2 spec-level alternates in a *different* direction when the user wants genuine options — that multiplies the set, it never replaces the per-engine takes.
+
+**Engine A — hand-authored layered SVG (this model; always produce this one).**
+Write the SVG yourself, 1024×1024, one `<g>` per layer named `bg` / `mid` / `fg` / `highlight` so it maps 1:1 onto Icon Composer layers.
+- *Strengths:* exact geometry and optical centring, true layer separation (#10 robustness by construction), deterministic palette hexes, editable forever. This is the **canonical master** — whatever wins the look, the shipped deliverable is this file matched to it.
+- *Tahoe material simulation in SVG:* cushion tile = radial gradient + a 1–2% inner white stroke ring; frosted glyph = white fill at 78–92% opacity over the ground with a soft `feGaussianBlur` inner bloom; overlap blends = literal overlapping semi-opaque shapes (let the renderer do the multiply); rim light = short arc strokes with linear gradients; contact shadow = blurred ellipse at 10–18% black. Keep filters simple — renderers vary.
+
+**Engine B — media-gen-pro vector (`svg: true`, Arrow).**
+A real, editable SVG generated from a text brief — an independent vector take you didn't draft.
+- *Brief it with:* the spec verbatim — direction essence, glyph device, palette hexes, ground register — plus: "1024×1024 app-icon artwork, full-bleed square, squircle-safe margins, no baked corner radius, no baked drop shadow, layered shapes".
+- *Strengths:* organic curves and shape ideas outside your drafting habits; still vector, so salvageable parts can be merged into the Engine A master.
+
+**Engine C — media-gen-pro raster (default model = GPT Image; the material-realism engine).**
+One or two raster takes for the gel/frost/glass rendering no vector engine matches.
+- *Steer it with reference images:* pass `referenceImages` — 2–4 corpus exemplars from `icon-corpus/` in the **same ground register** as the spec (e.g. porcelain register → `apple-2026/apple-23.png` Safari + `apple-28.png` Photos; saturated-tile register → `apple-01.png` Mail + `apple-14.png` App Store; dark register → the sticker/butterfly captures). This is how the Tahoe material language actually transfers.
+- *Prompt in prose* (media-gen-pro craft rules): subject first, then material ("soft-extruded translucent gel, frosted white glyph with the ground's hue bleeding through, one soft top light, rim highlights, soft contact shadow, no hard speculars"), composition ("single focal object, ~60% of tile, optically centred"), and "flat square full-bleed artwork, no rounded-corner mask, no baked drop shadow, no text".
+- *Caveats:* billed per image; the output is a **flat raster** — it is the hero preview and material target, never the shipped master (it re-creates failure mode #10 if shipped as-is). If a raster take wins the look, rebuild its material language into the Engine A layered SVG.
+
+**Step 4 — contact sheet + judgment.** Render every take at 1024 / 128 / 32 / 16 (e.g. `rsvg-convert`/`qlmanage` for SVGs, `sips` for rasters), assemble a contact sheet, and audit each against the 12-point rubric — silhouette and 16px checks on the actual small renders, not imagination. Report per-take scores, name a recommendation and why, and deliver the layered SVG master (+ the raster hero and the Arrow take as alternates). Minimum set: 3 takes (A + B + C); typical: 4–6 across two spec alternates.

@@ -1,0 +1,50 @@
+cubox-ai-read-it-later-app-2025-07-14	Cubox: AI Read-It-Later App	2025-07-14
+fast-collections-2025-07-14	Fast Collections	2025-07-14
+jomo-screen-time-blocker-2025-07-14	Jomo - Screen Time Blocker	2025-07-14
+launchbuddy-for-swiftui-devs-2025-07-14	LaunchBuddy for SwiftUI Devs	2025-07-14
+magic-drawing-and-ai-2025-07-14	Magic – Drawing and AI	2025-07-14
+screenshot-in-phone-frame-2025-07-14	Screenshot in Phone Frame	2025-07-14
+totp-authenticator-2025-07-14	TOTP Authenticator	2025-07-14
+weather-mini-2025-07-14	Weather mini	2025-07-14
+bluebird-focus-timer-2025-05-29	Bluebird Focus Timer	2025-05-29
+codye-2025-05-29	Codye	2025-05-29
+countdown-pro-flip-clock-app-2025-05-29	Countdown Pro - Flip Clock App	2025-05-29
+hex-fiend-2025-05-29	Hex Fiend	2025-05-29
+hydra-hdr-photo-studio-2025-05-29	Hydra › HDR Photo Studio	2025-05-29
+istat-menus-7-2025-05-29	iStat Menus 7	2025-05-29
+mdb-accdb-viewer-2025-05-29	MDB ACCDB Viewer	2025-05-29
+oneclock-a-simple-flip-clock-2025-05-29	OneClock - A Simple Flip Clock	2025-05-29
+photomator-photo-editor-2025-05-29	Photomator – Photo Editor	2025-05-29
+posterino-pro-photo-collage-2025-05-29	Posterino - Pro Photo Collage	2025-05-29
+screen-recorder-recordr-2025-05-29	Screen Recorder - Recordr	2025-05-29
+transporter-2025-05-29	Transporter	2025-05-29
+verba-string-catalog-editor-2025-05-29	Verba - String Catalog Editor	2025-05-29
+vinylpod-music-widget-2025-05-29	VinylPod - Music Widget	2025-05-29
+alzex-finance-pro-2025-04-26	Alzex Finance Pro	2025-04-26
+american-pool-billiard-3d-2025-04-26	American Pool: Billiard 3D	2025-04-26
+artykul-rss-reader-2025-04-26	Artykul – RSS Reader	2025-04-26
+elucidate-2025-04-26	Elucidate	2025-04-26
+expense-tracker-accountit-2025-04-26	Expense Tracker - Accountit	2025-04-26
+expenses-spending-tracker-2025-04-26	Expenses: Spending Tracker	2025-04-26
+habit-tracker-horizon-2025-04-26	Habit Tracker - Horizon	2025-04-26
+pixelgriddle-2025-04-26	PixelGriddle	2025-04-26
+precircuiter-2025-04-26	Precircuiter	2025-04-26
+shazam-identify-songs-2025-04-26	Shazam: Identify Songs	2025-04-26
+stitcher-pixel-art-2025-04-26	Stitcher Pixel Art	2025-04-26
+swiftly-business-workspace-2025-04-26	Swiftly: Business Workspace	2025-04-26
+gapplin-2025-04-04	Gapplin	2025-04-04
+hyperspace-reclaim-disk-space-2025-04-04	Hyperspace: Reclaim Disk Space	2025-04-04
+lickable-menu-bar-2025-04-04	Lickable Menu Bar	2025-04-04
+shot-lister-2025-04-04	Shot Lister	2025-04-04
+sleeve-for-spotify-music-2025-04-04	Sleeve for Spotify, Music	2025-04-04
+deskmat-cover-your-desktop-2025-03-17	DeskMat - Cover your Desktop	2025-03-17
+framous-screenshot-frames-2025-03-17	Framous: Screenshot Frames	2025-03-17
+miniblocker-website-blocker-2025-03-17	MiniBlocker - Website Blocker	2025-03-17
+whispertype-dictation-2025-03-17	WhisperType Dictation	2025-03-17
+macfamilytree-11-2025-02-28	MacFamilyTree 11	2025-02-28
+pieoneer-2025-02-28	Pieoneer	2025-02-28
+ai-note-taker-voicepen-2025-02-05	AI Note Taker – VoicePen	2025-02-05
+angry-birds-reloaded-2024-12-06	Angry Birds Reloaded	2024-12-06
+iphone-backup-extractor-2024-12-06	iPhone Backup Extractor	2024-12-06
+retcon-2024-12-06	Retcon	2024-12-06
+tes-2024-12-06	Tes	2024-12-06

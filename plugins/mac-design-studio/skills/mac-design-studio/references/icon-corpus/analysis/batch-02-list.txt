@@ -1,0 +1,50 @@
+lightweight-text-editor-2026-04-01	Lightweight Text Editor	2026-04-01
+octavo-2026-04-01	Octavo	2026-04-01
+owly-prevent-display-sleep-2026-04-01	Owly - Prevent Display Sleep	2026-04-01
+shortcut-bar-instant-access-2026-04-01	Shortcut Bar - Instant Access	2026-04-01
+tasktab-simple-to-do-list-2026-04-01	TaskTab: Simple To Do List	2026-04-01
+braw-toolbox-2026-03-24	BRAW Toolbox	2026-03-24
+dropzone-5-2026-03-24	Dropzone 5	2026-03-24
+fast-collections-2026-03-24	Fast Collections	2026-03-24
+gyroflow-toolbox-2026-03-24	Gyroflow Toolbox	2026-03-24
+istat-menus-7-2026-03-24	iStat Menus 7	2026-03-24
+nitro-photo-2026-03-24	Nitro Photo	2026-03-24
+untitled-for-desktop-2026-03-24	[untitled] for Desktop	2026-03-24
+awaken-2026-02-11	Awaken	2026-02-11
+bbedit-2026-02-11	BBEdit	2026-02-11
+framous-screenshot-frames-2026-02-11	Framous: Screenshot Frames	2026-02-11
+ia-writer-2026-02-11	iA Writer	2026-02-11
+sunset-predictions-alpenglow-2026-02-11	Sunset Predictions - Alpenglow	2026-02-11
+tap-forms-database-pro-2026-02-11	Tap Forms Database Pro	2026-02-11
+aeronaut-for-bluesky-2026-02-05	Aeronaut for Bluesky	2026-02-05
+cleanmymac-2026-02-05	CleanMyMac	2026-02-05
+hand-mirror-2026-02-05	Hand Mirror	2026-02-05
+ifinance-5-2026-02-05	iFinance 5	2026-02-05
+logic-pro-2026-02-05	Logic Pro	2026-02-05
+macfamilytree-11-2026-02-05	MacFamilyTree 11	2026-02-05
+mainstage-2026-02-05	MainStage	2026-02-05
+omnifocus-4-2026-02-05	OmniFocus 4	2026-02-05
+omnioutliner-6-2026-02-05	OmniOutliner 6	2026-02-05
+omniplan-4-2026-02-05	OmniPlan 4	2026-02-05
+apple-configurator-2026-02-04	Apple Configurator	2026-02-04
+compressor-encode-media-2026-02-04	Compressor: Encode Media	2026-02-04
+final-cut-pro-create-video-2026-02-04	Final Cut Pro: Create Video	2026-02-04
+keyhole-2026-02-04	Keyhole	2026-02-04
+keynote-design-presentations-2026-02-04	Keynote: Design Presentations	2026-02-04
+logic-pro-make-music-2026-02-04	Logic Pro: Make Music	2026-02-04
+mainstage-perform-live-2026-02-04	MainStage: Perform Live	2026-02-04
+motion-animate-effects-2026-02-04	Motion: Animate Effects	2026-02-04
+numbers-make-spreadsheets-2026-02-04	Numbers: Make Spreadsheets	2026-02-04
+pages-create-documents-2026-02-04	Pages: Create Documents	2026-02-04
+pixelmator-pro-edit-images-2026-02-04	Pixelmator Pro: Edit Images	2026-02-04
+kaleidoscope-3-2026-01-15	Kaleidoscope 3	2026-01-15
+cleanmaster-remove-junk-files-2026-01-05	CleanMaster: Remove Junk Files	2026-01-05
+draft-writing-script-blog-2026-01-05	Draft Writing - Script & Blog	2026-01-05
+logoist-5-2026-01-05	Logoist 5	2026-01-05
+noteplan-to-do-list-notes-2026-01-05	NotePlan - To-Do List & Notes	2026-01-05
+pastel-2026-01-05	Pastel	2026-01-05
+textsniper-2026-01-05	TextSniper	2026-01-05
+upscayl-2025-12-09	Upscayl	2025-12-09
+bit-slicer-2025-12-08	Bit Slicer	2025-12-08
+plugin-station-2025-12-08	Plugin Station	2025-12-08
+pricetag-app-pricing-manager-2025-12-08	Pricetag - App Pricing Manager	2025-12-08

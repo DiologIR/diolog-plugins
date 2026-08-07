@@ -1,0 +1,50 @@
+couverture-2024-11-21	Couverture	2024-11-21
+dbngin-2024-11-21	DBngin	2024-11-21
+pinwheel-2024-11-21	Pinwheel	2024-11-21
+polycapture-2024-11-21	PolyCapture	2024-11-21
+tableplus-2024-11-21	TablePlus	2024-11-21
+tabletool-2024-11-21	TableTool	2024-11-21
+bezel-phone-mirror-2024-11-06	Bezel • Phone Mirror	2024-11-06
+cleanmymac-2024-11-06	CleanMyMac	2024-11-06
+navi-subtitles-translation-2024-11-06	Navi - Subtitles & Translation	2024-11-06
+pastenow-instant-clipboard-2024-11-06	PasteNow - Instant Clipboard	2024-11-06
+perplexity-ask-anything-2024-11-06	Perplexity: Ask Anything	2024-11-06
+reeder-2024-11-06	Reeder.	2024-11-06
+screens-5-vnc-remote-desktop-2024-11-06	Screens 5: VNC Remote Desktop	2024-11-06
+screens-for-organizations-2024-11-06	Screens for Organizations	2024-11-06
+spring-shortcut-to-any-app-2024-11-06	Spring - Shortcut to any App	2024-11-06
+whisper-transcription-2024-11-06	Whisper Transcription	2024-11-06
+budget-seer-financial-vision-2024-10-08	Budget Seer - Financial Vision	2024-10-08
+macos-sequoia-2024-10-08	macOS Sequoia	2024-10-08
+persona-webcam-virtual-camera-2024-07-17	Persona Webcam: Virtual Camera	2024-07-17
+capacitor-2024-07-08	Capacitor	2024-07-08
+lut-robot-2024-07-08	LUT Robot	2024-07-08
+news-import-2024-07-08	News Import	2024-07-08
+oscsmith-2024-07-08	OSCsmith	2024-07-08
+recall-toolbox-2024-07-08	Recall Toolbox	2024-07-08
+helm-for-app-store-connect-2024-06-27	Helm for App Store Connect	2024-06-27
+looks-like-rain-2024-06-04	Looks Like Rain	2024-06-04
+menu-weather-pro-2024-06-04	Menu Weather Pro	2024-06-04
+cut-the-rope-3-2024-05-20	Cut the Rope 3	2024-05-20
+kolibri-for-swiftui-2024-05-20	Kolibri for SwiftUI	2024-05-20
+pricetag-app-pricing-manager-2024-05-20	Pricetag - App Pricing Manager	2024-05-20
+ai-photo-enhancer-by-pictura-2024-04-30	AI Photo Enhancer by Pictura	2024-04-30
+docktor-2024-04-30	Docktor	2024-04-30
+note-widget-notes-app-2024-04-24	Note: Widget Notes App	2024-04-24
+pdf-squeezer-4-2024-04-24	PDF Squeezer 4	2024-04-24
+taska-for-github-gitlab-issues-2024-04-24	Taska for GitHub/GitLab Issues	2024-04-24
+macos-ventura-2024-04-23	macOS Ventura	2024-04-23
+mass-rename-file-batch-rename-2024-04-23	Mass Rename: File Batch Rename	2024-04-23
+metaburner-2024-04-23	Metaburner	2024-04-23
+ok-json-viewer-formatter-2024-04-23	OK JSON - Viewer & Formatter	2024-04-23
+text-workflow-text-converter-2024-04-23	Text Workflow: Text Converter	2024-04-23
+brewer-x-2024-04-22	Brewer X	2024-04-22
+gpu-monitor-pro-2024-04-19	GPU Monitor Pro	2024-04-19
+privacy-cleaner-pro-2024-04-19	Privacy Cleaner Pro	2024-04-19
+remote-desktop-scanner-2024-04-19	Remote Desktop Scanner	2024-04-19
+screenfloat-screenshot-tools-2024-04-19	ScreenFloat - Screenshot Tools	2024-04-19
+scrobbles-for-last-fm-2024-04-19	Scrobbles for Last.fm	2024-04-19
+system-toolkit-pro-2024-04-19	System Toolkit Pro	2024-04-19
+screensnapai-2024-04-10	ScreenSnapAI	2024-04-10
+astro-2024-04-09	Astro	2024-04-09
+usage-system-activity-monitor-2024-04-09	Usage: System Activity Monitor	2024-04-09

@@ -1,0 +1,50 @@
+drive-capacity-tester-2025-11-26	Drive Capacity Tester	2025-11-26
+ghost-buster-pro-2025-11-26	Ghost Buster Pro	2025-11-26
+gpu-monitor-pro-2025-11-26	GPU Monitor Pro	2025-11-26
+ip-address-monitor-2025-11-26	IP Address Monitor	2025-11-26
+magic-battery-2025-11-26	Magic Battery	2025-11-26
+privacy-cleaner-pro-2025-11-26	Privacy Cleaner Pro	2025-11-26
+system-toolkit-pro-2025-11-26	System Toolkit Pro	2025-11-26
+system-watcher-2025-11-26	System Watcher	2025-11-26
+aspect-ratio-pro-2025-11-20	Aspect Ratio Pro	2025-11-20
+folder-preview-2025-11-20	Folder Preview	2025-11-20
+folder-quick-look-2025-11-20	Folder Quick Look	2025-11-20
+highlights-pdf-reader-notes-2025-11-20	Highlights: PDF Reader & Notes	2025-11-20
+microsoft-excel-2025-11-20	Microsoft Excel	2025-11-20
+microsoft-onenote-2025-11-20	Microsoft OneNote	2025-11-20
+microsoft-outlook-2025-11-20	Microsoft Outlook	2025-11-20
+microsoft-powerpoint-2025-11-20	Microsoft PowerPoint	2025-11-20
+microsoft-word-2025-11-20	Microsoft Word	2025-11-20
+pieoneer-2025-11-20	Pieoneer	2025-11-20
+polycapture-2025-11-20	PolyCapture	2025-11-20
+sketch-2025-11-20	Sketch	2025-11-20
+apple-remote-desktop-2025-11-17	Apple Remote Desktop	2025-11-17
+base-sqlite-editor-2025-11-17	Base - SQLite Editor	2025-11-17
+cleanshot-x-2025-11-17	CleanShot X	2025-11-17
+image-view-studio-gallery-2025-11-17	Image View Studio: Gallery	2025-11-17
+macleaner-pro-disk-cleaner-2025-11-17	MaCleaner Pro: Disk Cleaner	2025-11-17
+rectangle-2025-11-17	Rectangle	2025-11-17
+rocketsim-for-xcode-simulator-2025-11-17	RocketSim for Xcode Simulator	2025-11-17
+tasks-todo-lists-kanban-2025-11-17	Tasks: Todo Lists & Kanban	2025-11-17
+xcodes-2025-11-17	Xcodes	2025-11-17
+grapher-2025-11-14	Grapher	2025-11-14
+migration-assistant-2025-11-14	Migration Assistant	2025-11-14
+photos-2025-11-14	Photos	2025-11-14
+podcasts-2025-11-14	Podcasts	2025-11-14
+preview-2025-11-14	Preview	2025-11-14
+print-center-2025-11-14	Print Center	2025-11-14
+quicktime-2025-11-14	Quicktime	2025-11-14
+reminders-2025-11-14	Reminders	2025-11-14
+safari-2025-11-14	Safari	2025-11-14
+screen-sharing-2025-11-14	Screen Sharing	2025-11-14
+screenshot-2025-11-14	Screenshot	2025-11-14
+script-editor-2025-11-14	Script Editor	2025-11-14
+shortcuts-2025-11-14	Shortcuts	2025-11-14
+siri-2025-11-14	Siri	2025-11-14
+stickies-2025-11-14	Stickies	2025-11-14
+stocks-2025-11-14	Stocks	2025-11-14
+system-information-2025-11-14	System Information	2025-11-14
+system-settings-2025-11-14	System Settings	2025-11-14
+terminal-2025-11-14	Terminal	2025-11-14
+testflight-2025-11-14	TestFlight	2025-11-14
+textedit-2025-11-14	TextEdit	2025-11-14

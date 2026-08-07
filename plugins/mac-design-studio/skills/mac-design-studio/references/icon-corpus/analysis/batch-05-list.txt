@@ -1,0 +1,50 @@
+final-cut-pro-2025-11-10	Final Cut Pro	2025-11-10
+helm-for-app-store-connect-2025-11-10	Helm for App Store Connect	2025-11-10
+marsedit-5-blog-editor-2025-11-10	MarsEdit 5 - Blog Editor	2025-11-10
+mindnode-mind-map-outline-2025-11-10	MindNode: Mind Map & Outline	2025-11-10
+panelicious-2025-11-10	Panelicious	2025-11-10
+readkit-reading-hub-2025-11-10	ReadKit - Reading Hub	2025-11-10
+scrivener-3-2025-11-10	Scrivener 3	2025-11-10
+swmpc-2025-11-10	swmpc	2025-11-10
+things-3-2025-11-10	Things 3	2025-11-10
+bluebird-focus-timer-2025-10-06	Bluebird Focus Timer	2025-10-06
+parcel-delivery-tracking-2025-10-06	Parcel - Delivery Tracking	2025-10-06
+task-flow-tasks-checklists-2025-10-06	Task Flow: Tasks & Checklists	2025-10-06
+magic-disk-benchmark-2025-09-22	Magic Disk Benchmark	2025-09-22
+magic-disk-cleaner-2025-09-22	Magic Disk Cleaner	2025-09-22
+search-everything-2025-09-22	Search Everything	2025-09-22
+system-dashboard-pro-2025-09-22	System Dashboard Pro	2025-09-22
+musicsmart-liner-notes-2025-09-18	MusicSmart - Liner Notes	2025-09-18
+xcode-2025-09-18	Xcode	2025-09-18
+notepad-exe-2025-09-17	Notepad.exe	2025-09-17
+flighty-live-flight-tracker-2025-09-15	Flighty – Live Flight Tracker	2025-09-15
+shinytimer-2025-09-15	ShinyTimer	2025-09-15
+tapestry-loom-2025-09-15	Tapestry Loom	2025-09-15
+tot-2025-09-15	Tot	2025-09-15
+elytra-2025-09-13	Elytra	2025-09-13
+pockity-2025-09-13	Pockity	2025-09-13
+alarm-clock-wake-up-on-time-2025-08-22	Alarm Clock: Wake Up On Time	2025-08-22
+disk-diet-2025-08-22	Disk Diet	2025-08-22
+dropdmg-2025-08-22	DropDMG	2025-08-22
+eaglefiler-2025-08-22	EagleFiler	2025-08-22
+file-multi-tool-7-2025-08-22	File Multi Tool 7	2025-08-22
+idroid-explorer-for-android-2025-08-22	iDroid - Explorer for Android	2025-08-22
+macrowave-private-p2p-radio-2025-08-22	Macrowave - Private P2P Radio	2025-08-22
+monitorcontrol-lite-2025-08-22	MonitorControl Lite	2025-08-22
+shellcut-open-in-terminal-2025-08-22	Shellcut - Open in Terminal	2025-08-22
+spin-lucky-wheel-random-draw-2025-08-22	Spin - Lucky Wheel Random Draw	2025-08-22
+tap-bot-auto-click-refresh-2025-08-22	Tap Bot: Auto Click & Refresh	2025-08-22
+find-any-file-faf-2025-08-18	Find Any File (FAF)	2025-08-18
+parachute-backup-2025-08-18	Parachute Backup	2025-08-18
+vinegar-tube-cleaner-2025-08-18	Vinegar - Tube Cleaner	2025-08-18
+arkyve-2025-08-05	Arkyve	2025-08-05
+dj-mix-pads-2-edm-music-maker-2025-08-05	DJ Mix Pads 2: EDM Music Maker	2025-08-05
+feeder-4-2025-08-05	Feeder 4	2025-08-05
+morph-age-photo-morphing-2025-08-05	Morph Age › Photo Morphing	2025-08-05
+quip-clipboard-supercharger-2025-08-05	Quip - Clipboard Supercharger	2025-08-05
+rhythm-pads-beat-maker-2025-08-05	Rhythm Pads – Beat Maker	2025-08-05
+tap-forms-database-pro-2025-08-05	Tap Forms Database Pro	2025-08-05
+xcbabel-localize-app-projects-2025-08-05	XCBabel Localize App Projects	2025-08-05
+ai-app-localization-xcstrings-2025-07-14	AI App Localization: xcstrings	2025-07-14
+atem-exporter-2025-07-14	ATEM Exporter	2025-07-14
+bezel-phone-mirror-2025-07-14	Bezel • Phone Mirror	2025-07-14

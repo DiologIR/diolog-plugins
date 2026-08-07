@@ -1,0 +1,50 @@
+time-machine-2025-11-14	Time Machine	2025-11-14
+tips-2025-11-14	Tips	2025-11-14
+voice-memos-2025-11-14	Voice Memos	2025-11-14
+voiceover-utility-2025-11-14	Voiceover Utility	2025-11-14
+weather-2025-11-14	Weather	2025-11-14
+activity-monitor-2025-11-13	Activity Monitor	2025-11-13
+airport-utility-2025-11-13	AirPort Utility	2025-11-13
+app-store-2025-11-13	App Store	2025-11-13
+audio-midi-setup-2025-11-13	Audio Midi Setup	2025-11-13
+automator-2025-11-13	Automator	2025-11-13
+bluetooth-file-exchange-2025-11-13	Bluetooth File Exchange	2025-11-13
+books-2025-11-13	Books	2025-11-13
+calculator-2025-11-13	Calculator	2025-11-13
+calendar-2025-11-13	Calendar	2025-11-13
+chess-2025-11-13	Chess	2025-11-13
+clock-2025-11-13	Clock	2025-11-13
+colorsync-utility-2025-11-13	ColorSync Utility	2025-11-13
+console-2025-11-13	Console	2025-11-13
+contacts-2025-11-13	Contacts	2025-11-13
+dictionary-2025-11-13	Dictionary	2025-11-13
+digital-color-meter-2025-11-13	Digital Color Meter	2025-11-13
+disk-utility-2025-11-13	Disk Utility	2025-11-13
+facetime-2025-11-13	FaceTime	2025-11-13
+find-my-2025-11-13	Find My	2025-11-13
+finder-2025-11-13	Finder	2025-11-13
+font-book-2025-11-13	Font Book	2025-11-13
+freeform-2025-11-13	Freeform	2025-11-13
+game-center-2025-11-13	Game Center	2025-11-13
+games-2025-11-13	Games	2025-11-13
+home-2025-11-13	Home	2025-11-13
+icon-composer-2025-11-13	Icon Composer	2025-11-13
+image-capture-2025-11-13	Image Capture	2025-11-13
+image-playground-2025-11-13	Image Playground	2025-11-13
+imovie-2025-11-13	iMovie	2025-11-13
+journal-2025-11-13	Journal	2025-11-13
+keynote-2025-11-13	Keynote	2025-11-13
+magnifier-2025-11-13	Magnifier	2025-11-13
+mail-2025-11-13	Mail	2025-11-13
+maps-2025-11-13	Maps	2025-11-13
+messages-2025-11-13	Messages	2025-11-13
+music-2025-11-13	Music	2025-11-13
+news-2025-11-13	News	2025-11-13
+notes-2025-11-13	Notes	2025-11-13
+passwords-2025-11-13	Passwords	2025-11-13
+phone-2025-11-13	Phone	2025-11-13
+photo-booth-2025-11-13	Photo Booth	2025-11-13
+agenda-notes-meets-calendar-2025-11-10	Agenda - Notes meets Calendar	2025-11-10
+black-ink-2-2025-11-10	Black Ink 2	2025-11-10
+claquette-gif-video-tool-2025-11-10	Claquette - GIF & Video Tool	2025-11-10
+craft-write-docs-ai-editing-2025-11-10	Craft: Write docs, AI editing	2025-11-10

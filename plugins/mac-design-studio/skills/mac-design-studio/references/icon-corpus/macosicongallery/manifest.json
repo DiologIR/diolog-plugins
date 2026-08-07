@@ -1,0 +1,3122 @@
+[
+ {
+  "id": "betterzip-6-2026-07-27",
+  "name": "BetterZip 6",
+  "date": "2026-07-27",
+  "designer": "Matthew Skiles",
+  "developer": "macitbetter"
+ },
+ {
+  "id": "cotypist-2026-07-27",
+  "name": "Cotypist",
+  "date": "2026-07-27",
+  "developer": "Accelerated Thought"
+ },
+ {
+  "id": "darkroom-photo-video-editor-2026-07-27",
+  "name": "Darkroom: Photo & Video Editor",
+  "date": "2026-07-27",
+  "developer": "Bergen Co."
+ },
+ {
+  "id": "ghostty-2026-07-27",
+  "name": "Ghostty",
+  "date": "2026-07-27",
+  "developer": "Ghostty"
+ },
+ {
+  "id": "mockuper-phone-frame-mockup-2026-07-27",
+  "name": "Mockuper: Phone Frame Mockup",
+  "date": "2026-07-27",
+  "developer": "Sparrow Code"
+ },
+ {
+  "id": "photo-refinery-image-upscaler-2026-07-27",
+  "name": "Photo Refinery: Image Upscaler",
+  "date": "2026-07-27",
+  "developer": "Maulik Sutariya"
+ },
+ {
+  "id": "stitcher-pixel-art-2026-07-27",
+  "name": "Stitcher Pixel Art",
+  "date": "2026-07-27",
+  "developer": "Harry Shamansky"
+ },
+ {
+  "id": "vectorize-2-2026-07-27",
+  "name": "Vectorize 2",
+  "date": "2026-07-27",
+  "developer": "Synium Software GmbH"
+ },
+ {
+  "id": "text-catalyst-paste-expand-2026-07-23",
+  "name": "Text Catalyst: Paste & Expand",
+  "date": "2026-07-23",
+  "developer": "Sense LLC"
+ },
+ {
+  "id": "past-for-ichat-2026-07-20",
+  "name": "Past for iChat",
+  "date": "2026-07-20",
+  "designer": "Matthew Skiles",
+  "developer": "ZeeZide GmbH"
+ },
+ {
+  "id": "amethyst-rss-reader-2026-07-14",
+  "name": "Amethyst \u2013 RSS Reader",
+  "date": "2026-07-14",
+  "developer": "Peroxaan Studios, LLC"
+ },
+ {
+  "id": "secret-folder-2026-06-23",
+  "name": "Secret Folder",
+  "date": "2026-06-23",
+  "developer": "Apimac"
+ },
+ {
+  "id": "writestudio-2026-06-23",
+  "name": "WriteStudio",
+  "date": "2026-06-23",
+  "developer": "Apimac"
+ },
+ {
+  "id": "cardhop-contacts-2026-06-15",
+  "name": "Cardhop - Contacts",
+  "date": "2026-06-15",
+  "developer": "Flexibits Inc."
+ },
+ {
+  "id": "goodlinks-2026-06-15",
+  "name": "GoodLinks",
+  "date": "2026-06-15",
+  "developer": "Ngoc Luu"
+ },
+ {
+  "id": "logoist-6-graphic-design-2026-06-15",
+  "name": "Logoist 6 \u2013 Graphic Design",
+  "date": "2026-06-15",
+  "developer": "Synium Software GmbH"
+ },
+ {
+  "id": "network-radar-2026-06-15",
+  "name": "Network Radar",
+  "date": "2026-06-15",
+  "developer": "Daniel Witt"
+ },
+ {
+  "id": "openmark-2026-06-15",
+  "name": "OpenMark",
+  "date": "2026-06-15",
+  "developer": "Rotate, LLC."
+ },
+ {
+  "id": "planny-26-daily-planner-2026-06-15",
+  "name": "Planny 26 \u2022 Daily Planner",
+  "date": "2026-06-15",
+  "developer": "Kevin Reutter"
+ },
+ {
+  "id": "quick-notes-capture-2026-06-15",
+  "name": "Quick Notes - Capture",
+  "date": "2026-06-15",
+  "developer": "Furkan Simsir"
+ },
+ {
+  "id": "rocket-typist-2026-06-15",
+  "name": "Rocket Typist",
+  "date": "2026-06-15",
+  "developer": "Daniel Witt"
+ },
+ {
+  "id": "screenfloat-pro-screen-capture-2026-06-15",
+  "name": "ScreenFloat\u2014Pro Screen Capture",
+  "date": "2026-06-15",
+  "developer": "Matthias Gansrigler-Hrad"
+ },
+ {
+  "id": "soulver-3-2026-06-15",
+  "name": "Soulver 3",
+  "date": "2026-06-15",
+  "designer": "Matthew Skiles",
+  "developer": "Zac Cohan"
+ },
+ {
+  "id": "winmail-viewer-letter-opener-2026-06-15",
+  "name": "Winmail Viewer - Letter Opener",
+  "date": "2026-06-15",
+  "developer": "Letter Opener GmbH"
+ },
+ {
+  "id": "corridorkey-by-latenite-2026-06-02",
+  "name": "CorridorKey by LateNite",
+  "date": "2026-06-02",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "folders-file-manager-2026-05-21",
+  "name": "Folders File Manager",
+  "date": "2026-05-21",
+  "developer": "Andriy Konstantynov"
+ },
+ {
+  "id": "googly-eyes-2026-05-21",
+  "name": "Googly Eyes",
+  "date": "2026-05-21",
+  "developer": "Sindre Sorhus"
+ },
+ {
+  "id": "keyframe-toolbox-2026-05-21",
+  "name": "Keyframe Toolbox",
+  "date": "2026-05-21",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "notion-toolbox-2026-05-21",
+  "name": "Notion Toolbox",
+  "date": "2026-05-21",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "photomill-the-image-converter-2026-05-21",
+  "name": "PhotoMill: The Image Converter",
+  "date": "2026-05-21",
+  "developer": "Maksym Cherniaiev"
+ },
+ {
+  "id": "photosweeper-2026-05-21",
+  "name": "PhotoSweeper",
+  "date": "2026-05-21",
+  "developer": "Maksym Cherniaiev"
+ },
+ {
+  "id": "prompt-3-2026-05-21",
+  "name": "Prompt 3",
+  "date": "2026-05-21",
+  "developer": "Panic, Inc."
+ },
+ {
+  "id": "scriptstar-2026-05-19",
+  "name": "ScriptStar",
+  "date": "2026-05-19",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "apple-developer-2026-05-18",
+  "name": "Apple Developer",
+  "date": "2026-05-18",
+  "developer": "Apple"
+ },
+ {
+  "id": "bbedit-2026-05-18",
+  "name": "BBEdit",
+  "date": "2026-05-18",
+  "developer": "Bare Bones Software, Inc."
+ },
+ {
+  "id": "fantastical-calendar-2026-05-18",
+  "name": "Fantastical - Calendar",
+  "date": "2026-05-18",
+  "developer": "Flexibits Inc."
+ },
+ {
+  "id": "imovie-2026-05-18",
+  "name": "iMovie",
+  "date": "2026-05-18",
+  "developer": "Apple"
+ },
+ {
+  "id": "linea-link-2026-05-18",
+  "name": "Linea Link",
+  "date": "2026-05-18",
+  "designer": "The Iconfactory",
+  "developer": "The Iconfactory"
+ },
+ {
+  "id": "scapple-2026-05-18",
+  "name": "Scapple",
+  "date": "2026-05-18",
+  "developer": "Literature & Latte"
+ },
+ {
+  "id": "klack-2026-05-17",
+  "name": "Klack",
+  "date": "2026-05-17",
+  "developer": "Henrik Ruscon"
+ },
+ {
+  "id": "retcon-2026-05-01",
+  "name": "Retcon",
+  "date": "2026-05-01",
+  "designer": "Nathan Manceaux-Panot",
+  "developer": "Nathan Manceaux-Panot"
+ },
+ {
+  "id": "coppice-2026-04-01",
+  "name": "Coppice",
+  "date": "2026-04-01",
+  "designer": "Matthew Skiles",
+  "developer": "Steven Troughton-Smith"
+ },
+ {
+  "id": "coteditor-2026-04-01",
+  "name": "CotEditor",
+  "date": "2026-04-01",
+  "developer": "Mineko IMANISHI"
+ },
+ {
+  "id": "delete-apps-uninstaller-2026-04-01",
+  "name": "Delete Apps: Uninstaller",
+  "date": "2026-04-01",
+  "developer": "FIPLAB Ltd"
+ },
+ {
+  "id": "disk-aid-system-cleaner-2026-04-01",
+  "name": "Disk Aid: System Cleaner",
+  "date": "2026-04-01",
+  "developer": "FIPLAB Ltd"
+ },
+ {
+  "id": "disk-map-visualize-disk-usage-2026-04-01",
+  "name": "Disk Map: Visualize Disk Usage",
+  "date": "2026-04-01",
+  "developer": "FIPLAB Ltd"
+ },
+ {
+  "id": "download-shuttle-speed-boost-2026-04-01",
+  "name": "Download Shuttle: Speed Boost",
+  "date": "2026-04-01",
+  "developer": "FIPLAB Ltd"
+ },
+ {
+  "id": "extractor-unarchive-files-2026-04-01",
+  "name": "Extractor - Unarchive Files",
+  "date": "2026-04-01",
+  "developer": "FIPLAB Ltd"
+ },
+ {
+  "id": "istatistica-2026-04-01",
+  "name": "iStatistica",
+  "date": "2026-04-01",
+  "developer": "ImageTasks Inc"
+ },
+ {
+  "id": "istatistica-pro-2026-04-01",
+  "name": "iStatistica Pro",
+  "date": "2026-04-01",
+  "developer": "ImageTasks Inc"
+ },
+ {
+  "id": "lightweight-text-editor-2026-04-01",
+  "name": "Lightweight Text Editor",
+  "date": "2026-04-01",
+  "developer": "Erik Wegener"
+ },
+ {
+  "id": "octavo-2026-04-01",
+  "name": "Octavo",
+  "date": "2026-04-01",
+  "developer": "Double and Thrice Ltd."
+ },
+ {
+  "id": "owly-prevent-display-sleep-2026-04-01",
+  "name": "Owly - Prevent Display Sleep",
+  "date": "2026-04-01",
+  "developer": "FIPLAB Ltd"
+ },
+ {
+  "id": "shortcut-bar-instant-access-2026-04-01",
+  "name": "Shortcut Bar - Instant Access",
+  "date": "2026-04-01",
+  "developer": "FIPLAB Ltd"
+ },
+ {
+  "id": "tasktab-simple-to-do-list-2026-04-01",
+  "name": "TaskTab: Simple To Do List",
+  "date": "2026-04-01",
+  "developer": "FIPLAB Ltd"
+ },
+ {
+  "id": "braw-toolbox-2026-03-24",
+  "name": "BRAW Toolbox",
+  "date": "2026-03-24",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "dropzone-5-2026-03-24",
+  "name": "Dropzone 5",
+  "date": "2026-03-24",
+  "designer": "Matthew Skiles",
+  "developer": "Aptonic LLC"
+ },
+ {
+  "id": "fast-collections-2026-03-24",
+  "name": "Fast Collections",
+  "date": "2026-03-24",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "gyroflow-toolbox-2026-03-24",
+  "name": "Gyroflow Toolbox",
+  "date": "2026-03-24",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "istat-menus-7-2026-03-24",
+  "name": "iStat Menus 7",
+  "date": "2026-03-24",
+  "developer": "Bjango Pty Ltd"
+ },
+ {
+  "id": "nitro-photo-2026-03-24",
+  "name": "Nitro Photo",
+  "date": "2026-03-24",
+  "developer": "Gentlemen Coders"
+ },
+ {
+  "id": "untitled-for-desktop-2026-03-24",
+  "name": "[untitled] for Desktop",
+  "date": "2026-03-24",
+  "developer": "sin titulo, inc"
+ },
+ {
+  "id": "awaken-2026-02-11",
+  "name": "Awaken",
+  "date": "2026-02-11",
+  "designer": "Michael Flarup",
+  "developer": "Embraceware Software Inc"
+ },
+ {
+  "id": "bbedit-2026-02-11",
+  "name": "BBEdit",
+  "date": "2026-02-11",
+  "developer": "Bare Bones Software, Inc."
+ },
+ {
+  "id": "framous-screenshot-frames-2026-02-11",
+  "name": "Framous: Screenshot Frames",
+  "date": "2026-02-11",
+  "developer": "Dark Noise LLC"
+ },
+ {
+  "id": "ia-writer-2026-02-11",
+  "name": "iA Writer",
+  "date": "2026-02-11",
+  "developer": "Information Architects AG"
+ },
+ {
+  "id": "sunset-predictions-alpenglow-2026-02-11",
+  "name": "Sunset Predictions - Alpenglow",
+  "date": "2026-02-11",
+  "designer": "Michael Flarup",
+  "developer": "Andrew Yates"
+ },
+ {
+  "id": "tap-forms-database-pro-2026-02-11",
+  "name": "Tap Forms Database Pro",
+  "date": "2026-02-11",
+  "developer": "Tap Zapp Software Inc."
+ },
+ {
+  "id": "aeronaut-for-bluesky-2026-02-05",
+  "name": "Aeronaut for Bluesky",
+  "date": "2026-02-05",
+  "developer": "Michael Clarke"
+ },
+ {
+  "id": "cleanmymac-2026-02-05",
+  "name": "CleanMyMac",
+  "date": "2026-02-05",
+  "developer": "MacPaw Way Ltd"
+ },
+ {
+  "id": "hand-mirror-2026-02-05",
+  "name": "Hand Mirror",
+  "date": "2026-02-05",
+  "designer": "Rafael Conde",
+  "developer": "Rafael Conde"
+ },
+ {
+  "id": "ifinance-5-2026-02-05",
+  "name": "iFinance 5",
+  "date": "2026-02-05",
+  "developer": "Synium Software GmbH"
+ },
+ {
+  "id": "logic-pro-2026-02-05",
+  "name": "Logic Pro",
+  "date": "2026-02-05",
+  "developer": "Apple"
+ },
+ {
+  "id": "macfamilytree-11-2026-02-05",
+  "name": "MacFamilyTree 11",
+  "date": "2026-02-05",
+  "developer": "Synium Software GmbH"
+ },
+ {
+  "id": "mainstage-2026-02-05",
+  "name": "MainStage",
+  "date": "2026-02-05",
+  "developer": "Apple"
+ },
+ {
+  "id": "omnifocus-4-2026-02-05",
+  "name": "OmniFocus 4",
+  "date": "2026-02-05",
+  "developer": "The Omni Group"
+ },
+ {
+  "id": "omnioutliner-6-2026-02-05",
+  "name": "OmniOutliner 6",
+  "date": "2026-02-05",
+  "developer": "The Omni Group"
+ },
+ {
+  "id": "omniplan-4-2026-02-05",
+  "name": "OmniPlan 4",
+  "date": "2026-02-05",
+  "developer": "The Omni Group"
+ },
+ {
+  "id": "apple-configurator-2026-02-04",
+  "name": "Apple Configurator",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "compressor-encode-media-2026-02-04",
+  "name": "Compressor: Encode Media",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "final-cut-pro-create-video-2026-02-04",
+  "name": "Final Cut Pro: Create Video",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "keyhole-2026-02-04",
+  "name": "Keyhole",
+  "date": "2026-02-04",
+  "designer": "Matthew Skiles",
+  "developer": "Daniel Kennett"
+ },
+ {
+  "id": "keynote-design-presentations-2026-02-04",
+  "name": "Keynote: Design Presentations",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "logic-pro-make-music-2026-02-04",
+  "name": "Logic Pro: Make Music",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "mainstage-perform-live-2026-02-04",
+  "name": "MainStage: Perform Live",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "motion-animate-effects-2026-02-04",
+  "name": "Motion: Animate Effects",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "numbers-make-spreadsheets-2026-02-04",
+  "name": "Numbers: Make Spreadsheets",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "pages-create-documents-2026-02-04",
+  "name": "Pages: Create Documents",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "pixelmator-pro-edit-images-2026-02-04",
+  "name": "Pixelmator Pro: Edit Images",
+  "date": "2026-02-04",
+  "developer": "Apple"
+ },
+ {
+  "id": "kaleidoscope-3-2026-01-15",
+  "name": "Kaleidoscope 3",
+  "date": "2026-01-15",
+  "designer": "Alexander K\u00e4\u00dfner",
+  "developer": "Leitmotif GmbH"
+ },
+ {
+  "id": "cleanmaster-remove-junk-files-2026-01-05",
+  "name": "CleanMaster: Remove Junk Files",
+  "date": "2026-01-05",
+  "developer": "Any Case Solutions"
+ },
+ {
+  "id": "draft-writing-script-blog-2026-01-05",
+  "name": "Draft Writing - Script & Blog",
+  "date": "2026-01-05",
+  "developer": "Any Case Solutions"
+ },
+ {
+  "id": "logoist-5-2026-01-05",
+  "name": "Logoist 5",
+  "date": "2026-01-05",
+  "developer": "Synium Software GmbH"
+ },
+ {
+  "id": "noteplan-to-do-list-notes-2026-01-05",
+  "name": "NotePlan - To-Do List & Notes",
+  "date": "2026-01-05",
+  "designer": "Alexander K\u00e4\u00dfner",
+  "developer": "NotePlan LLC"
+ },
+ {
+  "id": "pastel-2026-01-05",
+  "name": "Pastel",
+  "date": "2026-01-05",
+  "developer": "Steven Troughton-Smith"
+ },
+ {
+  "id": "textsniper-2026-01-05",
+  "name": "TextSniper",
+  "date": "2026-01-05",
+  "developer": "Valerijs Boguckis"
+ },
+ {
+  "id": "upscayl-2025-12-09",
+  "name": "Upscayl",
+  "date": "2025-12-09",
+  "developer": "Mayank Sharma"
+ },
+ {
+  "id": "bit-slicer-2025-12-08",
+  "name": "Bit Slicer",
+  "date": "2025-12-08",
+  "designer": "Matthew Skiles",
+  "developer": "Zorg"
+ },
+ {
+  "id": "plugin-station-2025-12-08",
+  "name": "Plugin Station",
+  "date": "2025-12-08",
+  "designer": "Matthew Skiles",
+  "developer": "Julian Michael Technologies"
+ },
+ {
+  "id": "pricetag-app-pricing-manager-2025-12-08",
+  "name": "Pricetag - App Pricing Manager",
+  "date": "2025-12-08",
+  "designer": "Raphael Lopes",
+  "developer": "Thomas Brandstaetter"
+ },
+ {
+  "id": "drive-capacity-tester-2025-11-26",
+  "name": "Drive Capacity Tester",
+  "date": "2025-11-26",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "ghost-buster-pro-2025-11-26",
+  "name": "Ghost Buster Pro",
+  "date": "2025-11-26",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "gpu-monitor-pro-2025-11-26",
+  "name": "GPU Monitor Pro",
+  "date": "2025-11-26",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "ip-address-monitor-2025-11-26",
+  "name": "IP Address Monitor",
+  "date": "2025-11-26",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "magic-battery-2025-11-26",
+  "name": "Magic Battery",
+  "date": "2025-11-26",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "privacy-cleaner-pro-2025-11-26",
+  "name": "Privacy Cleaner Pro",
+  "date": "2025-11-26",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "system-toolkit-pro-2025-11-26",
+  "name": "System Toolkit Pro",
+  "date": "2025-11-26",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "system-watcher-2025-11-26",
+  "name": "System Watcher",
+  "date": "2025-11-26",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "aspect-ratio-pro-2025-11-20",
+  "name": "Aspect Ratio Pro",
+  "date": "2025-11-20",
+  "developer": "App ahead GmbH"
+ },
+ {
+  "id": "folder-preview-2025-11-20",
+  "name": "Folder Preview",
+  "date": "2025-11-20",
+  "developer": "Anybox LTD"
+ },
+ {
+  "id": "folder-quick-look-2025-11-20",
+  "name": "Folder Quick Look",
+  "date": "2025-11-20",
+  "developer": "App ahead GmbH"
+ },
+ {
+  "id": "highlights-pdf-reader-notes-2025-11-20",
+  "name": "Highlights: PDF Reader & Notes",
+  "date": "2025-11-20",
+  "designer": "Michael Flarup",
+  "developer": "Jonas Myren Ribe"
+ },
+ {
+  "id": "microsoft-excel-2025-11-20",
+  "name": "Microsoft Excel",
+  "date": "2025-11-20",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "microsoft-onenote-2025-11-20",
+  "name": "Microsoft OneNote",
+  "date": "2025-11-20",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "microsoft-outlook-2025-11-20",
+  "name": "Microsoft Outlook",
+  "date": "2025-11-20",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "microsoft-powerpoint-2025-11-20",
+  "name": "Microsoft PowerPoint",
+  "date": "2025-11-20",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "microsoft-word-2025-11-20",
+  "name": "Microsoft Word",
+  "date": "2025-11-20",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "pieoneer-2025-11-20",
+  "name": "Pieoneer",
+  "date": "2025-11-20",
+  "developer": "App ahead GmbH"
+ },
+ {
+  "id": "polycapture-2025-11-20",
+  "name": "PolyCapture",
+  "date": "2025-11-20",
+  "developer": "App ahead GmbH"
+ },
+ {
+  "id": "sketch-2025-11-20",
+  "name": "Sketch",
+  "date": "2025-11-20",
+  "developer": "Sketch B.V."
+ },
+ {
+  "id": "apple-remote-desktop-2025-11-17",
+  "name": "Apple Remote Desktop",
+  "date": "2025-11-17",
+  "developer": "Apple"
+ },
+ {
+  "id": "base-sqlite-editor-2025-11-17",
+  "name": "Base - SQLite Editor",
+  "date": "2025-11-17",
+  "developer": "Menial"
+ },
+ {
+  "id": "cleanshot-x-2025-11-17",
+  "name": "CleanShot X",
+  "date": "2025-11-17",
+  "developer": "MTW"
+ },
+ {
+  "id": "image-view-studio-gallery-2025-11-17",
+  "name": "Image View Studio: Gallery",
+  "date": "2025-11-17",
+  "developer": "Everyday Tools, LLC"
+ },
+ {
+  "id": "macleaner-pro-disk-cleaner-2025-11-17",
+  "name": "MaCleaner Pro: Disk Cleaner",
+  "date": "2025-11-17",
+  "developer": "Everyday Tools, LLC"
+ },
+ {
+  "id": "rectangle-2025-11-17",
+  "name": "Rectangle",
+  "date": "2025-11-17",
+  "designer": "Alexander K\u00e4\u00dfner",
+  "developer": "Ryan Hanson"
+ },
+ {
+  "id": "rocketsim-for-xcode-simulator-2025-11-17",
+  "name": "RocketSim for Xcode Simulator",
+  "date": "2025-11-17",
+  "developer": "SwiftLee"
+ },
+ {
+  "id": "tasks-todo-lists-kanban-2025-11-17",
+  "name": "Tasks: Todo Lists & Kanban",
+  "date": "2025-11-17",
+  "developer": "Msquare Labs Technologies Private Limited"
+ },
+ {
+  "id": "xcodes-2025-11-17",
+  "name": "Xcodes",
+  "date": "2025-11-17",
+  "designer": "Matthew Skiles",
+  "developer": "Matt Kiazyk"
+ },
+ {
+  "id": "grapher-2025-11-14",
+  "name": "Grapher",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "migration-assistant-2025-11-14",
+  "name": "Migration Assistant",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "photos-2025-11-14",
+  "name": "Photos",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "podcasts-2025-11-14",
+  "name": "Podcasts",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "preview-2025-11-14",
+  "name": "Preview",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "print-center-2025-11-14",
+  "name": "Print Center",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "quicktime-2025-11-14",
+  "name": "Quicktime",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "reminders-2025-11-14",
+  "name": "Reminders",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "safari-2025-11-14",
+  "name": "Safari",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "screen-sharing-2025-11-14",
+  "name": "Screen Sharing",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "screenshot-2025-11-14",
+  "name": "Screenshot",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "script-editor-2025-11-14",
+  "name": "Script Editor",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "shortcuts-2025-11-14",
+  "name": "Shortcuts",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "siri-2025-11-14",
+  "name": "Siri",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "stickies-2025-11-14",
+  "name": "Stickies",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "stocks-2025-11-14",
+  "name": "Stocks",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "system-information-2025-11-14",
+  "name": "System Information",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "system-settings-2025-11-14",
+  "name": "System Settings",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "terminal-2025-11-14",
+  "name": "Terminal",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "testflight-2025-11-14",
+  "name": "TestFlight",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "textedit-2025-11-14",
+  "name": "TextEdit",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "time-machine-2025-11-14",
+  "name": "Time Machine",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "tips-2025-11-14",
+  "name": "Tips",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "voice-memos-2025-11-14",
+  "name": "Voice Memos",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "voiceover-utility-2025-11-14",
+  "name": "Voiceover Utility",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "weather-2025-11-14",
+  "name": "Weather",
+  "date": "2025-11-14",
+  "developer": "Apple"
+ },
+ {
+  "id": "activity-monitor-2025-11-13",
+  "name": "Activity Monitor",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "airport-utility-2025-11-13",
+  "name": "AirPort Utility",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "app-store-2025-11-13",
+  "name": "App Store",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "audio-midi-setup-2025-11-13",
+  "name": "Audio Midi Setup",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "automator-2025-11-13",
+  "name": "Automator",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "bluetooth-file-exchange-2025-11-13",
+  "name": "Bluetooth File Exchange",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "books-2025-11-13",
+  "name": "Books",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "calculator-2025-11-13",
+  "name": "Calculator",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "calendar-2025-11-13",
+  "name": "Calendar",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "chess-2025-11-13",
+  "name": "Chess",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "clock-2025-11-13",
+  "name": "Clock",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "colorsync-utility-2025-11-13",
+  "name": "ColorSync Utility",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "console-2025-11-13",
+  "name": "Console",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "contacts-2025-11-13",
+  "name": "Contacts",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "dictionary-2025-11-13",
+  "name": "Dictionary",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "digital-color-meter-2025-11-13",
+  "name": "Digital Color Meter",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "disk-utility-2025-11-13",
+  "name": "Disk Utility",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "facetime-2025-11-13",
+  "name": "FaceTime",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "find-my-2025-11-13",
+  "name": "Find My",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "finder-2025-11-13",
+  "name": "Finder",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "font-book-2025-11-13",
+  "name": "Font Book",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "freeform-2025-11-13",
+  "name": "Freeform",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "game-center-2025-11-13",
+  "name": "Game Center",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "games-2025-11-13",
+  "name": "Games",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "home-2025-11-13",
+  "name": "Home",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "icon-composer-2025-11-13",
+  "name": "Icon Composer",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "image-capture-2025-11-13",
+  "name": "Image Capture",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "image-playground-2025-11-13",
+  "name": "Image Playground",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "imovie-2025-11-13",
+  "name": "iMovie",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "journal-2025-11-13",
+  "name": "Journal",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "keynote-2025-11-13",
+  "name": "Keynote",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "magnifier-2025-11-13",
+  "name": "Magnifier",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "mail-2025-11-13",
+  "name": "Mail",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "maps-2025-11-13",
+  "name": "Maps",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "messages-2025-11-13",
+  "name": "Messages",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "music-2025-11-13",
+  "name": "Music",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "news-2025-11-13",
+  "name": "News",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "notes-2025-11-13",
+  "name": "Notes",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "passwords-2025-11-13",
+  "name": "Passwords",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "phone-2025-11-13",
+  "name": "Phone",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "photo-booth-2025-11-13",
+  "name": "Photo Booth",
+  "date": "2025-11-13",
+  "developer": "Apple"
+ },
+ {
+  "id": "agenda-notes-meets-calendar-2025-11-10",
+  "name": "Agenda - Notes meets Calendar",
+  "date": "2025-11-10",
+  "developer": "Momenta B.V."
+ },
+ {
+  "id": "black-ink-2-2025-11-10",
+  "name": "Black Ink 2",
+  "date": "2025-11-10",
+  "developer": "Red Sweater Software"
+ },
+ {
+  "id": "claquette-gif-video-tool-2025-11-10",
+  "name": "Claquette - GIF & Video Tool",
+  "date": "2025-11-10",
+  "designer": "Matthew Skiles",
+  "developer": "Thomas Zoechling"
+ },
+ {
+  "id": "craft-write-docs-ai-editing-2025-11-10",
+  "name": "Craft: Write docs, AI editing",
+  "date": "2025-11-10",
+  "developer": "Craft Docs Limited"
+ },
+ {
+  "id": "final-cut-pro-2025-11-10",
+  "name": "Final Cut Pro",
+  "date": "2025-11-10",
+  "developer": "Apple"
+ },
+ {
+  "id": "helm-for-app-store-connect-2025-11-10",
+  "name": "Helm for App Store Connect",
+  "date": "2025-11-10",
+  "developer": "Modum B.V."
+ },
+ {
+  "id": "marsedit-5-blog-editor-2025-11-10",
+  "name": "MarsEdit 5 - Blog Editor",
+  "date": "2025-11-10",
+  "developer": "Red Sweater Software"
+ },
+ {
+  "id": "mindnode-mind-map-outline-2025-11-10",
+  "name": "MindNode: Mind Map & Outline",
+  "date": "2025-11-10",
+  "developer": "IdeasOnCanvas GmbH"
+ },
+ {
+  "id": "panelicious-2025-11-10",
+  "name": "Panelicious",
+  "date": "2025-11-10",
+  "developer": "Lars Augustin"
+ },
+ {
+  "id": "readkit-reading-hub-2025-11-10",
+  "name": "ReadKit - Reading Hub",
+  "date": "2025-11-10",
+  "developer": "Balazs Varkonyi"
+ },
+ {
+  "id": "scrivener-3-2025-11-10",
+  "name": "Scrivener 3",
+  "date": "2025-11-10",
+  "developer": "Literature & Latte"
+ },
+ {
+  "id": "swmpc-2025-11-10",
+  "name": "swmpc",
+  "date": "2025-11-10",
+  "developer": "Camille Scholtz"
+ },
+ {
+  "id": "things-3-2025-11-10",
+  "name": "Things 3",
+  "date": "2025-11-10",
+  "developer": "Cultured Code GmbH & Co. KG"
+ },
+ {
+  "id": "bluebird-focus-timer-2025-10-06",
+  "name": "Bluebird Focus Timer",
+  "date": "2025-10-06",
+  "developer": "Cub & Pup"
+ },
+ {
+  "id": "parcel-delivery-tracking-2025-10-06",
+  "name": "Parcel - Delivery Tracking",
+  "date": "2025-10-06",
+  "developer": "Ivan Pavlov Pty Ltd"
+ },
+ {
+  "id": "task-flow-tasks-checklists-2025-10-06",
+  "name": "Task Flow: Tasks & Checklists",
+  "date": "2025-10-06",
+  "developer": "Vladimir Butko"
+ },
+ {
+  "id": "magic-disk-benchmark-2025-09-22",
+  "name": "Magic Disk Benchmark",
+  "date": "2025-09-22",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "magic-disk-cleaner-2025-09-22",
+  "name": "Magic Disk Cleaner",
+  "date": "2025-09-22",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "search-everything-2025-09-22",
+  "name": "Search Everything",
+  "date": "2025-09-22",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "system-dashboard-pro-2025-09-22",
+  "name": "System Dashboard Pro",
+  "date": "2025-09-22",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "musicsmart-liner-notes-2025-09-18",
+  "name": "MusicSmart - Liner Notes",
+  "date": "2025-09-18",
+  "designer": "Matthew Skiles",
+  "developer": "Loop Apps LTDA"
+ },
+ {
+  "id": "xcode-2025-09-18",
+  "name": "Xcode",
+  "date": "2025-09-18",
+  "developer": "Apple"
+ },
+ {
+  "id": "notepad-exe-2025-09-17",
+  "name": "Notepad.exe",
+  "date": "2025-09-17",
+  "designer": "Matthew Skiles",
+  "developer": "Marcin Krzy\u017canowski"
+ },
+ {
+  "id": "flighty-live-flight-tracker-2025-09-15",
+  "name": "Flighty \u2013 Live Flight Tracker",
+  "date": "2025-09-15",
+  "developer": "Flighty LLC"
+ },
+ {
+  "id": "shinytimer-2025-09-15",
+  "name": "ShinyTimer",
+  "date": "2025-09-15",
+  "developer": "Six Overground LLC"
+ },
+ {
+  "id": "tapestry-loom-2025-09-15",
+  "name": "Tapestry Loom",
+  "date": "2025-09-15",
+  "designer": "The Iconfactory",
+  "developer": "The Iconfactory"
+ },
+ {
+  "id": "tot-2025-09-15",
+  "name": "Tot",
+  "date": "2025-09-15",
+  "designer": "The Iconfactory",
+  "developer": "The Iconfactory"
+ },
+ {
+  "id": "elytra-2025-09-13",
+  "name": "Elytra",
+  "date": "2025-09-13",
+  "designer": "Nikhil Nigade",
+  "developer": "Nikhil Nigade"
+ },
+ {
+  "id": "pockity-2025-09-13",
+  "name": "Pockity",
+  "date": "2025-09-13",
+  "designer": "Nikhil Nigade",
+  "developer": "Nikhil Nigade"
+ },
+ {
+  "id": "alarm-clock-wake-up-on-time-2025-08-22",
+  "name": "Alarm Clock: Wake Up On Time",
+  "date": "2025-08-22",
+  "developer": "Villow"
+ },
+ {
+  "id": "disk-diet-2025-08-22",
+  "name": "Disk Diet",
+  "date": "2025-08-22",
+  "developer": "Tunabelly Software Inc."
+ },
+ {
+  "id": "dropdmg-2025-08-22",
+  "name": "DropDMG",
+  "date": "2025-08-22",
+  "developer": "C-Command Software, LLC"
+ },
+ {
+  "id": "eaglefiler-2025-08-22",
+  "name": "EagleFiler",
+  "date": "2025-08-22",
+  "developer": "C-Command Software, LLC"
+ },
+ {
+  "id": "file-multi-tool-7-2025-08-22",
+  "name": "File Multi Tool 7",
+  "date": "2025-08-22",
+  "developer": "publicspace.net"
+ },
+ {
+  "id": "idroid-explorer-for-android-2025-08-22",
+  "name": "iDroid - Explorer for Android",
+  "date": "2025-08-22",
+  "developer": "Leon Boettger"
+ },
+ {
+  "id": "macrowave-private-p2p-radio-2025-08-22",
+  "name": "Macrowave - Private P2P Radio",
+  "date": "2025-08-22",
+  "developer": "Lucas Fischer"
+ },
+ {
+  "id": "monitorcontrol-lite-2025-08-22",
+  "name": "MonitorControl Lite",
+  "date": "2025-08-22",
+  "developer": "Kodeon Software Korlatolt Felelossegu Tarsasag"
+ },
+ {
+  "id": "shellcut-open-in-terminal-2025-08-22",
+  "name": "Shellcut - Open in Terminal",
+  "date": "2025-08-22",
+  "developer": "Leon Boettger"
+ },
+ {
+  "id": "spin-lucky-wheel-random-draw-2025-08-22",
+  "name": "Spin - Lucky Wheel Random Draw",
+  "date": "2025-08-22",
+  "developer": "Leon Boettger"
+ },
+ {
+  "id": "tap-bot-auto-click-refresh-2025-08-22",
+  "name": "Tap Bot: Auto Click & Refresh",
+  "date": "2025-08-22",
+  "developer": "Villow"
+ },
+ {
+  "id": "find-any-file-faf-2025-08-18",
+  "name": "Find Any File (FAF)",
+  "date": "2025-08-18",
+  "developer": "Thomas Tempelmann"
+ },
+ {
+  "id": "parachute-backup-2025-08-18",
+  "name": "Parachute Backup",
+  "date": "2025-08-18",
+  "developer": "Eric Mann"
+ },
+ {
+  "id": "vinegar-tube-cleaner-2025-08-18",
+  "name": "Vinegar - Tube Cleaner",
+  "date": "2025-08-18",
+  "developer": "And a Dinosaur"
+ },
+ {
+  "id": "arkyve-2025-08-05",
+  "name": "Arkyve",
+  "date": "2025-08-05",
+  "designer": "Matthew Skiles",
+  "developer": "Chris Jones"
+ },
+ {
+  "id": "dj-mix-pads-2-edm-music-maker-2025-08-05",
+  "name": "DJ Mix Pads 2: EDM Music Maker",
+  "date": "2025-08-05",
+  "developer": "Inline Solutions s.r.o."
+ },
+ {
+  "id": "feeder-4-2025-08-05",
+  "name": "Feeder 4",
+  "date": "2025-08-05",
+  "developer": "Steve Harris"
+ },
+ {
+  "id": "morph-age-photo-morphing-2025-08-05",
+  "name": "Morph Age \u203a Photo Morphing",
+  "date": "2025-08-05",
+  "developer": "Creaceed SRL"
+ },
+ {
+  "id": "quip-clipboard-supercharger-2025-08-05",
+  "name": "Quip - Clipboard Supercharger",
+  "date": "2025-08-05",
+  "designer": "Matthew Skiles",
+  "developer": "BZG Inc."
+ },
+ {
+  "id": "rhythm-pads-beat-maker-2025-08-05",
+  "name": "Rhythm Pads \u2013 Beat Maker",
+  "date": "2025-08-05",
+  "developer": "Stanislav Duplinskiy"
+ },
+ {
+  "id": "tap-forms-database-pro-2025-08-05",
+  "name": "Tap Forms Database Pro",
+  "date": "2025-08-05",
+  "developer": "Tap Zapp Software Inc."
+ },
+ {
+  "id": "xcbabel-localize-app-projects-2025-08-05",
+  "name": "XCBabel Localize App Projects",
+  "date": "2025-08-05",
+  "designer": "Matthew Skiles",
+  "developer": "Fifteen Jugglers Software UG"
+ },
+ {
+  "id": "ai-app-localization-xcstrings-2025-07-14",
+  "name": "AI App Localization: xcstrings",
+  "date": "2025-07-14",
+  "developer": "Sparrow Code"
+ },
+ {
+  "id": "atem-exporter-2025-07-14",
+  "name": "ATEM Exporter",
+  "date": "2025-07-14",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "bezel-phone-mirror-2025-07-14",
+  "name": "Bezel \u2022 Phone Mirror",
+  "date": "2025-07-14",
+  "designer": "Matthew Skiles",
+  "developer": "Nonstrict B.V."
+ },
+ {
+  "id": "cubox-ai-read-it-later-app-2025-07-14",
+  "name": "Cubox: AI Read-It-Later App",
+  "date": "2025-07-14",
+  "developer": "Odd Lab"
+ },
+ {
+  "id": "fast-collections-2025-07-14",
+  "name": "Fast Collections",
+  "date": "2025-07-14",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "jomo-screen-time-blocker-2025-07-14",
+  "name": "Jomo - Screen Time Blocker",
+  "date": "2025-07-14",
+  "designer": "Matthew Skiles",
+  "developer": "Jomo"
+ },
+ {
+  "id": "launchbuddy-for-swiftui-devs-2025-07-14",
+  "name": "LaunchBuddy for SwiftUI Devs",
+  "date": "2025-07-14",
+  "developer": "Florian Schweizer"
+ },
+ {
+  "id": "magic-drawing-and-ai-2025-07-14",
+  "name": "Magic \u2013 Drawing and AI",
+  "date": "2025-07-14",
+  "developer": "Joao Pozzobon"
+ },
+ {
+  "id": "screenshot-in-phone-frame-2025-07-14",
+  "name": "Screenshot in Phone Frame",
+  "date": "2025-07-14",
+  "developer": "Sparrow Code"
+ },
+ {
+  "id": "totp-authenticator-2025-07-14",
+  "name": "TOTP Authenticator",
+  "date": "2025-07-14",
+  "developer": "Sparrow Code"
+ },
+ {
+  "id": "weather-mini-2025-07-14",
+  "name": "Weather mini",
+  "date": "2025-07-14",
+  "developer": "Kai Luo"
+ },
+ {
+  "id": "bluebird-focus-timer-2025-05-29",
+  "name": "Bluebird Focus Timer",
+  "date": "2025-05-29",
+  "developer": "Cub & Pup"
+ },
+ {
+  "id": "codye-2025-05-29",
+  "name": "Codye",
+  "date": "2025-05-29",
+  "developer": "Dario Roa"
+ },
+ {
+  "id": "countdown-pro-flip-clock-app-2025-05-29",
+  "name": "Countdown Pro - Flip Clock App",
+  "date": "2025-05-29",
+  "developer": "Metromedya Digital Ad Agency"
+ },
+ {
+  "id": "hex-fiend-2025-05-29",
+  "name": "Hex Fiend",
+  "date": "2025-05-29",
+  "developer": "Peter Ammon"
+ },
+ {
+  "id": "hydra-hdr-photo-studio-2025-05-29",
+  "name": "Hydra \u203a HDR Photo Studio",
+  "date": "2025-05-29",
+  "developer": "Creaceed SRL"
+ },
+ {
+  "id": "istat-menus-7-2025-05-29",
+  "name": "iStat Menus 7",
+  "date": "2025-05-29",
+  "designer": "Marc Edwards",
+  "developer": "Bjango Pty Ltd"
+ },
+ {
+  "id": "mdb-accdb-viewer-2025-05-29",
+  "name": "MDB ACCDB Viewer",
+  "date": "2025-05-29",
+  "developer": "Jakob Egger"
+ },
+ {
+  "id": "oneclock-a-simple-flip-clock-2025-05-29",
+  "name": "OneClock - A Simple Flip Clock",
+  "date": "2025-05-29",
+  "developer": "Chengdu Reinvent Technology Co., Ltd."
+ },
+ {
+  "id": "photomator-photo-editor-2025-05-29",
+  "name": "Photomator \u2013 Photo Editor",
+  "date": "2025-05-29",
+  "developer": "Apple"
+ },
+ {
+  "id": "posterino-pro-photo-collage-2025-05-29",
+  "name": "Posterino - Pro Photo Collage",
+  "date": "2025-05-29",
+  "developer": "Christoph Priebe"
+ },
+ {
+  "id": "screen-recorder-recordr-2025-05-29",
+  "name": "Screen Recorder - Recordr",
+  "date": "2025-05-29",
+  "developer": "Perpetio OU"
+ },
+ {
+  "id": "transporter-2025-05-29",
+  "name": "Transporter",
+  "date": "2025-05-29",
+  "developer": "Apple"
+ },
+ {
+  "id": "verba-string-catalog-editor-2025-05-29",
+  "name": "Verba - String Catalog Editor",
+  "date": "2025-05-29",
+  "developer": "Wessley Roche"
+ },
+ {
+  "id": "vinylpod-music-widget-2025-05-29",
+  "name": "VinylPod - Music Widget",
+  "date": "2025-05-29",
+  "developer": "\u88d5\u6d9b \u5170"
+ },
+ {
+  "id": "alzex-finance-pro-2025-04-26",
+  "name": "Alzex Finance Pro",
+  "date": "2025-04-26",
+  "developer": "Anna Shirokova"
+ },
+ {
+  "id": "american-pool-billiard-3d-2025-04-26",
+  "name": "American Pool: Billiard 3D",
+  "date": "2025-04-26",
+  "developer": "One Tap Games"
+ },
+ {
+  "id": "artykul-rss-reader-2025-04-26",
+  "name": "Artykul\u00a0\u2013 RSS Reader",
+  "date": "2025-04-26",
+  "developer": "Mikalaj Karhin"
+ },
+ {
+  "id": "elucidate-2025-04-26",
+  "name": "Elucidate",
+  "date": "2025-04-26",
+  "developer": "Harry Shamansky"
+ },
+ {
+  "id": "expense-tracker-accountit-2025-04-26",
+  "name": "Expense Tracker - Accountit",
+  "date": "2025-04-26",
+  "developer": "DesignTech SIA"
+ },
+ {
+  "id": "expenses-spending-tracker-2025-04-26",
+  "name": "Expenses: Spending Tracker",
+  "date": "2025-04-26",
+  "designer": "Matthew Skiles",
+  "developer": "BLUE COMET LABS LLC"
+ },
+ {
+  "id": "habit-tracker-horizon-2025-04-26",
+  "name": "Habit Tracker - Horizon",
+  "date": "2025-04-26",
+  "developer": "Metronome Software Pty Ltd"
+ },
+ {
+  "id": "pixelgriddle-2025-04-26",
+  "name": "PixelGriddle",
+  "date": "2025-04-26",
+  "developer": "Splasm Software, Inc."
+ },
+ {
+  "id": "precircuiter-2025-04-26",
+  "name": "Precircuiter",
+  "date": "2025-04-26",
+  "developer": "Harry Shamansky"
+ },
+ {
+  "id": "shazam-identify-songs-2025-04-26",
+  "name": "Shazam: Identify Songs",
+  "date": "2025-04-26",
+  "developer": "Apple"
+ },
+ {
+  "id": "stitcher-pixel-art-2025-04-26",
+  "name": "Stitcher Pixel Art",
+  "date": "2025-04-26",
+  "developer": "Harry Shamansky"
+ },
+ {
+  "id": "swiftly-business-workspace-2025-04-26",
+  "name": "Swiftly: Business Workspace",
+  "date": "2025-04-26",
+  "designer": "Matthew Skiles",
+  "developer": "Swiftly Workspace"
+ },
+ {
+  "id": "gapplin-2025-04-04",
+  "name": "Gapplin",
+  "date": "2025-04-04",
+  "developer": "Mineko IMANISHI"
+ },
+ {
+  "id": "hyperspace-reclaim-disk-space-2025-04-04",
+  "name": "Hyperspace: Reclaim Disk Space",
+  "date": "2025-04-04",
+  "developer": "Hypercritical LLC"
+ },
+ {
+  "id": "lickable-menu-bar-2025-04-04",
+  "name": "Lickable Menu Bar",
+  "date": "2025-04-04",
+  "developer": "Honghao Zhang"
+ },
+ {
+  "id": "shot-lister-2025-04-04",
+  "name": "Shot Lister",
+  "date": "2025-04-04",
+  "developer": "Reel Apps Inc."
+ },
+ {
+  "id": "sleeve-for-spotify-music-2025-04-04",
+  "name": "Sleeve for Spotify, Music",
+  "date": "2025-04-04",
+  "developer": "Replay Software Limited"
+ },
+ {
+  "id": "deskmat-cover-your-desktop-2025-03-17",
+  "name": "DeskMat - Cover your Desktop",
+  "date": "2025-03-17",
+  "developer": "Matthias Gansrigler"
+ },
+ {
+  "id": "framous-screenshot-frames-2025-03-17",
+  "name": "Framous: Screenshot Frames",
+  "date": "2025-03-17",
+  "developer": "Dark Noise LLC"
+ },
+ {
+  "id": "miniblocker-website-blocker-2025-03-17",
+  "name": "MiniBlocker - Website Blocker",
+  "date": "2025-03-17",
+  "developer": "Median Tech, s.r.o."
+ },
+ {
+  "id": "whispertype-dictation-2025-03-17",
+  "name": "WhisperType Dictation",
+  "date": "2025-03-17",
+  "designer": "Matthew Skiles",
+  "developer": "Median Tech, s.r.o."
+ },
+ {
+  "id": "macfamilytree-11-2025-02-28",
+  "name": "MacFamilyTree 11",
+  "date": "2025-02-28",
+  "developer": "Synium Software GmbH"
+ },
+ {
+  "id": "pieoneer-2025-02-28",
+  "name": "Pieoneer",
+  "date": "2025-02-28",
+  "developer": "App ahead GmbH"
+ },
+ {
+  "id": "ai-note-taker-voicepen-2025-02-05",
+  "name": "AI Note Taker \u2013 VoicePen",
+  "date": "2025-02-05",
+  "designer": "Matthew Skiles",
+  "developer": "Timur Khairullin"
+ },
+ {
+  "id": "angry-birds-reloaded-2024-12-06",
+  "name": "Angry Birds Reloaded",
+  "date": "2024-12-06",
+  "developer": "Rovio Entertainment Oyj"
+ },
+ {
+  "id": "iphone-backup-extractor-2024-12-06",
+  "name": "iPhone Backup Extractor",
+  "date": "2024-12-06",
+  "designer": "Matthew Skiles",
+  "developer": "Reincubate"
+ },
+ {
+  "id": "retcon-2024-12-06",
+  "name": "Retcon",
+  "date": "2024-12-06",
+  "designer": "Nathan Manceaux-Panot",
+  "developer": "Nathan Manceaux-Panot"
+ },
+ {
+  "id": "tes-2024-12-06",
+  "name": "Tes",
+  "date": "2024-12-06",
+  "designer": "Parakeet",
+  "developer": "DoubleDog Software"
+ },
+ {
+  "id": "couverture-2024-11-21",
+  "name": "Couverture",
+  "date": "2024-11-21",
+  "developer": "App ahead GmbH"
+ },
+ {
+  "id": "dbngin-2024-11-21",
+  "name": "DBngin",
+  "date": "2024-11-21",
+  "developer": "TablePlus"
+ },
+ {
+  "id": "pinwheel-2024-11-21",
+  "name": "Pinwheel",
+  "date": "2024-11-21",
+  "designer": "Marc Edwards",
+  "developer": "bjango"
+ },
+ {
+  "id": "polycapture-2024-11-21",
+  "name": "PolyCapture",
+  "date": "2024-11-21",
+  "designer": "Matthew Skiles",
+  "developer": "App ahead GmbH"
+ },
+ {
+  "id": "tableplus-2024-11-21",
+  "name": "TablePlus",
+  "date": "2024-11-21",
+  "designer": "Matthew Skiles",
+  "developer": "TablePlus"
+ },
+ {
+  "id": "tabletool-2024-11-21",
+  "name": "TableTool",
+  "date": "2024-11-21",
+  "designer": "Matthew Skiles",
+  "developer": "TablePlus"
+ },
+ {
+  "id": "bezel-phone-mirror-2024-11-06",
+  "name": "Bezel \u2022 Phone Mirror",
+  "date": "2024-11-06",
+  "developer": "Nonstrict B.V."
+ },
+ {
+  "id": "cleanmymac-2024-11-06",
+  "name": "CleanMyMac",
+  "date": "2024-11-06",
+  "developer": "MacPaw Way Ltd"
+ },
+ {
+  "id": "navi-subtitles-translation-2024-11-06",
+  "name": "Navi - Subtitles & Translation",
+  "date": "2024-11-06",
+  "designer": "Matthew Skiles",
+  "developer": "Good Snooze"
+ },
+ {
+  "id": "pastenow-instant-clipboard-2024-11-06",
+  "name": "PasteNow - Instant Clipboard",
+  "date": "2024-11-06",
+  "developer": "Hangzhou Tulading Technology Co., Ltd."
+ },
+ {
+  "id": "perplexity-ask-anything-2024-11-06",
+  "name": "Perplexity: Ask Anything",
+  "date": "2024-11-06",
+  "developer": "Perplexity AI, Inc."
+ },
+ {
+  "id": "reeder-2024-11-06",
+  "name": "Reeder.",
+  "date": "2024-11-06",
+  "developer": "Silvio Rizzi"
+ },
+ {
+  "id": "screens-5-vnc-remote-desktop-2024-11-06",
+  "name": "Screens 5: VNC Remote Desktop",
+  "date": "2024-11-06",
+  "developer": "Edovia Inc."
+ },
+ {
+  "id": "screens-for-organizations-2024-11-06",
+  "name": "Screens for Organizations",
+  "date": "2024-11-06",
+  "designer": "Matthew Skiles",
+  "developer": "Edovia Inc."
+ },
+ {
+  "id": "spring-shortcut-to-any-app-2024-11-06",
+  "name": "Spring - Shortcut to any App",
+  "date": "2024-11-06",
+  "developer": "Rasmus Nielsen"
+ },
+ {
+  "id": "whisper-transcription-2024-11-06",
+  "name": "Whisper Transcription",
+  "date": "2024-11-06",
+  "developer": "Good Snooze"
+ },
+ {
+  "id": "budget-seer-financial-vision-2024-10-08",
+  "name": "Budget Seer - Financial Vision",
+  "date": "2024-10-08",
+  "developer": "Caseiro Software LLC"
+ },
+ {
+  "id": "macos-sequoia-2024-10-08",
+  "name": "macOS Sequoia",
+  "date": "2024-10-08",
+  "developer": "Apple"
+ },
+ {
+  "id": "persona-webcam-virtual-camera-2024-07-17",
+  "name": "Persona Webcam: Virtual Camera",
+  "date": "2024-07-17",
+  "designer": "Matthew Skiles",
+  "developer": "Nonstrict B.V."
+ },
+ {
+  "id": "capacitor-2024-07-08",
+  "name": "Capacitor",
+  "date": "2024-07-08",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "lut-robot-2024-07-08",
+  "name": "LUT Robot",
+  "date": "2024-07-08",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "news-import-2024-07-08",
+  "name": "News Import",
+  "date": "2024-07-08",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "oscsmith-2024-07-08",
+  "name": "OSCsmith",
+  "date": "2024-07-08",
+  "designer": "Matthew Skiles",
+  "developer": "Artifice Industries Ltd."
+ },
+ {
+  "id": "recall-toolbox-2024-07-08",
+  "name": "Recall Toolbox",
+  "date": "2024-07-08",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "helm-for-app-store-connect-2024-06-27",
+  "name": "Helm for App Store Connect",
+  "date": "2024-06-27",
+  "developer": "Modum B.V."
+ },
+ {
+  "id": "looks-like-rain-2024-06-04",
+  "name": "Looks Like Rain",
+  "date": "2024-06-04",
+  "developer": "Thinkbitz Software Studio"
+ },
+ {
+  "id": "menu-weather-pro-2024-06-04",
+  "name": "Menu Weather Pro",
+  "date": "2024-06-04",
+  "designer": "Matthew Skiles",
+  "developer": "Condor Digital"
+ },
+ {
+  "id": "cut-the-rope-3-2024-05-20",
+  "name": "Cut the Rope 3",
+  "date": "2024-05-20",
+  "developer": "ZeptoLab UK Limited"
+ },
+ {
+  "id": "kolibri-for-swiftui-2024-05-20",
+  "name": "Kolibri for SwiftUI",
+  "date": "2024-05-20",
+  "developer": "Sandro Pennisi"
+ },
+ {
+  "id": "pricetag-app-pricing-manager-2024-05-20",
+  "name": "Pricetag - App Pricing Manager",
+  "date": "2024-05-20",
+  "designer": "Raphael Lopes",
+  "developer": "Thomas Brandstaetter"
+ },
+ {
+  "id": "ai-photo-enhancer-by-pictura-2024-04-30",
+  "name": "AI Photo Enhancer by Pictura",
+  "date": "2024-04-30",
+  "designer": "Matthew Skiles",
+  "developer": "Jonathan Estuardo Benavides Vallejo"
+ },
+ {
+  "id": "docktor-2024-04-30",
+  "name": "Docktor",
+  "date": "2024-04-30",
+  "designer": "Rafael Conde",
+  "developer": "Rafael Conde"
+ },
+ {
+  "id": "note-widget-notes-app-2024-04-24",
+  "name": "Note: Widget Notes App",
+  "date": "2024-04-24",
+  "developer": "Monelyze Inc."
+ },
+ {
+  "id": "pdf-squeezer-4-2024-04-24",
+  "name": "PDF Squeezer 4",
+  "date": "2024-04-24",
+  "designer": "Raphael Lopes",
+  "developer": "Daniel Witt"
+ },
+ {
+  "id": "taska-for-github-gitlab-issues-2024-04-24",
+  "name": "Taska for GitHub/GitLab Issues",
+  "date": "2024-04-24",
+  "developer": "Made by Windmill, LLC"
+ },
+ {
+  "id": "macos-ventura-2024-04-23",
+  "name": "macOS Ventura",
+  "date": "2024-04-23",
+  "developer": "Apple"
+ },
+ {
+  "id": "mass-rename-file-batch-rename-2024-04-23",
+  "name": "Mass Rename: File Batch Rename",
+  "date": "2024-04-23",
+  "developer": "Georgios Trigonakis"
+ },
+ {
+  "id": "metaburner-2024-04-23",
+  "name": "Metaburner",
+  "date": "2024-04-23",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty"
+ },
+ {
+  "id": "ok-json-viewer-formatter-2024-04-23",
+  "name": "OK JSON - Viewer & Formatter",
+  "date": "2024-04-23",
+  "developer": "Anybox LTD"
+ },
+ {
+  "id": "text-workflow-text-converter-2024-04-23",
+  "name": "Text Workflow: Text Converter",
+  "date": "2024-04-23",
+  "developer": "Georgios Trigonakis"
+ },
+ {
+  "id": "brewer-x-2024-04-22",
+  "name": "Brewer X",
+  "date": "2024-04-22",
+  "developer": "Panini House"
+ },
+ {
+  "id": "gpu-monitor-pro-2024-04-19",
+  "name": "GPU Monitor Pro",
+  "date": "2024-04-19",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "privacy-cleaner-pro-2024-04-19",
+  "name": "Privacy Cleaner Pro",
+  "date": "2024-04-19",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "remote-desktop-scanner-2024-04-19",
+  "name": "Remote Desktop Scanner",
+  "date": "2024-04-19",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "screenfloat-screenshot-tools-2024-04-19",
+  "name": "ScreenFloat - Screenshot Tools",
+  "date": "2024-04-19",
+  "designer": "Alexander K\u00e4\u00dfner",
+  "developer": "Matthias Gansrigler"
+ },
+ {
+  "id": "scrobbles-for-last-fm-2024-04-19",
+  "name": "Scrobbles for Last.fm",
+  "date": "2024-04-19",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "system-toolkit-pro-2024-04-19",
+  "name": "System Toolkit Pro",
+  "date": "2024-04-19",
+  "designer": "Hugo Santos",
+  "developer": "Sascha Simon"
+ },
+ {
+  "id": "screensnapai-2024-04-10",
+  "name": "ScreenSnapAI",
+  "date": "2024-04-10",
+  "designer": "Matthew Skiles",
+  "developer": "Aptonic LLC"
+ },
+ {
+  "id": "astro-2024-04-09",
+  "name": "Astro",
+  "date": "2024-04-09",
+  "designer": "Yannick Lung",
+  "developer": "Matteo Spada"
+ },
+ {
+  "id": "usage-system-activity-monitor-2024-04-09",
+  "name": "Usage: System Activity Monitor",
+  "date": "2024-04-09",
+  "designer": "Yannick Lung",
+  "developer": "Oleh Stasula"
+ },
+ {
+  "id": "prompt-3-2024-02-12",
+  "name": "Prompt 3",
+  "date": "2024-02-12",
+  "developer": "Panic, Inc."
+ },
+ {
+  "id": "source-files-git-storage-2023-11-21",
+  "name": "Source Files - Git Storage",
+  "date": "2023-11-21",
+  "developer": "Anders Borum ApS"
+ },
+ {
+  "id": "timemachinestatus-2023-11-21",
+  "name": "TimeMachineStatus",
+  "date": "2023-11-21",
+  "developer": "Luke Pistrol"
+ },
+ {
+  "id": "davinci-resolve-2023-11-02",
+  "name": "DaVinci Resolve",
+  "date": "2023-11-02",
+  "developer": "Blackmagic Design Inc"
+ },
+ {
+  "id": "folder-colorizer-pro-2023-11-02",
+  "name": "Folder Colorizer Pro",
+  "date": "2023-11-02",
+  "developer": "Softorino Inc."
+ },
+ {
+  "id": "font-file-browser-2023-11-02",
+  "name": "Font File Browser",
+  "date": "2023-11-02",
+  "developer": "X04 Studios Inc."
+ },
+ {
+  "id": "ultra-character-map-2023-11-02",
+  "name": "Ultra Character Map",
+  "date": "2023-11-02",
+  "developer": "X04 Studios Inc."
+ },
+ {
+  "id": "gametrack-2023-10-19",
+  "name": "GameTrack",
+  "date": "2023-10-19",
+  "designer": "Gavin Nelson",
+  "developer": "Hidden Key LTD"
+ },
+ {
+  "id": "party-mixer-3d-dj-turntable-2023-10-19",
+  "name": "Party Mixer 3D - DJ Turntable",
+  "date": "2023-10-19",
+  "developer": "Groove Vibes"
+ },
+ {
+  "id": "teleprompter-premium-2023-10-19",
+  "name": "Teleprompter Premium +",
+  "date": "2023-10-19",
+  "designer": "Joe Allen",
+  "developer": "Teleprompter Apps Ltd"
+ },
+ {
+  "id": "daily-hours-time-tracker-2023-10-09",
+  "name": "Daily - Hours & Time Tracker",
+  "date": "2023-10-09",
+  "developer": "Niels Mouthaan"
+ },
+ {
+  "id": "desktop-curtain-2023-10-09",
+  "name": "Desktop Curtain",
+  "date": "2023-10-09",
+  "developer": "Many Tricks"
+ },
+ {
+  "id": "fiveacts-2023-10-09",
+  "name": "FiveActs",
+  "date": "2023-10-09",
+  "developer": "Synium Software GmbH"
+ },
+ {
+  "id": "logoist-5-2023-10-09",
+  "name": "Logoist 5",
+  "date": "2023-10-09",
+  "developer": "Synium Software GmbH"
+ },
+ {
+  "id": "creativit-mood-board-vision-2023-09-29",
+  "name": "Creativit: Mood Board & Vision",
+  "date": "2023-09-29",
+  "developer": "DesignTech SIA"
+ },
+ {
+  "id": "doneit-kanban-board-to-do-2023-09-29",
+  "name": "Doneit: Kanban Board, To Do",
+  "date": "2023-09-29",
+  "developer": "DesignTech SIA"
+ },
+ {
+  "id": "virtualbuddy-2023-09-29",
+  "name": "VirtualBuddy",
+  "date": "2023-09-29",
+  "designer": "Matthew Skiles",
+  "developer": "Guilherme Rambo"
+ },
+ {
+  "id": "angry-birds-reloaded-2023-09-27",
+  "name": "Angry Birds Reloaded",
+  "date": "2023-09-27",
+  "developer": "Rovio Entertainment Oyj"
+ },
+ {
+  "id": "cut-the-rope-remastered-2023-09-27",
+  "name": "Cut the Rope Remastered",
+  "date": "2023-09-27",
+  "developer": "Paladin Studios"
+ },
+ {
+  "id": "frogger-in-toy-town-2023-09-27",
+  "name": "Frogger in Toy Town",
+  "date": "2023-09-27",
+  "developer": "KONAMI"
+ },
+ {
+  "id": "illustrated-2023-09-27",
+  "name": "Illustrated",
+  "date": "2023-09-27",
+  "developer": "BorderLeap"
+ },
+ {
+  "id": "pac-man-party-royale-2023-09-27",
+  "name": "PAC-MAN Party Royale",
+  "date": "2023-09-27",
+  "developer": "Bandai Namco Entertainment Inc."
+ },
+ {
+  "id": "flashcard-hero-lite-2023-09-26",
+  "name": "Flashcard Hero Lite",
+  "date": "2023-09-26",
+  "designer": "Matthew Skiles",
+  "developer": "Kitestack Software"
+ },
+ {
+  "id": "hand-mirror-2023-09-26",
+  "name": "Hand Mirror",
+  "date": "2023-09-26",
+  "designer": "Rafael Conde",
+  "developer": "Rafael Conde"
+ },
+ {
+  "id": "macos-sonoma-2023-09-26",
+  "name": "macOS Sonoma",
+  "date": "2023-09-26",
+  "developer": "Apple"
+ },
+ {
+  "id": "artstudio-pro-desktop-2023-09-14",
+  "name": "Artstudio Pro - Desktop",
+  "date": "2023-09-14",
+  "developer": "Lucky Clan"
+ },
+ {
+  "id": "mercury-weather-2023-09-14",
+  "name": "Mercury Weather",
+  "date": "2023-09-14",
+  "developer": "Triple Glazed Studios"
+ },
+ {
+  "id": "popclip-2023-09-14",
+  "name": "PopClip",
+  "date": "2023-09-14",
+  "designer": "Matthew Skiles",
+  "developer": "Pilotmoon Software"
+ },
+ {
+  "id": "ai-transcription-2023-09-07",
+  "name": "AI Transcription",
+  "date": "2023-09-07",
+  "developer": "IXEAU"
+ },
+ {
+  "id": "all-windows-appear-2023-09-07",
+  "name": "All Windows Appear",
+  "date": "2023-09-07",
+  "developer": "IXEAU"
+ },
+ {
+  "id": "aspect-ratio-x-2023-09-07",
+  "name": "Aspect Ratio X",
+  "date": "2023-09-07",
+  "developer": "IXEAU"
+ },
+ {
+  "id": "codepoint-2023-09-07",
+  "name": "Codepoint",
+  "date": "2023-09-07",
+  "developer": "IXEAU"
+ },
+ {
+  "id": "qreate-qr-code-generator-2023-09-07",
+  "name": "QReate - QR-code generator",
+  "date": "2023-09-07",
+  "designer": "Matthew Skiles",
+  "developer": "Pol Piella Abadia"
+ },
+ {
+  "id": "multi-2023-08-16",
+  "name": "Multi",
+  "date": "2023-08-16",
+  "designer": "Adam Whitcroft",
+  "developer": "Multi Software"
+ },
+ {
+  "id": "braw-toolbox-2023-08-10",
+  "name": "BRAW Toolbox",
+  "date": "2023-08-10",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "gyroflow-toolbox-2023-08-10",
+  "name": "Gyroflow Toolbox",
+  "date": "2023-08-10",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "klack-2023-08-10",
+  "name": "Klack",
+  "date": "2023-08-10",
+  "developer": "Henrik Ruscon"
+ },
+ {
+  "id": "s3-files-2023-08-10",
+  "name": "S3 Files",
+  "date": "2023-08-10",
+  "developer": "Anders Borum ApS"
+ },
+ {
+  "id": "ai-photo-2023-08-09",
+  "name": "AI Photo",
+  "date": "2023-08-09",
+  "developer": "IXEAU"
+ },
+ {
+  "id": "dollar-sense-family-chores-2023-08-09",
+  "name": "Dollar & Sense - Family Chores",
+  "date": "2023-08-09",
+  "designer": "Matthew Skiles",
+  "developer": "Stan Lemon"
+ },
+ {
+  "id": "hype-4-2023-08-09",
+  "name": "Hype 4",
+  "date": "2023-08-09",
+  "developer": "Tumult Inc."
+ },
+ {
+  "id": "monodraw-2023-08-09",
+  "name": "Monodraw",
+  "date": "2023-08-09",
+  "developer": "Helftone"
+ },
+ {
+  "id": "pockity-2023-08-09",
+  "name": "Pockity",
+  "date": "2023-08-09",
+  "developer": "Nikhil Nigade"
+ },
+ {
+  "id": "unfolder-2023-08-09",
+  "name": "Unfolder",
+  "date": "2023-08-09",
+  "developer": "\u7384\u6d0b \u5434"
+ },
+ {
+  "id": "archive-utility-2023-05-23",
+  "name": "Archive Utility",
+  "date": "2023-05-23",
+  "developer": "Apple"
+ },
+ {
+  "id": "directory-utility-2023-05-23",
+  "name": "Directory Utility",
+  "date": "2023-05-23",
+  "developer": "Apple"
+ },
+ {
+  "id": "dvd-player-2023-05-23",
+  "name": "DVD Player",
+  "date": "2023-05-23",
+  "developer": "Apple"
+ },
+ {
+  "id": "ios-app-installer-2023-05-23",
+  "name": "iOS App Installer",
+  "date": "2023-05-23",
+  "developer": "Apple"
+ },
+ {
+  "id": "ticket-viewer-2023-05-23",
+  "name": "Ticket Viewer",
+  "date": "2023-05-23",
+  "developer": "Apple"
+ },
+ {
+  "id": "widgetkit-simulator-2023-05-23",
+  "name": "WidgetKit Simulator",
+  "date": "2023-05-23",
+  "developer": "Apple"
+ },
+ {
+  "id": "wireless-diagnostics-2023-05-23",
+  "name": "Wireless Diagnostics",
+  "date": "2023-05-23",
+  "developer": "Apple"
+ },
+ {
+  "id": "accessibility-inspector-2023-05-22",
+  "name": "Accessibility Inspector",
+  "date": "2023-05-22",
+  "developer": "Apple"
+ },
+ {
+  "id": "create-ml-2023-05-22",
+  "name": "Create ML",
+  "date": "2023-05-22",
+  "developer": "Apple"
+ },
+ {
+  "id": "filemerge-2023-05-22",
+  "name": "FileMerge",
+  "date": "2023-05-22",
+  "developer": "Apple"
+ },
+ {
+  "id": "instruments-2023-05-22",
+  "name": "Instruments",
+  "date": "2023-05-22",
+  "developer": "Apple"
+ },
+ {
+  "id": "reality-composer-2023-05-22",
+  "name": "Reality Composer",
+  "date": "2023-05-22",
+  "developer": "Apple"
+ },
+ {
+  "id": "maps-2023-05-19",
+  "name": "Maps",
+  "date": "2023-05-19",
+  "developer": "Apple"
+ },
+ {
+  "id": "stocks-2023-05-19",
+  "name": "Stocks",
+  "date": "2023-05-19",
+  "developer": "Apple"
+ },
+ {
+  "id": "testflight-2023-05-19",
+  "name": "TestFlight",
+  "date": "2023-05-19",
+  "developer": "Apple"
+ },
+ {
+  "id": "clipboard-manager-pasty-2023-05-17",
+  "name": "Clipboard Manager \u2014 Pasty",
+  "date": "2023-05-17",
+  "developer": "Ivan Sapozhnik"
+ },
+ {
+  "id": "marker-toolbox-2023-05-17",
+  "name": "Marker Toolbox",
+  "date": "2023-05-17",
+  "designer": "Matthew Skiles",
+  "developer": "LateNite Films Pty Ltd"
+ },
+ {
+  "id": "pasta-2023-05-17",
+  "name": "Pasta",
+  "date": "2023-05-17",
+  "designer": "Wessley Roche",
+  "developer": "Wessley Roche"
+ },
+ {
+  "id": "ssh-files-secure-shellfish-2023-05-17",
+  "name": "SSH Files \u2013 Secure ShellFish",
+  "date": "2023-05-17",
+  "developer": "Anders Borum"
+ },
+ {
+  "id": "plasticity-2023-04-27",
+  "name": "Plasticity",
+  "date": "2023-04-27",
+  "designer": "Adam Whitcroft",
+  "developer": "Plasticity"
+ },
+ {
+  "id": "coduo-pair-coding-for-xcode-2023-02-16",
+  "name": "Coduo - Pair coding for Xcode",
+  "date": "2023-02-16",
+  "designer": "Yannick Lung",
+  "developer": "Lumen Digital"
+ },
+ {
+  "id": "hidock-2023-02-16",
+  "name": "HiDock",
+  "date": "2023-02-16",
+  "designer": "Rafael Conde",
+  "developer": "Rafael Conde"
+ },
+ {
+  "id": "affinity-designer-2-2023-02-14",
+  "name": "Affinity Designer 2",
+  "date": "2023-02-14",
+  "developer": "Serif Labs"
+ },
+ {
+  "id": "affinity-photo-2-2023-02-14",
+  "name": "Affinity Photo 2",
+  "date": "2023-02-14",
+  "developer": "Serif Labs"
+ },
+ {
+  "id": "affinity-publisher-2-2023-02-14",
+  "name": "Affinity Publisher 2",
+  "date": "2023-02-14",
+  "developer": "Serif Labs"
+ },
+ {
+  "id": "copilot-2023-02-14",
+  "name": "Copilot",
+  "date": "2023-02-14",
+  "designer": "Gavin Nelson",
+  "developer": "Copilot Money"
+ },
+ {
+  "id": "coppice-2023-02-14",
+  "name": "Coppice",
+  "date": "2023-02-14",
+  "designer": "Matthew Skiles",
+  "developer": "M Cubed Software"
+ },
+ {
+  "id": "flighty-live-flight-tracker-2023-02-14",
+  "name": "Flighty \u2013 Live Flight Tracker",
+  "date": "2023-02-14",
+  "developer": "Global Flight, Airport, & Airline Status Tracker LLC"
+ },
+ {
+  "id": "gyroflow-toolbox-2023-02-14",
+  "name": "Gyroflow Toolbox",
+  "date": "2023-02-14",
+  "designer": "Matthew Skiles",
+  "developer": "latenitefilms"
+ },
+ {
+  "id": "lasso-2023-02-14",
+  "name": "Lasso",
+  "date": "2023-02-14",
+  "designer": "Yannick Lung",
+  "developer": "Lasso"
+ },
+ {
+  "id": "pitch-collaborate-on-decks-2023-02-14",
+  "name": "Pitch | Collaborate on Decks",
+  "date": "2023-02-14",
+  "developer": "Pitch Software GmbH"
+ },
+ {
+  "id": "raycast-2023-02-14",
+  "name": "Raycast",
+  "date": "2023-02-14",
+  "developer": "Raycast"
+ },
+ {
+  "id": "screensearch-2023-02-14",
+  "name": "ScreenSearch",
+  "date": "2023-02-14",
+  "designer": "Matthew Skiles",
+  "developer": "Fabi\u00e1n Ca\u00f1as"
+ },
+ {
+  "id": "tasks-to-do-lists-planner-2023-02-14",
+  "name": "Tasks: To Do Lists & Planner",
+  "date": "2023-02-14",
+  "designer": "Matthew Skiles",
+  "developer": "Mustafa Yusuf"
+ },
+ {
+  "id": "yarnbuddy-knit-and-crochet-2023-02-14",
+  "name": "YarnBuddy \u2013 Knit and Crochet",
+  "date": "2023-02-14",
+  "developer": "Rebecca Hansmeyer"
+ },
+ {
+  "id": "font-proofer-2023-02-03",
+  "name": "Font Proofer",
+  "date": "2023-02-03",
+  "designer": "Peter Nowell",
+  "developer": "Font Proofer"
+ },
+ {
+  "id": "franz-2022-11-22",
+  "name": "Franz",
+  "date": "2022-11-22",
+  "designer": "Matthew Skiles",
+  "developer": "Cleartype"
+ },
+ {
+  "id": "opus-one-daily-planner-2022-11-22",
+  "name": "Opus One: Daily Planner",
+  "date": "2022-11-22",
+  "developer": "PISO 13, Inc."
+ },
+ {
+  "id": "proxyman-2022-11-22",
+  "name": "Proxyman",
+  "date": "2022-11-22",
+  "designer": "Matthew Skiles",
+  "developer": "Proxyman LLC"
+ },
+ {
+  "id": "rapidweaver-2022-11-09",
+  "name": "RapidWeaver",
+  "date": "2022-11-09",
+  "designer": "Matthew Skiles",
+  "developer": "Realmac Software"
+ },
+ {
+  "id": "simulator-2022-11-09",
+  "name": "Simulator",
+  "date": "2022-11-09",
+  "developer": "Apple"
+ },
+ {
+  "id": "superstar-respond-to-reviews-2022-11-09",
+  "name": "Superstar - Respond to Reviews",
+  "date": "2022-11-09",
+  "designer": "Matthew Skiles",
+  "developer": "Good Snooze"
+ },
+ {
+  "id": "cashculator-personal-finance-2022-10-17",
+  "name": "Cashculator \u2014 Personal Finance",
+  "date": "2022-10-17",
+  "developer": "Apparent Software Inc."
+ },
+ {
+  "id": "night-owl-2022-10-17",
+  "name": "Night Owl",
+  "date": "2022-10-17",
+  "developer": "aki-null.net"
+ },
+ {
+  "id": "omnifocus-3-2022-10-17",
+  "name": "OmniFocus 3",
+  "date": "2022-10-17",
+  "developer": "The Omni Group"
+ },
+ {
+  "id": "omnigraffle-7-2022-10-17",
+  "name": "OmniGraffle 7",
+  "date": "2022-10-17",
+  "developer": "The Omni Group"
+ },
+ {
+  "id": "omnioutliner-5-2022-10-17",
+  "name": "OmniOutliner 5",
+  "date": "2022-10-17",
+  "developer": "The Omni Group"
+ },
+ {
+  "id": "omniplan-4-2022-10-17",
+  "name": "OmniPlan 4",
+  "date": "2022-10-17",
+  "developer": "The Omni Group"
+ },
+ {
+  "id": "action-camera-master-editor-2022-10-07",
+  "name": "Action Camera Master: Editor",
+  "date": "2022-10-07",
+  "developer": "Photo & Video Labs"
+ },
+ {
+  "id": "elpass-2022-10-07",
+  "name": "Elpass",
+  "date": "2022-10-07",
+  "developer": "Surge Networks Inc."
+ },
+ {
+  "id": "librarian-pro-2022-10-07",
+  "name": "Librarian Pro",
+  "date": "2022-10-07",
+  "developer": "Koingo Software, Inc."
+ },
+ {
+  "id": "mango-5star-2022-10-07",
+  "name": "Mango 5Star",
+  "date": "2022-10-07",
+  "developer": "Yilei Yang"
+ },
+ {
+  "id": "money-budget-finance-2022-10-07",
+  "name": "Money - Budget & Finance",
+  "date": "2022-10-07",
+  "developer": "Jumsoft"
+ },
+ {
+  "id": "badminton-clash-sport-league-2022-10-04",
+  "name": "Badminton Clash: Sport League",
+  "date": "2022-10-04",
+  "developer": "One Tap Games"
+ },
+ {
+  "id": "ball-road-jump-smash-maze-2022-10-04",
+  "name": "Ball Road Jump: Smash Maze",
+  "date": "2022-10-04",
+  "developer": "Tap by Tap, LLC"
+ },
+ {
+  "id": "filesafe-2022-10-04",
+  "name": "FileSafe",
+  "date": "2022-10-04",
+  "developer": "Think Yeah"
+ },
+ {
+  "id": "focus-flow-productivity-timer-2022-10-04",
+  "name": "Focus Flow: Productivity Timer",
+  "date": "2022-10-04",
+  "developer": "MotivApp GmbH"
+ },
+ {
+  "id": "mining-tycoon-dig-empire-2022-10-04",
+  "name": "Mining Tycoon - Dig Empire",
+  "date": "2022-10-04",
+  "developer": "One Tap Games"
+ },
+ {
+  "id": "road-rush-cars-crossy-race-2022-10-04",
+  "name": "Road Rush Cars - Crossy Race",
+  "date": "2022-10-04",
+  "developer": "MotivApp GmbH"
+ },
+ {
+  "id": "sketchbook-illustration-2022-10-04",
+  "name": "Sketchbook Illustration",
+  "date": "2022-10-04",
+  "developer": "MotivApp GmbH"
+ },
+ {
+  "id": "hypercal-2022-08-08",
+  "name": "Hypercal",
+  "date": "2022-08-08",
+  "designer": "Matthew Skiles",
+  "developer": "Hypercal"
+ },
+ {
+  "id": "hand-mirror-2022-08-02",
+  "name": "Hand Mirror",
+  "date": "2022-08-02",
+  "designer": "Rafael Conde",
+  "developer": "Rafael Conde"
+ },
+ {
+  "id": "letter-opener-winmail-viewer-2022-08-02",
+  "name": "Letter Opener \u2013 Winmail Viewer",
+  "date": "2022-08-02",
+  "developer": "Letter Opener GmbH"
+ },
+ {
+  "id": "microsoft-excel-2022-08-02",
+  "name": "Microsoft Excel",
+  "date": "2022-08-02",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "microsoft-onenote-2022-08-02",
+  "name": "Microsoft OneNote",
+  "date": "2022-08-02",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "microsoft-outlook-2022-08-02",
+  "name": "Microsoft Outlook",
+  "date": "2022-08-02",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "microsoft-powerpoint-2022-08-02",
+  "name": "Microsoft PowerPoint",
+  "date": "2022-08-02",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "microsoft-word-2022-08-02",
+  "name": "Microsoft Word",
+  "date": "2022-08-02",
+  "developer": "Microsoft Corporation"
+ },
+ {
+  "id": "pdf-search-ai-powered-app-2022-08-02",
+  "name": "PDF Search: AI-Powered App",
+  "date": "2022-08-02",
+  "developer": "Muharrem Ozkan"
+ },
+ {
+  "id": "cleanmymac-x-business-2022-07-31",
+  "name": "CleanMyMac X Business",
+  "date": "2022-07-31",
+  "developer": "MacPaw Inc."
+ },
+ {
+  "id": "draft-writing-script-blog-2022-07-31",
+  "name": "Draft Writing - Script & Blog",
+  "date": "2022-07-31",
+  "developer": "Any Case Solutions"
+ },
+ {
+  "id": "gpu-benchmark-video-card-test-2022-07-31",
+  "name": "GPU Benchmark: Video Card Test",
+  "date": "2022-07-31",
+  "developer": "Any Case Solutions"
+ },
+ {
+  "id": "make-my-app-mockup-designer-2022-07-31",
+  "name": "Make My App: Mockup Designer",
+  "date": "2022-07-31",
+  "developer": "Any Case Solutions"
+ },
+ {
+  "id": "the-unarchiver-2022-07-31",
+  "name": "The Unarchiver",
+  "date": "2022-07-31",
+  "developer": "MacPaw Inc."
+ },
+ {
+  "id": "dropzone-4-2022-07-29",
+  "name": "Dropzone 4",
+  "date": "2022-07-29",
+  "developer": "Aptonic Limited"
+ },
+ {
+  "id": "ftp-disk-2022-07-29",
+  "name": "FTP Disk",
+  "date": "2022-07-29",
+  "developer": "Max Programming, S.L."
+ },
+ {
+  "id": "fusioncast-2022-07-29",
+  "name": "FusionCast",
+  "date": "2022-07-29",
+  "developer": "Buddy Software LTDA"
+ },
+ {
+  "id": "piano-play-any-song-sheets-2022-07-29",
+  "name": "Piano - Play any song & sheets",
+  "date": "2022-07-29",
+  "developer": "T.V CO., LTD"
+ },
+ {
+  "id": "podcast-soundboard-2022-07-29",
+  "name": "Podcast Soundboard",
+  "date": "2022-07-29",
+  "developer": "Alexander Paterson"
+ },
+ {
+  "id": "tempi-live-beat-detection-2022-07-29",
+  "name": "Tempi \u2013 Live Beat Detection",
+  "date": "2022-07-29",
+  "developer": "Made by Windmill, LLC"
+ },
+ {
+  "id": "core-data-lab-2022-07-28",
+  "name": "Core Data Lab",
+  "date": "2022-07-28",
+  "developer": "Ron Elemans"
+ },
+ {
+  "id": "marble-it-up-mayhem-2022-07-28",
+  "name": "Marble It Up: Mayhem!",
+  "date": "2022-07-28",
+  "developer": "The Marble Collective"
+ },
+ {
+  "id": "my-bowling-3d-2022-07-28",
+  "name": "My Bowling 3D+",
+  "date": "2022-07-28",
+  "developer": "iWare Designs Ltd."
+ },
+ {
+  "id": "solitaire-stories-2022-07-28",
+  "name": "Solitaire Stories",
+  "date": "2022-07-28",
+  "developer": "RED GAMES CO, LLC"
+ },
+ {
+  "id": "creaks-2022-07-14",
+  "name": "Creaks",
+  "date": "2022-07-14",
+  "developer": "Amanita Design s.r.o."
+ },
+ {
+  "id": "musicbox-save-music-for-later-2022-07-14",
+  "name": "MusicBox: Save Music for Later",
+  "date": "2022-07-14",
+  "designer": "Matthew Skiles",
+  "developer": "Marcos Antonio Tanaka"
+ },
+ {
+  "id": "neptunes-2022-07-14",
+  "name": "NepTunes",
+  "date": "2022-07-14",
+  "designer": "Matthew Skiles",
+  "developer": "Adam Rozynski"
+ },
+ {
+  "id": "topdrop-2022-07-14",
+  "name": "TopDrop",
+  "date": "2022-07-14",
+  "designer": "Matthew Skiles",
+  "developer": "Timberlane Labs"
+ },
+ {
+  "id": "worldwideweb-desktop-2022-07-14",
+  "name": "WorldWideWeb \u2013 Desktop",
+  "date": "2022-07-14",
+  "designer": "The Iconfactory",
+  "developer": "The Iconfactory"
+ },
+ {
+  "id": "rocketsim-for-xcode-simulator-2022-06-17",
+  "name": "RocketSim for Xcode Simulator",
+  "date": "2022-06-17",
+  "developer": "A.J. van der Lee"
+ },
+ {
+  "id": "word-writing-documents-2022-06-17",
+  "name": "Word Writing Documents",
+  "date": "2022-06-17",
+  "developer": "Nebula SRL"
+ },
+ {
+  "id": "profind-2022-05-22",
+  "name": "ProFind",
+  "date": "2022-05-22",
+  "designer": "Sandor",
+  "developer": "Ross Tulloch"
+ },
+ {
+  "id": "rottenwood-2022-05-22",
+  "name": "Rottenwood",
+  "date": "2022-05-22",
+  "designer": "Sandor",
+  "developer": "Charlie Monroe Software, s.r.o."
+ },
+ {
+  "id": "darkroom-photo-video-editor-2022-05-20",
+  "name": "Darkroom: Photo & Video Editor",
+  "date": "2022-05-20",
+  "developer": "Bergen Co."
+ },
+ {
+  "id": "references-on-tap-2022-05-20",
+  "name": "References On Tap",
+  "date": "2022-05-20",
+  "developer": "ReferencesOnTap"
+ },
+ {
+  "id": "stick-ies-2022-05-20",
+  "name": "Stick-ies",
+  "date": "2022-05-20",
+  "developer": "ASHVIN SUTHAR"
+ },
+ {
+  "id": "couverture-2022-05-11",
+  "name": "Couverture",
+  "date": "2022-05-11",
+  "designer": "Matthew Skiles",
+  "developer": "IXEAU"
+ },
+ {
+  "id": "overflow-3-2022-05-11",
+  "name": "Overflow 3",
+  "date": "2022-05-11",
+  "developer": "Stunt Software"
+ },
+ {
+  "id": "readkit-2022-05-11",
+  "name": "ReadKit",
+  "date": "2022-05-11",
+  "developer": "Balazs Varkonyi"
+ },
+ {
+  "id": "gemini-2-the-duplicate-finder-2022-04-07",
+  "name": "Gemini 2: The Duplicate Finder",
+  "date": "2022-04-07",
+  "developer": "MacPaw Inc."
+ },
+ {
+  "id": "spark-email-app-by-readdle-2022-04-07",
+  "name": "Spark \u2013 Email App by Readdle",
+  "date": "2022-04-07",
+  "developer": "Readdle Technologies Limited"
+ },
+ {
+  "id": "linear-2022-03-15",
+  "name": "Linear",
+  "date": "2022-03-15",
+  "designer": "Gavin Nelson",
+  "developer": "Linear"
+ },
+ {
+  "id": "paletter-4-2022-02-15",
+  "name": "Paletter 4",
+  "date": "2022-02-15",
+  "developer": "Toys, Inc."
+ },
+ {
+  "id": "solitaire-stories-2022-02-15",
+  "name": "Solitaire Stories",
+  "date": "2022-02-15",
+  "developer": "RED GAMES CO, LLC"
+ },
+ {
+  "id": "cleanmaster-remove-junk-files-2022-02-03",
+  "name": "CleanMaster: Remove Junk Files",
+  "date": "2022-02-03",
+  "developer": "Any Case Solutions"
+ },
+ {
+  "id": "linea-link-2022-02-03",
+  "name": "Linea Link",
+  "date": "2022-02-03",
+  "designer": "The Iconfactory",
+  "developer": "The Iconfactory"
+ }
+]

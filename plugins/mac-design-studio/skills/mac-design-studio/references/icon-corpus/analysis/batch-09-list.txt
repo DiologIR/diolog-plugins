@@ -1,0 +1,50 @@
+wireless-diagnostics-2023-05-23	Wireless Diagnostics	2023-05-23
+accessibility-inspector-2023-05-22	Accessibility Inspector	2023-05-22
+create-ml-2023-05-22	Create ML	2023-05-22
+filemerge-2023-05-22	FileMerge	2023-05-22
+instruments-2023-05-22	Instruments	2023-05-22
+reality-composer-2023-05-22	Reality Composer	2023-05-22
+maps-2023-05-19	Maps	2023-05-19
+stocks-2023-05-19	Stocks	2023-05-19
+testflight-2023-05-19	TestFlight	2023-05-19
+clipboard-manager-pasty-2023-05-17	Clipboard Manager — Pasty	2023-05-17
+marker-toolbox-2023-05-17	Marker Toolbox	2023-05-17
+pasta-2023-05-17	Pasta	2023-05-17
+ssh-files-secure-shellfish-2023-05-17	SSH Files – Secure ShellFish	2023-05-17
+plasticity-2023-04-27	Plasticity	2023-04-27
+coduo-pair-coding-for-xcode-2023-02-16	Coduo - Pair coding for Xcode	2023-02-16
+hidock-2023-02-16	HiDock	2023-02-16
+affinity-designer-2-2023-02-14	Affinity Designer 2	2023-02-14
+affinity-photo-2-2023-02-14	Affinity Photo 2	2023-02-14
+affinity-publisher-2-2023-02-14	Affinity Publisher 2	2023-02-14
+copilot-2023-02-14	Copilot	2023-02-14
+coppice-2023-02-14	Coppice	2023-02-14
+flighty-live-flight-tracker-2023-02-14	Flighty – Live Flight Tracker	2023-02-14
+gyroflow-toolbox-2023-02-14	Gyroflow Toolbox	2023-02-14
+lasso-2023-02-14	Lasso	2023-02-14
+pitch-collaborate-on-decks-2023-02-14	Pitch | Collaborate on Decks	2023-02-14
+raycast-2023-02-14	Raycast	2023-02-14
+screensearch-2023-02-14	ScreenSearch	2023-02-14
+tasks-to-do-lists-planner-2023-02-14	Tasks: To Do Lists & Planner	2023-02-14
+yarnbuddy-knit-and-crochet-2023-02-14	YarnBuddy – Knit and Crochet	2023-02-14
+font-proofer-2023-02-03	Font Proofer	2023-02-03
+franz-2022-11-22	Franz	2022-11-22
+opus-one-daily-planner-2022-11-22	Opus One: Daily Planner	2022-11-22
+proxyman-2022-11-22	Proxyman	2022-11-22
+rapidweaver-2022-11-09	RapidWeaver	2022-11-09
+simulator-2022-11-09	Simulator	2022-11-09
+superstar-respond-to-reviews-2022-11-09	Superstar - Respond to Reviews	2022-11-09
+cashculator-personal-finance-2022-10-17	Cashculator — Personal Finance	2022-10-17
+night-owl-2022-10-17	Night Owl	2022-10-17
+omnifocus-3-2022-10-17	OmniFocus 3	2022-10-17
+omnigraffle-7-2022-10-17	OmniGraffle 7	2022-10-17
+omnioutliner-5-2022-10-17	OmniOutliner 5	2022-10-17
+omniplan-4-2022-10-17	OmniPlan 4	2022-10-17
+action-camera-master-editor-2022-10-07	Action Camera Master: Editor	2022-10-07
+elpass-2022-10-07	Elpass	2022-10-07
+librarian-pro-2022-10-07	Librarian Pro	2022-10-07
+mango-5star-2022-10-07	Mango 5Star	2022-10-07
+money-budget-finance-2022-10-07	Money - Budget & Finance	2022-10-07
+badminton-clash-sport-league-2022-10-04	Badminton Clash: Sport League	2022-10-04
+ball-road-jump-smash-maze-2022-10-04	Ball Road Jump: Smash Maze	2022-10-04
+filesafe-2022-10-04	FileSafe	2022-10-04
