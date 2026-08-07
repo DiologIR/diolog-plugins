@@ -17,7 +17,7 @@ Map the DESIGN.md's names onto the contract's:
 | `rounded.*` | `radius.*` |
 | `elevation.*` | same |
 | `motion.*` | same |
-| container / gutter / prose | same |
+| container / gutter / prose | **do not copy.** The grid is not a tenant axis — the contract pins it to the platform's 1200 / 24 / 68 and refuses anything else as `measuredGrid`. A width measured off a brand's site and passed through is a style channel with a numeric keyboard, and it re-breaks parity per tenant. Every DESIGN.md measured so far states these exact three. |
 
 ## The one token you must compute: `primaryOnDark`
 
@@ -117,7 +117,7 @@ Pick per section from the enumerated set:
 | `reveal` | the default. Fade-and-rise on scroll |
 | `lineMask` | a display headline arriving a line at a time |
 | `parallax` | a background photograph drifting as its section leaves |
-| `countUp` | numerals whose final value is already in the HTML |
+| `countUp` | numerals whose final value is already in the HTML — and **never over a stated figure.** The contract refuses it (`lodgedFigureMotion`) on any section carrying a `SourcedValue` or rendering a lodged document: ramping a disclosed number from zero makes it emphasis, and over a resource or reserve figure it detaches the number from the competent-person statement it is only valid alongside |
 | `lineDraw` | an SVG path drawing itself once |
 | `clipUncover` | a photograph uncovering on entry |
 | `railDrift` | a horizontal rail drifting against the scroll |

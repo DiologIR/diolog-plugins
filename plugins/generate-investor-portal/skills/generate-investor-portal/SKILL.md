@@ -295,6 +295,54 @@ company, on `/`, at 1280px, and every one of them was green while generated port
 no header. Open a *generated* tenant, on a page that is **not** the home page, at **375px**, and
 walk it with the Tab key. Those three deviations found three blocking defects on their first run.
 
+## Ideas that look good and are not
+
+These are not style preferences. Each one is an idea a capable author re-derives from the
+same brand documents you are reading, so each is written with the mechanism that defeats it
+rather than a verdict — a rule with no reason attached loses to the first person with an
+argument, and the argument for all six is good.
+
+**Three of them the contract now refuses outright**, so you will meet them as a validation
+error rather than as advice. The reason is in `PlatformProhibitionSchema` in
+`libs/shared/src/investor-portal/portal-contract.ts`; the short version:
+
+| Refused | Why it is not a matter of taste |
+|---|---|
+| An excerpt of a lodged announcement (`announcementExcerpt`) | Quoting one sentence of a price-sensitive release is **selective emphasis**, and it changes what the release says even when every word is verbatim — the reader gets the fragment the portal chose in place of the document the company lodged. Bound three ways: the lodged-document field set is closed so an excerpt has nowhere to live, no string may be a fragment of a lodged title, and no string may be a lodged title with its case changed. Render the title whole and link to the PDF. |
+| `countUp` over a stated figure (`lodgedFigureMotion`) | Ramping a numeral from zero turns a disclosure into emphasis. Over a mineral-resource or ore-reserve figure it detaches the number from the **competent-person statement** it is only ever valid alongside; over any other figure it detaches it from its as-at date and its source. `countUp` is still available over a number that is not a stated figure. |
+| A measured grid value in the theme (`measuredGrid`) | `container` / `gutter` / `prose` read off a brand's site and passed through is a free-text style channel with a numeric keyboard: unbounded, cited to nothing, different on every tenant, and it re-breaks the parity oracle per tenant. Every DESIGN.md measured so far states the same 1200 / 24 / 68. If a brand genuinely differs, add the rung to `PLATFORM_GRID` **with the sentence that justifies it** — the same standard `WebglFigureSchema` holds its three values to. |
+
+The general form of that last one: **a new tenant style axis is an enum or a bucketed value,
+never a pass-through number.** A raw measured number is a free-text channel expressed
+numerically — it ends the bounded vocabulary the same way a `styleOverrides` blob would, and
+it does it without looking like one.
+
+The remaining three are design decisions you make before any record exists, so they cannot
+be a schema rule. Do not take them:
+
+- **Composing the page from engagement telemetry.** Ordering or promoting sections by what
+  readers click is self-echoing — the telemetry measures the layout that produced it, so the
+  loop converges on whatever the first layout happened to surface. Worse on this surface
+  specifically: it demotes exactly the content nobody clicks *and that is mandated anyway* —
+  governance documents, the registry block, disclaimers, the illustrative-value ledger.
+  Section order comes from what the record holds, which is the same input for every reader.
+  Engagement evidence is not brand evidence.
+
+- **Reader-density rungs with a HUD toggle** (a "summary / standard / full" switch). It varies
+  what ONE reader sees; it does nothing about what distinguishes two companies, which is the
+  problem the structural vocabulary exists for. And it multiplies the surface every
+  computed-style oracle has to cover by the number of render states, on a platform whose gates
+  are already the thing holding the tenant count up. If a portal is too dense, the record is
+  placing too many bands — cut sections, not pixels.
+
+- **A distinctiveness loop with no hard abort.** "Keep differentiating until the two tenants
+  are far enough apart" runs out of honest input: once the second-ranked evidence in the
+  DESIGN.md is used, the loop has nothing left and starts choosing by taste or by noise. That
+  is variety from randomness, and it fails the derivability floor every axis on this platform
+  is held to — **every option must be traceable to a sentence in the brand's own documents and
+  must cite it.** A loop that cannot cite its next move must stop, and report that the brand's
+  material supports N axes rather than inventing the N+1th.
+
 ## What this skill will not do
 
 - **Publish.** Records are written as `draft`. Publishing is a human decision, and on an
