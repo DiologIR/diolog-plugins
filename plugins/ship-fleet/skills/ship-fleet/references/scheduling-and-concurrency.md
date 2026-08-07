@@ -219,8 +219,18 @@ Rules that override ship-feature's defaults:
   accept/reject tally in your handback; a genuine unavailability is a LOGGED in-family
   downgrade, never a silent skip.
 
+- NEVER strip the pipeline's safeguards to make a runner cheaper. If you author a reduced
+  ("solo") brief for a small item, it must keep: the acceptance evidence rule (typed
+  evidence per clause — measurement / exercised request / red→green test), the
+  affected-test sweep, the two-probe rule before any "verification is blocked" claim,
+  and the completion comment/progress note with its tables. A hand-rolled brief that
+  drops Phase D or the browser check is how a fix ships "verified by code reading" —
+  the audit corpus's most common failure. Cost is cut by model/effort routing and
+  scope, never by deleting verification.
+
 Final message = a report: status (ready-to-merge | blocked | failed), branch + worktree,
-gate evidence (typecheck/tests/e2e results verbatim), deferred children discovered
+gate evidence (typecheck/tests/e2e results verbatim — behavioural evidence for UI claims,
+not just build gates), deferred children discovered
 (title + suggested deps), shared-surface changes you wanted but skipped, questions for the user.
 ```
 

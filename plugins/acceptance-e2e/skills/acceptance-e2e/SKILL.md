@@ -176,6 +176,8 @@ hold, not that the asserts were watered down. **Run the full suite TWICE** — f
 (optimistic-id timing, parallel-load 5xx, leftover state) only surface on the second
 run, and green-twice also proves isolation.
 
+**A committed spec carries its run record — "authored, not run locally" is a defect, not a caveat.** Never commit a spec file whose run output you have not captured: the commit (or the run report) must carry the pass/fail counts of an actual execution, and a suite committed unrun must be assumed red — one real suite shipped that way sat red for 14 days encoding the exact acceptance criterion a later fix needed, and nobody knew. Same discipline for `test.fixme`/`test.fail`: each carries a precise comment naming the bug/ticket and the un-fixme condition, and a fixme whose *assertion encodes a since-reversed requirement* must be rewritten or deleted, never left hiding — it reads as coverage while asserting the old world.
+
 **Assertion-strength gate (after green-twice).** Stabilization is exactly where a
 suite quietly goes hollow — each individual reframe is defensible, and the sum stops
 proving anything. So once the suite is green twice, run one strong-model pass that

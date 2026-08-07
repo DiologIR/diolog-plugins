@@ -23,7 +23,9 @@ Runs **in your current session** with `Read`/`Glob`/`Grep`/`Write`/`Edit`, `Bash
 
 4. **Write the plan file.** Use `Write` to save it at `docs/plans/plan-<ID>.md` (uppercase id, e.g. `docs/plans/plan-DIO-0001.md`) in the **target repository** (the same repo the worker will run against). Start with the shared header, then the tier's template. Follow `references/plan-tiers.md` for the exact templates, quality criteria, and the anti-over-engineering rules (a 10-line diff gets a ~30-line plan, not a 260-line one).
 
-5. **Plan review gate — before the status flips (Standard and Large tiers; skip for Trivial/Small).** The plan is the pipeline's highest-leverage trusted-first-output artifact — everything downstream amplifies it — so it gets its own gate, run after the file is written and before step 6:
+5. **Scope-narrowing check (ALL tiers, mechanical — a grep and a diff, not a model).** Before any status move, compare every "Out of scope" line and every requirement the plan does **not** carry against (a) the spec's `## Feature description` and (b) the triage Assumptions. Any overlap is a narrowing, and silence in the plan file is not disclosure — surface it in the spec's `## Plan` section as its own line: *"The plan excludes <X>; triage assumption <N> ('<text>') appears to include it — edit here to keep it excluded, or re-run `/plan` to plan it in."* This check exists because the review gate below is skipped for Trivial/Small tiers, and small changes are exactly where a quiet descope otherwise meets no reader before `/work` inherits it as a premise.
+
+6. **Plan review gate — before the status flips (Standard and Large tiers; skip for Trivial/Small).** The plan is the pipeline's highest-leverage trusted-first-output artifact — everything downstream amplifies it — so it gets its own gate, run after the file is written and before step 7:
    - **Mechanical path check (a script/grep, not a model).** Every file path the plan references must exist: extract the backtick-quoted paths from `plan-<ID>.md` and check each (`ls` / `git ls-files`), exempting only paths the plan explicitly marks *to be created*. A referenced-but-missing path means the plan was grounded in assumption, not code — re-investigate and fix it.
    - **Cross-family one-shot review — the Codex CLI, `gpt-5.6-sol` at `max` effort (mandatory where available).** The plan is the artifact every later stage amplifies, so its reviewer comes from **outside Claude's model family** rather than from the family that wrote it. Run it read-only and grounded in the real codebase:
 
@@ -44,7 +46,7 @@ Runs **in your current session** with `Read`/`Glob`/`Grep`/`Write`/`Edit`, `Bash
 
    Findings → fix the plan (and re-run the failed check) before flipping status. Record the verdict, the accept/reject tally, and any downgrade in the plan's gate note. The gate costs one read; a plan defect costs the whole downstream pipeline.
 
-6. **Link the plan from the spec and bump status** (skip in dry-run). Append a short pointer section to `docs/specs/spec-<ID>.md`:
+7. **Link the plan from the spec and bump status** (skip in dry-run). Append a short pointer section to `docs/specs/spec-<ID>.md`:
 
    ```markdown
    ## Plan — <YYYY-MM-DD>
@@ -54,7 +56,7 @@ Runs **in your current session** with `Read`/`Glob`/`Grep`/`Write`/`Edit`, `Bash
 
    Then set the spec header `Status: Ready for Work` (and `Last updated`), and update the ledger row's Status to `Ready for Work`. Skip the status change only if the spec is already at `Ready for Work` or further downstream (`In Progress`, `In Review`) — never downgrade. The plan file lives in the repo with the code and is read from there; don't copy its contents into the spec — link by path so the two never drift.
 
-7. Print a short summary (tier + the plan path + the gate outcome + the spec id). In dry-run, say the file was written locally and no spec/ledger updates were made.
+8. Print a short summary (tier + the plan path + the gate outcome + the spec id). In dry-run, say the file was written locally and no spec/ledger updates were made.
 
 ## Workflow fan-out limits (avoid throttling)
 
@@ -70,6 +72,7 @@ When step 3 uses the `Workflow` tool to investigate in parallel:
 - **Replacement/parallel paths get a Parity inventory.** When the plan routes an existing flow through a new engine/path/provider (even flag-gated with the old path as fallback), the plan MUST include a section enumerating the existing path's load-bearing behaviours — security guards (untrusted-input framing/sanitisation, injection envelopes), validation/reconciliation steps (e.g. output-vs-expected-structure checks), observability/metering (token/cost accounting, progress, tracing), and error semantics — each explicitly marked **keep / port / drop-with-rationale**. A new path that silently loses a guard the old path had is the classic engine-swap regression: it ships green because nothing asserts the *absence*. The worker's acceptance review audits against this inventory.
 - Keep the plan scoped to the spec; don't extend to adjacent features or cleanup.
 - Name specific file paths, functions, components, and analogues — but only where they're real (verify with Glob/Grep). A bad plan references files that don't exist or invents patterns not used in the codebase.
+- **Mark rendered-appearance claims MEASURED or ASSUMED.** Glob/Grep verifies that code exists and what it says — never what it renders. Any plan statement about how something currently *looks or behaves on screen* must carry `(measured: <browser evidence>)` or `(assumed from source — verify in browser before building on it)`. A class string is not a rendered fact — overrides get silently discarded — and a false "reference implementation" premise read off source is how the worker inherits an unchallenged wrong truth. The read-only review gate above cannot catch these (it reads code, it does not render), so the marking is the only guard.
 - When the change is trivial, a short plan is the correct output, not a failure.
 - **Length is a tier constraint, not an outcome.** Written plans run long by default; `references/plan-tiers.md` sets the budget and a 10-line diff gets a ~30-line plan. Padding with empty sections is worse than omitting them — `/work` treats every section as work to do. Full length calibration in `feature-spec-pipeline/skills/work/references/model-and-effort.md` §7.
 - **Model routing by tier (REVIEWER ≥ WRITER)** — and effort is the second dial, canonical in `feature-spec-pipeline/skills/work/references/model-and-effort.md`: readers at `low`, Trivial/Small synthesis at `medium`, Standard/Large synthesis and this gate at `high`. Step effort down before model down; a strong model at low effort keeps the capability class the invariant below is really about. Trivial/Small synthesis may run on a cheaper model (sonnet). Standard synthesis runs on the strongest model (opus) — or on glm-5.2-high via the zero CLI, in which case the step-5 gate is doubly mandatory. Large synthesis never downgrades. Whatever wrote the plan, the gate's reviewer must be at least as strong as the strongest model that wrote it — and step 5 routes it **out of family** to Codex `gpt-5.6-sol` at `max` effort, which satisfies that bar and adds the independence an in-family reviewer cannot.

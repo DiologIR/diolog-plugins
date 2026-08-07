@@ -1,12 +1,13 @@
 # diolog-tasks-pipeline
 
-Three native Claude Code skills that run the Diolog Tasks issue pipeline — **triage → plan → worker** — entirely inside your interactive session. Formerly `linear-issue-pipeline`; the pipeline now targets the **diolog-tasks MCP** (Diolog's own Tasks product) instead of Linear.
+Four native Claude Code skills that run the Diolog Tasks issue pipeline — **triage → plan → worker → verify** — entirely inside your interactive session. Formerly `linear-issue-pipeline`; the pipeline now targets the **diolog-tasks MCP** (Diolog's own Tasks product) instead of Linear.
 
 | Skill | What it does |
 |-------|--------------|
 | **tasks-triage** | Codebase grounding + a Specification Sentinel product/UX/compliance review of a Diolog Tasks issue (or all `Todo` issues). Posts a short, non-technical "Ready for Implementation Plan" comment (with a UI & logic preview + Assumptions block) or — only for genuinely essential gaps — an Essential Questions comment, and sets status. Never writes an implementation spec. |
 | **tasks-plan** | Classifies a plan-size tier (Trivial/Small/Standard/Large), investigates the codebase (fanning out via the Workflow tool for big tickets), writes the plan to `docs/plans/<id>.md`, then **comments the repository-relative path** to that file (it does **not** upload/attach the file) and moves the issue to `Ready for AI`. |
 | **tasks-worker** | Implements a planned issue in an isolated git worktree via **dynamic ultracode workflows** (understand → implement → rebase onto `origin/staging` → acceptance-review vs the original ticket → resolve every finding → finalize). Commits locally and comments completion; **no remote PR** — the branch stays local for human review. |
+| **tasks-verify** | Independent acceptance, in a **fresh session** (never the one that built the ticket): re-derives the requirement list from the ticket + comments alone, then closes every requirement on typed behavioural evidence — browser measurements, exercised requests, stored-row counts, affected e2e specs actually run — and posts a per-requirement verdict comment. The worker reviews its own work as QA; this skill is the acceptance authority, because self-graded acceptance was the most common single cause in the 110-ticket WEB-4905 audit (46% of requirements delivered as specified). Audit-only. |
 
 ## Why native skills (not the old Agent SDK scripts)
 
@@ -35,4 +36,4 @@ Invoke by name or describe the task:
 - `/tasks-plan DIO-1234` · "write the implementation plan for DIO-1234"
 - `/tasks-worker DIO-1234` · "implement DIO-1234"
 
-The pipeline order is triage → plan → worker, but each skill stands alone.
+The pipeline order is triage → plan → worker → verify, and each skill stands alone — with one deliberate exception: tasks-verify must NOT run in the session that triaged/planned/built the ticket (its value is exactly that it does not share the builder's premises).

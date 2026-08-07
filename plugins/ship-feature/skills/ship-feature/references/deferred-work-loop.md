@@ -35,7 +35,7 @@ Either way, the invariant to hold: **by the time Phase 5 starts, all parent + de
 
 ## Loop, don't recurse forever
 
-Repeat B/C until the evidence (progress notes + plans, parent and children) shows no outstanding phase or deferred item. Each pass ends with the same per-phase verification `/work` runs internally, and you re-read the resulting progress note before deciding whether to loop again. If a "deferred item" turns out to need a human decision (an essential question, a product call), stop and ask — same rule as triage; don't loop on an ambiguity.
+Repeat B/C until the evidence (progress notes + plans, parent and children) shows no outstanding phase or deferred item. Each pass ends with the same conformance checks `/work` runs internally, and you re-read the resulting progress note before deciding whether to loop again. If a "deferred item" turns out to need a human decision (an essential question, a product call), stop and ask — same rule as triage; don't loop on an ambiguity.
 
 ## Handing off to Phase 5
 
