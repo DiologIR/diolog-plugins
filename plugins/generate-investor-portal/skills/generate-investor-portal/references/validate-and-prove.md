@@ -213,9 +213,76 @@ Three checks, and they are cheap because both records are already in the databas
 3. **Copy collision.** Compare `/` section headings after substituting the company name out.
    Today five generated tenants share five of five.
 
-And the gate that already exists must be pointed at production: `webgl-probe.mjs --assert`
-defaults to three *local* fixtures. A gate whose default target set is not the thing that
-ships is a gate that measures a rehearsal.
+All three now exist as `scripts/portal-collision.mjs` (`npm run test:collision`), reading the
+three keys from the contract so the report, the write path and the generator compare one
+definition. **Run it and read the row count, not the verdict.** On 2026-08-08 it reported
+**13 collisions over 53 published pairs** — and four of those pairs were between tenants the
+six-portal review never opened, including `ecargo-holdings-paid ↔ nh3-clean-energy-paid`, which
+collides on **all three axes at once** and is worse than either pair the review named. A review
+that opens six of eleven tenants is a review with a sampling frame; a pairwise gate has none.
+
+### Why a failing gate did not block a deploy — five reasons, and the fifth is the one to learn
+
+`webgl-probe.mjs --assert` existed, its floor was right, and it *failed the live pair*. It
+never stopped anything. Enumerated, because each is a separate hole and fixing one leaves four:
+
+1. **No CI.** There was no `.github/` directory at all.
+2. **No hook.** `.git/hooks` held nothing but the samples git ships.
+3. **The deploy runs one gate, and it is not this one.** `vercel.json` sets no
+   `buildCommand`, so the deploy runs `npm run build` — `node scripts/contract-check.mjs &&
+   next build`. That is a vendored-file **hash comparison**. Nothing else on the deploy path
+   executes a suite.
+4. **It was not in `package.json`.** Not as `test:*`, not anywhere — so it could not be typed
+   as `npm run …`, and nothing that enumerates scripts could find it.
+5. **Its default target set could not fail it.** With no arguments it measured three *local*
+   fixtures — `alfabs`, `metallium-ltd`, `bhp-group-limited` — and printed
+   `3/3 tenant pairs are distinguishable at the framebuffer`, exit 0. A person who ran the
+   gate, correctly, by hand, would have been told the thing was fine.
+
+Reason 5 is the general one. **A gate whose default target set is not the thing that ships
+measures a rehearsal**, and it is the failure mode that survives every organisational fix —
+wire it into CI and CI will run the rehearsal on a schedule. Two habits close it: a gate names
+its own target set in its summary line (`measured over the 6 LIVE paid origins` /
+`measured over the THREE LOCAL FIXTURES — this says nothing about production`), and the live
+target list is a committed artefact a second gate can be diffed against.
+
+### Two severities, because a refusal on a live record is an outage
+
+The ladder in this file — *the contract refuses it > an assertion catches it > the skill says
+do not* — has a ceiling, and it is worth knowing before you reach for rung one.
+
+`PortalRecordSchema` is enforced on the way **in** and on the way **out**. `lib/mongo.ts` and
+`lib/resolve.ts` both `safeParse` a stored record and return `null` on failure, which the
+renderer serves as a 404. So a rule added to `superRefine` is **retroactive on every record
+already published**.
+
+The DIO-0122 review's own patch put *"roboto may not lead a stack"* there and reported
+*"jb-hi-fi-paid's theme is now refused"* as the win. It is an outage: a paying listed company's
+investor portal goes dark on the next deploy, to fix a font falling back to Helvetica. Applied
+to the rest of that review's findings it would have taken **four of six** tenants down for a
+gapped section index and a fifth for having no governance page.
+
+So the rung above an assertion is not always `superRefine`:
+
+| tier | where | what it means | what it costs |
+|---|---|---|---|
+| **read** | `PortalRecordSchema.superRefine` | the record is **wrong** — a hotlinked asset, an undisclosed illustrative figure | a live portal stops rendering |
+| **publish** | `publishBlockers(record, peers)`, called by `seed-portal.mjs` | the record is **poor** — a font nobody serves, a gapped index, a masthead repeating itself | a *write* is refused; nothing live moves |
+| assertion | the acceptance suites | the rule is proven to bite | a suite fails |
+| skill prose | this file | somebody has to read it | it lost 5-of-5 |
+
+The publish tier refuses every FUTURE record, which is the whole of what a generator defect
+needs. Two rules keep it honest, and both are asserted in `acceptance-structure.mjs`:
+
+- **a record every publish rule refuses must still parse `PortalRecordSchema` cleanly** — the
+  tier's contract with itself, and the thing that makes adding a rule safe;
+- **the generator must not be able to emit a record the publish tier refuses**
+  (`acceptance-generate.mjs`, over all fourteen tenants) — otherwise the tier is a wall the
+  pipeline walks into on every run.
+
+**Before you push a finding to rung one, ask what is already published.** If the defect is live
+on real tenants, a read-tier rule is not a stronger gate than a publish-tier one — it is the
+same gate plus an outage.
 
 ### The viewport is part of the gate, and 1280 is not a safe default
 

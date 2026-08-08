@@ -391,6 +391,40 @@ Five identical lines is not a portal for this company; it is the previous compan
 new palette. `references/validate-and-prove.md` carries the three collision checks and where they
 belong.
 
+**An axis a reader cannot see is a database field, not a design device.**
+
+The platform allocates prominence from a scarce budget: one emphasis-3 and two emphasis-2 per
+page, bid for in citable currencies, so two companies with different evidence emphasise different
+sections. Measured on production 2026-08-08 across four emphasis-aware tenants and eleven pages:
+**the emphasis-3 rung had never once been won by a bid.** All four awards were the hero, taken as
+the off-budget `pageOpener` levy. The mechanism was that the rung was offered to the top-ranked
+bid *only* — if that bid had no audited dark rendering the rung was burned, and a dark-capable
+section ranked #2 could never reach it. That is a bug, and it is fixed: the rung passes down the
+ranking, and only a page where *nothing* can express it reports it unspent.
+
+The review that found it proposed a second fix — emit `data-emphasis` on every `<section>` so a
+rendered-layer gate can read the budget. **Do not take that one, and the reason generalises.**
+Emphasis is not a device; it is a *ranking step* whose output is `band` and `divider`, and those
+are already in the DOM and already gateable. Emitting the rank itself would put a database field
+into the markup so a gate could confirm the database, which is a gate measuring its own input.
+Worse, it would break a deliberate assertion — *nothing that renders a page reads `emphasis`* —
+which is the entire proof that the feature cannot move the parity reference.
+
+The measurement sharpens what the real defect is. At level 2 the budget maps to `band: 'surface'`,
+which measures **1.08:1 against the canvas**. So after all of it, the visible difference between
+two tenants' home pages is which of two sections carries a band 8% off white. **The defect is not
+that emphasis is invisible to a gate. It is that emphasis is nearly invisible to a reader**, and
+the fix for that is a wider set of audited dark-capable kinds and a louder level-2 treatment —
+not an attribute. Gate what a section *renders*, never what a record *ranked*.
+
+**Report the imagery, and never decide it silently.** Two of six live paid portals — Temple &
+Webster and Telstra — ship with **zero images on every page**: a type-on-charcoal hero and
+text-list business pages, for a paying listed company. Nothing was broken; every image the record
+declared loaded, and there were none. `references/imagery.md`'s rule is find-before-you-generate,
+and when finding yields nothing and generating is declined, that is a **decision** — so it belongs
+in the generation report (`imagery: N crawled, M generated, K sections without`) and a
+zero-imagery paid record is a publish-blocking warning a human clears, not a silent outcome.
+
 ## Ideas that look good and are not
 
 These are not style preferences. Each one is an idea a capable author re-derives from the

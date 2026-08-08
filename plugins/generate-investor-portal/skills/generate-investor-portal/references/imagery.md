@@ -11,6 +11,25 @@ On a real run this took a portal from four generated images to **zero** — ever
 the finished surface was the company's own, which removed an entire entry from its disclosure
 ledger. That is a better outcome than a well-disclosed generated image, not merely a cheaper one.
 
+### …and NOTHING is a decision, so say it out loud
+
+Find-before-generate has a failure mode nobody wrote down, and it shipped: finding yields
+nothing, generating is declined, and the portal goes out with **no photograph of the company on
+it anywhere**. Measured on production 2026-08-08, two of six live paid tenants — Temple &
+Webster and Telstra — served **0 images on every page**. Type on a near-black ground for a hero;
+text lists for `/business`. Nothing was broken. Every image each record declared loaded, and each
+declared none.
+
+That is invisible to every gate on the pipeline, because each one asks *does what the record
+names actually render?* and the answer is yes. Imagery presence is a per-tenant **outcome**, and
+an outcome nothing reports is an outcome nobody chose:
+
+- put it in the generation report — `imagery: N crawled, M generated, K sections without`;
+- treat a zero-image **paid** record as a publish-blocking warning that a human clears, in the
+  same breath as the money;
+- and when a section's slot stays empty, that is the record placing FEWER bands (see the skill's
+  thin-record rule), not a band with a hole in it.
+
 Two things to check on a crawled image before placing it:
 
 - **Baked-in furniture.** Source sites overlay caption bars and award badges. They collide with

@@ -123,23 +123,48 @@ that rule is already in this file for extraction, and it applies identically to 
 `primaryOnDark`, `onPrimary` and the small-text eyebrow role, each of them named, each of them
 recorded. **If the repair has replaced the brand colour, the repair is the defect.**
 
-### `onPrimary` is a PAIR, and 12px is where it fails
+### `onPrimary` passes and the reader still cannot read it: an alpha undoes an AA repair
 
-A third site the two rules above still miss: the accent as a **background** with ink on it, at
-small sizes. Measured across six live tenants, `<span class="unit__fl">` — the 12px unit label
-on the accent stat chip — fails 4.5:1 on **four of them**:
+A third site the two rules above still miss, and the first diagnosis of it — written here on
+2026-08-08 from an axe report — was **wrong in a way that would have shipped the defect again**.
+It is left visible rather than deleted, because the correction is the lesson.
 
-| Tenant | ink | accent | ratio |
-|---|---|---|---|
-| jb-hi-fi | `#f2f1e6` | `#807500` | **4.14** |
-| bhp | `#302118` | `#e65400` | **4.15** |
-| alfabs | `#fbe9ea` | `#d72229` | **4.32** |
-| metallium | `#30211d` | `#e85a2a` | **4.35** |
+The finding: `<span class="unit__fl">`, the 12px unit label on the accent stat chip, fails 4.5:1
+on four of six live tenants (4.14 – 4.35). The first reading was "the ink was chosen by eye and
+lands in the low fours — compute `onPrimary` against `primary` at the 4.5 floor, always."
 
-Every one is *close*, which is the tell: the ink was chosen by eye against the accent and lands
-in the low fours. Two tenants pass, by luck, at 4.56 and 5.63. Compute `onPrimary` against
-`primary` at the 4.5 floor, always — this pairing carries body-size text, so the large-text
-exemption never applies to it.
+**Measured in the browser instead of read off axe, that reading is false.** `.unit__fig` sets
+`color: var(--on-primary)`, and the vars layer already *replaces* a stated `onPrimary` that
+fails 4.5:1 on the accent. The token pair is compliant on every tenant:
+
+| Tenant | ink (`--on-primary`) | accent | ratio | `opacity` | composited | ratio |
+|---|---|---|---|---|---|---|
+| alfabs | `#ffffff` | `#d72229` | 5.06 | `.9` | `rgb(251,233,234)` | **4.32** |
+| metallium | `#1C1B1B` | `#E85A2A` | 4.85 | `.9` | `rgb(48,33,29)` | **4.34** |
+| bhp | `#1C1B1B` | `#E65400` | 4.61 | `.9` | `rgb(48,33,24)` | **4.16** |
+| jb-hi-fi | `#FFFFFF` | `#807500` | 4.71 | `.9` | `rgb(242,241,230)` | **4.15** |
+| telstra | `#FFFFFF` | `#0D54FF` | 5.63 | `.9` | `rgb(231,238,255)` | 4.84 |
+
+Every tenant passes on the colours it states, 4.61 to 5.63. A single `opacity: .9` on the label
+composites that repaired ink back through the accent underneath it and takes four of five below
+AA — including the hand-built reference build.
+
+Three things follow, and the third is the general one:
+
+- **A contract rule comparing `theme.onPrimary` to `theme.primary` would have caught none of
+  them.** It is the rule the first reading asked for. It scores 4.61–5.63 and returns green.
+- **`opacity` is the only property that moves a computed contrast without moving any colour
+  token.** Every gate that reads a design system's resolved token map is structurally blind to
+  it, and so is every audit that reasons from the tokens rather than from the render.
+- **Muting text is a COLOUR, chosen and checked against its ground — never an alpha applied to a
+  colour that was already chosen and checked.** If a label wants to sit back from the figure
+  above it, give it its own token and measure that token.
+
+And the method note, which is why the first reading was wrong: axe reports the **composited**
+foreground (`#f2f1e6`), which looks like a stated token and is not one. `#f2f1e6` is
+`0.9 × #FFFFFF + 0.1 × #807500`. When a measured foreground is not a value anywhere in the
+theme, something between the token and the pixel is doing arithmetic — find it before writing
+the rule.
 
 ### The LEADING family is the claim; everything after it is a fallback
 
