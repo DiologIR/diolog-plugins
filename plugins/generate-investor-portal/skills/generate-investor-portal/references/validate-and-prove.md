@@ -134,6 +134,110 @@ fallback are never among the skips, and print the skip list beside the count. A 
 measurement you did not take, and a gate that does not say how many it did not take is reporting
 its coverage as its result.
 
+### A gate that PRINTS its own counter-example and passes
+
+Worse than a skip, because the evidence is on the screen. Measured on production 2026-08-08,
+`rendered-typeface.mjs` — a probe written specifically to catch a record naming a face nobody
+serves — emitted this and exited 0:
+
+```
+── https://jb-hi-fi-limited.diolog.app
+   /            ok   leads "Roboto" → renders "Helvetica" (local)
+
+RESULT  checks=12  failures=0  every portal renders the typeface it names, from its own origin
+```
+
+The row states the defect (*leads Roboto → renders Helvetica*) and the summary denies it. The
+predicate was `matchesLead || (leadIsSystem && SYSTEM_OK.has(rendered))` and `roboto` was on
+`SYSTEM_OK` — so "the reader's own machine supplied it" was true of the *fallback* while the
+lead went unserved.
+
+Two rules fall out, and both generalise past fonts:
+
+- **When a check has an "acceptable alternative" branch, the branch must be narrower than the
+  thing it excuses.** "A system face rendered" is a fine outcome when the record *led* with a
+  system face. It is not a fine outcome when the record led with something else and the system
+  face is what the reader got instead.
+- **If a gate prints a field, compare the printed fields.** `leads X → renders Y` was already
+  in the output. Nothing compared X to Y under the condition that mattered. A one-line
+  post-condition — *no `ok` row may print two different families* — would have caught it
+  without understanding fonts at all.
+
+### A record-level contrast gate cannot see a pairing the renderer hardcodes
+
+Assertion 5 above is a real gate and it is worth having. It reads the **resolved token map**,
+which means it can only see pairings that are expressed as tokens. Measured on production:
+
+```tsx
+// app/site/sections.tsx — inside a panel whose background is var(--surface-dark)
+<span className="over" style={{ color: 'var(--primary)' }}>{id?.legalName}</span>
+```
+
+`--primary-on-dark` exists, every theme carries it, and the vars layer computes it to exactly
+4.5:1 against that ground. This one component reached past it. Result: **five of six live
+tenants**, the company's own name at 13px, between **1.97:1** and 4.46:1 — and the
+record-level gate was green because the pairing (`--primary` × `--surface-dark`) is not in
+the token map; it is in a JSX inline style.
+
+So the record gate needs a **source-side sibling**, which is cheap and needs no browser:
+
+> Grep the renderer for `var(--primary)` in a `color:` position, and fail any occurrence
+> whose enclosing element sits inside a `--surface-dark` / `.on-dark` subtree. The on-dark
+> role exists; a component that does not use it is a bug whether or not a reader has met it.
+
+The general shape: **a gate that reads the record proves things about the record.** Anything
+the renderer decides for itself — an inline style, a hardcoded class, a default — is outside
+its domain, and the fix is a second gate at that layer rather than a wider claim from the
+first one.
+
+### Open a SECOND tenant beside the first
+
+Every gate on this pipeline is per-tenant, and the defect that shipped is between tenants.
+Measured on production 2026-08-08 across six live portals: **`metallium-ltd` and
+`telstra-group-limited` publish the same eight pages, with the same section kinds in the same
+order on every one of them, under the same archetype.** `jb-hi-fi-limited` matches Telstra on
+seven of eight and additionally carries a byte-identical WebGL vector — which the repo's own
+framebuffer gate scores at a still-distance of **1.169 against a floor of 1.9**.
+
+Every per-tenant gate was green. They cannot be otherwise: sameness is not a property of a
+record, it is a property of a *pair*.
+
+Three checks, and they are cheap because both records are already in the database:
+
+1. **Structural collision.** For a new `paid` record, compare `(archetype, page paths,
+   per-page section-kind order)` against every published paid tenant. An exact triple match
+   is a refusal, not a warning.
+2. **Motion collision.** Compare the seven-value canvas vector (`preset`, `palette`,
+   `density`, `figure`, `stroke`, `accentRation`, `intensity`). Identical vectors on two
+   tenants means the hero's moving layer differs only by hue.
+3. **Copy collision.** Compare `/` section headings after substituting the company name out.
+   Today five generated tenants share five of five.
+
+And the gate that already exists must be pointed at production: `webgl-probe.mjs --assert`
+defaults to three *local* fixtures. A gate whose default target set is not the thing that
+ships is a gate that measures a rehearsal.
+
+### The viewport is part of the gate, and 1280 is not a safe default
+
+`acceptance` has no width. The sweep that found it did:
+`document.documentElement.scrollWidth` against the viewport, at 375 / 768 / 1280 / 1440 /
+1920, on every page of every tenant. Result: **21 overflowing page-widths across three
+tenants**, including the primary "Contact investor relations" CTA rendering *entirely
+off-screen* at both 1280 and 1440 on two of them, and every page of a third overflowing by
+32px at 375 with its mobile nav labels clipped.
+
+This is three lines and it needs no judgement:
+
+```js
+const sw = await page.evaluate(() => document.documentElement.scrollWidth);
+const vw = page.viewportSize().width;
+ok(sw <= vw + 1, `${path} @${vw}: document is ${sw}px wide — it scrolls sideways`);
+```
+
+Run it at **1440 as well as 1280**. The two tenants above are fine at 768 and 1024, broken at
+1280 and 1440, and correct again above ~1600 — so a matrix that skips the middle reports a
+working header.
+
 ## Report the three claims separately
 
 ```

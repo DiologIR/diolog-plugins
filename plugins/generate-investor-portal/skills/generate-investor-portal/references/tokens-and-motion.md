@@ -108,6 +108,60 @@ a statement that it can be read on the thing it sits on. **A stated value that f
 floor is replaced exactly as an absent one is**, and the replacement goes in the record's
 provenance, because a repair nobody recorded looks identical to a brand that got it right.
 
+### The repair goes in a ROLE. It never goes in `primary`.
+
+The other end of the same trap, and it destroys the brand rather than the contrast. Measured on
+production 2026-08-08: `jb-hi-fi-limited`'s `theme.primary` is **`#807500`** — a dark khaki. JB
+Hi-Fi's brand is a saturated yellow. That value is the *repaired* colour written back into the
+brand slot, so it paints the monogram disc, the header CTA, the hero's accent word and every
+stat chip. The raw brand colour appears nowhere on the portal, and the portal does not look like
+JB Hi-Fi.
+
+A near-miss on a brand colour is worse than an obvious substitution because nobody catches it —
+that rule is already in this file for extraction, and it applies identically to repair.
+`primary` stays exactly as the brand states it. The lifted value lives in `link`,
+`primaryOnDark`, `onPrimary` and the small-text eyebrow role, each of them named, each of them
+recorded. **If the repair has replaced the brand colour, the repair is the defect.**
+
+### `onPrimary` is a PAIR, and 12px is where it fails
+
+A third site the two rules above still miss: the accent as a **background** with ink on it, at
+small sizes. Measured across six live tenants, `<span class="unit__fl">` — the 12px unit label
+on the accent stat chip — fails 4.5:1 on **four of them**:
+
+| Tenant | ink | accent | ratio |
+|---|---|---|---|
+| jb-hi-fi | `#f2f1e6` | `#807500` | **4.14** |
+| bhp | `#302118` | `#e65400` | **4.15** |
+| alfabs | `#fbe9ea` | `#d72229` | **4.32** |
+| metallium | `#30211d` | `#e85a2a` | **4.35** |
+
+Every one is *close*, which is the tell: the ink was chosen by eye against the accent and lands
+in the low fours. Two tenants pass, by luck, at 4.56 and 5.63. Compute `onPrimary` against
+`primary` at the 4.5 floor, always — this pairing carries body-size text, so the large-text
+exemption never applies to it.
+
+### The LEADING family is the claim; everything after it is a fallback
+
+`lib/portal-contract.ts` refuses a stack that names a face nothing serves. That question —
+*does this face exist anywhere?* — is the wrong one for the **head** of the stack. Measured on
+production, and it passed every gate:
+
+```
+jb-hi-fi-limited   declares "Roboto, Helvetica, Arial"   →   renders Helvetica
+```
+
+Roboto ships on Android and ChromeOS, and on neither Windows nor macOS. Mid-stack that is a
+perfectly good fallback — the reference tenant's own stack carries Roboto and Segoe UI behind
+Figtree, and that is what a fallback chain is for. **As the head it is a claim that only the
+Android share of readers can honour.**
+
+The contract now refuses `roboto` and `segoe ui` in position 0 unless the record actually serves
+them (`NON_LEADING_WEB_SAFE`). When you extract a stack from a DESIGN.md, read the head first:
+if it is not a face this origin serves and not a face every desktop platform supplies, either
+add it to `TENANT_WEBFONTS` with its licence recorded and list it in `webfonts`, or lead with
+the face the stack will actually render.
+
 ## Motion is a preset, not code
 
 Pick per section from the enumerated set:
@@ -138,6 +192,28 @@ Set `opacity` low (the shipped reference uses **0.26**) and give it a `mask` so 
 band rather than the whole hero. The first version of that reference ran the frame across the
 full hero at 0.55 and it read as scribble through the copy — a mask confining it to a band low
 in the frame is what turned it into structure.
+
+**Four presets do not cover the ASX, and the collision is invisible from inside one tenant.**
+`pointField` is the house default *and* the answer for anything that is not resources, not
+logistics and not fabrication — which is most listed companies. Measured on production
+2026-08-08, a consumer-electronics retailer and a telco both landed on it, and because the four
+tuning axes are each derived from a DESIGN.md sentence, both derived the same four
+(`planar` / `solid` / `standard` / density 1). The result is a byte-identical seven-value
+vector, and the framebuffer probe scores the pair at a still-distance of **1.169** where the
+gate's floor is 1.9 — with `shape 0.036`, `ink 0.015` and `churn 0.002`. The two heroes are the
+same picture at the same density with the same movement; **0.927 of the entire distance is
+hue.** Strip the brand colour and they are indistinguishable.
+
+Note which pair failed. The *same-sector* pair the design worried about — two retailers — scores
+2.941 and is fine. It is the **cross-sector** pair that collapsed, because both sectors route to
+the same default. So:
+
+- Before emitting the layer, compare the full vector against every published paid tenant.
+- On a collision, take the corpus's **runner-up** preset and record the choice, the margin and
+  the tenant it avoided in `generation.motion`.
+- If there is no runner-up above the floor, say so and stop. Inventing a fifth axis to break the
+  tie is the distinctiveness-loop failure this skill already refuses: every option must be
+  traceable to a sentence in the brand's own documents.
 
 ### Two rules that are not stylistic
 

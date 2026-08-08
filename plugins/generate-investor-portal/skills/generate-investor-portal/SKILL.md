@@ -171,6 +171,26 @@ where the second carves out exactly the statutory phrases — and guard the spli
 that **names the four documents and their hrefs**, because "4 documents mentioning slavery"
 passes on four copies of a policy about the topic.
 
+**The same split governs whether a PAGE is placed at all, and the mandated pages are LEVIED.**
+An evidence threshold is the right way to decide whether a company gets a `projectRail`. It is
+the wrong way to decide whether it gets a governance surface. Measured on production
+2026-08-08: **`temple-and-webster-group-ltd` has no `/corporate-governance` page and no
+`governanceSnapshot` section** — no route from the portal to any governance material at all —
+while the other five portals carry, in the platform's own copy, the sentence *"Listing Rule
+4.10.3 lets the governance statement live at a URL, and that URL is lodged with ASX under
+4.7.4."* The platform states the obligation on five portals and ships a sixth without it.
+
+A mandated surface with no evidence behind it is not an absent page. It is a page that says
+**`unavailable`** — which is a provenance state this contract already has, and which exists
+for exactly this:
+
+> We do not currently hold Temple & Webster's governance documents. The company's governance
+> statement is lodged with ASX under Listing Rule 4.7.4.
+
+The distinction to carry: *does the company do this?* is a bid, and no evidence means no
+section. *Is the company obliged to publish this?* is a levy, and no evidence means an honest
+"not held" — never silence. Governance, the registry block and the disclosure index are levies.
+
 > **The tell that the split was already needed, visible without rendering anything.** The
 > generator's own shelf map carried a `modern slavery` term in the rule that files a document
 > under "Sustainability and ESG" — so there was a shelf named for a document class the filter
@@ -227,6 +247,59 @@ for crawled material, and it is not a failure.
 own site" was shipped as one of three headline facts in a hero. It is a count of what the crawler
 found. So are page counts, link counts, and anything phrased about the *record* rather than about
 the business.
+
+> **This rule is written above, and five of five generated tenants broke it anyway.** Measured
+> on production 2026-08-08: every generated portal's hero evidence panel opens with
+> *"N dated documents held, each linking its published PDF"* — 245 for Telstra, 388 for JB
+> Hi-Fi, 46 for Temple & Webster, where it is **one of only two items**, so half the hero's
+> evidence is about the CMS. The phrasing gives it away: *held* is something the portal does,
+> not something the company does.
+>
+> A rule this file states and production breaks five times out of five is a rule that needs a
+> gate, not more prose. The gate is a regex over the emitted hero props, and it belongs in
+> `acceptance-generate.mjs`:
+>
+> ```js
+> const ARTEFACT = /\b(documents?|pages?|links?|images?|photographs?|records?|files?)\s+(held|found|crawled|mirrored|indexed|captured)\b/i;
+> ```
+>
+> …plus a literal ban on "each linking its published PDF". If a hero has nothing to say about
+> the company, it says less — the record already has `enabled: false` for that.
+
+**A section's masthead may not repeat the section under it, and the HERO is where this bites.**
+Measured on the same five tenants: the hero's eyebrow pill and its H1 are the **same string**,
+the company's legal name, one above the other in two sizes — *"Telstra Group Limited"* over
+*"Telstra Group Limited"*. The largest type on the page carries nothing the wordmark 300px above
+it did not already say, and a screen-reader user hears the legal entity name three times before
+reaching content.
+
+The rule already exists one section down — *"drop the eyebrow whenever it would repeat the
+heading"*, written for `unitList`. It is not a `unitList` rule. Apply it everywhere, and
+give the hero eyebrow the job the reference build gives it: **status, not identity.** Alfabs'
+reads *"ASX listed since June 2024 · Updated 5 August 2026"*.
+
+**And the H1 is a claim the company makes, not the name on the share register.** *"The H1 comes
+from the company's own website language"* (see Voice) is right and has been over-read into
+*"the H1 is the legal entity name"*: five of six live portals open with `<h1>Telstra Group
+Limited</h1>`, `<h1>BHP Group Limited</h1>`, `<h1>JB Hi-Fi Limited</h1>`. The reference build
+opens with *"Design to delivery, from the Hunter Valley to your site."* Both are the company's
+own language; only one of them says anything. Take the H1 from a sentence the company writes
+**about what it does** — its own site's hero, its overview's opening claim — and put the legal
+name where it belongs, in the identity badge and the `<title>`.
+
+**A page's section index must read 1..n with no gaps.** The `§01 · …` ordinal is rendered, in
+the eyebrow, and it is a claim about completeness on a surface whose entire subject is
+completeness. Measured on production: **four of six tenants** ship a gapped index —
+`§01 §02 §03 §05 §06` on three of them, and `§01 §02 §03 §06` on Temple & Webster, which also
+has no governance page. A reader counts that and concludes the portal is hiding section 04.
+
+The mechanism is worth knowing because it is a shape that recurs: the renumbering pass was
+written for the archetype that **reorders**, and lives inside its `if`. The gaps come from
+section **omission**, which happens under every archetype — including the one whose layout
+table is `null` and which therefore skips the block entirely. **A repair coupled to the
+condition that first revealed the defect will miss every other condition that causes it.**
+Renumber unconditionally, after every step that can drop a section, and assert the ordinals
+are contiguous per page.
 
 **`asAt` is when the fact was true, never `now()`.** A legal name from an exchange listing
 stamped with today's date reads as a live measurement of something that has not changed in
@@ -294,6 +367,29 @@ load shows scroll-revealed content as blank and will make a working page look br
 company, on `/`, at 1280px, and every one of them was green while generated portals shipped with
 no header. Open a *generated* tenant, on a page that is **not** the home page, at **375px**, and
 walk it with the Tab key. Those three deviations found three blocking defects on their first run.
+
+**And open a SECOND tenant beside it.** This is the deviation that was still missing, and it is
+where the largest defect of 2026-08 was hiding. Every gate on this pipeline is per-tenant;
+sameness is not a property of a record, it is a property of a **pair**. Measured across the six
+live portals: `metallium-ltd` and `telstra-group-limited` — a junior explorer and Australia's
+largest telco — publish the same eight pages, with the same section kinds **in the same order on
+every one of them**, under the same archetype. `jb-hi-fi-limited` matches Telstra on seven of
+eight *and* carries a byte-identical WebGL vector, which the repo's own framebuffer probe scores
+at a still-distance of **1.169 against a floor of 1.9**.
+
+So before publishing, print the diff against the nearest published tenant:
+
+```
+page set           8 paths · IDENTICAL to telstra-paid
+section order      8 of 8 pages IDENTICAL to telstra-paid
+archetype          index (= telstra-paid)
+motion vector      pointField/accentOnDark/1/planar/solid/standard/standard (= telstra-paid)
+copy               5 of 5 `/` headings identical after name substitution
+```
+
+Five identical lines is not a portal for this company; it is the previous company's portal in a
+new palette. `references/validate-and-prove.md` carries the three collision checks and where they
+belong.
 
 ## Ideas that look good and are not
 

@@ -54,16 +54,27 @@ Create new macOS app designs — windows and icons — that are **native to the 
 
 ## Procedure — designing an app icon
 
-1. **Brief:** the app's subject, personality (3 committed adjectives), and any brand colour constraints.
-2. **Choose era + direction** from `icon-directions.md` — same open-menu rule as UI: the families are calibration, and a hybrid or novel composition is legitimate when the subject earns it. State choice + runner-up. For any current-era icon, the **Tahoe gel-glass grammar** section (cushion tile, two ground registers, frosted white, authored overlap) is the correctness bar, not a style option. Calibration warning: the corpus's own template-default is the **stock-glyph-on-indigo/blue ramp** (technically clean, communicates nothing — the `sparkles`-on-indigo problem); blue/indigo backgrounds need positive justification, and the glyph must name *this* subject, not its category. Vary across a session — don't produce five glyph-on-blue-ramp icons in a row. Declare the icon's signature device (subject-mined, from the device bank or invented).
-3. **Silhouette first.** Design the glyph as a solid shape that names the subject instantly; run the mental 16px squint test before any styling.
-4. **Write the shared spec** (`icon-directions.md` § Generation pipeline, Step 0): 1024 canvas, squircle mask discipline, optical centring, one light model, ≤2 hue families with ramps, accent saturation reserved for the focal element, and the #10 layer plan (bg / mid / fg / highlight). The spec is shared across engines so every variation is a take on one committed idea.
-5. **Build a variation set — never a single take** (three engines, per the pipeline section). The three engines are a floor, not a target: under any iteration/time/cost cap, cut render-audit iterations, never engines — a set missing an engine is a named deviation the user agreed to, not a cap casualty.
-   - **Engine A — hand-authored layered SVG** (always): you write it, one named `<g>` per layer, Icon Composer-ready. This is the canonical master that ultimately ships.
-   - **Engine B — media-gen-pro `generate_image` with `svg: true`** (Arrow vector): an independent vector take from the spec-as-brief; salvage its best shapes into the master when they win.
-   - **Engine C — media-gen-pro `generate_image` raster** (default OpenAI GPT Image model): 1–2 material-realism takes; pass `referenceImages` of 2–4 same-register corpus exemplars from `references/icon-corpus/` to transfer the Tahoe material language. Raster output is the hero preview/material target only — if it wins the look, rebuild its material into the Engine A master (shipping a flat raster re-creates the #10 failure).
-   - If media-gen-pro is unavailable, say so and widen Engine A to 2–3 genuinely different hand-authored takes instead.
-6. **Contact sheet + audit — written, not narrated:** render every take at 1024 / 128 / 32 / 16 and write **`audit.html`** next to the deliverables — start from `assets/icon-audit-template.html` (its comments carry the hard requirements a design-review pass established: 2x retina sources displayed at half size, the pixelated 16px magnification, the mobile overflow container, AA caption contrast, table caption+scope) — a self-contained page showing each take's small renders beside its 12-point rubric score (`mac-design-digest` icon-anatomy if installed; the distilled version is in `icon-directions.md`) plus the failure-mode anti-checklist — delivery bar ≥10/12 with checks 1–4 (mask, grid, silhouette, 16px) non-negotiable. Losing takes stay on the sheet with their scores; a variation set that hides its losers isn't an audit. Name a recommendation on the page, and deliver the layered SVG master with the alternates attached. An icon commission without `audit.html` on disk is incomplete.
+**Route this to `create-mac-icon` (fledgeling-plugins) when it is installed.**
+That skill grew out of this one's icon pipeline and has since moved well past
+it: it carries the same direction catalogue and 12-point rubric, plus a
+ground-truth corpus the master is measured against rather than merely described
+from, a `scripts/fidelity.py` harness that scores the shipped SVG against the
+winning raster at five sizes with a Pareto gate, a bounded iteration loop with
+one edit class per round, a served human review sheet, a blind three-family
+judge panel, and a `material-recipes.md` library that grows with every
+commission. Icon work done here instead starts every lesson over.
+
+Invoke it, or spawn an agent briefed to read its SKILL.md and follow it. Pass
+the app's subject, personality and any brand constraints; it owns the rest.
+
+If it is not installed, the fallback is the pipeline in
+`references/icon-directions.md` § Generation pipeline: one shared spec, three
+engines (hand-authored layered SVG, Arrow vector, corpus-referenced raster),
+every take rendered at 1024/128/32/16, and an `audit.html` written from
+`assets/icon-audit-template.html` with losing takes scored on the sheet. The
+delivery bar is ≥10/12 with checks 1-4 non-negotiable. Note plainly in the
+delivery that the fidelity loop was unavailable, since the master then ships
+unmeasured against its reference.
 
 ## Variety discipline (what makes this a studio, not a template)
 

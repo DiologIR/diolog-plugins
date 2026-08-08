@@ -53,9 +53,40 @@ Serve over HTTP (never `file://`), load the page, and check — at minimum — a
 | Mobile | 375px | The layout's true stress test — most breakage lives here |
 | Tablet | 768px | Awkward two-column intermediates, orphaned sidebars |
 | Desktop | 1280px | The design as intended |
+| **Laptop** | **1440px** | **The width a "desktop" check skips, and the one most people are actually on** |
 | Wide | 1920px | Missing `max-width` — content stretched to absurd measure |
 
 Also pause at 2–3 in-between widths while resizing: breakpoint *transitions* break more often than breakpoints.
+
+> **1440 is in the table because of a measured miss.** A six-tenant review found four sites whose
+> header overflowed the viewport at **both** 1280 and 1440 while rendering correctly at 768,
+> 1024 and 1920 — so a matrix of 375/768/1280/1920 that treated 1280 as "the design as intended"
+> reported a working header on two sites whose primary CTA was *entirely off-screen* at every
+> laptop width. A viewport matrix with a hole in the middle is a matrix that certifies the hole.
+
+**The single-row header is the most reliable overflow in this class**, and it is worth its own
+check because it fails silently in the direction nobody looks. A row of
+`logo + N nav links + a fixed-width CTA` has an intrinsic width; when that exceeds the viewport
+and nothing collapses, the flex row **pushes** rather than wrapping, the document gains a
+horizontal scrollbar, and the last items — always the nav's tail and the CTA, i.e. the most
+important control on the page — leave the screen to the right, where a user who scrolls
+vertically will never look. Two tells:
+
+```js
+// Is the header the thing making the page wide?
+const hdr = document.querySelector('header');
+console.log(hdr.scrollWidth, innerWidth, document.documentElement.scrollWidth);
+// Is any control laid out past the right edge?
+[...document.querySelectorAll('header a, header button')]
+  .filter(el => el.getBoundingClientRect().left >= innerWidth)
+  .forEach(el => console.warn('OFF-SCREEN control:', el.textContent.trim()));
+```
+
+The fix is `min-width: 0` on the flex children plus a real collapse (drawer, overflow menu, or a
+second row) at the width where the row stops fitting — **not** `overflow: hidden` on the header,
+which hides the control instead of the scrollbar. And where the label lengths are data rather
+than design — a tenanted product, a CMS, any localised UI — the trigger width is per-instance,
+so a container query on the header beats a hand-picked breakpoint.
 
 Per viewport, in severity order:
 
