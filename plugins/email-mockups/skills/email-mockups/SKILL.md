@@ -205,8 +205,10 @@ not invent new tokens, shadows, or a second blue.
 
 ## 5. Verify the render
 
-Open the HTML in a browser and screenshot it (use the `playwright-cli` or
-`agent-browser` skill, or the Chrome MCP). This is design-craft's `ai-slop-check` /
+Open the HTML in a browser, screenshot it, **and read the screenshot** (use the `playwright-cli` or
+`agent-browser` skill, or the Chrome MCP). Capturing is not seeing: a shot that succeeded against a
+404 looks exactly like a shot that succeeded against the artboard, and only opening the image tells
+them apart. Ask each capture *"what is wrong with this?"*, never *"is this done?"*. This is design-craft's `ai-slop-check` /
 `polish-pass` territory — if design-craft built it, let it run those — and then
 check against the playbook's quality bar: the one idea is obvious at 50% size;
 every colour is a `--dio-` token with no stray blues; the serif is never bolder

@@ -157,10 +157,22 @@ everything, and renumbers footers/section labels from slide order, so the output
 is one portable file.
 
 ### 8 — Verify
-Confirm the build reported `0` unresolved tokens and the expected slide count. If
-useful, open `deck.html` in a browser to eyeball it. Sanity-check that no
-`Alfabs`/`Becca` leaked where the client differs (grep the output), and that
-longer copy didn't overflow any frame.
+Confirm the build reported `0` unresolved tokens and the expected slide count.
+Sanity-check that no `Alfabs`/`Becca` leaked where the client differs (grep the
+output), and that longer copy didn't overflow any frame.
+
+**Then open `deck.html` and look at every slide** — not "if useful". Serve it
+over HTTP, capture each slide at 1920×1080, and read the captures. Token counts
+and slide counts prove the build ran; they say nothing about a headline that
+wrapped to three lines, a chart that overlaps its legend, or a frame whose copy
+sits under the bottom edge. Those are the defects a client sees first, they are
+invisible in the source and in the build log, and a screenshot that was rendered
+but never opened is not a slide that was checked. Ask each capture *"what is
+wrong with this?"* rather than *"is this done?"*.
+
+Export the PDF and read that too, at least spot-checking the first, a dense
+middle slide, and the last. Print rendering diverges from screen rendering, and
+this deck is handed over as a PDF.
 
 ### 9 — Present & hand off
 Tell the user where `deck.html` is and how to use it:

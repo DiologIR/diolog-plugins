@@ -74,7 +74,17 @@ adapt only what the current source/evidence requires, and never reconstruct it f
 ### 1. Structure — decide the page set
 
 List the pages the brief/site-structure calls for, and for each, the ordered blocks. Use the preset
-as the baseline, or use the materialised `site.json` when `siteSeedPath` is present. Map every source page/section to a target (its own page, merged, or dropped) — mirror
+as the baseline, or use the materialised `site.json` when `siteSeedPath` is present.
+
+**Vary the composition per company, not only the theme.** Two portals that differ in accent hue and
+nothing else are the same page twice, and that has been the owner's complaint about generated
+portals in exactly those words: *"the leadership page looks almost identical for every company"*.
+The levers that actually differentiate are block **selection**, block **order**, and section
+**density** — driven by what that company's own material supports (how much news it publishes, whether
+it has video, how many people are on the board, what its business actually is). Before composing a
+second portal, read the block list of the last one and deliberately diverge. If the available blocks
+genuinely cannot express a difference, say so — that is a finding about the block library, not a
+result to ship silently. Map every source page/section to a target (its own page, merged, or dropped) — mirror
 the site's real depth, don't flatten it. Read `references/authoring-guide.md` for the site-spec shape,
 nav keys, and how to choose blocks for a structure. **For the investor overview page specifically,
 compose to `references/investor-home-blueprint.md`** — the canonical section order and density
@@ -164,6 +174,14 @@ Python analysis with NO browser, so unlike `verify.mjs` as a whole it runs fine 
 ```bash
 python3 /opt/diolog-runner/scripts/vendor/design-lint.py out/<slug>.html
 ```
+
+**Then open the captures and read them.** `render_preview` writes full-page shots and
+top/middle/bottom crops at mobile and desktop; a lint pass and a written capture prove that no
+*known* rule fired and that a file exists, never that the page looks right. Read each crop asking
+*"what is wrong with this?"*, and give the **header its own look** at every width — shared chrome
+is the component this pipeline has shipped broken across every tenant at once, because a per-page
+review reads it as the frame rather than as the thing under review. A generated portal has reached
+the owner with the verdict "they look absolutely terrible" on a run where every gate was green.
 
 Treat every `CRITICAL` and `MAJOR` as a mustFix; the runner runs the identical linter as a gate and
 one MAJOR fails the whole run. This closes a real hole: the guidance above says "run `verify.mjs`",
