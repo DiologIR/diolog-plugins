@@ -50,6 +50,20 @@ Visible focus ring for keyboard users. Use `:focus-visible` over `:focus` so the
 
 For buttons that submit forms, save data, or wait on a network call: disable the button immediately on click (prevent double-submission); replace the label with a spinner or "Loading…" text; re-enable and restore the label on completion. For elements that fetch data on render: a skeleton, spinner, or progress indicator while waiting.
 
+#### Skeleton discipline
+
+A skeleton is a design of the content it stands in for, and this is the state most often shipped as a grey box. Seven checks, each one a defect that has been caught by a reviewer rather than by this pass:
+
+1. **It matches the real content's size.** Load the surface twice and compare: the skeleton card and the resolved card have the same height and width. A mismatch guarantees a layout jump, and it is the same defect whether the skeleton is too small or the mock is too big.
+2. **It matches the real content's shape.** Card skeletons have the card's radius and internal block structure; a text skeleton has the line count and last-line raggedness of real copy. A single flat rectangle where three stacked elements will appear is a placeholder for the *slot*, not for the content.
+3. **It sits on the surface the content will sit on.** Grey blocks dropped on a coloured or dark ground read as breakage. Derive the skeleton fill from the surface token it covers, not from a global grey.
+4. **It moves.** A static block is indistinguishable from a broken image or a failed fetch. A shimmer or pulse on a 1.2–2s loop says "still working"; it also needs `prefers-reduced-motion` handling, where the honest fallback is a static block plus visible text, not silence.
+5. **It clears per section, as that section resolves.** A skeleton still visible under content that has already painted is worse than no skeleton — the surface reads as stuck. Section headers in particular usually resolve first and should stop being skeletons first.
+6. **Skeletons in a stack are separated.** A run of blocks with no gap reads as one large block; 1–2px minimum between them, and shrink the blocks to make room rather than growing the stack.
+7. **Static things get no skeleton at all.** A button, a nav item, or a section heading whose content does not depend on data should simply be there from the first paint. Wrapping the whole page in skeletons because part of it is async invents a loading state for elements that were never loading.
+
+**Every async action gets one, not just page load.** Recording, saving, uploading, generating, submitting, deleting, refreshing — each needs its own in-flight, success and failure treatment. A surface where every state is either the ideal one or an empty one is not finished, however good the ideal one looks.
+
 ## Phase 3: Verify transitions
 
 Every state change should be smoothly transitioned, not snapped:
