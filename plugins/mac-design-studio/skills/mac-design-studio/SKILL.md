@@ -31,6 +31,7 @@ Create new macOS app designs — windows and icons — that are **native to the 
    - **AI-default calibration** works at the *type* level too. The face this model reaches for when told to be distinctive is **Space Grotesk** — which makes it the opposite of distinctive; the same applies to Inter/Roboto/system-stack as silent defaults. A font choice you can defend in one sentence ("a typewriter mono, because the app reads logs") is a choice; a name you arrived at before you had a reason is gravity. Direction-level: Warm Paper (cream + terracotta + serif display) and Terminal Dark (near-black + single acid accent) are simultaneously corpus-proven directions *and* the looks AI currently defaults to on any brief. When the brief explicitly asks for them, or the subject positively earns them (a break app named after a musical rest earned its paper), commit fully. When the brief leaves the aesthetic axis free, don't spend that freedom on either — reach for a direction the subject actually pulls toward.
    - Never default to the same direction twice in a row across a session; if the user asks for "another app", pick a different direction or justify staying.
    - Subject-mine (design-craft vocabulary): let the app's own world pull the palette/type personality *within* the direction.
+   - **Trawl reference evidence for the content area, and for any companion surface.** The corpus leads on mac *chrome* — Mobbin indexes iOS and web, not macOS, so it cannot tell you what a native toolbar or sidebar should be. What it can tell you is what a real, shipped version of the *content* looks like: the density of a live transaction list, the anatomy of a settings pane, how a shipped product handles the partial state. Query it (`search_screens`, `platform: ios` for the app's own surfaces, `web` for a companion or marketing surface), open the images, and note what transferred. When the commission includes an iPhone or iPad companion, or a marketing site, that surface gets a proper trawl — design-craft's `plugins/design-craft/skills/design-craft/references/mobbin-trawl.md` is the playbook. Two or three searches; not installed is a one-line note in the delivery, never a silent skip.
    - If the user wants options, produce 2–3 directions as thumbnail-level descriptions first (design-craft `generate-variations` discipline) — genuinely different directions, not tints of one.
    - **Name the risk and the signature.** Every design declares (a) one signature element — the single thing it will be remembered by (draw from or generalise the corpus signature-move bank, or invent) — and (b) one justified aesthetic risk. Spend the boldness there; keep everything around it quiet and disciplined. Before delivery, apply the remove-one-accessory pass: cut any decoration that isn't the signature or serving it. Not taking a risk is itself a risk — "competent but anonymous" is the corpus's named failure mode.
 3. **Structure before polish.** Name the surface's **single question** (mac-essence conviction 3) — the thing a user opens it to learn or do — and promote its answer to the visual hero. For multi-step surfaces, shape the flow first (ux-craft flows-and-forms: entry → one-decision steps → completion signal → recovery exits). Then lay out the window from the pattern library: three-zone window (toolbar / sidebar / content), correct chrome archetype, native lists-tables-forms — per `native-foundation.md` metrics and the relevant HIG files. Sketch the skeleton (regions + kit-tier sizes) before any styling, and run the trunk test on it: where am I, what can I do, what happens next.
@@ -70,11 +71,34 @@ the app's subject, personality and any brand constraints; it owns the rest.
 If it is not installed, the fallback is the pipeline in
 `references/icon-directions.md` § Generation pipeline: one shared spec, three
 engines (hand-authored layered SVG, Arrow vector, corpus-referenced raster),
-every take rendered at 1024/128/32/16, and an `audit.html` written from
+every take rendered at 1024/128/48/32/16, and an `audit.html` written from
 `assets/icon-audit-template.html` with losing takes scored on the sheet. The
 delivery bar is ≥10/12 with checks 1-4 non-negotiable. Note plainly in the
 delivery that the fidelity loop was unavailable, since the master then ships
 unmeasured against its reference.
+
+**The audit sheet is a deliverable, and it is the one this pipeline drops.**
+Twice on record the commission shipped icons with no sheet, and the user had to
+ask *"why no audit.html? doesn't the skill say to create one?"* — it did say so,
+which is the point: an instruction-only rule in this pipeline has a measured
+history of being skipped. So treat it mechanically. Before you report the icon
+done, list the directory and confirm four things are on disk: `audit.html`, one
+render per take at each size, the master, and the losing takes. Then **open the
+sheet in a browser and read it** — a contact sheet whose images 404 is the exact
+artifact that gets shipped unseen, since nothing about writing the file reveals
+that its `src` paths are wrong. If any of the four is missing, the commission is
+not finished; say which is missing rather than reporting completion.
+
+Sizes: render 1024, and retina pairs for the display sizes — 256/128/96/64/32
+sources shown at 128/64/48/32/16 css px. The 48px row exists because that is the
+size a Finder list and a plugin marketplace tile actually use, and an icon that
+survives 128 and 16 can still fail between them.
+
+**One silhouette across the whole set.** When a commission produces several
+icons — variants, a family, a marketplace row — every one shares the same outer
+shape, from `assets/squircle-path.txt`. A single icon whose corner radius or
+outline differs from its siblings reads as a mistake at any size, and has been
+caught by the user rather than by this pipeline.
 
 ## Variety discipline (what makes this a studio, not a template)
 
