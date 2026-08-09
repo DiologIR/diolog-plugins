@@ -1,0 +1,46 @@
+<!-- TEMPLATE copy-chart
+     Use for: a financial-position or performance slide — the narrative on the
+     left, the one chart that carries it on the right. The plainest layout in
+     the library, and the right choice when the content is already dense.
+     Slots: EYEBROW · TITLE · CLAIM · three × LI · CAP · three × (V, H%, X) · NOTE
+     Rules: put the movement in the text when the geometry cannot show it. Three
+            near-equal bars are the honest picture of a flat period; the delta
+            belongs in CLAIM, not in a truncated axis.
+            Restate any figure the reader needs from an earlier slide — nobody
+            holds your numbers in working memory across nine slides.
+     Watch: the optional band divider at the foot is decorative brand furniture.
+            Delete `.band` and its footer overrides if the brand has no such
+            device; do not invent one. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage">
+    <div class="pad" style="padding-bottom:208px">
+      <hr class="rule" />
+      <p class="eyebrow">{{EYEBROW}}</p>
+      <h2 class="title" style="margin-top:20px"><span>{{TITLE}}</span></h2>
+      <div style="display:grid;grid-template-columns:1fr 700px;gap:96px;margin-top:40px;height:auto">
+        <div style="height:auto">
+          <p class="body" style="max-width:44ch"><span>{{CLAIM}}</span></p>
+          <ul class="bullets" style="margin-top:36px;gap:20px">
+            <li><b>{{LI_1_LEAD}}</b> {{LI_1}}</li>
+            <li><b>{{LI_2_LEAD}}</b> {{LI_2}}</li>
+            <li><b>{{LI_3_LEAD}}</b> {{LI_3}}</li>
+          </ul>
+        </div>
+        <figure class="chart" style="height:auto">
+          <figcaption class="cap"><span>{{CAP}}</span></figcaption>
+          <div class="plot" style="height:300px" role="img" aria-label="{{CHART_ARIA}}">
+            <div class="col"><span class="v">{{V_1}}</span><span class="b" style="height:{{H_1}}%"></span></div>
+            <div class="col mid"><span class="v">{{V_2}}</span><span class="b" style="height:{{H_2}}%"></span></div>
+            <div class="col now"><span class="v">{{V_3}}</span><span class="b" style="height:{{H_3}}%"></span></div>
+          </div>
+          <div class="xax"><span>{{X_1}}</span><span>{{X_2}}</span><span class="now">{{X_3}}</span></div>
+          <p class="fine" style="margin-top:22px"><span>Axis begins at zero. {{CHART_NOTE}}</span></p>
+        </figure>
+      </div>
+    </div>
+    <div class="foot">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

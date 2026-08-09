@@ -1,0 +1,41 @@
+<!-- TEMPLATE agenda
+     Use for: slide 2 of a speaker-led deck, or the contents page of a reading
+     deck long enough to need one (twelve slides or more).
+     Slots: EYEBROW · TITLE · rows of (NUM, HEADING, ONE-LINE)
+     Rules: the agenda's rows are the deck's own slide titles, not a paraphrase
+            of them. If the row and the slide disagree, one of them is wrong,
+            and it is usually the slide.
+            Skip this slide entirely on a short deck. An agenda for six slides
+            spends a twelfth of the deck telling the reader what the other
+            eleven twelfths say. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage">
+    <div class="pad" style="justify-content:center">
+      <hr class="rule" />
+      <p class="eyebrow">{{EYEBROW}}</p>
+      <h2 class="title" style="margin-top:20px"><span>{{TITLE}}</span></h2>
+
+      <div style="margin-top:72px;height:auto;display:flex;flex-direction:column">
+        <div style="display:grid;grid-template-columns:120px 1fr;gap:40px;padding:26px 0;border-top:1px solid var(--border)">
+          <span class="mono" style="font-size:var(--t-lead);font-weight:600;color:var(--brand)">{{R1_NUM}}</span>
+          <div>
+            <p style="font-family:var(--font-display);font-size:var(--t-sub);font-weight:700;line-height:1.2;letter-spacing:-.02em;color:var(--ink)"><span>{{R1_HEAD}}</span></p>
+            <p class="small" style="margin-top:8px"><span>{{R1_LINE}}</span></p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:120px 1fr;gap:40px;padding:26px 0;border-top:1px solid var(--border)">
+          <span class="mono" style="font-size:var(--t-lead);font-weight:600;color:var(--brand)">{{R2_NUM}}</span>
+          <div>
+            <p style="font-family:var(--font-display);font-size:var(--t-sub);font-weight:700;line-height:1.2;letter-spacing:-.02em;color:var(--ink)"><span>{{R2_HEAD}}</span></p>
+            <p class="small" style="margin-top:8px"><span>{{R2_LINE}}</span></p>
+          </div>
+        </div>
+        <!-- repeat the row block; write each one out literally -->
+      </div>
+    </div>
+    <div class="foot">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

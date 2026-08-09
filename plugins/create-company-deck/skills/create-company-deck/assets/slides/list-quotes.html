@@ -1,0 +1,49 @@
+<!-- TEMPLATE list-quotes
+     Use for: a commitments / pillars / strategy slide where the claim is a list
+     and the evidence is what a named person said about it. The quote cards give
+     the slide a second voice, which is what stops a list of six bullets reading
+     as a table of contents.
+     Slots: EYEBROW · TITLE · INTRO · six × LI · two × (QUOTE, WHO, ROLE)
+     Rules: quote verbatim from the source document, attributed to the person
+            the source attributes it to. A paraphrase in quotation marks is a
+            fabricated quotation, whatever its accuracy.
+     Watch: the right column is `height:auto` so its cards size to content —
+            the wrapper-collapse guard would otherwise stretch them to 1080px.
+     Light variant: drop `.on-dark` / `style="background:var(--dark)"` and swap
+            `.card.dark` for `.card`. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage" style="background:var(--dark)">
+    <div class="pad" style="display:grid;grid-template-columns:1fr 620px;gap:96px;align-items:start">
+      <div style="height:auto">
+        <hr class="rule" />
+        <p class="eyebrow on-dark">{{EYEBROW}}</p>
+        <h2 class="title on-dark" style="margin-top:20px"><span>{{TITLE}}</span></h2>
+        <p class="body on-dark" style="margin-top:26px;max-width:44ch"><span>{{INTRO}}</span></p>
+        <ul class="bullets on-dark" style="margin-top:38px;gap:20px">
+          <li><b>{{LI_1_LEAD}}</b> {{LI_1}}</li>
+          <li><b>{{LI_2_LEAD}}</b> {{LI_2}}</li>
+          <li><b>{{LI_3_LEAD}}</b> {{LI_3}}</li>
+          <li><b>{{LI_4_LEAD}}</b> {{LI_4}}</li>
+          <li><b>{{LI_5_LEAD}}</b> {{LI_5}}</li>
+          <li><b>{{LI_6_LEAD}}</b> {{LI_6}}</li>
+        </ul>
+      </div>
+      <div style="height:auto;display:flex;flex-direction:column;gap:28px;padding-top:36px">
+        <div class="card dark" style="border-top:6px solid var(--brand)">
+          <p class="q"><span>“{{QUOTE_1}}”</span></p>
+          <p class="who"><span>{{WHO_1}}</span></p>
+          <p class="fine on-dark" style="margin-top:6px"><span>{{ROLE_1}}</span></p>
+        </div>
+        <div class="card dark">
+          <p class="q"><span>“{{QUOTE_2}}”</span></p>
+          <p class="who"><span>{{WHO_2}}</span></p>
+          <p class="fine on-dark" style="margin-top:6px"><span>{{ROLE_2}}</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="foot on-dark">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

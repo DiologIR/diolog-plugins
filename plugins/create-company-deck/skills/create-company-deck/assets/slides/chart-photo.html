@@ -1,0 +1,59 @@
+<!-- TEMPLATE chart-photo
+     Use for: a divisional or segment review — the claim and its chart on one
+     side, a photograph of that division's work carrying supporting points on
+     the other. The workhorse layout of an operational deck.
+     Slots: EYEBROW · TITLE · CLAIM · CAP · three × (V, HEIGHT%, XLAB) · NOTE
+            IMG_SRC · IMG_ALT · three × LI
+     Mirror it (photo left, copy right) for the next divisional slide so two
+     reviews in a row don't read as one repeated slide — swap the two children
+     and move the footer's width to the other side.
+     Chart rules that are not stylistic:
+       · HEIGHT% is the value as a percentage of a NOMINAL MAX you choose above
+         the largest value — never rescaled so the smallest bar reaches zero.
+         The axis begins at zero and the caption says so, on the slide.
+       · When the movement is too small for the bars to show, put it in the
+         CLAIM as text ("up 0.9% on the prior quarter"). A flat-looking chart
+         of a flat quarter is the honest signal.
+       · aria-label on .plot states every value and the zero baseline — the
+         chart is an image to a screen reader and the numbers must survive.
+     Watch: .foot is given an explicit width so it stops at the photo's edge
+            rather than running under it. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage">
+    <div style="display:grid;grid-template-columns:1.06fr .94fr">
+      <div class="pad" style="padding-right:80px">
+        <hr class="rule" />
+        <p class="eyebrow">{{EYEBROW}}</p>
+        <h2 class="title" style="margin-top:20px"><span>{{TITLE}}</span></h2>
+        <p class="body" style="margin-top:26px;max-width:40ch"><span>{{CLAIM}}</span></p>
+
+        <figure class="chart" style="height:auto;margin-top:64px">
+          <figcaption class="cap"><span>{{CAP}}</span></figcaption>
+          <div class="plot" style="height:296px" role="img" aria-label="{{CHART_ARIA}}">
+            <div class="col"><span class="v">{{V_1}}</span><span class="b" style="height:{{H_1}}%"></span></div>
+            <div class="col mid"><span class="v">{{V_2}}</span><span class="b" style="height:{{H_2}}%"></span></div>
+            <div class="col now"><span class="v">{{V_3}}</span><span class="b" style="height:{{H_3}}%"></span></div>
+          </div>
+          <div class="xax"><span>{{X_1}}</span><span>{{X_2}}</span><span class="now">{{X_3}}</span></div>
+          <p class="fine" style="margin-top:20px"><span>Axis begins at zero. {{CHART_NOTE}}</span></p>
+        </figure>
+      </div>
+
+      <div style="position:relative;overflow:hidden">
+        <img class="photo" src="{{IMG_SRC}}" alt="{{IMG_ALT}}" />
+        <div class="scrim soft"></div>
+        <div class="abs" style="left:72px;right:72px;bottom:150px">
+          <ul class="bullets on-dark" style="gap:26px">
+            <li>{{LI_1}}</li>
+            <li>{{LI_2}}</li>
+            <li>{{LI_3}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot" style="right:auto;width:900px">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

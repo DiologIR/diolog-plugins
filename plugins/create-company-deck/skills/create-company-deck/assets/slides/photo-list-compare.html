@@ -1,0 +1,68 @@
+<!-- TEMPLATE photo-list-compare
+     Use for: a change programme — what was done on the left, what it cost and
+     what it is expected to return on the right, over a photograph of the work
+     itself. The comparison bars are for two quantities on ONE shared scale
+     where the ratio is the point (cost against benefit, spend against saving).
+     Slots: IMG_SRC · IMG_ALT · EYEBROW · TITLE · CLAIM · three × LI
+            CAP · two × (LAB, WIDTH%, V) · two × (STAT VAL/LAB/NOTE)
+     Rules: both bars share one scale from zero, and the caption says so. Two
+            bars on independent scales is the most persuasive chart you can
+            draw and it is not a chart.
+            A negative figure keeps its sign in the value (−60%), never only in
+            a colour or an arrow.
+     Watch: .pad has position:relative so the copy paints above the photo, and
+            both grid children are height:auto so the guard doesn't stretch
+            them. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage">
+    <img class="photo" src="{{IMG_SRC}}" alt="{{IMG_ALT}}" />
+    <div class="scrim"></div>
+    <div class="pad" style="position:relative;display:grid;grid-template-columns:1fr 700px;gap:88px;align-items:start">
+      <div style="height:auto">
+        <hr class="rule" />
+        <p class="eyebrow on-dark">{{EYEBROW}}</p>
+        <h2 class="title on-dark" style="margin-top:20px"><span>{{TITLE}}</span></h2>
+        <p class="body on-dark" style="margin-top:28px;max-width:40ch"><span>{{CLAIM}}</span></p>
+        <ul class="bullets on-dark" style="margin-top:36px;gap:20px">
+          <li>{{LI_1}}</li>
+          <li>{{LI_2}}</li>
+          <li>{{LI_3}}</li>
+        </ul>
+      </div>
+
+      <div style="height:auto;padding-top:44px">
+        <figure class="chart on-dark" style="height:auto">
+          <figcaption class="cap"><span>{{CAP}}</span></figcaption>
+          <div class="hbars" role="img" aria-label="{{CHART_ARIA}}">
+            <div class="hbar">
+              <p class="lab"><span>{{BAR_1_LAB}}</span></p>
+              <div class="track"><span class="fill" style="width:{{BAR_1_PCT}}%"></span><span class="v">{{BAR_1_V}}</span></div>
+            </div>
+            <div class="hbar key">
+              <p class="lab"><span>{{BAR_2_LAB}}</span></p>
+              <div class="track"><span class="fill" style="width:{{BAR_2_PCT}}%"></span><span class="v">{{BAR_2_V}}</span></div>
+            </div>
+          </div>
+          <p class="fine on-dark" style="margin-top:22px"><span>Both bars share one scale beginning at zero.</span></p>
+        </figure>
+
+        <div class="statrow on-dark" style="grid-template-columns:1fr 1fr;margin-top:60px">
+          <div class="stat">
+            <span class="val" style="font-size:var(--t-stat-md)">{{S1_VAL}}<span class="unit" style="font-size:var(--t-figure)">{{S1_UNIT}}</span></span>
+            <span class="lab">{{S1_LAB}}</span>
+            <span class="note">{{S1_NOTE}}</span>
+          </div>
+          <div class="stat">
+            <span class="val" style="font-size:var(--t-stat-md)">{{S2_VAL}}<span class="unit" style="font-size:var(--t-figure)">{{S2_UNIT}}</span></span>
+            <span class="lab">{{S2_LAB}}</span>
+            <span class="note">{{S2_NOTE}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot on-dark">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

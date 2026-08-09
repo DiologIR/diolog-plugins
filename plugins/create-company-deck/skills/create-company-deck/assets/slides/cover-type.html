@@ -1,0 +1,30 @@
+<!-- TEMPLATE cover-type
+     Use for: slide 1 when there is no honest photograph — a services company, a
+     confidential brief, an internal deck. A typographic cover on the brand's
+     dark ground reads as deliberate; a stock image or a gradient standing in
+     for a photograph reads as a placeholder nobody replaced.
+     Slots: EYEBROW · TITLE · SUBTITLE · CHIP · FOOT-LEFT
+     Watch: no image means no paint-order problem, so this is also the right
+            template when the imagery budget is spent and slide 1 still needs
+            to ship. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} Cover">
+  <div class="stage" style="background:var(--dark)">
+    <div class="pad" style="justify-content:center">
+      <hr class="rule" />
+      <p class="eyebrow on-dark">{{EYEBROW}}</p>
+      <h1 class="display on-dark" style="margin:28px 0 0;max-width:18ch">
+        <span>{{TITLE}}</span>
+      </h1>
+      <p class="lead on-dark" style="margin-top:36px;max-width:48ch">
+        <span>{{SUBTITLE}}</span>
+      </p>
+      <div style="margin-top:52px">
+        <span class="chip mono on-dark">{{CHIP}}</span>
+      </div>
+    </div>
+    <div class="foot on-dark">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

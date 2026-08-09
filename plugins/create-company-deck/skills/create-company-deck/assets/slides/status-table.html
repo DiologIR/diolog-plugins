@@ -1,0 +1,57 @@
+<!-- TEMPLATE status-table
+     Use for: progress against a set of previously stated commitments — the
+     slide that answers "you said you would; did you?". The most valuable slide
+     in a follow-up deck and the one most often softened into prose.
+     Slots: EYEBROW (what and when the commitments were made) · TITLE
+            rows of (MILESTONE, TIMELINE, STATUS, PROGRESS) · NOTE
+     Rules: keep every commitment from the source, including the ones with no
+            progress. Dropping a row is the single most damaging edit this
+            slide can carry, and a reader who has the earlier document will see
+            it immediately.
+            STATUS carries a glyph and a word — "✓ Completed", "→ On track",
+            "! Behind". The chip's colour is a second signal, never the only one.
+            PROGRESS says what actually moved, and "No change" is a legitimate
+            and honest value.
+     Watch: NOTE dates the assessment and names whose assessment it is. Status
+            without a date is an assertion with no shelf life. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage">
+    <div class="pad" style="padding-top:76px">
+      <hr class="rule" />
+      <p class="eyebrow">{{EYEBROW}}</p>
+      <h2 class="title" style="margin-top:18px"><span>{{TITLE}}</span></h2>
+
+      <table style="margin-top:38px">
+        <thead>
+          <tr>
+            <th style="width:470px">{{COL_1}}</th>
+            <th style="width:190px">{{COL_2}}</th>
+            <th style="width:210px">Status</th>
+            <th>{{COL_4}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">{{R1_MILESTONE}}</td>
+            <td class="d">{{R1_TIMELINE}}</td>
+            <td><span class="chip done">✓&nbsp;&nbsp;Completed</span></td>
+            <td>{{R1_PROGRESS}}</td>
+          </tr>
+          <tr>
+            <td class="k">{{R2_MILESTONE}}</td>
+            <td class="d">{{R2_TIMELINE}}</td>
+            <td><span class="chip">→&nbsp;&nbsp;On track</span></td>
+            <td>{{R2_PROGRESS}}</td>
+          </tr>
+          <!-- repeat <tr> per milestone -->
+        </tbody>
+      </table>
+
+      <p class="fine" style="margin-top:32px"><span>{{NOTE}}</span></p>
+    </div>
+    <div class="foot">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

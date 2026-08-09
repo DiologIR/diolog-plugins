@@ -1,0 +1,34 @@
+<!-- TEMPLATE cover-photo
+     Use for: slide 1 of a deck that has a real photograph of the company's own
+     world (a site, a plant, a product in use). The strongest opening a company
+     deck has, and the one that most needs a generated or licensed image.
+     Slots: EYEBROW (occasion + date) · TITLE · SUBTITLE · CHIP (ticker/label)
+            FOOT-LEFT (a caveat that belongs on the cover, e.g. "Unaudited")
+     Watch: .pad carries position:relative so the copy paints ABOVE the photo.
+            Remove it and the whole slide's text goes invisible with a perfect
+            layout — every overflow, contrast and inventory check still passes.
+     Alt text is not decoration here: it is how the deck reads to a screen
+     reader and how a reviewer checks the image is the one that was commissioned. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} Cover">
+  <div class="stage">
+    <img class="photo" src="{{IMG_SRC}}" alt="{{IMG_ALT}}" />
+    <div class="scrim grad"></div>
+    <div class="pad" style="position:relative;justify-content:center">
+      <hr class="rule" />
+      <p class="eyebrow on-dark">{{EYEBROW}}</p>
+      <h1 class="display on-dark" style="margin:28px 0 0;max-width:20ch">
+        <span>{{TITLE}}</span>
+      </h1>
+      <p class="lead on-dark" style="margin-top:36px">
+        <span>{{SUBTITLE}}</span>
+      </p>
+      <div style="margin-top:52px">
+        <span class="chip mono on-dark">{{CHIP}}</span>
+      </div>
+    </div>
+    <div class="foot on-dark">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

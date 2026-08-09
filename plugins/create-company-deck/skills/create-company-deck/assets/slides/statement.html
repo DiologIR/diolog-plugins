@@ -1,0 +1,32 @@
+<!-- TEMPLATE statement
+     Use for: outlook, close, or a single-claim slide that earns a full-bleed
+     photograph and two short paragraphs. Also the right template for the one
+     slide in the deck that should slow the reader down.
+     Slots: IMG_SRC · IMG_ALT · EYEBROW · TITLE · PARA_1 · PARA_2
+     Rules: the title here runs a step below --t-display and above --t-title;
+            it is a token (--t-title with an explicit larger size is a stray).
+            If it needs to be bigger, raise --t-title for the whole deck or use
+            the display size — do not invent a value for one slide.
+            Two paragraphs is the ceiling. A third is a different slide.
+     Watch: .pad carries position:relative. Without it the entire text of the
+            slide is invisible under the photograph while every layout check
+            passes. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage">
+    <img class="photo" src="{{IMG_SRC}}" alt="{{IMG_ALT}}" />
+    <div class="scrim grad"></div>
+    <div class="pad" style="position:relative;justify-content:center">
+      <hr class="rule" />
+      <p class="eyebrow on-dark">{{EYEBROW}}</p>
+      <h2 class="title on-dark" style="margin-top:20px;max-width:20ch"><span>{{TITLE}}</span></h2>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,540px));gap:80px;margin-top:56px;height:auto">
+        <div style="height:auto"><p class="body on-dark"><span>{{PARA_1}}</span></p></div>
+        <div style="height:auto"><p class="body on-dark"><span>{{PARA_2}}</span></p></div>
+      </div>
+    </div>
+    <div class="foot on-dark">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

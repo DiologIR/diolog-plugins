@@ -1,0 +1,54 @@
+<!-- TEMPLATE photo-copy
+     Use for: the mirror of chart-photo — photograph left carrying a named
+     project or site, copy and a smaller chart right. Alternate the two so
+     consecutive divisional slides read as a pair rather than a repeat.
+     Slots: IMG_SRC · IMG_ALT · PROJ_EYEBROW · PROJ_TITLE · PROJ_BODY
+            EYEBROW · TITLE · CLAIM · CAP · three × (V, H%, X) · SUPPORT
+     Rules: show the unflattering series at the same weight as the flattering
+            one — same chart treatment, same axis discipline, same slide size.
+            A deck that buries the soft division is the default; refusing that
+            is usually the deck's whole thesis.
+     Watch: the plot box is shorter here (184px) because the copy column also
+            carries a support paragraph. Shrink the plot, never the type. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage">
+    <div style="display:grid;grid-template-columns:.92fr 1.08fr">
+      <div style="position:relative;overflow:hidden">
+        <img class="photo" src="{{IMG_SRC}}" alt="{{IMG_ALT}}" />
+        <div class="scrim soft"></div>
+        <div class="abs" style="left:72px;right:72px;bottom:160px">
+          <p class="eyebrow on-dark">{{PROJ_EYEBROW}}</p>
+          <p class="title on-dark" style="font-size:var(--t-sub);margin-top:16px">
+            <span>{{PROJ_TITLE}}</span>
+          </p>
+          <p class="body on-dark" style="margin-top:20px;max-width:32ch">
+            <span>{{PROJ_BODY}}</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="pad" style="padding-left:80px;padding-top:68px">
+        <hr class="rule" />
+        <p class="eyebrow">{{EYEBROW}}</p>
+        <h2 class="title" style="margin-top:20px"><span>{{TITLE}}</span></h2>
+        <p class="body" style="margin-top:24px;max-width:46ch"><span>{{CLAIM}}</span></p>
+
+        <figure class="chart" style="height:auto;margin-top:36px">
+          <figcaption class="cap"><span>{{CAP}} · axis begins at zero</span></figcaption>
+          <div class="plot" style="height:184px" role="img" aria-label="{{CHART_ARIA}}">
+            <div class="col"><span class="v">{{V_1}}</span><span class="b" style="height:{{H_1}}%"></span></div>
+            <div class="col mid"><span class="v">{{V_2}}</span><span class="b" style="height:{{H_2}}%"></span></div>
+            <div class="col now"><span class="v">{{V_3}}</span><span class="b" style="height:{{H_3}}%"></span></div>
+          </div>
+          <div class="xax"><span>{{X_1}}</span><span>{{X_2}}</span><span class="now">{{X_3}}</span></div>
+        </figure>
+
+        <p class="small" style="margin-top:28px;max-width:58ch"><span>{{SUPPORT}}</span></p>
+      </div>
+    </div>
+    <div class="foot" style="left:auto;width:900px">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

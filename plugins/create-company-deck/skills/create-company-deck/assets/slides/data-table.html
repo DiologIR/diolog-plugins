@@ -1,0 +1,55 @@
+<!-- TEMPLATE data-table
+     Use for: an inventory with a progress dimension — a build programme, a
+     project register, a milestone schedule. Nine rows is comfortable; past
+     twelve, split the slide rather than shrinking the type.
+     Slots: EYEBROW · TITLE · four column headers · rows · NOTE
+     Rules: the completion bar and the status chip say the same thing two ways
+            on purpose — a bar read at distance, a word read up close. Colour
+            alone never carries a status, so every chip keeps its glyph and its
+            word ("✓ Complete", "→ On track").
+            The bar's width is the literal percentage, not a rounded band.
+     Watch: `.tight` on the <table> pulls the row padding in for a long table.
+            Use it instead of overriding td padding per slide, so the change
+            stays inside the type system. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage">
+    <div class="pad" style="padding-top:72px">
+      <hr class="rule" />
+      <p class="eyebrow">{{EYEBROW}}</p>
+      <h2 class="title" style="margin-top:18px"><span>{{TITLE}}</span></h2>
+
+      <table class="tight" style="margin-top:36px">
+        <thead>
+          <tr>
+            <th style="width:300px">{{COL_1}}</th>
+            <th style="width:200px">{{COL_2}}</th>
+            <th>{{COL_3}}</th>
+            <th style="width:260px">{{COL_4}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">{{R1_C1}}</td>
+            <td class="d">{{R1_C2}}</td>
+            <td><div class="barcell"><div class="bar"><span class="full" style="width:100%"></span></div><span class="d">Complete</span></div></td>
+            <td><span class="chip">{{R1_C4}}</span></td>
+          </tr>
+          <tr>
+            <td class="k">{{R2_C1}}</td>
+            <td class="d">{{R2_C2}}</td>
+            <td><div class="barcell"><div class="bar"><span style="width:{{R2_PCT}}%"></span></div><span class="d">~{{R2_PCT}}%</span></div></td>
+            <td><span class="chip neutral">{{R2_C4}}</span></td>
+          </tr>
+          <!-- repeat <tr> per row. Write every row out literally rather than
+               generating them, so a later edit touches one row only. -->
+        </tbody>
+      </table>
+
+      <p class="fine" style="margin-top:12px;max-width:135ch"><span>{{NOTE}}</span></p>
+    </div>
+    <div class="foot">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

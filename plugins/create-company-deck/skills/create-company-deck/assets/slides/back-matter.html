@@ -1,0 +1,47 @@
+<!-- TEMPLATE back-matter
+     Use for: the last slide — who the company is, who to contact, and every
+     disclosure the deck owes its reader.
+     Slots: ABOUT (the company's own boilerplate, lifted from the company
+            overview, not rewritten) · CONTACT block · OFFICE block · DISCLAIMER
+     The disclaimer is where the deck's honesty is recorded, and each line is
+     there because something in the deck put it there:
+       · who authorised the release, when the source document says so;
+       · the audit status of every figure ("unaudited and not subject to
+         external audit or review") when the source document says so;
+       · that generated imagery is illustrative and does not depict the
+         company's sites, assets or personnel — required on any deck carrying
+         a generated photograph, and the reason it can carry one at all;
+       · any forward-looking-statement wording the source document carries.
+     Drop a line only when the thing it discloses is genuinely absent. A deck
+     with generated photography and no imagery disclosure is the one failure
+     here that a reader cannot detect and is entitled to. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage" style="background:var(--footer-bg)">
+    <div class="pad" style="justify-content:center">
+      <hr class="rule" />
+      <p class="eyebrow on-dark">About {{COMPANY_SHORT}}</p>
+      <p class="body on-dark" style="margin-top:26px;max-width:78ch"><span>{{ABOUT}}</span></p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-top:72px;height:auto;border-top:1px solid rgba(255,255,255,.16);padding-top:56px">
+        <div style="height:auto">
+          <p class="eyebrow on-dark">For further information</p>
+          <p class="title on-dark" style="font-size:var(--t-sub);margin-top:20px"><span>{{CONTACT_NAME}}</span></p>
+          <p class="small on-dark" style="margin-top:10px"><span>{{CONTACT_ROLE}}</span></p>
+          <p class="mono" style="margin-top:22px;font-size:var(--t-body);color:var(--on-dark)"><span>{{CONTACT_DETAIL}}</span></p>
+        </div>
+        <div style="height:auto">
+          <p class="eyebrow on-dark">Registered office</p>
+          <p class="small on-dark" style="margin-top:20px;font-size:var(--t-card);line-height:1.6"><span>{{ADDRESS_1}}</span></p>
+          <p class="small on-dark" style="margin-top:6px;font-size:var(--t-card);line-height:1.6"><span>{{ADDRESS_2}}</span></p>
+          <p class="mono on-dark" style="margin-top:20px;font-size:var(--t-small);color:var(--on-dark-muted)"><span>{{IDENTIFIERS}}</span></p>
+        </div>
+      </div>
+
+      <p class="fine on-dark" style="margin-top:76px;max-width:120ch"><span>{{DISCLAIMER}}</span></p>
+    </div>
+    <div class="foot on-dark">
+      <span>{{WEBSITE}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

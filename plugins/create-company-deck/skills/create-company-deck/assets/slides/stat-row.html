@@ -1,0 +1,48 @@
+<!-- TEMPLATE stat-row
+     Use for: the "at a glance" slide — four headline figures, each with a label
+     and the one clause of context that makes it mean something. Best placed
+     second, so a reader who stops after two slides still has the quarter.
+     Slots: EYEBROW · TITLE · LEAD · four × (VAL, UNIT, LAB, NOTE)
+     Rules: mark exactly ONE stat `.hero` — the accent is spent once per slide.
+            Every figure traces to the source document; a stat with no NOTE is
+            a number with no provenance, so write the clause or drop the stat.
+            Three or five stats work: change grid-template-columns to match.
+     Watch: the NOTE line is where the comparison lives ("up 0.9% on the prior
+            quarter") when the figure alone cannot show movement. -->
+<section class="slide" id="s{{N}}" data-screen-label="{{NN}} {{LABEL}}">
+  <div class="stage">
+    <div class="pad" style="justify-content:center">
+      <hr class="rule" />
+      <p class="eyebrow">{{EYEBROW}}</p>
+      <h2 class="title" style="margin-top:20px"><span>{{TITLE}}</span></h2>
+      <p class="lead" style="margin-top:28px"><span>{{LEAD}}</span></p>
+
+      <div class="statrow" style="margin-top:104px">
+        <div class="stat hero">
+          <span class="val">{{VAL_1}}<span class="unit">{{UNIT_1}}</span></span>
+          <span class="lab">{{LAB_1}}</span>
+          <span class="note">{{NOTE_1}}</span>
+        </div>
+        <div class="stat">
+          <span class="val">{{VAL_2}}<span class="unit">{{UNIT_2}}</span></span>
+          <span class="lab">{{LAB_2}}</span>
+          <span class="note">{{NOTE_2}}</span>
+        </div>
+        <div class="stat">
+          <span class="val">{{VAL_3}}<span class="unit">{{UNIT_3}}</span></span>
+          <span class="lab">{{LAB_3}}</span>
+          <span class="note">{{NOTE_3}}</span>
+        </div>
+        <div class="stat">
+          <span class="val">{{VAL_4}}<span class="unit">{{UNIT_4}}</span></span>
+          <span class="lab">{{LAB_4}}</span>
+          <span class="note">{{NOTE_4}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="foot">
+      <span>{{FOOT_LEFT}}</span>
+      <span>{{NN}}</span>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,424 @@
+<!doctype html>
+<!--
+  DIRECTION CONTRACT — {{COMPANY}} · {{OCCASION}}
+  Design system: {{DESIGN_SOURCE}}. Binding, not inspiration.
+
+  THESIS — {{the one idea this deck owns, and the default arrangement it refuses}}
+  OWN-WORLD — {{palette, type ramp, surface language in real values, not adjectives}}
+  STORY — {{what the audience understands, believes, and does}}
+  COVER — {{the exact composition of slide 1: what is where, at what scale}}
+  FORM — {{the candidate taken and why; or "a complete design system was supplied,
+    which is binding — every token below is lifted from it verbatim"}}
+
+  Figures: every number traces to {{SOURCE_DOCUMENT}}. {{audit status}}
+  Charts are authored in CSS from those figures; every value axis begins at zero.
+  {{imagery disclosure, if any image is generated}}
+-->
+<html lang="{{LANG}}">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{COMPANY}} — {{OCCASION}}</title>
+<meta name="description" content="{{META_DESCRIPTION}}" />
+{{FONT_LINKS}}
+<style>
+/* ===== THEME ===== */
+/* Replaced wholesale by scripts/theme_from_design.py. Never hand-edit a value
+   here that the company's DESIGN.md already states — regenerate instead, so the
+   deck and the company's other surfaces cannot drift apart in silence. */
+:root{
+  --brand:#D72229; --brand-hover:#B91D23; --brand-pressed:#9E1318;
+  --brand-tint:#FBE9E9; --brand-on-dark:#FF6A6E; --link:#C0202A;
+
+  --ink:#1C1B1B; --ink-body:#3A3A3A; --ink-muted:#6E6968;
+  --canvas:#F7F6F5; --surface:#FFFFFF; --sunken:#EFEDEC;
+  --dark:#2E2B2B; --dark-raised:#3C3939; --footer-bg:#181717;
+  --scrim:#000000DB;
+  --on-dark:#FFFFFF; --on-dark-body:#DAD7D6; --on-dark-muted:#B7B2B1;
+  --border:#E2DFDD; --border-strong:#C4C0BE;
+
+  --font-display:Figtree,-apple-system,system-ui,'Segoe UI',Roboto,Arial,sans-serif;
+  --font-body:Figtree,-apple-system,system-ui,'Segoe UI',Roboto,Arial,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+
+  /* Type ramp for a 1920×1080 stage. Derived from the design system's web ramp
+     by a single ratio (~×1.8), so the steps keep their relationships. Every
+     font-size in this file is one of these — a stray 31px beside a 29px body is
+     the clearest tell of a deck assembled slide-by-slide rather than designed. */
+  --t-display:112px; --t-title:72px; --t-sub:42px; --t-lead:34px;
+  --t-body:29px; --t-small:24px; --t-fine:22px; --t-over:20px;
+  --t-quote:28px; --t-card:26px;
+  --t-stat:104px; --t-stat-md:60px; --t-stat-sm:44px; --t-figure:40px;
+
+  --pad-x:112px; --pad-top:88px; --pad-bottom:120px; --gap-item:24px;
+  --foot-b:44px;
+
+  --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:28px; --r-full:9999px;
+  --e-md:0 4px 6px -1px rgba(28,27,27,.08),0 2px 4px -2px rgba(28,27,27,.06);
+  --e-xl:0 24px 48px -12px rgba(28,27,27,.18);
+  --ease-out:cubic-bezier(.2,0,0,1);
+  --dur-fast:120ms; --dur-base:220ms; --dur-slow:420ms;
+
+  --s:1;   /* stage scale, set by fit() */
+}
+/* ===== /THEME ===== */
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--footer-bg);color:var(--ink);
+  font-family:var(--font-body);overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── The deck shell ───────────────────────────────────────────────────────
+   Every slide is authored at a fixed 1920×1080 and the stage scales to fit,
+   letterboxing rather than reflowing. Content that reflows for a phone is a
+   web page; the presenter can no longer predict what the audience sees.
+
+   #deck stops short of the bottom so the control bar has its own band. Chrome
+   floated over the stage sits on slide content at every 16:9-ish window, where
+   the letterbox is only a few dozen pixels — measured 55–93 stage px of overlap
+   at 1440×900, 1680×1050 and 1920×1080.
+
+   The stage is centred with explicit half-size margins, never `place-items`:
+   flex and grid START-align an item wider than their area instead of centring
+   it, so at 1680px wide the box lands at left:0 rather than -120px, and scaling
+   about its own centre then throws 120px of every slide off the right edge. */
+#deck{position:fixed;inset:0 0 104px 0;background:var(--footer-bg)}
+.slide{
+  position:absolute;inset:0;overflow:hidden;
+  visibility:hidden;opacity:0;pointer-events:none;
+  transition:opacity var(--dur-base) var(--ease-out),visibility 0s linear var(--dur-base);
+}
+/* Visibility is toggled with an attribute, not `display`: a later layout rule
+   setting `display:flex` on a slide descendant would otherwise un-hide the
+   whole deck at once. */
+.slide[data-active]{
+  visibility:visible;opacity:1;pointer-events:auto;
+  transition:opacity var(--dur-base) var(--ease-out),visibility 0s;
+}
+.stage{
+  width:1920px;height:1080px;
+  position:absolute;left:50%;top:50%;margin-left:-960px;margin-top:-540px;
+  transform:scale(var(--s));transform-origin:center center;
+  overflow:hidden;background:var(--canvas);color:var(--ink);
+  box-shadow:var(--e-xl);
+}
+/* Wrapper-collapse guard. The shell sizes only the <section>; an in-flow
+   wrapper is height:auto, so a wrapper holding only absolutely-positioned
+   children collapses to zero and its full-bleed image vanishes.
+   Absolutely-positioned chrome must be EXCLUDED — height:100% on a footer
+   pinned at bottom:44px makes a 1080px box growing upward, and its flex
+   content renders along the TOP edge of the slide while every overflow and
+   collision check still passes. */
+.stage > *:not(img):not(picture):not(video):not(svg):not(canvas):not(.abs):not(.foot):not(.pinned){
+  height:100%;box-sizing:border-box;
+}
+.abs,.pinned{position:absolute}
+
+/* ── Recurring chrome ─────────────────────────────────────────────────── */
+.pad{padding:var(--pad-top) var(--pad-x) var(--pad-bottom);display:flex;flex-direction:column}
+.eyebrow{
+  font-family:var(--font-display);font-size:var(--t-over);font-weight:700;
+  line-height:1.4;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);margin:0;
+}
+.eyebrow.on-dark{color:var(--brand-on-dark)}
+.rule{width:96px;height:8px;background:var(--brand);border:0;margin:0 0 28px;flex:none}
+h1,h2,h3,p,ul,ol,li,figure,figcaption,table,dl{margin:0}
+.display{
+  font-family:var(--font-display);font-size:var(--t-display);font-weight:900;
+  line-height:1.02;letter-spacing:-.03em;color:var(--ink);
+}
+.title{
+  font-family:var(--font-display);font-size:var(--t-title);font-weight:800;
+  line-height:1.1;letter-spacing:-.02em;color:var(--ink);
+}
+.display.on-dark,.title.on-dark{color:var(--on-dark)}
+.lead{font-size:var(--t-lead);font-weight:500;line-height:1.5;color:var(--ink-body);max-width:58ch}
+.body{font-size:var(--t-body);font-weight:400;line-height:1.5;color:var(--ink-body);max-width:56ch}
+.small{font-size:var(--t-small);font-weight:400;line-height:1.5;color:var(--ink-muted)}
+.fine{font-size:var(--t-fine);font-weight:400;line-height:1.5;color:var(--ink-muted)}
+.lead.on-dark,.body.on-dark{color:var(--on-dark-body)}
+.small.on-dark,.fine.on-dark{color:var(--on-dark-muted)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:500}
+
+/* Slide footer — same position on every slide, so the eye stops noticing it. */
+.foot{
+  position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:var(--foot-b);height:auto;
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--font-mono);font-size:var(--t-over);font-weight:500;
+  letter-spacing:.02em;color:var(--ink-muted);
+  border-top:1px solid var(--border);padding-top:18px;
+}
+.foot.on-dark{color:var(--on-dark-muted);border-top-color:rgba(255,255,255,.16)}
+
+/* Accent bullet. Replace the clip-path with the brand's own mark if it has one
+   that reduces to a glyph; a plain square or disc is honest when it doesn't. */
+.bullets{list-style:none;padding:0;display:flex;flex-direction:column;gap:var(--gap-item)}
+.bullets li{position:relative;padding-left:52px;font-size:var(--t-body);line-height:1.45;color:var(--ink-body)}
+.bullets.on-dark li{color:var(--on-dark-body)}
+.bullets li::before{
+  content:"";position:absolute;left:0;top:.42em;width:26px;height:16px;background:var(--brand);
+  clip-path:polygon(50% 0,100% 100%,76% 100%,50% 46%,24% 100%,0 100%);
+}
+.bullets li b{font-weight:700;color:var(--ink)}
+.bullets.on-dark li b{color:var(--on-dark)}
+
+/* Stat / metric. Published figures take the mono face with tabular numerals so
+   columns of numbers align; prose never does. */
+.statrow{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border)}
+.stat{padding:44px 40px 0;border-right:1px solid var(--border)}
+.stat:first-child{padding-left:0}
+.stat:last-child{border-right:0;padding-right:0}
+.stat .val{
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600;
+  font-size:var(--t-stat);line-height:1;letter-spacing:-.03em;color:var(--ink);display:block;
+}
+.stat.hero .val{color:var(--brand)}
+.stat .unit{font-size:var(--t-stat-sm);font-weight:500;color:var(--ink-muted);letter-spacing:-.01em}
+.stat .lab{display:block;margin-top:22px;font-family:var(--font-display);font-size:var(--t-small);font-weight:600;line-height:1.3;color:var(--ink)}
+.stat .note{display:block;margin-top:10px;font-size:var(--t-fine);font-weight:400;line-height:1.4;color:var(--ink-muted)}
+.statrow.on-dark{border-top-color:rgba(255,255,255,.18)}
+.statrow.on-dark .stat{border-right-color:rgba(255,255,255,.18)}
+.statrow.on-dark .val,.statrow.on-dark .lab{color:var(--on-dark)}
+.statrow.on-dark .note,.statrow.on-dark .unit{color:var(--on-dark-muted)}
+
+.card{background:var(--surface);border-radius:var(--r-md);box-shadow:var(--e-md);padding:36px}
+.card.dark{background:var(--dark-raised);box-shadow:none}
+.card .q{font-size:var(--t-quote);font-weight:400;line-height:1.45;color:var(--ink-body)}
+.card.dark .q{color:var(--on-dark-body)}
+.card .who{margin-top:24px;font-size:var(--t-small);font-weight:600;line-height:1.3;color:var(--ink)}
+.card.dark .who{color:var(--on-dark)}
+.card .h{font-family:var(--font-display);font-size:var(--t-card);font-weight:700;line-height:1.3;color:var(--ink)}
+.card.dark .h{color:var(--on-dark)}
+
+/* Status chip. A status is never encoded by colour alone — every chip carries a
+   glyph and a word, because ~8% of men have a colour-vision deficiency and a
+   projector flattens the distinction anyway. */
+.chip{
+  display:inline-block;padding:7px 18px;border-radius:var(--r-full);
+  background:var(--brand-tint);color:var(--link);
+  font-size:var(--t-fine);font-weight:600;line-height:1.3;white-space:nowrap;
+}
+.chip.mono{font-family:var(--font-mono);letter-spacing:.04em}
+.chip.neutral{background:var(--sunken);color:var(--ink-muted)}
+.chip.done{background:var(--sunken);color:var(--ink-body)}
+.chip.on-dark{background:rgba(255,255,255,.12);color:var(--on-dark)}
+
+table{border-collapse:collapse;width:100%}
+th{
+  font-family:var(--font-display);font-size:var(--t-over);font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--brand);
+  text-align:left;padding:0 24px 16px 0;border-bottom:2px solid var(--border-strong);
+}
+td{
+  padding:13px 24px 13px 0;border-bottom:1px solid var(--border);
+  font-size:var(--t-fine);color:var(--ink-body);vertical-align:middle;
+}
+td.k{font-family:var(--font-display);font-weight:700;color:var(--ink)}
+td.d{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:500;color:var(--ink)}
+.tight td{padding:10px 24px 10px 0}
+.tight .bar{height:11px}
+
+/* Progress bar for a build / completion column. */
+.bar{position:relative;height:12px;background:var(--sunken);border-radius:var(--r-full);overflow:hidden;width:240px;flex:none}
+.bar span{position:absolute;inset:0 auto 0 0;background:var(--ink);border-radius:var(--r-full)}
+.bar span.full{background:var(--brand)}
+.barcell{display:flex;align-items:center;gap:20px}
+
+/* ── Charts, authored in CSS ──────────────────────────────────────────────
+   Bar heights are a percentage of a fixed plot box taken from zero, so the
+   axis always begins at zero and the bars stay proportional — a truncated
+   value axis on a comparison is a defect, not a style.
+   CSS beats SVG here: SVG <text> sizes are attributes that bypass the type
+   scale, and a viewBox re-scales labels independently of the deck's own
+   scaling, so chart labels drift off the ramp. These labels are real HTML on
+   --t-* tokens and cannot. */
+.chart{display:flex;flex-direction:column}
+.chart .cap{font-family:var(--font-display);font-size:var(--t-small);font-weight:600;color:var(--ink);margin-bottom:22px}
+.chart.on-dark .cap{color:var(--on-dark)}
+.plot{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:64px;align-items:end;border-bottom:2px solid var(--border-strong)}
+.col{display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.col .v{
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600;
+  font-size:var(--t-figure);line-height:1;letter-spacing:-.02em;color:var(--ink);
+  text-align:center;margin-bottom:14px;
+}
+.col .b{background:var(--border-strong);border-radius:4px 4px 0 0}
+.col.mid .b{background:var(--ink-muted)}
+.col.now .v{color:var(--brand)}
+.col.now .b{background:var(--brand)}
+.xax{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:64px;margin-top:16px}
+.xax span{text-align:center;font-family:var(--font-display);font-size:var(--t-small);font-weight:600;color:var(--ink-muted)}
+.xax span.now{color:var(--ink);font-weight:700}
+.chart.on-dark .col .v{color:var(--on-dark)}
+.chart.on-dark .col .b{background:var(--on-dark-muted)}
+.chart.on-dark .xax span{color:var(--on-dark-muted)}
+.chart.on-dark .plot{border-bottom-color:rgba(255,255,255,.3)}
+
+.hbars{display:flex;flex-direction:column;gap:34px}
+.hbar .lab{font-family:var(--font-display);font-size:var(--t-small);font-weight:600;color:var(--ink-muted);margin-bottom:12px}
+.hbar .track{display:flex;align-items:center;gap:24px}
+.hbar .fill{height:44px;background:var(--border-strong);border-radius:0 4px 4px 0}
+.hbar.key .fill{background:var(--brand)}
+.hbar .v{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600;font-size:var(--t-figure);line-height:1;color:var(--ink)}
+.chart.on-dark .hbar .lab{color:var(--on-dark-muted)}
+.chart.on-dark .hbar .fill{background:var(--on-dark-muted)}
+.chart.on-dark .hbar.key .fill{background:var(--brand)}
+.chart.on-dark .hbar .v{color:var(--on-dark)}
+
+/* Full-bleed photograph with scrim. Copy laid over it needs its own
+   `position:relative` to win the paint order — an inset:0 image and its scrim
+   paint above every static in-flow sibling whatever the source order, and the
+   slide's entire text goes invisible while its layout stays perfect. */
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.scrim{position:absolute;inset:0;background:var(--scrim)}
+.scrim.grad{background:linear-gradient(90deg,#000000EE 0%,#000000DB 52%,#0000008F 100%)}
+.scrim.soft{background:#000000B3}
+
+/* ── Deck controls ───────────────────────────────────────────────────────
+   One bar in the letterbox below the stage. It wakes on any pointer movement
+   or key press and retires after 2s — unless the pointer is over it or
+   keyboard focus is inside it, so it can never vanish mid-click. */
+#controls{
+  position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(0);z-index:30;
+  display:flex;align-items:center;gap:8px;padding:8px;
+  background:rgba(24,23,23,.86);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.12);border-radius:var(--r-full);box-shadow:var(--e-xl);
+  transition:opacity var(--dur-base) var(--ease-out),transform var(--dur-base) var(--ease-out),visibility 0s;
+}
+#controls[data-idle]{
+  opacity:0;visibility:hidden;transform:translateX(-50%) translateY(12px);
+  transition:opacity var(--dur-base) var(--ease-out),transform var(--dur-base) var(--ease-out),visibility 0s linear var(--dur-base);
+}
+#controls button{
+  appearance:none;width:52px;height:52px;flex:none;padding:0;
+  display:grid;place-items:center;cursor:pointer;
+  background:transparent;border:0;border-radius:var(--r-full);color:#fff;
+  transition:background var(--dur-fast) var(--ease-out);
+}
+#controls button:hover:not(:disabled){background:rgba(255,255,255,.14)}
+#controls button:active:not(:disabled){background:rgba(255,255,255,.22)}
+#controls button:disabled{opacity:.3;cursor:default}
+#controls button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+#controls button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#counter{
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:15px;font-weight:500;letter-spacing:.08em;color:rgba(255,255,255,.78);
+  min-width:74px;text-align:center;user-select:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,#controls,#controls button{transition-duration:1ms !important}
+}
+
+/* Print un-stacks the deck: every slide visible, one per landscape page. */
+@page{size:1920px 1080px;margin:0}
+@media print{
+  body{background:#fff;overflow:visible}
+  #deck{position:static;display:block;inset:auto;height:auto;background:#fff}
+  .slide{
+    position:static;display:block;width:1920px;height:1080px;
+    visibility:visible !important;opacity:1 !important;pointer-events:auto;
+    page-break-after:always;background:#fff;overflow:hidden;transition:none;
+  }
+  /* `relative`, never `static`. The stage is the containing block for every
+     absolutely-positioned descendant — .photo, .scrim, .foot. Making it static
+     re-anchors all of them to the page box and every slide's photograph and
+     footer composites onto page 1, while pages 2+ look perfect. The signature
+     is page 1 rendering the LAST slide's photo under the LAST slide's footer. */
+  .stage{position:relative;left:auto;top:auto;margin:0;transform:none;box-shadow:none}
+  #controls{display:none}
+  .stage,.stat.hero .val,.bar span,.chip,.eyebrow,.rule,.bullets li::before,
+  th,.col .b,.hbar .fill{
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="deck">
+<!-- SLIDES -->
+</div><!-- /#deck -->
+
+<div id="controls" role="group" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 L8 12 L15 19" /></svg>
+  </button>
+  <span id="counter" role="status" aria-live="polite"></span>
+  <button type="button" id="next" aria-label="Next slide">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5 L16 12 L9 19" /></svg>
+  </button>
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var controls = document.getElementById('controls');
+  var counter = document.getElementById('counter');
+  var prevBtn = document.getElementById('prev');
+  var nextBtn = document.getElementById('next');
+  var KEY = '{{STORAGE_KEY}}';
+  var i = 0;
+
+  // Fit the fixed 1920×1080 stage to #deck — not to the viewport, because
+  // #deck reserves the control bar's band and the scale must respect it.
+  function fit() {
+    var deck = document.getElementById('deck').getBoundingClientRect();
+    document.documentElement.style.setProperty('--s', String(Math.min(deck.width / 1920, deck.height / 1080)));
+  }
+
+  function show(n, push) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (sl, k) { sl.toggleAttribute('data-active', k === i); });
+    counter.textContent = String(i + 1).padStart(2, '0') + ' / ' + slides.length;
+    prevBtn.disabled = i === 0;
+    nextBtn.disabled = i === slides.length - 1;
+    try { localStorage.setItem(KEY, String(i)); } catch (e) {}
+    if (push) history.replaceState(null, '', '#' + slides[i].id);
+  }
+
+  var idleTimer = null;
+  function wake() {
+    controls.removeAttribute('data-idle');
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(sleep, 2000);
+  }
+  function sleep() {
+    // `:focus-visible`, not `document.activeElement` — a mouse click leaves
+    // focus on the button it clicked, so an activeElement check re-arms the
+    // timer forever and the bar never retires again for the rest of the session.
+    if (controls.matches(':hover') || controls.querySelector(':focus-visible')) { wake(); return; }
+    controls.setAttribute('data-idle', '');
+  }
+  ['mousemove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (e) {
+    addEventListener(e, wake, { passive: true });
+  });
+  controls.addEventListener('mouseleave', wake);
+  controls.addEventListener('focusin', wake);
+  controls.addEventListener('focusout', wake);
+
+  prevBtn.addEventListener('click', function () { show(i - 1, true); wake(); });
+  nextBtn.addEventListener('click', function () { show(i + 1, true); wake(); });
+
+  addEventListener('keydown', function (e) {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].indexOf(e.key) > -1) { e.preventDefault(); show(i + 1, true); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp'].indexOf(e.key) > -1) { e.preventDefault(); show(i - 1, true); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0, true); }
+    else if (e.key === 'End') { e.preventDefault(); show(slides.length - 1, true); }
+  });
+
+  addEventListener('resize', fit);
+  fit();
+
+  var start = 0;
+  var byHash = location.hash && slides.map(function (s) { return '#' + s.id; }).indexOf(location.hash);
+  if (byHash > -1) start = byHash;
+  else { try { start = parseInt(localStorage.getItem(KEY) || '0', 10) || 0; } catch (e) {} }
+  show(start, false);
+  wake();
+})();
+</script>
+</body>
+</html>
