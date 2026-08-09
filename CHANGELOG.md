@@ -6,6 +6,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); eac
 
 ## 2026-08-10
 
+### create-company-deck 1.0.0 → 1.1.0
+
+Composition, from a fair question on review: the skill named four sibling skills and invoked none of them. Every reference was a signpost pointing away, which left the pipeline unable to start without inputs it could have produced itself, and finishing on gates that by construction can only find defects someone has already met.
+
+- **Added** step 0. A missing company overview is now crawled with `company-overview-from-website`, which emits the same `<COMPANY>-Company-Overview.md` contract the portal generator reads — so it is the same artifact rather than a similar one. A missing `DESIGN.md` is measured off the same site with `design-md-from-website`, which reads computed CSS; a guessed brand colour is the most visible failure a branded deck has, and nothing in this skill's own gates can catch it, because the deck is internally consistent around the wrong red. A company URL plus a source document is now enough to start, and only the source document is genuinely irreplaceable.
+- **Added** `deck-craft` as a dependency rather than only a destination: its direction round for the case where there is no design system to measure, and its `deck-review.md` for the delivery pass.
+- **Added** step 8, `design-review` over the served deck before completion. The bundled gates are deterministic and prove four known defects have not returned; they say nothing about whether a slide's hierarchy works or whether the deck reads as one designed object. This is also where the review's worklist matters — every slide a row, every stage a column, `check` exiting non-zero while any cell is open — so a partial review stops being indistinguishable from a complete one. Several of the bundled gates are findings from exactly that run, promoted into code. The delegation cap was scoped to slide-building so it does not suppress the review's own passes.
+- **Changed** the closing report's middle line from what was looked at to the review's coverage and findings.
+
 ### create-company-deck 1.0.0 — new
 
 Extracted from the session that built, reviewed and shipped an ASX quarterly deck, and from the handover written out of it (`~/Dev/dAIolog/docs/HANDOVER-2026-08-06-investor-surfaces.md`). `deck-craft` already absorbed that session's craft learnings; what it does not carry is the *materials* — the shell and layouts that were debugged in production, and the scripts for the parts of a company deck that are the same every time.

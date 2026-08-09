@@ -32,6 +32,23 @@ a deck with no brand and no source (`deck-craft`'s direction round first).
 Crossing those is the failure no craft recovers, because the deck looks right and
 says something the company did not say.
 
+Only the source document is irreplaceable. A missing overview is crawled from the
+company's site with `company-overview-from-website`; a missing `DESIGN.md` is
+measured off the same site with `design-md-from-website`, which reads computed
+CSS rather than guessing a hex from a screenshot. A company URL plus a source
+document is enough to start.
+
+## What it composes with
+
+`company-overview-from-website` and `design-md-from-website` supply the missing
+inputs. `deck-craft` owns the craft layer — its direction round when there is no
+design system to measure, its `deck-review.md` for the delivery pass, and its
+lecturn JSON target when the ask is really a `.pptx`. `design-review` runs over
+the built deck before it is called done: the bundled gates prove four known
+defects have not returned, and cannot see the ones nobody has met yet.
+`media-gen-pro` generates the photography; `playwright-cli` drives the gates.
+
+
 ## What's bundled
 
 - **`assets/deck-shell.html`** — the scaling shell: fixed stage, keyboard and

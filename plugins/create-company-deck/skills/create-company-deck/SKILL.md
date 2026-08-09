@@ -16,10 +16,14 @@ description: >-
   and overview exist, because it carries the layout templates, the theme
   generator, the figure and chart discipline a disclosure-derived deck needs,
   and the measured gates for four render failures that are invisible in a
-  screenshot. Not for a .pptx or an editable Office handoff (use deck-craft's
-  lecturn JSON target), not for an investor portal page
-  (create-investor-portal-free), and not for a deck with no brand and no source
-  material, which is deck-craft's direction round.
+  screenshot. When the overview or the DESIGN.md is missing it produces them
+  first from the company's website via company-overview-from-website and
+  design-md-from-website, so a company URL plus a source document is enough to
+  start; it finishes by running design-review over the built deck. Not for a
+  .pptx or an editable Office handoff (use deck-craft's lecturn JSON target),
+  not for an investor portal page (create-investor-portal-free), and not for a
+  deck with no brand and no source material, which is deck-craft's direction
+  round.
 ---
 
 # Create a company deck
@@ -57,7 +61,7 @@ subagent covers it. Image generation and the gates are tool calls, not agents.
 
 **Match written length to the surface.** Slide copy is capped by its layout, so
 when text does not fit, cut the text rather than shrinking type or moving a rail.
-The closing report is the three-line shape in step 8, not a narrative of the
+The closing report is the three-line shape in step 9, not a narrative of the
 build. If you write any accompanying document, cover the substance and skip the
 filler sections — a recap of what you just did, a restated plan, a closing
 reflection.
@@ -71,11 +75,41 @@ reflection.
 | Source document or prompt (announcement, PDF, brief, notes) | every number, date, status and quotation | who the company is |
 | `DESIGN.md` / brand tokens | every colour, size, radius, space | content |
 
-If one is missing, say which and what you will do instead — a deck built with a
-guessed brand colour or an invented figure is worse than a deck that says the
-input was not supplied. If the company has an earlier deck built this way, use
-it as the template in preference to the library: matching the last deck is brand
-work.
+Only the source document is irreplaceable. The other two describe a company that
+has a website, so a missing one is an input to go and produce rather than a
+reason to guess or to stop.
+
+## 0 · Assemble the missing inputs
+
+Do this before anything else, because both later phases read these files as
+records rather than as drafts.
+
+**No company overview** → invoke `company-overview-from-website` with the
+company's URL. It crawls the site and emits `<COMPANY>-Company-Overview.md` in
+the contract the Diolog portal generator already reads — legal name anchored to
+the domain, ticker with its exchange prefix, business sections, leadership,
+documents, images with real alt text. That contract is why the file is usable
+here without re-reading the whole site: it is the same artifact, not a similar
+one. Budget under ten minutes; past that it is rewriting what the site says.
+
+**No `DESIGN.md`** → invoke `design-md-from-website` with the same URL. It drives
+a browser and reads **computed CSS**, so the palette and type are correct by
+construction. This matters more for a deck than for most surfaces: a guessed
+brand colour is the most visible failure a branded deck has and no gate in this
+skill will catch it, because the deck is internally consistent around the wrong
+red. Screenshot-based extraction is the fallback only when no URL exists.
+
+**No `DESIGN.md` and no URL** — the company has no measurable design system, so
+run `deck-craft`'s direction round (`references/visual-craft.md` §2) to commit a
+direction, and record it in the shell's FORM block as an authored direction
+rather than a supplied system. That is the one case where this skill hands the
+aesthetic decision back to `deck-craft`.
+
+**No source document and no prompt** is the genuine block. Ask for it — there is
+nothing to build a deck about.
+
+If the company already has a deck built this way, use it as the template in
+preference to the library. Matching the last deck is brand work.
 
 ## 1 · Ground
 
@@ -202,13 +236,43 @@ Two things it cannot do, and you must:
 Then read the finished deck against the direction contract promise by promise,
 and remove one element the deck does not need.
 
-## 8 · Report
+## 8 · Review
+
+Invoke `design-review` on the served deck before calling it done, and resolve
+what it returns.
+
+Step 7's gates are deterministic: they prove that four known defects have not
+returned. They cannot find the defect nobody has met yet, and they say nothing
+about whether slide 6's hierarchy works, whether the eye lands where the argument
+needs it to, or whether the deck reads as one designed object. `design-review`'s
+judged passes are where those live, and its worklist mechanism is what makes the
+review finishable — every slide is a row, every stage a column, and
+`worklist.py check` exits non-zero while any cell is open, so a partial review
+stops being indistinguishable from a complete one. The reference deck went
+through 13 surfaces × 7 stages, and several of this skill's bundled gates are
+findings from that run, promoted into code.
+
+Give it the deck's URL and its slide count as the surface list. It reviews rather
+than fixes, so apply the findings yourself, then re-run step 7's gates over the
+changes — a fix for a craft finding is exactly the kind of edit that reintroduces
+a layout defect.
+
+This is the one place in the pipeline where fan-out is appropriate: the review
+skill runs its own passes, and the delegation cap above is about building slides,
+not about reviewing them.
+
+Also read `deck-craft`'s `references/deck-review.md` for the deck-specific
+delivery pass — the per-slide gate and the audit of the finished deck against its
+direction contract. It is the deck dialect of the same discipline and it is
+shorter than repeating it here.
+
+## 9 · Report
 
 Three claims, kept apart:
 
 ```
 Gates:       what the script asserted, each with its denominator
-Looked at:   the captures you actually opened, at which sizes
+Reviewed:    design-review's coverage — surfaces × stages, and what it found
 Not checked: never empty
 ```
 
@@ -246,3 +310,15 @@ or a template without reading its comments.
 | `references/template-library.md` | at step 3 — the catalogue, choosing a sequence, filling and extending safely |
 | `references/imagery.md` | before generating anything — prompts, the grade lock, the three non-negotiables, compression |
 | `references/gates.md` | at step 7 — why each gate exists, the contrast caveat, proving a gate can fail |
+
+## Skills this composes with
+
+| Skill | When |
+|---|---|
+| `company-overview-from-website` | step 0, when no overview was supplied and the company has a site |
+| `design-md-from-website` | step 0, when no `DESIGN.md` was supplied — measured computed CSS, not a guessed hex |
+| `deck-craft` | step 0 for its direction round when there is no design system to measure; step 8 for `references/deck-review.md`; and as the destination whenever the ask turns out to be a `.pptx` |
+| `design-review` | step 8, on the served deck, before calling it done |
+| `mcp__media-gen-pro__generate_image` | step 5 — a tool, not a skill |
+| `playwright-cli` | step 7 — `run_gates.sh` drives it; the gates do not run without it |
+
