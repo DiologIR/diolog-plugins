@@ -26,18 +26,59 @@ Slot-refill beats wave-barriers: when a runner lands, anything newly unblocked s
 ```js
 // ready-queue + slot refill; items/deps come in via args
 const done = new Set(args.alreadyMerged), running = new Map()
+const parked = new Map(), attempts = new Map()          // id -> reason / restart count
 const ready = () => args.items.filter(i => !done.has(i.id) && !running.has(i.id)
-  && i.deps.every(d => done.has(d)))
-while (done.size < args.items.length) {
+  && !parked.has(i.id) && i.deps.every(d => done.has(d)))
+while (done.size + parked.size < args.items.length) {
   for (const item of ready().slice(0, 8 - running.size))
     running.set(item.id, agent(runnerPrompt(item), {label: item.id, model: 'opus', effort: 'high', agentType: 'claude'})
       .then(report => ({item, report})))
+
+  // Nothing ready and nothing running means the remainder is blocked behind items
+  // that never merged. Promise.race over an empty iterable NEVER settles, so
+  // entering it here hangs the fleet silently and forever.
+  if (running.size === 0) {
+    for (const i of args.items)
+      if (!done.has(i.id) && !parked.has(i.id)) parked.set(i.id, 'blocked: a dependency never merged')
+    break
+  }
+
   const {item, report} = await Promise.race(running.values())
   running.delete(item.id)
+
+  // A dead runner is NOT a finished one. agent() returns null when the subagent
+  // hits a terminal API error (zero retries) or the user skips it, and a null
+  // destructures just as cleanly as a real report — so without this branch the
+  // slot frees, the fleet moves on, and the item vanishes having never run.
+  if (report == null) {
+    const n = (attempts.get(item.id) ?? 0) + 1
+    attempts.set(item.id, n)
+    if (n > 2) parked.set(item.id, `runner returned null ${n}x — parked, needs a human`)
+    continue                                            // never add to `done`
+  }
+
   // hand ready-to-merge back to the MAIN session between workflow rounds if you
   // prefer to finalize there; either way: ONE merge at a time, ledger updated first
 }
+// `parked` is an outcome, not an exception: write every entry to ORCHESTRATOR.md
+// with its reason before the run reports anything.
 ```
+
+**Three rules the sketch encodes, worth stating on their own because a fleet that
+breaks them looks exactly like a fleet that worked:**
+
+1. **A null return is a death, not a completion.** Claude Code's workflow `agent()`
+   returns `null` on any terminal API error, with **zero retries**, and the run
+   still reports `completed`. Counting that item as done is how a fleet reports a
+   green backlog it never touched. Check for null explicitly; `.filter(Boolean)`
+   in a script quietly does the opposite of what you want here, because it drops
+   the evidence that something died.
+2. **Never `Promise.race` an empty map.** It never settles. If the ready queue is
+   empty and nothing is running, the remaining items are blocked behind something
+   that never merged — park them with that reason and break.
+3. **`done` means merged.** Not "the runner returned", not "the report said
+   ready-to-merge". The only writer to `done` is your own serialized finalize
+   after the merge lands.
 
 In practice you may prefer batches: run one workflow per "as many slots as are ready", return the ready-to-merge reports, finalize serially in-session, update ORCHESTRATOR.md, then launch the next workflow. That trades a little parallelism for much simpler state — fine. What is not fine: exceeding 8 concurrent runners, starting an item whose deps haven't merged, or two merges at once.
 
