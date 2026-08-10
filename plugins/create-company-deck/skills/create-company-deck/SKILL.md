@@ -43,6 +43,15 @@ slides (`design-craft`), or a deck for a company with no design system and no
 source material — that last one needs `deck-craft`'s direction round first, and
 you can come back here once a direction exists.
 
+**Route to `references/eve-runner.md` FIRST** when the session carries a
+`<SOURCE_DATA>` envelope and the loop instruction names `deck.json` and
+`submit_artifact` — a Diolog studio job. There the artifact is a
+`diolog.deck-source/1` deck.json rendered by the platform's own rail, so the
+shell, the HTML slide files and every script below do not apply while the
+grounding and craft rules do. Following the HTML procedure on that target
+produces a deck the runner cannot apply.
+
+
 ## How to work through this
 
 Deliver the deck that was asked for, at the scope intended. Make the routine
@@ -310,6 +319,7 @@ or a template without reading its comments.
 | `references/template-library.md` | at step 3 — the catalogue, choosing a sequence, filling and extending safely |
 | `references/imagery.md` | before generating anything — prompts, the grade lock, the three non-negotiables, compression |
 | `references/gates.md` | at step 7 — why each gate exists, the contrast caveat, proving a gate can fail |
+| `references/eve-runner.md` | FIRST, when the session is a Diolog studio job — the deck.json target, the envelope keys, and which mechanics here do not apply |
 
 ## Skills this composes with
 
