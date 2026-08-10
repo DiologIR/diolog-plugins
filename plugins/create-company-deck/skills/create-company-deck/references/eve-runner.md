@@ -113,6 +113,23 @@ edit-specific obligations:
   `attachedDocs`. An edit is the cheapest route to an unsourced figure inside an
   otherwise compliant deck, which is why it is called out.
 
+## Editing
+
+A `DECK_EDIT` job carries the same grounding — theme, overview and the deck's own
+generation sources — so the rules above apply unchanged to an edit. Two
+edit-specific obligations:
+
+- Carry every element's existing `sourceLink` through verbatim, on edited and
+  unedited slides alike. Dropping one silently strips a figure's attribution.
+- A figure the edit **adds** is sourced the same way, from the same
+  `attachedDocs`. An edit is the cheapest route to an unsourced figure inside an
+  otherwise compliant deck, which is why it is called out.
+
+An edit is not fanned out. The parallel path above is for authoring a fresh deck
+against a plan that does not exist yet; an edit already has the whole deck in
+front of it, and the slides it must not touch are exactly the ones a second
+author would put at risk.
+
 ## What still applies from the main skill
 
 All of it, minus the mechanics: the three authorities, the figure discipline,
