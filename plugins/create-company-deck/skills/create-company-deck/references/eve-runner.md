@@ -15,7 +15,7 @@ and the loop instruction names `deck.json` and `submit_artifact` — i.e. a stud
 | This skill's HTML mechanism | On the runner |
 |---|---|
 | `assets/deck-shell.html` | nothing to build — the platform renders and scales the deck |
-| `assets/slides/*.html` | the `diolog-slide-templates` skill: pick a template, send `{templateId, slots}` |
+| `assets/slides/*.html` | the `diolog-slide-templates` skill: pick a template, send `{templateId, slots}` — or hand-author the slide's elements where a template cannot carry what the slide needs. Either way one child agent per slide (see Delegation) |
 | `scripts/theme_from_design.py` | `designMd` + `themeTokens` arrive resolved in the envelope |
 | `scripts/build_deck.py` | author `deck.json` directly; the finalizer normalises and streams it |
 | `scripts/run_gates.sh` / `gates.js` | the platform's render/review rail, plus the `design-reviewer` subagent |
@@ -101,6 +101,26 @@ where any surviving drift surfaces.
 So on this target: plan as a whole, author in parallel, assemble and critique as
 a whole. The disciplines in the rest of this skill apply to every child
 unchanged.
+
+**Hand-authoring is not a reason to stop fanning out.** These are two independent
+choices and only the second is constrained:
+
+| Choice | Options | Constrained? |
+|---|---|---|
+| How a slide's object is produced | a `diolog-slide-templates` `{templateId, slots}` pair, or hand-authored elements | Free — pick per slide |
+| Who produces it | one child agent per slide, or the root alone | **Fan out.** Authoring ten slides serially is the thing this section exists to prevent |
+
+Deciding that a slide must be hand-authored — because templated slot objects
+cannot carry a per-figure `sourceLink`, a group `autoLayout`, or an asserted
+zero-based axis floor, all of which are ordinary on a disclosure-derived deck —
+says nothing about who authors it. A child hand-authors just as well as the root,
+against the same plan and the same tokens, and that is the intended path. Observed
+failure: a runner read "templates cannot carry my `sourceLink`s" as licence to
+author all ten slides itself, which is exactly the serial build the fan-out is
+meant to replace, at several times the wall-clock.
+
+The only case for the root authoring a slide directly is repair — a child's file
+missing or breaking the plan's contract at assembly, which step 2c already covers.
 
 
 A `DECK_EDIT` job carries the same grounding — theme, overview and the deck's own
