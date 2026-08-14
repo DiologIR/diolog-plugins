@@ -4,7 +4,7 @@ Two loops. The **per-slide gate** runs while you build, because a mistake on sli
 
 ## The per-slide gate
 
-After drafting each slide, before starting the next. Cheap checks first:
+After drafting each slide, before starting the next. **Run `scripts/run-preflight.sh` first** — it settles the computable half in seconds and leaves the looking for what only an eye can judge. Then the cheap checks:
 
 1. **Does it say one thing?** Name the slide's single claim out loud. If that takes two sentences joined by "and", it's two slides.
 2. **Does every slot say something different?** A template with kicker / title / body / caption fills easily and empties nothing. The failure shape, measured on a real generated surface: eyebrow = the item's name, title = a truncated blurb ending mid-clause, body = *that identical string again*, caption = the eyebrow once more. Four slots, two pieces of information, and the hierarchy inverted — the name demoted to a label and a sentence fragment promoted to the headline. A slot with nothing of its own to say is left empty, not filled; and **a title is written short, never cut short** — a heading ending in an ellipsis is body copy in the title slot.
@@ -13,8 +13,28 @@ After drafting each slide, before starting the next. Cheap checks first:
 5. **Does the text fit its box** at its stated size, with the longest real string rather than the sample one? In an absolute-geometry format nothing shrinks to fit; in HTML nothing warns you.
 6. **Grounding.** Every figure and claim traces to the source material. A number you can't point at is a number that comes off the slide. A count of what a *tool* found — images crawled, pages read, rows parsed — is not a fact about the subject and never belongs on a slide as one.
 7. **Accent spent once.** One thing carries the colour. On a dark ground, check the accent's *measured* contrast rather than assuming the brand colour carries over: an accent chosen against white typically lands near 2–3:1 on a charcoal band, and the largest text on the slide is the most likely victim.
-8. **Parallel with its neighbours.** Repeated elements in the same position; section headers identical to each other.
-9. **Look at it.** Render the slide and open the capture — see below.
+8. **Text over imagery is legible, judged on the composite.** A scrim declared in the stylesheet is not a scrim doing its job: check the rendered slide, at the point where the text actually sits, over the busiest part of the photograph rather than an average of it. The failure this catches has a specific shape — a cover whose brand colour was correctly rationed to under 10% of the surface and whose eyebrows are therefore unreadable, because the audit measured the *quantity* of accent and never its legibility. Two questions, both answerable by looking: can you read every word over the image, and is the smallest text over it still above the type floor?
+9. **Parallel with its neighbours.** Repeated elements in the same position; section headers identical to each other.
+10. **Look at it.** Render the slide and open the capture — see below.
+
+## Look wide, then filter — never both at once
+
+A review has two passes and merging them lowers what you find. During the looking, record everything: the uncertain finding, the low-severity one, the suspicion you cannot yet prove. Ranking, merging and deciding what reaches the summary happen once, at the end.
+
+This matters because suppressing a "minor" finding mid-pass loses it permanently, and because an instruction to be conservative gets followed literally: a brief that says "only flag serious issues" produces a *worse* review rather than a shorter one. If you delegate a lens, never ask it for restraint during the looking — ask for everything, and filter yourself.
+
+## A fixed defect is not a fixed defect class
+
+The most expensive pattern a deck review can fall into, and it is invisible from inside: a defect is found on one slide, repaired there, and the *same defect* ships untouched on another slide, because the fix was applied to an instance rather than to the rule that produced it.
+
+Measured on a real deck. Its own validation pass found a table clipping against its container's right edge on slide 3, rewrote that slide's grid, and reported the issue resolved. On slide 8 an identical table clipped its last column by 24px — same cause, never looked at, because slide 3 was where the eye had been. The same pass reported a metric wrapping to two lines on slide 4, fixed it with a `white-space: nowrap` on that one class, and left every other metric and status badge in the deck able to wrap. And it reported a "vertical void" on slide 9, added content to fill it, and shipped voids of 200–330px on six other slides that were never measured.
+
+So when a finding is repaired, ask the two questions that catch this:
+
+1. **Where else does this shape exist?** Grep the class, not the slide. A fix applied to `.stat-number` on slide 4 belongs in the base stylesheet if slides 2, 5 and 7 also carry stat numbers.
+2. **Would the check that found it have found the others?** If it was found by eye on one slide, the answer is no — so re-run it across the deck. This is exactly what `run-preflight.sh` is for: it reports every instance, with a denominator, rather than the one you were looking at.
+
+A per-slide fix list against a deck-wide cause is how a review closes with everything ticked and the same defect still shipping.
 
 ## Looking is the part that gets skipped
 
@@ -28,7 +48,9 @@ Three rules make verification real rather than ceremonial:
 
 **Inspect crops, not whole decks.** A full slide scaled into a review thumbnail is a resolution at which a 161px void reads as generous whitespace and an orphaned label is a few ragged pixels. Judging from thumbnails is looking at an image in which the defects cannot exist and concluding there are none. Crop to the region at DPR 2–3.
 
-**Capture after the build-in has finished, and know that it has.** A slide with a staged reveal captures mid-animation as a slide missing half its content, and a colour measured mid-fade is not that element's colour — a contrast gate sampled 400ms into a 700ms entrance read a `#E85A2A` accent as `#6a2d18` and reported a fix making things worse. Drain `document.getAnimations()` before capturing, and if you are measuring rather than looking, record how many were still running. A measurement taken mid-animation is precise, confident and wrong, and nothing in its output says so.
+**Capture after the build-in has finished, and know that it has.** A slide with a staged reveal captures mid-animation as a slide missing half its content, and a colour measured mid-fade is not that element's colour — a contrast gate sampled 400ms into a 700ms entrance read a `#E85A2A` accent as `#6a2d18` and reported a fix making things worse. Drain `document.getAnimations()` before capturing, and if you are measuring rather than looking, record how many were still running.
+
+**Suspect the engine before the page.** A rendering engine that is not packaged Chrome will diverge, and the divergence arrives looking exactly like a defect in your deck. Measured on Obscura, 14 Aug 2026: it resolves `height:84.0%` and `height:86.4%` to the *same* computed pixel value and returns a bounding rect matching neither, which turns a provably zero-based chart into a false axis-truncation finding; it drops single `l` glyphs from Figtree at some sizes, so "Complete" captures as "Comp ete" and "plan" as "p an" in decks whose source is correct; and `DOMMatrixReadOnly` is absent, so any probe constructing one throws and returns nothing. Before changing a deck on the strength of a capture, check the declared value in the source. Two decks showing the *same* anomaly is the tell: that is the engine, not two authors making one mistake.
 
 Do this yourself. A deck is a handful of tool calls to walk, and delegating it costs a whole context to learn what a crop would have told you.
 
@@ -80,12 +102,12 @@ A passing check means **no known defect is present**. It never means *verified*.
 So report the two claims separately, in these words:
 
 ```
-Gates:       validator clean · no overflow · 0 console errors
+Gates:       preflight 12/12 slides · 0 stage · 0 below type floor · 1 chart not zero-based
 Looked at:   12 slide crops @2x, cover + section breaks, 1280 and 1920
 Not checked: the PDF export, the chart's empty state
 ```
 
-The first line is what a machine asserts. The second is what *you* assert, and it's true only for captures you opened. The third is never empty — if you think it is, you've confused the scope of your checks with the scope of the deck.
+The first line is what a machine asserts, **and it carries its denominator** — `12/12 slides` is a result, `0 failures` on its own is not. A check reporting zero over a selector that matched nothing is indistinguishable from a clean deck, and that is how a whole sweep goes green forever. The second line is what *you* assert, and it's true only for captures you opened. The third is never empty — if you think it is, you've confused the scope of your checks with the scope of the deck.
 
 ## Convergence and the disposition
 

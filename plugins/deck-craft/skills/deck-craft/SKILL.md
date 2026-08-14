@@ -69,6 +69,8 @@ Then read the sequence back and cut the AI-isms that mark a deck as generated: p
 
 ## 5. The craft that holds across all three targets
 
+**A slide is a fixed 16:9 box, and that is a boundary rather than a preference.** Author at one canvas size (1920×1080 unless the brief says otherwise) and scale the whole stage to fit the viewport, letterboxing rather than reflowing. A "slide" built as a fluid section — `width: 100%` with a `min-height` — is a web page section wearing a slide's name, and the failure cascades: because the box is fluid, type has to be authored at web density to fit, so body copy lands at 13–16px; because there is no fixed height, "overflow" stops being computable and becomes a judgement call at whatever window the author happened to use. One measured example: a nine-slide investor deck built this way rendered every slide at 1240×820 (aspect 1.51, not 1.78), carried **294 text elements below the 24px floor** with a median size of 22px, and left 200–330px voids at the foot of seven slides. Every one of those numbers is a consequence of the missing stage, not nine separate mistakes. Check it with one line — `slide.getBoundingClientRect()`, width/height must equal 16/9 — before authoring the second slide.
+
 **One idea per slide, one focal point.** If a slide has two messages, it is two slides — or one slide and one cut. The focal point is what the eye lands on first; everything else is visibly subordinate. Two elements competing at equal weight means the slide hasn't decided what it's for.
 
 **Type sized for distance, not for a browser.** On a 1920×1080 canvas: body never below 24px, ideally 32px+; headlines 60–96px. At 1280×720 scale by ~0.67. Web density (14–16px body) is the reflex to resist — it is unreadable from row four. When a user names a font size they mean **points**, the Keynote/PowerPoint unit: `px = pt × 1.333`.
@@ -85,7 +87,7 @@ Then read the sequence back and cut the AI-isms that mark a deck as generated: p
 
 **Cut the filler slides.** "Why choose us", "About this deck", "Agenda" on a 6-slide deck, a thank-you slide with no contact details. Each costs the audience attention and returns nothing.
 
-**Charts show the point, not the dataset.** Cut every series and column that doesn't support the slide's one idea. A chart nobody can read at distance is decoration with error bars.
+**Charts show the point, not the dataset.** Cut every series and column that doesn't support the slide's one idea. A chart nobody can read at distance is decoration with error bars. **Bar length is the encoding, so bar charts start at zero** — the check is arithmetic (`length / value` constant across the group) and `references/deck-charts.md` carries it along with direct labelling, the accent budget inside a chart panel, and the provenance that travels with a published figure. Read it before authoring the first chart on any deck carrying figures.
 
 **Animate rarely, and only when reveal order carries meaning** — building a list point by point, landing a number, walking a diagram. One or two animated slides in ten is right. Author each slide in its **final visible layout** and let the animation hide elements until their step, so print, thumbnails and screenshots all see the finished slide for free.
 
@@ -101,7 +103,11 @@ Gate each slide as you finish it, before starting the next — a mistake on slid
 
 **Narrate thinly.** One sentence before you start building. After that, write only when you find something or change direction. Lead the close with the outcome — what the deck is and what's open — not a slide-by-slide recap of what the user watched you build.
 
-**Do the looking yourself.** Render the deck, screenshot slides, open every capture. A screenshot you generated but didn't open is not evidence, and looking costs less than reasoning about what you'd see. Delegation is for a genuinely wide review of a finished long deck, not for re-checking a slide you just wrote. Inside the Diolog deck producer this has a name — `render_deck`, mandatory, looped until it reports zero blockers; see `references/diolog-templates.md`.
+**Run the computable checks before you look.** `scripts/run-preflight.sh <url>` measures stage geometry, the type floor, overflow, chrome collision, text-on-text overlap, copy invisible under its own photograph, chart axis honesty, the accent budget, dead bands at a slide's foot, and — with `--regulated` — whether the deck states its audit status, as-at dates, axis disclosure and illustrative markers at all. It takes seconds and returns numbers. The looking then goes on judgment, which is where it is worth spending, instead of on finding a collision a rectangle comparison finds in 30ms. This is also the cheaper lever: model vision improves most when it is paired with tools that crop and measure, not when it is asked to look harder.
+
+**Do the looking yourself.** Render the deck, screenshot slides, open every capture. A screenshot you generated but didn't open is not evidence, and looking costs less than reasoning about what you'd see. Inside the Diolog deck producer this has a name — `render_deck`, mandatory, looped until it reports zero blockers; see `references/diolog-templates.md`.
+
+**Delegate at most one agent, and only for a wide review of a finished long deck** — say twelve slides or more, split into lenses that genuinely don't overlap. Anything you can finish in a handful of tool calls, do yourself; re-checking a slide you just wrote costs a whole context to learn what a crop would have told you. Never spawn an agent to verify another agent's findings.
 
 **Hold the scope.** Build the deck asked for. If the brief looks wrong — nine slides for a topic that needs four, a chart with no underlying data — say so in a sentence and build what was asked. Don't quietly re-scope.
 
@@ -114,6 +120,7 @@ No back button, no undo, no zoom, and the pace belongs to the speaker. That make
 - **The trunk test, per slide.** Dropped onto any slide cold, the audience should know where they are in the argument and what this slide claims. A slide that only parses if you saw the previous one is a hidden dependency — make it visible with a section marker, a running position, or a title that carries its own claim.
 - **Recognition over recall.** If slide 9 needs a figure from slide 3, restate it. Nobody is holding your numbers in working memory while listening.
 - **Persuasion yes, manipulation no.** A truncated axis, a scarcity claim with no verifiable referent, a peer comparison that omits the unflattering peer — defects, and in investor communications, compliance exposure. Polish makes an unverifiable claim *more* dangerous, because fluency reads as credibility.
+- **A figure with no stated provenance is not neutral.** It reads as authoritative, because that is the default a reader applies. On any deck someone will act on — investor, board, financial, health, pricing, compliance — every figure carries where it came from and as at when, illustrative or generated material is visibly marked, and a value that isn't available says so rather than showing a placeholder or a zero. `references/deck-charts.md` §6 carries the three states and what a regulated deck must state; `run-preflight.sh --regulated` checks the four disclosures are present at all, which is the floor rather than the standard.
 
 Before laying out a decision deck (board pack, investment case, proposal), shape the argument first: what does the audience know at slide 1, what must be true before the ask lands, where can they get lost. Then lay out slides against that shape.
 
@@ -132,5 +139,13 @@ This skill is self-contained — it needs no other skill installed. Read only th
 - `references/direction-index.md` — 34 style systems for choosing a visual direction, with the progressive read rule.
 - `references/template-additions.md` — the gap analysis behind the 60 additions, and the traps flagged but not built.
 - `references/deck-review.md` — the per-slide gate and the pre-delivery review: what to check, what a clean gate does and doesn't prove, and the honest-report shape.
+- `references/deck-charts.md` — charts on slides: the zero-baseline arithmetic and how to declare a chart so the check is exact, direct labelling, the accent budget inside a panel, colour that isn't the only signal, the text alternative, and the provenance a published figure carries.
+
+## 10. Scripts
+
+- `scripts/deck-preflight.js` — the computable half of the gate, as one in-page expression: stage geometry, type floor, overflow, chrome collision, text-on-text overlap, paint order over imagery, chart axis honesty, accent budget, dead bands, and the regulated-deck disclosure check. Each check is isolated, so an engine gap degrades one section and says so rather than returning nothing.
+- `scripts/run-preflight.sh` — serves the file if needed and runs the probe: `./run-preflight.sh deck.html --regulated --selector '.slide-wrap'`.
+
+Two things the runner exists to prevent. Obscura's `--eval` returns the value of the *first* statement, so a `cfg = {…}; probe()` payload evaluates to `null` — a gate that looks like it ran and reported nothing; the probe is therefore one expression and the config is substituted into its final argument. And an empty result exits non-zero with "this is NOT a pass", because a silent gate is indistinguishable from a clean deck.
 
 Nothing here waits on another skill. If the task reaches past slides — a full brand system, a product UX review, company-voice copy — say so and hand that part off; don't stretch a deck skill over it.

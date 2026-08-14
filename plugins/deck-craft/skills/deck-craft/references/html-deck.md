@@ -2,6 +2,37 @@
 
 One HTML file, no build step, no dependencies. Every slide is authored at a fixed 1920×1080 and the whole stage scales to fit the viewport, letterboxing rather than reflowing. That invariant is what makes a deck a deck: content that reflows for a phone is a web page, and the presenter can no longer predict what the audience sees.
 
+## Phase 0: The one structural decision, and what it costs to get wrong
+
+**The stage is a fixed pixel box scaled by a transform. It is never a fluid box with a `min-height`.** This is the single decision the rest of the file depends on, so it comes before the shell rather than inside it.
+
+```css
+/* ✅ a stage: authored at one size, scaled as a unit */
+.slide-wrap { width: 100%; max-width: 1600px; aspect-ratio: 16 / 9;
+              position: relative; overflow: hidden; }
+.stage      { width: 1920px; height: 1080px; position: absolute; top: 0; left: 0;
+              transform-origin: top left; }   /* JS sets transform: scale(s) */
+
+/* ❌ a web section wearing a slide's name */
+.slide-stage { width: 100%; min-height: 820px; }
+```
+
+The wrong version does not fail loudly. It fails as a cascade, and every symptom looks like a separate bug:
+
+- **The box is no longer 16:9.** Measured on a real nine-slide investor deck built this way: every slide rendered 1240×820, aspect 1.51 against the 1.78 it claimed. On a 16:9 projector that is either letterboxed waste or a crop.
+- **Type collapses to web density.** With no fixed height to fill, sizes get chosen to fit a browser window: that deck carried **294 text elements below the 24px floor**, median 22px, 43 of them under 18px — unreadable from row four. The type was not a separate mistake; there was nowhere for 32px body copy to go.
+- **Overflow stops being computable.** Against a fixed 1080px height, "does it fit" is a boolean. Against `min-height`, the box simply grows, so the question becomes "does it look right in the window I happen to have open" — which is why that deck's own validation pass found and fixed table clipping on slide 3 and shipped the identical defect on slide 8.
+- **Voids open at the foot of every slide.** Content stops at its natural height and the rest of the box is empty: 200–330px on seven of nine slides, 30% of the canvas on the worst.
+
+One line settles it, and it belongs in the gate before the second slide is authored:
+
+```js
+const r = document.querySelector('.slide-wrap').getBoundingClientRect();
+Math.abs(r.width / r.height - 16 / 9) < 0.02;   // must be true
+```
+
+`scripts/run-preflight.sh` runs this across every slide along with the rest of the computable gate.
+
 ## Phase 1: Build the shell once
 
 Don't hand-roll scaling per slide. The shell holds every slide, scales the stage, handles keyboard/tap nav, shows a counter, and persists position to `localStorage` so a reload doesn't lose the presenter's place.
@@ -87,6 +118,48 @@ Don't hand-roll scaling per slide. The shell holds every slide, scales the stage
 Each slide is a direct child `<section class="slide">` of `#stage`, carrying a 1-indexed `data-screen-label` so the user can say "fix slide 04" and you both mean the same slide.
 
 Adapt freely — transitions, a progress bar, an ESC overview grid, wheel and swipe navigation. Keep the invariant: authored at fixed size, stage scales to fit, never re-layout for a narrow viewport.
+
+### The defensive base, added once
+
+Most of what a deck review finds is preventable in the stylesheet rather than repairable per slide. Each rule below exists because its absence has shipped:
+
+```css
+/* Metrics, status pills and any figure compared column to column never wrap
+   and never shift width digit to digit. Without this, "12 Mo" breaks across
+   two lines inside a stat and "ON TRACK" stacks inside its badge — the
+   commonest cosmetic defect in generated decks, and the one that reads
+   loudest at distance. */
+.stat, .stat-number, .metric, .status-pill, .badge, .chip, td.num, .mono-cell {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Reserve the foot of every slide. This space is structural: it is what keeps
+   the last line of body copy off the footer rule and out from under any
+   floating control dock. */
+.slide > .pad { padding-bottom: var(--pad-bottom, 80px); }
+
+/* A table given less width than its columns need clips silently at the
+   container edge — no scrollbar, no warning, just a truncated last column.
+   Give data tables a floor and let the layout fail visibly instead. */
+.data-table { width: 100%; table-layout: fixed; }
+.data-table td, .data-table th { overflow-wrap: anywhere; }
+.grid-with-table { grid-template-columns: minmax(560px, 1.3fr) 1fr; }
+
+/* Copy over a full-bleed photograph needs its own positioning to win the
+   paint order, and the photograph needs a scrim before white type sits on it.
+   Both, or the text is invisible while its layout is perfect. */
+.slide > .copy { position: relative; }
+.scrim { position: absolute; inset: 0;
+         background: linear-gradient(90deg, rgba(16,15,15,.92), rgba(20,18,18,.55)); }
+
+/* Terminate every font stack with a generic: a bare family that fails to load
+   falls back to serif and the deck silently changes character. */
+:root { --font-display: Figtree, system-ui, sans-serif; }
+```
+
+The nowrap and tabular-numbers rule is the highest-yield line in the block. A real validation pass spent 24 minutes finding, by eye and one slide at a time, three defects this single rule prevents outright.
 
 **Centre the stage with `left/top: 50%` and a translate, not with flex or grid centring.** The shell above does this for a reason. `place-items: center` on a container narrower than the 1920px stage does **not** centre it: CSS flex and grid *start-align* an item larger than its area rather than letting it overflow both sides. The layout box lands at `left: 0` instead of `-120px`, and a `scale()` about the element's own centre then pushes the whole deck sideways by half the overflow — a dead band down one edge and the opposite edge of every slide cut off. It looks like a margin bug and it is a centring bug. If you must use grid, place the stage with explicit half-size margins instead:
 
@@ -182,13 +255,17 @@ The `@media print` block in the shell is the floor: it un-scales the stage, forc
 
 **Open the exported pages, and not just the first one.** The page count is not the check — a 12-page PDF whose page 1 is a composite of twelve slides still counts twelve pages. Open page 1, one photo-bearing slide from the middle, and the last, and confirm each carries the right content, the right image and the right page number.
 
-If a headless export is available (`~/Dev/frontend-slides/scripts/export-pdf.sh` is one), use it rather than asking the user to print by hand.
+If a headless export is available (`~/Dev/frontend-slides/scripts/export-pdf.sh` is one), use it rather than asking the user to print by hand. Obscura's own PDF output is raster-backed — no selectable text, no outlines, no headers/footers and incomplete paged-media CSS — so it can show you that a slide composited wrongly but never that the print typography is right.
 
 ## Phase 8: Verify
 
 Serve over HTTP, never `file://` — module scripts, fetches and some fonts fail silently from the filesystem.
 
-**Capture the viewport, not the element.** An element screenshot (`page.locator('.stage').screenshot()`, `playwright-cli screenshot "#s4 .stage"`) renders the element's own box and is structurally blind to where that box actually sits: a stage shifted 120px off-centre, half of it past the right edge of the window, screenshots as a perfect slide. So does a stage sitting under a floating control bar. Element captures are for cropping a component you have already located; they can never establish that the deck fits its window.
+**Run `scripts/run-preflight.sh <url>` first.** It measures, in one call, what would otherwise be nine slides × three tool round-trips of looking: stage geometry against 16:9, the type floor, overflow, collision with chrome, text laid over text, copy invisible under its own photograph, chart axis honesty, the accent budget, dead bands at a slide's foot, and — with `--regulated` — whether the deck states its disclosures at all. Fix what it names, then spend the looking on what it cannot see. A validation pass that inspected a nine-slide deck screenshot-by-screenshot took 24 minutes and still missed both of that deck's truncated-axis charts; the script finds them in seconds and returns the implied baseline.
+
+Read its output the way it is written: a non-empty `notes` entry saying a check *failed* means that check did **not run**, which is not the same as clean. An empty result is not a pass either — the runner exits non-zero and says so.
+
+**Capture the viewport, not the element.** An element screenshot (a `Page.captureScreenshot` with a `clip` taken from the stage's own `getBoundingClientRect()`) renders the element's own box and is structurally blind to where that box actually sits: a stage shifted 120px off-centre, half of it past the right edge of the window, screenshots as a perfect slide. So does a stage sitting under a floating control bar. Element captures are for cropping a component you have already located; they can never establish that the deck fits its window.
 
 **A ratio check is not a placement check either.** `getBoundingClientRect().width / .height === 1.778` stays true when the box is the right size in the wrong place. Measure the edges against the viewport:
 
