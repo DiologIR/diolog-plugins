@@ -1,13 +1,7 @@
 ---
 name: improve-prompt
-description: "Review and improve any prompt artifact — task prompts, prompt templates, system prompts, agent/persona instructions, CLAUDE.md rule files, and Claude Code skills (SKILL.md) — grounded in the bundled Anthropic prompt-engineering docs and Karpathy principles + rule craft. Diagnoses against a structured rubric, then rewrites surgically with per-change rationale citing the principle behind it. Use whenever the user wants a prompt improved, reviewed, hardened, optimized, tightened, or modernized — 'improve this prompt', 'my agent hallucinates/leaks/drifts', 'review my system prompt', 'harden this against prompt injection', 'update this prompt for a newer model', 'make this skill trigger better', 'tighten up this SKILL.md' — even when they just paste a prompt and say 'make this better'. Do NOT use for creating a brand-new skill from scratch with evals (use skill-creator), writing content in a person's voice (use that person's content skill), or improving product code rather than prompts (use code-review)."
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "Edit"
-  - "Glob"
-  - "Grep"
-  - "Bash"
+description: >-
+  Review and improve any prompt artifact — task prompts, prompt templates, system prompts, agent/persona instructions, CLAUDE.md rule files, and Claude Code skills (SKILL.md) — grounded in the bundled Anthropic prompt-engineering docs and Karpathy principles + rule craft. Diagnoses against a structured rubric, then rewrites surgically with per-change rationale citing the principle behind it. Use whenever the user wants a prompt improved, reviewed, hardened, optimized, tightened, or modernized — 'improve this prompt', 'my agent hallucinates/leaks/drifts', 'review my system prompt', 'harden this against prompt injection', 'update this prompt for a newer model', 'make this skill trigger better', 'tighten up this SKILL.md' — even when they just paste a prompt and say 'make this better'. Do NOT use for creating a brand-new skill from scratch with evals (use skill-creator), writing content in a person's voice (use that person's content skill), or improving product code rather than prompts (use code-review).
 ---
 
 # Improve Prompt

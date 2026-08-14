@@ -1,11 +1,7 @@
 ---
 name: doc-summarizer
-description: Transform a verbose source document — README, API docs, research paper, technical guide, library docs, whitepaper — into a maximally dense, semantically complete reference written to a `<source>.summary.md` file that another LLM (or a skimming human) can consume in a fraction of the tokens; target 60–80% compression retaining 100% of semantically unique information. Use this skill whenever the user asks to "summarize", "compress", "distill", "condense", "cheat-sheet", or "extract the golden nuggets from" a technical document, API reference, research paper, README, or long piece of documentation — even if they don't use the word "summarize" explicitly. Also trigger when the user wants to prep a long doc for another AI's context window, reduce token cost of documentation, produce an `llms.txt`-style compressed reference, or get a dense briefing from one or more source files. Do NOT use for narrative or conversational content (email threads, meeting transcripts, chat logs) or for summarizing source code itself.
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "WebFetch"
-  - "Glob"
+description: >-
+  Transform a verbose source document — README, API docs, research paper, technical guide, library docs, whitepaper — into a maximally dense, semantically complete reference written to a `<source>.summary.md` file that another LLM (or a skimming human) can consume in a fraction of the tokens; target 60–80% compression retaining 100% of semantically unique information. Use this skill whenever the user asks to "summarize", "compress", "distill", "condense", "cheat-sheet", or "extract the golden nuggets from" a technical document, API reference, research paper, README, or long piece of documentation — even if they don't use the word "summarize" explicitly. Also trigger when the user wants to prep a long doc for another AI's context window, reduce token cost of documentation, produce an `llms.txt`-style compressed reference, or get a dense briefing from one or more source files. Do NOT use for narrative or conversational content (email threads, meeting transcripts, chat logs) or for summarizing source code itself.
 ---
 
 # Doc Summarizer

@@ -1,0 +1,6 @@
+{
+  "name": "discovery-sentinel",
+  "version": "1.2.0",
+  "description": "Analyze product discovery and customer feedback session documents using the Discovery Sentinel persona. Types sessions by purpose (discovery vs demo), segments distinct client companies, and produces lean Feedback Classification Reports, Discovery Insight Briefs, readable Prioritised Opportunity Assessments, an Action Checklist, and company-specific Sales Discovery Companions — with confidence scoring, JTBD extraction, bias detection, and compliance flagging for regulated B2B SaaS. Includes a trend-synthesis mode across prior analyses.",
+  "category": "development"
+}

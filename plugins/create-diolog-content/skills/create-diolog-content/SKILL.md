@@ -1,13 +1,7 @@
 ---
 name: create-diolog-content
-description: "Write any content in Diolog's company voice (Australian investor-communication SaaS), routed through the right register persona: long-form A4 guide copy (question banks, playbooks - the master copy create-diolog-guides renders), articles/blog posts (investor education, IR best practice, thought leadership, announcements), website + email marketing copy, and buyer-facing business cases. Successor to the diolog-brand-voice skills, rebuilt on the create-amy-content architecture: a base voice carrying Amy's 2026-07 review learnings (literal naming, the skim test, epigram budgets, verbatim positioning beats), a review ledger, the anti-AI research layer, and a deterministic voice lint. Use for any Diolog-branded (not personal-voice) content: 'write the Diolog guide copy', 'draft a Diolog article', 'write Diolog landing/email copy', 'draft the business case for prospect X'. NOT for Amy's voice (create-amy-content), Luke's voice (create-luke-content), or rendering guide copy into pages (create-diolog-guides)."
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "Edit"
-  - "Bash"
-  - "Glob"
-  - "Grep"
+description: >-
+  Write any content in Diolog's company voice (Australian investor-communication SaaS), routed through the right register persona: long-form A4 guide copy (question banks, playbooks - the master copy create-diolog-guides renders), articles/blog posts (investor education, IR best practice, thought leadership, announcements), website + email marketing copy, and buyer-facing business cases. Successor to the diolog-brand-voice skills, rebuilt on the create-amy-content architecture: a base voice carrying Amy's 2026-07 review learnings (literal naming, the skim test, epigram budgets, verbatim positioning beats), a review ledger, the anti-AI research layer, and a deterministic voice lint. Use for any Diolog-branded (not personal-voice) content: 'write the Diolog guide copy', 'draft a Diolog article', 'write Diolog landing/email copy', 'draft the business case for prospect X'. NOT for Amy's voice (create-amy-content), Luke's voice (create-luke-content), or rendering guide copy into pages (create-diolog-guides).
 ---
 
 # Create Diolog Content - Any Format, One Company Voice

@@ -1,18 +1,7 @@
 ---
 name: mockup-fidelity
-description: "Validate that an implemented React or React Native UI faithfully reproduces a reference mockup, then update the code to close every gap — by measuring the rendered tree, never eyeballing or reading source. Treats the mock as the source of truth, inventories every frame, inverts the burden of proof (a difference is a defect until a citation proves it intentional), diffs structure then computed styles, and emits a present/divergent/absent ledger plus a functional-gaps doc. Use whenever someone wants to compare, align, pixel-match, audit, or verify a built page/screen/component against a design: 'does this match the mock?', 'align the app to the figma/html mockup', 'pixel-match this screen', 'why doesn't it look like the design?', 'verify the migration didn't drift', 'audit the UI fidelity', 'what's missing vs the mock?', 'make the react-native app match the prototype', 'does our web app match the design-system mock/preview?'. Trigger even when told 'it should already match' or 'it uses the same design system'."
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "Edit"
-  - "Bash"
-  - "Grep"
-  - "Glob"
-  - "Agent"
-  - "ToolSearch"
-  - "TaskCreate"
-  - "TaskUpdate"
-  - "AskUserQuestion"
+description: >-
+  Validate that an implemented React or React Native UI faithfully reproduces a reference mockup, then update the code to close every gap — by measuring the rendered tree, never eyeballing or reading source. Treats the mock as the source of truth, inventories every frame, inverts the burden of proof (a difference is a defect until a citation proves it intentional), diffs structure then computed styles, and emits a present/divergent/absent ledger plus a functional-gaps doc. Use whenever someone wants to compare, align, pixel-match, audit, or verify a built page/screen/component against a design: 'does this match the mock?', 'align the app to the figma/html mockup', 'pixel-match this screen', 'why doesn't it look like the design?', 'verify the migration didn't drift', 'audit the UI fidelity', 'what's missing vs the mock?', 'make the react-native app match the prototype', 'does our web app match the design-system mock/preview?'. Trigger even when told 'it should already match' or 'it uses the same design system'.
 ---
 
 # Mockup Fidelity

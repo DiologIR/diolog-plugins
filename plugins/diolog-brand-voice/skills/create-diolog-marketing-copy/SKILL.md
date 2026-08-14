@@ -1,12 +1,7 @@
 ---
 name: create-diolog-marketing-copy
-description: "Write website marketing copy and marketing email content in Diolog's brand voice (Australian investor-communication SaaS). Ready-to-ship, benefit-first, compliance-aware copy: heroes and page sections, feature-to-'so what' bullets, twin CTAs, and nurture/update/campaign emails (subject, preview, body, one CTA). Use whenever the user wants Diolog website copy, landing-page copy, a page hero, product/feature marketing copy, a marketing or nurture email, an email sequence, ad or campaign copy, or any short-form brand conversion text ('write the hero for the X page', 'draft Diolog landing copy for Y', 'write a marketing email about the Smart Inbox', 'give me the copy for the pricing/feature section', 'write a Diolog nurture sequence'). Trigger even without the word 'copy'; any Diolog marketing/website/email text request qualifies. For articles/blog posts use create-diolog-article; for buyer ROI/justification docs use create-diolog-business-case; for LinkedIn/social see the deployed diolog-linkedin-writer prompt."
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "Bash"
-  - "Glob"
-  - "Grep"
+description: >-
+  Write website marketing copy and marketing email content in Diolog's brand voice (Australian investor-communication SaaS). Ready-to-ship, benefit-first, compliance-aware copy: heroes and page sections, feature-to-'so what' bullets, twin CTAs, and nurture/update/campaign emails (subject, preview, body, one CTA). Use whenever the user wants Diolog website copy, landing-page copy, a page hero, product/feature marketing copy, a marketing or nurture email, an email sequence, ad or campaign copy, or any short-form brand conversion text ('write the hero for the X page', 'draft Diolog landing copy for Y', 'write a marketing email about the Smart Inbox', 'give me the copy for the pricing/feature section', 'write a Diolog nurture sequence'). Trigger even without the word 'copy'; any Diolog marketing/website/email text request qualifies. For articles/blog posts use create-diolog-article; for buyer ROI/justification docs use create-diolog-business-case; for LinkedIn/social see the deployed diolog-linkedin-writer prompt.
 ---
 
 # Create Diolog Marketing Copy — Website & Email in the Diolog Brand Voice

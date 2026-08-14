@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); eac
 
 ## 2026-08-15
 
+### Antigravity & Strict YAML 1.2 Frontmatter Normalisation
+
+- **Antigravity CLI Compatibility**: Added top-level `plugin.json` manifests across all 52 plugins in the marketplace to enable seamless zero-config discovery in Google Antigravity CLI (`agy`).
+- **Strict YAML 1.2 Frontmatter Formatting**: Formatted description frontmatters in all `SKILL.md` files to standard YAML 1.2 block scalars (`description: >-`), preventing strict YAML parsers from dropping skills containing colons or quotation marks.
+
 ### The Obscura migration — every browser-driving skill
 
 Playwright, `playwright-cli`, `agent-browser` and the Chrome MCP are gone from the machine; [Obscura](https://github.com/h4ckf0r0day/obscura) is the only browser lane. Each skill below was rewritten against what Obscura actually does, not against a find-and-replace of the command name — including, where it applies, what the swap **costs**, because a capability quietly lost is worse than one that was never claimed.

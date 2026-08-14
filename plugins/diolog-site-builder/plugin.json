@@ -1,0 +1,6 @@
+{
+  "name": "diolog-site-builder",
+  "version": "1.1.0",
+  "description": "Build or extend a company website or standalone investor centre by composing gate-tested HTML blocks, theming them from DESIGN.md, filling copy from VOICE.md, and wiring Diolog live-data markers. Use for a marketing site, investor portal, site artifact, site structure + design + voice conversion, or when adding pages, sections, images, and explicit custom workspace blocks. Prefer this over hand-writing whole pages because the shared chrome, responsive system, and stock blocks already pass the Studio gates. Triggers include \"build the company site\", \"generate the investor centre\", \"scaffold a marketing site\", \"make a site from this DESIGN.md/VOICE.md\", \"add a pricing page\", and \"theme this template to the brand\".",
+  "category": "development"
+}

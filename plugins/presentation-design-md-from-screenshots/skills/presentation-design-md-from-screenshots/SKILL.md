@@ -1,9 +1,7 @@
 ---
 name: presentation-design-md-from-screenshots
-description: Reverse-engineer a deck's visual design system from slide screenshots and produce a single authoritative PRESENTATION_DESIGN.md — a token-based slide spec (canvas, palette, typography, slide archetypes, chart style, image treatment, icons, motion, do/don't) for another AI (Gamma, Beautiful.ai, Pitch, Keynote/PowerPoint co-pilots, Claude, v0) to generate new slides that belong to the same deck. Use whenever the user attaches or references slide screenshots / PDF deck pages / Keynote / PowerPoint / Google Slides / Gamma / Pitch / Canva decks and asks to "document the slide design", "extract the deck style", "create a PRESENTATION_DESIGN.md", "match this deck's look", or "reverse-engineer the slide system" — even if they never say "PRESENTATION_DESIGN.md". Also trigger for chart-style guidance, slide-layout rules, image-treatment conventions, or a deck style guide for a downstream generator. Do NOT use for app/website UI screenshots (use design-md-from-screenshots). Output is hard-capped at 1,700 characters.
-allowed-tools:
-  - "Read"
-  - "Write"
+description: >-
+  Reverse-engineer a deck's visual design system from slide screenshots and produce a single authoritative PRESENTATION_DESIGN.md — a token-based slide spec (canvas, palette, typography, slide archetypes, chart style, image treatment, icons, motion, do/don't) for another AI (Gamma, Beautiful.ai, Pitch, Keynote/PowerPoint co-pilots, Claude, v0) to generate new slides that belong to the same deck. Use whenever the user attaches or references slide screenshots / PDF deck pages / Keynote / PowerPoint / Google Slides / Gamma / Pitch / Canva decks and asks to "document the slide design", "extract the deck style", "create a PRESENTATION_DESIGN.md", "match this deck's look", or "reverse-engineer the slide system" — even if they never say "PRESENTATION_DESIGN.md". Also trigger for chart-style guidance, slide-layout rules, image-treatment conventions, or a deck style guide for a downstream generator. Do NOT use for app/website UI screenshots (use design-md-from-screenshots). Output is hard-capped at 1,700 characters.
 ---
 
 # PRESENTATION_DESIGN.md from Slide Screenshots

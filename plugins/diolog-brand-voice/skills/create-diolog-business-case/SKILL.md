@@ -1,12 +1,7 @@
 ---
 name: create-diolog-business-case
-description: "Write a buyer-facing business case or ROI / justification document in Diolog's brand voice (Australian investor-communication SaaS) for the economic buyer (CFO, Company Secretary, board): status-quo cost, what changes, proof/security/compliance posture, measurable outcomes, next step. No fabricated numbers, no guaranteed outcomes; compliance confidence capped at 95%. Use whenever the user wants a Diolog business case, ROI document, cost-justification, buyer/board justification, procurement or budget-approval document, internal champion's case, or 'the case for Diolog' for a specific prospect ('write a business case for Diolog', 'draft an ROI doc for prospect X', 'make the buyer/board case', 'help our champion justify the spend', 'write the justification for the CFO'). Trigger even without the exact words 'business case'. For long-form articles use create-diolog-article; for website/email marketing copy use create-diolog-marketing-copy; for LinkedIn/social see the deployed diolog-linkedin-writer prompt."
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "Bash"
-  - "Glob"
-  - "Grep"
+description: >-
+  Write a buyer-facing business case or ROI / justification document in Diolog's brand voice (Australian investor-communication SaaS) for the economic buyer (CFO, Company Secretary, board): status-quo cost, what changes, proof/security/compliance posture, measurable outcomes, next step. No fabricated numbers, no guaranteed outcomes; compliance confidence capped at 95%. Use whenever the user wants a Diolog business case, ROI document, cost-justification, buyer/board justification, procurement or budget-approval document, internal champion's case, or 'the case for Diolog' for a specific prospect ('write a business case for Diolog', 'draft an ROI doc for prospect X', 'make the buyer/board case', 'help our champion justify the spend', 'write the justification for the CFO'). Trigger even without the exact words 'business case'. For long-form articles use create-diolog-article; for website/email marketing copy use create-diolog-marketing-copy; for LinkedIn/social see the deployed diolog-linkedin-writer prompt.
 ---
 
 # Create Diolog Business Case — Buyer-Facing Justification in the Diolog Brand Voice

@@ -1,9 +1,7 @@
 ---
 name: create-persona
-description: "Generate dense, agent-ready persona definitions from a target role — structured, tagged, verifiable, and free of placeholders. Produces a full framework (identity kernel, responsibility matrix, decision frameworks, maturity model, metrics, interaction examples) that an AI agent can load as operating context and a human can verify at a glance. Use this skill whenever the user asks to create, generate, design, build, or draft a persona, agent persona, AI persona, expert persona, role definition, system-prompt role, role spec, operating context, agent identity, character brief, or domain-specialist framework for any role (IC / Lead / Manager / Executive) — even if they don't explicitly say the word 'persona'. Also trigger when asked to turn a job description into an AI operating context, define an expert agent, codify a role for an LLM, or produce a role brief another AI can adopt. Do NOT use for voice/writing-style personas built from someone's writing samples (use create-voice-persona)."
-allowed-tools:
-  - "Read"
-  - "Write"
+description: >-
+  Generate dense, agent-ready persona definitions from a target role — structured, tagged, verifiable, and free of placeholders. Produces a full framework (identity kernel, responsibility matrix, decision frameworks, maturity model, metrics, interaction examples) that an AI agent can load as operating context and a human can verify at a glance. Use this skill whenever the user asks to create, generate, design, build, or draft a persona, agent persona, AI persona, expert persona, role definition, system-prompt role, role spec, operating context, agent identity, character brief, or domain-specialist framework for any role (IC / Lead / Manager / Executive) — even if they don't explicitly say the word 'persona'. Also trigger when asked to turn a job description into an AI operating context, define an expert agent, codify a role for an LLM, or produce a role brief another AI can adopt. Do NOT use for voice/writing-style personas built from someone's writing samples (use create-voice-persona).
 ---
 
 # Create Persona — AI Persona Architect

@@ -1,9 +1,7 @@
 ---
 name: design-md-from-screenshots
-description: Reverse-engineer a product's visual design system from website/app screenshots and produce a single authoritative DESIGN.md — a token-based design spec (palette, typography, spacing, shape, motion, components, voice, do/don't) for another AI (Stitch, Claude, v0, Cursor) to generate new screens that unmistakably belong to the same product. Use whenever the user attaches, pastes, or references a screenshot/mockup/Figma export of a UI and asks to "document the design", "extract the design system", "create a DESIGN.md", "capture the style/vibe", "reverse-engineer the visual language", "audit the UI", "codify the brand", or "describe the design tokens" — even if they never say "DESIGN.md". Also trigger to seed a design-token file, style guide, or brand snapshot, or when the user asks what a screenshot's "vibe" or "aesthetic" is so it can be reproduced. If a live URL is available, prefer design-md-from-website (it measures real computed styles); for slide decks, use presentation-design-md-from-screenshots.
-allowed-tools:
-  - "Read"
-  - "Write"
+description: >-
+  Reverse-engineer a product's visual design system from website/app screenshots and produce a single authoritative DESIGN.md — a token-based design spec (palette, typography, spacing, shape, motion, components, voice, do/don't) for another AI (Stitch, Claude, v0, Cursor) to generate new screens that unmistakably belong to the same product. Use whenever the user attaches, pastes, or references a screenshot/mockup/Figma export of a UI and asks to "document the design", "extract the design system", "create a DESIGN.md", "capture the style/vibe", "reverse-engineer the visual language", "audit the UI", "codify the brand", or "describe the design tokens" — even if they never say "DESIGN.md". Also trigger to seed a design-token file, style guide, or brand snapshot, or when the user asks what a screenshot's "vibe" or "aesthetic" is so it can be reproduced. If a live URL is available, prefer design-md-from-website (it measures real computed styles); for slide decks, use presentation-design-md-from-screenshots.
 ---
 
 # DESIGN.md from Screenshots

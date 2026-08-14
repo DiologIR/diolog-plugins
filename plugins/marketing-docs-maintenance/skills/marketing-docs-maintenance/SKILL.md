@@ -1,17 +1,7 @@
 ---
 name: marketing-docs-maintenance
-description: "Keep the Diolog marketing/feature documentation set in the diolog-team-files repo (~/Dev/diolog-team-files/web) current when a feature ships, a Diolog Tasks ticket lands, or an area goes stale. Use whenever the user asks to update, sync, refresh, or maintain the marketing docs / feature guide / product docs / feature documentation ('update the marketing docs for DIO-1234', 'document this feature in the feature guide', 'the inbox docs are out of date', 'sync the product docs with what shipped', 'add this to the technical/marketing features doc', 'keep the feature documentation current'), or after shipping a user-facing feature when the docs should follow. Updates existing-features-technical.md, exhisting-features-marketing.md, the per-area final/ and plain/ files and auxiliary surfaces, enforcing the register split, pair consistency and the live-app > source > ticket hierarchy. Trigger even if the user doesn't say 'marketing docs'; any 'reflect this shipped feature in the documentation' request qualifies."
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "Edit"
-  - "Grep"
-  - "Glob"
-  - "Bash"
-  - "ToolSearch"
-  - "Agent"
-  - "TaskCreate"
-  - "TaskUpdate"
+description: >-
+  Keep the Diolog marketing/feature documentation set in the diolog-team-files repo (~/Dev/diolog-team-files/web) current when a feature ships, a Diolog Tasks ticket lands, or an area goes stale. Use whenever the user asks to update, sync, refresh, or maintain the marketing docs / feature guide / product docs / feature documentation ('update the marketing docs for DIO-1234', 'document this feature in the feature guide', 'the inbox docs are out of date', 'sync the product docs with what shipped', 'add this to the technical/marketing features doc', 'keep the feature documentation current'), or after shipping a user-facing feature when the docs should follow. Updates existing-features-technical.md, exhisting-features-marketing.md, the per-area final/ and plain/ files and auxiliary surfaces, enforcing the register split, pair consistency and the live-app > source > ticket hierarchy. Trigger even if the user doesn't say 'marketing docs'; any 'reflect this shipped feature in the documentation' request qualifies.
 ---
 
 # Marketing Docs Maintenance (Diolog)

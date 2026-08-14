@@ -1,12 +1,7 @@
 ---
 name: create-amy-content
-description: "Write any content in Amy Benson's authentic voice (Diolog Founder & CEO), routed through the right persona variant: LinkedIn posts, long-form articles/blog posts, marketing content (announcements, launch/landing copy, campaign emails, release notes), sales/partnership outreach email, Diolog investor updates, Slack/chat, short-form, and speaking notes (panels, podcasts, pitches). Always sounds like Amy: warm first, sharp underneath, low-pressure asks, no em dashes, AU spelling; grounded in supplied context, never invention; deterministic voice-lint + fingerprint gate. Use whenever the user wants to draft or ghostwrite ANY content in Amy's voice (or 'my voice' / 'as me' when the user is Amy): 'write a LinkedIn post as Amy', 'draft Amy's outreach email', 'write the launch copy as Amy', 'a blog post in Amy's voice', 'reply to this thread as Amy', 'draft the investor update', 'prep Amy's panel notes'. Do NOT use for Luke's voice (create-luke-content) or standalone Diolog company voice (diolog-brand-voice)."
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "Bash"
-  - "Glob"
-  - "Grep"
+description: >-
+  Write any content in Amy Benson's authentic voice (Diolog Founder & CEO), routed through the right persona variant: LinkedIn posts, long-form articles/blog posts, marketing content (announcements, launch/landing copy, campaign emails, release notes), sales/partnership outreach email, Diolog investor updates, Slack/chat, short-form, and speaking notes (panels, podcasts, pitches). Always sounds like Amy: warm first, sharp underneath, low-pressure asks, no em dashes, AU spelling; grounded in supplied context, never invention; deterministic voice-lint + fingerprint gate. Use whenever the user wants to draft or ghostwrite ANY content in Amy's voice (or 'my voice' / 'as me' when the user is Amy): 'write a LinkedIn post as Amy', 'draft Amy's outreach email', 'write the launch copy as Amy', 'a blog post in Amy's voice', 'reply to this thread as Amy', 'draft the investor update', 'prep Amy's panel notes'. Do NOT use for Luke's voice (create-luke-content) or standalone Diolog company voice (diolog-brand-voice).
 ---
 
 # Create Amy Content - Any Format, One Voice

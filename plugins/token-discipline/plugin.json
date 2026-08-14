@@ -1,0 +1,6 @@
+{
+  "name": "token-discipline",
+  "version": "1.0.0",
+  "description": "Session-start operating defaults that cut token spend without cutting quality, tuned for Claude Opus 5. Targets where the tokens actually are — 96% of a session's bill is reused input, resent from the top every turn — so it addresses repetition, delegation and read width rather than prose length. Ships as a ~1029-byte literal designed to sit inside the cached system prefix, paid for once per cache window rather than re-read. Includes the reasoning for every rule, the four alternatives that were rejected as traps (tool-definition stripping, transport-layer prefix truncation, request-hash response caching, and a plain 'be concise' instruction), an explicit measured-vs-assumed split, and a comparison against prose-compression skills like caveman with the four-arm benchmark that would settle it. Perch injects this at session start behind a toggle; it also works standalone.",
+  "category": "development"
+}

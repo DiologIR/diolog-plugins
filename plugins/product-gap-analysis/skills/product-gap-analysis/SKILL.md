@@ -1,17 +1,7 @@
 ---
 name: product-gap-analysis
-description: "Whole-product gap analysis for ANY project against ANY stated goal — 'where does this project stand and what's left?' answered with no stone unturned. Surveys everything the repo has (status ledgers/orchestrator logs OR issue-tracker exports, specs and their deferral sections, untriaged briefs or roadmap docs, reference catalogues, the live app code, nav/wiring, and the test inventory), cross-checks every status claim against git, and synthesizes one comprehensive, evidence-cited gap report that seeds the next wave of work items. Finds: missing features, incomplete/deferred tails, untested areas, missing user flows, dead navigation, fake/sample data presented as live, cross-feature coherence holes (no home, no search, broken deep links, surfaces-as-islands), pending security/legal gates, dark-by-default workers, and documentation drift. Use whenever someone asks 'where does the project stand', 'what's left to implement or test', 'give me a comprehensive list of gaps', 'what's missing for v1.0 / GA / launch / this milestone', 'what doesn't make sense in the product', 'audit what's incomplete', or wants a report that becomes feature/gap-fix briefs or tickets — for any repo, whatever its doc conventions, even if they never say 'gap analysis'. NOT for a single spec's done-ness (use spec-validation), NOT for executing a backlog (use ship-fleet), NOT for code-quality improvement plans (use improve). Read-only: it writes one report (and later, briefs) — never product code."
-allowed-tools:
-  - "Read"
-  - "Grep"
-  - "Glob"
-  - "Bash"
-  - "Agent"
-  - "Write"
-  - "TaskCreate"
-  - "TaskUpdate"
-  - "TaskList"
-  - "ToolSearch"
+description: >-
+  Whole-product gap analysis for ANY project against ANY stated goal — 'where does this project stand and what's left?' answered with no stone unturned. Surveys everything the repo has (status ledgers/orchestrator logs OR issue-tracker exports, specs and their deferral sections, untriaged briefs or roadmap docs, reference catalogues, the live app code, nav/wiring, and the test inventory), cross-checks every status claim against git, and synthesizes one comprehensive, evidence-cited gap report that seeds the next wave of work items. Finds: missing features, incomplete/deferred tails, untested areas, missing user flows, dead navigation, fake/sample data presented as live, cross-feature coherence holes (no home, no search, broken deep links, surfaces-as-islands), pending security/legal gates, dark-by-default workers, and documentation drift. Use whenever someone asks 'where does the project stand', 'what's left to implement or test', 'give me a comprehensive list of gaps', 'what's missing for v1.0 / GA / launch / this milestone', 'what doesn't make sense in the product', 'audit what's incomplete', or wants a report that becomes feature/gap-fix briefs or tickets — for any repo, whatever its doc conventions, even if they never say 'gap analysis'. NOT for a single spec's done-ness (use spec-validation), NOT for executing a backlog (use ship-fleet), NOT for code-quality improvement plans (use improve). Read-only: it writes one report (and later, briefs) — never product code.
 ---
 
 # Product Gap Analysis — whole-product standing survey

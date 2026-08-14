@@ -1,12 +1,7 @@
 ---
 name: log-bugs-to-diolog-tasks
-description: "Create Diolog Tasks issues from a code-review markdown report. Each `### [SEVERITY] Title` finding becomes one Tasks issue with severity (Critical/High/Medium/Low) plus type (Vulnerability/Bug) labels and Todo status. Formerly log-bugs-to-linear. Use this skill whenever the user asks to log, file, create, import, sync, raise, or 'load' findings from a code-review .md (or security audit / PR review report) into Diolog Tasks, even if they don't say 'skill' or 'Diolog' explicitly. Triggers on phrases like 'log these to Tasks', 'create Tasks issues for each finding', 'import this code review into Diolog Tasks', 'file these bugs as tickets', 'raise tickets for these findings', or any prompt that points at a markdown file with `[CRITICAL]` / `[HIGH]` / `[MEDIUM]` / `[LOW]` severity-tagged sections."
-allowed-tools:
-  - "Read"
-  - "Bash"
-  - "ToolSearch"
-  - "TaskCreate"
-  - "TaskUpdate"
+description: >-
+  Create Diolog Tasks issues from a code-review markdown report. Each `### [SEVERITY] Title` finding becomes one Tasks issue with severity (Critical/High/Medium/Low) plus type (Vulnerability/Bug) labels and Todo status. Formerly log-bugs-to-linear. Use this skill whenever the user asks to log, file, create, import, sync, raise, or 'load' findings from a code-review .md (or security audit / PR review report) into Diolog Tasks, even if they don't say 'skill' or 'Diolog' explicitly. Triggers on phrases like 'log these to Tasks', 'create Tasks issues for each finding', 'import this code review into Diolog Tasks', 'file these bugs as tickets', 'raise tickets for these findings', or any prompt that points at a markdown file with `[CRITICAL]` / `[HIGH]` / `[MEDIUM]` / `[LOW]` severity-tagged sections.
 ---
 
 # Log Bugs to Diolog Tasks

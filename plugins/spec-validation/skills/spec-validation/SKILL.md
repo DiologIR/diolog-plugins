@@ -1,17 +1,7 @@
 ---
 name: spec-validation
-description: "Validate whether a specification, build plan, or Definition of Done is GENUINELY implemented in a large codebase — not just rendered, schema-valid, and passing tests. Use whenever someone claims a feature/app is 'done', '100% complete', or 'validated against the spec' and you need to confirm it for real; when you suspect a surface shows demo/seed/mock data dressed up as real; when asked to audit data provenance, do a source-of-truth audit, check 'is this actually wired or is it fake', find 'implemented-but-not-really' gaps, re-validate after a prior validation pass, or prove a Definition-of-Done line is actually met. Classifies every claimed-done field as REAL, AUTHORED, or MOCK with file:line evidence and writes a ranked, living gap report. Trigger even if the user doesn't say 'audit' — any 'is this spec actually implemented end-to-end' / 'are these features real or mocked' request qualifies. Audit-only: it changes no product code — when the user wants the gaps FIXED in code, use the gap-fix skill instead."
-allowed-tools:
-  - "Read"
-  - "Grep"
-  - "Glob"
-  - "Bash"
-  - "Agent"
-  - "Write"
-  - "TaskCreate"
-  - "TaskUpdate"
-  - "TaskList"
-  - "ToolSearch"
+description: >-
+  Validate whether a specification, build plan, or Definition of Done is GENUINELY implemented in a large codebase — not just rendered, schema-valid, and passing tests. Use whenever someone claims a feature/app is 'done', '100% complete', or 'validated against the spec' and you need to confirm it for real; when you suspect a surface shows demo/seed/mock data dressed up as real; when asked to audit data provenance, do a source-of-truth audit, check 'is this actually wired or is it fake', find 'implemented-but-not-really' gaps, re-validate after a prior validation pass, or prove a Definition-of-Done line is actually met. Classifies every claimed-done field as REAL, AUTHORED, or MOCK with file:line evidence and writes a ranked, living gap report. Trigger even if the user doesn't say 'audit' — any 'is this spec actually implemented end-to-end' / 'are these features real or mocked' request qualifies. Audit-only: it changes no product code — when the user wants the gaps FIXED in code, use the gap-fix skill instead.
 ---
 
 <role>

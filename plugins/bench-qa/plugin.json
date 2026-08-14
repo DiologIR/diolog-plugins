@@ -1,0 +1,6 @@
+{
+  "name": "bench-qa",
+  "version": "1.1.1",
+  "description": "Quality-assurance automation for the diolog-swe-bench benchmark corpus: judge whether a task is difficult enough and fairly verified (bench-task-judge), re-run the whole-corpus review with any model (bench-corpus-review), and author new gated tasks including ui design tasks (bench-task-author).",
+  "category": "development"
+}

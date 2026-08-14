@@ -1,6 +1,7 @@
 ---
 name: workflow-resume
-description: Find recent dynamic workflow runs that lost agents to API errors, and resume or finish them correctly. Use whenever someone asks to resume, recover, restart or salvage a workflow, mentions a workflow that "completed" but lost agents, reports failed or dead agents in a fan-out, asks what happened to a wave or fleet run, hits a rate limit or usage limit or `ConnectionRefused` mid-run, or asks why a resume cold-started and re-ran work it had already done. Also use before relaunching any workflow the user believes failed, because a run that reports `completed` with failed agents and a run that is still live need opposite handling.
+description: >-
+  Find recent dynamic workflow runs that lost agents to API errors, and resume or finish them correctly. Use whenever someone asks to resume, recover, restart or salvage a workflow, mentions a workflow that "completed" but lost agents, reports failed or dead agents in a fan-out, asks what happened to a wave or fleet run, hits a rate limit or usage limit or `ConnectionRefused` mid-run, or asks why a resume cold-started and re-ran work it had already done. Also use before relaunching any workflow the user believes failed, because a run that reports `completed` with failed agents and a run that is still live need opposite handling.
 ---
 
 # Resuming a dynamic workflow

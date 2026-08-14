@@ -1,7 +1,7 @@
 ---
 name: code-review
-description: Use this skill when the user asks for a code review, asks Claude to "review my changes / PR / diff", asks for a security, performance, dead-code, test-coverage, component-quality or tech-debt pass on code, or asks for a pre-push check ("can I push this?", "check the diff before I push"). Covers NestJS APIs, Next.js (App Router) / React 19, frontend HTML/CSS/React, and React Native mobile code. Supports depth levels (quick / standard / deep), area targeting (frontend, nest, next, mobile, or explicit paths), focus lenses (bugs, security, perf, tests, components, a11y, dead-code, debt, deps, dx), and a token-light prepush gate on the outgoing diff. High-signal multi-pass review with parallel sharding for large diffs and an independent verifier fan-out that suppresses hallucinated findings. Do NOT use to apply fixes or refactor — this skill is read-only on source and reports findings only.
-allowed-tools: Read, Grep, Glob, Bash, Agent, Write
+description: >-
+  Use this skill when the user asks for a code review, asks Claude to "review my changes / PR / diff", asks for a security, performance, dead-code, test-coverage, component-quality or tech-debt pass on code, or asks for a pre-push check ("can I push this?", "check the diff before I push"). Covers NestJS APIs, Next.js (App Router) / React 19, frontend HTML/CSS/React, and React Native mobile code. Supports depth levels (quick / standard / deep), area targeting (frontend, nest, next, mobile, or explicit paths), focus lenses (bugs, security, perf, tests, components, a11y, dead-code, debt, deps, dx), and a token-light prepush gate on the outgoing diff. High-signal multi-pass review with parallel sharding for large diffs and an independent verifier fan-out that suppresses hallucinated findings. Do NOT use to apply fixes or refactor — this skill is read-only on source and reports findings only.
 ---
 
 # Code Review (NestJS · Next.js · Frontend Web · React Native)

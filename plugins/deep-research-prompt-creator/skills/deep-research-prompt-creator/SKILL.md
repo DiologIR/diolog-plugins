@@ -1,9 +1,7 @@
 ---
 name: deep-research-prompt-creator
-description: Turns a vague research need into a single copy-paste-ready Gemini Deep Research prompt (with pseudo-XML scaffolding, archetype-specific overrides, epistemic bounding, and inline citation protocol) plus the Operator Notes that wrap around the run (Plan Review pause, decomposition, adversarial audit). Use this skill whenever the user asks for a Gemini Deep Research prompt, a research brief, competitive intel prep, regulatory mapping, literature synthesis, market sizing, trend forecasting, or any task phrased as "deep research", "research plan", "research brief", "Gemini prompt", or "help me scope a research question" — even if they do not explicitly say "Gemini". Do NOT use when the user wants the research executed in this session (use a deep-research execution skill instead) — this skill only engineers the prompt for a Gemini run and hands it off.
-allowed-tools:
-  - "Read"
-  - "Write"
+description: >-
+  Turns a vague research need into a single copy-paste-ready Gemini Deep Research prompt (with pseudo-XML scaffolding, archetype-specific overrides, epistemic bounding, and inline citation protocol) plus the Operator Notes that wrap around the run (Plan Review pause, decomposition, adversarial audit). Use this skill whenever the user asks for a Gemini Deep Research prompt, a research brief, competitive intel prep, regulatory mapping, literature synthesis, market sizing, trend forecasting, or any task phrased as "deep research", "research plan", "research brief", "Gemini prompt", or "help me scope a research question" — even if they do not explicitly say "Gemini". Do NOT use when the user wants the research executed in this session (use a deep-research execution skill instead) — this skill only engineers the prompt for a Gemini run and hands it off.
 ---
 
 # Deep Research Prompt Creator (Gemini 3.1 Pro)

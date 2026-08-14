@@ -1,6 +1,7 @@
 ---
 name: mac-design-studio
-description: Design beautiful, varied, authentically native macOS app UIs and app icons from scratch — full mock windows (HTML/CSS or spec) and 1024pt icon designs (SVG/spec) with committed aesthetic directions learned from 135 curated macapp.supply apps, Apple's macOS 27 UI kit ground truth, and the HIG. Use whenever the user asks to design/mock/create a mac app UI, a macOS window, a menu-bar app, a native-feeling interface, or a mac app icon — "design me a mac app for X", "mock the main window", "make an icon for my app", "give me 3 directions for a macOS tool" — including when they just say "make it beautiful/native". Routes native correctness to the macosify HIG library and craft/variation to design-craft. For analysing existing screenshots into the corpus use mac-design-digest; for refitting existing built UI use macosify.
+description: >-
+  Design beautiful, varied, authentically native macOS app UIs and app icons from scratch — full mock windows (HTML/CSS or spec) and 1024pt icon designs (SVG/spec) with committed aesthetic directions learned from 135 curated macapp.supply apps, Apple's macOS 27 UI kit ground truth, and the HIG. Use whenever the user asks to design/mock/create a mac app UI, a macOS window, a menu-bar app, a native-feeling interface, or a mac app icon — "design me a mac app for X", "mock the main window", "make an icon for my app", "give me 3 directions for a macOS tool" — including when they just say "make it beautiful/native". Routes native correctness to the macosify HIG library and craft/variation to design-craft. For analysing existing screenshots into the corpus use mac-design-digest; for refitting existing built UI use macosify.
 ---
 
 # Mac Design Studio

@@ -1,12 +1,7 @@
 ---
 name: create-diolog-article
-description: "Write a long-form article or blog post in Diolog's brand voice (Australian investor-communication SaaS). Produces a ready-to-publish, cited, compliance-aware article across every register: investor-education, IR best practice, thought leadership, and announcements. Use whenever the user wants to draft, write, ghostwrite, or generate a Diolog blog post, article, thought-leadership piece, or investor-education explainer ('write a Diolog article/blog post on X', 'turn this research into a Diolog article', 'draft a thought-leadership piece for the Diolog blog', 'write us a piece explaining X to investors'), especially anything about investor relations, disclosure, ASX/ASIC compliance, AGMs, dividends, retail investing, or the Diolog product. Trigger even without the word 'voice'; any Diolog-destined blog/article request qualifies. This is the BRAND voice: for Luke Rhodes' personal voice use create-luke-content; for LinkedIn/social brand posts use the deployed diolog-linkedin-writer prompt."
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "Bash"
-  - "Glob"
-  - "Grep"
+description: >-
+  Write a long-form article or blog post in Diolog's brand voice (Australian investor-communication SaaS). Produces a ready-to-publish, cited, compliance-aware article across every register: investor-education, IR best practice, thought leadership, and announcements. Use whenever the user wants to draft, write, ghostwrite, or generate a Diolog blog post, article, thought-leadership piece, or investor-education explainer ('write a Diolog article/blog post on X', 'turn this research into a Diolog article', 'draft a thought-leadership piece for the Diolog blog', 'write us a piece explaining X to investors'), especially anything about investor relations, disclosure, ASX/ASIC compliance, AGMs, dividends, retail investing, or the Diolog product. Trigger even without the word 'voice'; any Diolog-destined blog/article request qualifies. This is the BRAND voice: for Luke Rhodes' personal voice use create-luke-content; for LinkedIn/social brand posts use the deployed diolog-linkedin-writer prompt.
 ---
 
 # Create Diolog Article — Long-Form in the Diolog Brand Voice

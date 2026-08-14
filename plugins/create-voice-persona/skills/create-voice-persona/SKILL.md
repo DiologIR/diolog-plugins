@@ -1,13 +1,7 @@
 ---
 name: create-voice-persona
-description: "Build a complete, reusable VOICE PERSONA PACKAGE for any person from examples of their real writing — the generalised factory behind the create-luke-content pattern. Mines the corpus into an evidence-anchored base voice plus purpose-tailored variants (LinkedIn flagship, plus long-form, marketing, short-form, chat, email, code review), a per-person voice lint, and a bundled 'Signs of AI writing' field guide. Delivers a ready-to-install create-X-content plugin skill or a portable docs folder, and maintains delivered packages from owner feedback. Use to create a voice persona, writing persona, brand voice, ghostwriting profile, 'a skill that writes like me/them', 'clone my writing style', 'turn these samples into a voice' — AND when the voice owner has reviewed output and the package should absorb the corrections ('Amy says she'd never write this, update her skill'). Do NOT use for drafting pieces in an existing persona (that person's content skill) or role/agent personas (create-persona)."
-allowed-tools:
-  - "Read"
-  - "Write"
-  - "Edit"
-  - "Bash"
-  - "Glob"
-  - "Grep"
+description: >-
+  Build a complete, reusable VOICE PERSONA PACKAGE for any person from examples of their real writing — the generalised factory behind the create-luke-content pattern. Mines the corpus into an evidence-anchored base voice plus purpose-tailored variants (LinkedIn flagship, plus long-form, marketing, short-form, chat, email, code review), a per-person voice lint, and a bundled 'Signs of AI writing' field guide. Delivers a ready-to-install create-X-content plugin skill or a portable docs folder, and maintains delivered packages from owner feedback. Use to create a voice persona, writing persona, brand voice, ghostwriting profile, 'a skill that writes like me/them', 'clone my writing style', 'turn these samples into a voice' — AND when the voice owner has reviewed output and the package should absorb the corrections ('Amy says she'd never write this, update her skill'). Do NOT use for drafting pieces in an existing persona (that person's content skill) or role/agent personas (create-persona).
 ---
 
 # Create Voice Persona — The Voice-Persona Factory
