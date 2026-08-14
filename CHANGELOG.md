@@ -4,6 +4,19 @@ Notable changes to the plugins in this marketplace. Newest first.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); each plugin carries its own version in its `plugin.json`, and this file records what moved and why.
 
+## 2026-08-14
+
+### deck-craft 1.7.0 → 1.8.0
+
+Hardens first-pass presentation deck generation against common design-review failure modes identified during ASX quarterly and strategic deck audits:
+
+- **Added pure deterministic SVG charts by default**: Replaced reliance on external JS/CDN chart libraries (`Chart.js`) with responsive inline SVG bar and trend line templates. Eliminates canvas initialization failures, network latency, and blank card rendering in offline, sandboxed, and `file://` presentation contexts.
+- **Added Image Downsampling & Base64 Inlining Pipeline**: Automated downsampling (1600px width @ 80–85% JPEG) and Base64 Data URI embedding (`data:image/jpeg;base64,...`) for AI-generated photography (e.g. from `media-gen-pro`), ensuring 100% single-file portability.
+- **Enforced Dual-Theme Dark Band Contrast Discipline**: Defined explicit lifted accent tokens (`--color-primary-on-dark: #FF5A5F`), translucent badge pills with high-contrast text (`#4ADE80`, `#60A5FA`), and solid primary backgrounds with white text for badges positioned over photographic scrims.
+- **Enforced Card Semantic Purity**: Strictly banned `border-left: 4px solid` on quote cards, metrics, and generic containers, reserving left accent borders exclusively for system warnings and semantic alert banners.
+- **Standardised Native IntersectionObserver Navigation**: Replaced scroll-offset arithmetic with `IntersectionObserver` active-slide tracking, 9-dot stepper sync, and `scroll-margin-top` guards against sticky header occlusion.
+- **Integrated Accessibility Floor**: Universal `:focus-visible` ring, `@media (prefers-reduced-motion)` overrides, and slide `role="region" aria-roledescription="slide"` attributes baked directly into the default HTML template.
+
 ## 2026-08-10
 
 ### create-company-deck 1.0.0 → 1.1.0

@@ -69,6 +69,66 @@ declared value is exact, engine-independent, and is the number the author
 actually wrote. When a capture accuses a chart you believe is honest, check the
 declared geometry before changing anything: suspect the engine before the page.
 
+## 2.1 Pure Deterministic SVG Charts (Banned: External JS/Canvas Libraries)
+
+**Never use external JS chart libraries (like Chart.js) for presentation decks.**
+In local file runs, headless browser reviews, and offline presentation laptops, CDN scripts fail silently or delay, rendering blank canvas cards. Pure inline SVG charts are deterministic, zero-dependency, and instantly responsive.
+
+### Pattern A: Deterministic SVG Bar Chart
+```html
+<svg viewBox="0 0 300 160" style="width: 100%; height: 160px; overflow: visible;" role="img" aria-label="Net debt bar chart">
+  <!-- Dashed Grid Lines -->
+  <line x1="40" y1="20" x2="290" y2="20" stroke="#E2DFDD" stroke-width="1" stroke-dasharray="3,3" />
+  <line x1="40" y1="60" x2="290" y2="60" stroke="#E2DFDD" stroke-width="1" stroke-dasharray="3,3" />
+  <line x1="40" y1="100" x2="290" y2="100" stroke="#E2DFDD" stroke-width="1" stroke-dasharray="3,3" />
+  <line x1="40" y1="130" x2="290" y2="130" stroke="#C4C0BE" stroke-width="1.5" />
+  
+  <!-- Y-Axis Labels -->
+  <text x="32" y="24" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#6E6968" text-anchor="end">$40m</text>
+  <text x="32" y="64" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#6E6968" text-anchor="end">$38m</text>
+  <text x="32" y="104" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#6E6968" text-anchor="end">$36m</text>
+
+  <!-- Bars (with rx rounded tops) -->
+  <rect x="70" y="64" width="42" height="66" rx="5" fill="#6E6968" />
+  <text x="91" y="56" font-family="'IBM Plex Mono', monospace" font-weight="700" font-size="11" fill="#1C1B1B" text-anchor="middle">$37.8m</text>
+  <text x="91" y="146" font-family="'Figtree', sans-serif" font-weight="600" font-size="11" fill="#6E6968" text-anchor="middle">Q2 FY26</text>
+
+  <rect x="145" y="42" width="42" height="88" rx="5" fill="#A8A29E" />
+  <text x="166" y="34" font-family="'IBM Plex Mono', monospace" font-weight="700" font-size="11" fill="#1C1B1B" text-anchor="middle">$38.9m</text>
+  <text x="166" y="146" font-family="'Figtree', sans-serif" font-weight="600" font-size="11" fill="#6E6968" text-anchor="middle">Q3 FY26</text>
+
+  <!-- Focal Accent Bar -->
+  <rect x="220" y="88" width="42" height="42" rx="5" fill="var(--color-primary, #D72229)" />
+  <text x="241" y="80" font-family="'IBM Plex Mono', monospace" font-weight="700" font-size="11" fill="var(--color-primary, #D72229)" text-anchor="middle">$36.6m</text>
+  <text x="241" y="146" font-family="'Figtree', sans-serif" font-weight="700" font-size="11" fill="#1C1B1B" text-anchor="middle">Q4 FY26</text>
+</svg>
+```
+
+### Pattern B: Deterministic SVG Line / Area Trend Chart
+```html
+<svg viewBox="0 0 300 160" style="width: 100%; height: 160px; overflow: visible;" role="img" aria-label="Daily hire rate trend">
+  <!-- Grid -->
+  <line x1="40" y1="20" x2="290" y2="20" stroke="#E2DFDD" stroke-width="1" stroke-dasharray="3,3" />
+  <line x1="40" y1="60" x2="290" y2="60" stroke="#E2DFDD" stroke-width="1" stroke-dasharray="3,3" />
+  <line x1="40" y1="100" x2="290" y2="100" stroke="#E2DFDD" stroke-width="1" stroke-dasharray="3,3" />
+  <line x1="40" y1="130" x2="290" y2="130" stroke="#C4C0BE" stroke-width="1.5" />
+
+  <!-- Semi-transparent Area Fill & Line Path -->
+  <polygon points="91,100 166,44 241,32 241,130 91,130" fill="rgba(215, 34, 41, 0.08)" />
+  <polyline points="91,100 166,44 241,32" fill="none" stroke="var(--color-primary, #D72229)" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Nodes and Direct Tabular Labels -->
+  <circle cx="91" cy="100" r="5" fill="var(--color-primary, #D72229)" stroke="#fff" stroke-width="2" />
+  <text x="91" y="88" font-family="'IBM Plex Mono', monospace" font-weight="700" font-size="11" fill="#1C1B1B" text-anchor="middle">$76.2k</text>
+
+  <circle cx="166" cy="44" r="5" fill="var(--color-primary, #D72229)" stroke="#fff" stroke-width="2" />
+  <text x="166" y="32" font-family="'IBM Plex Mono', monospace" font-weight="700" font-size="11" fill="#1C1B1B" text-anchor="middle">$80.7k</text>
+
+  <circle cx="241" cy="32" r="6" fill="var(--color-primary, #D72229)" stroke="#fff" stroke-width="2" />
+  <text x="241" y="20" font-family="'IBM Plex Mono', monospace" font-weight="700" font-size="11" fill="var(--color-primary, #D72229)" text-anchor="middle">$81.4k</text>
+</svg>
+```
+
 ## 3. Cut to the point
 
 - **Every series and column that doesn't support the slide's one idea comes

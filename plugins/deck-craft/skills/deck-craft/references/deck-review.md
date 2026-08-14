@@ -12,10 +12,12 @@ After drafting each slide, before starting the next. **Run `scripts/run-prefligh
 4. **Type on the scale.** Every size traces to a `--type-*` token (or the deck's declared ramp). Body at or above the distance minimum: ≥24px on a 1920 canvas, ideally 32px+.
 5. **Does the text fit its box** at its stated size, with the longest real string rather than the sample one? In an absolute-geometry format nothing shrinks to fit; in HTML nothing warns you.
 6. **Grounding.** Every figure and claim traces to the source material. A number you can't point at is a number that comes off the slide. A count of what a *tool* found — images crawled, pages read, rows parsed — is not a fact about the subject and never belongs on a slide as one.
-7. **Accent spent once.** One thing carries the colour. On a dark ground, check the accent's *measured* contrast rather than assuming the brand colour carries over: an accent chosen against white typically lands near 2–3:1 on a charcoal band, and the largest text on the slide is the most likely victim.
-8. **Text over imagery is legible, judged on the composite.** A scrim declared in the stylesheet is not a scrim doing its job: check the rendered slide, at the point where the text actually sits, over the busiest part of the photograph rather than an average of it. The failure this catches has a specific shape — a cover whose brand colour was correctly rationed to under 10% of the surface and whose eyebrows are therefore unreadable, because the audit measured the *quantity* of accent and never its legibility. Two questions, both answerable by looking: can you read every word over the image, and is the smallest text over it still above the type floor?
-9. **Parallel with its neighbours.** Repeated elements in the same position; section headers identical to each other.
-10. **Look at it.** Render the slide and open the capture — see below.
+7. **Accent spent once & dual-theme contrast checked.** One thing carries the colour. On a dark ground, check the accent's *measured* contrast: ensure dark-band lifted tokens (`--color-primary-on-dark: #FF5A5F`) and high-contrast badge text (`#4ADE80`, `#60A5FA`) are used. Badges on photo scrims must use solid primary backgrounds with white text.
+8. **Text over imagery is legible, judged on the composite.** A scrim declared in the stylesheet is not a scrim doing its job: check the rendered slide, at the point where the text actually sits, over the busiest part of the photograph rather than an average of it. Can you read every word over the image, and is the smallest text over it still above the type floor?
+9. **Charts are deterministic pure SVG.** Bar and trend charts are inline SVGs with zero runtime CDN script dependencies, starting at zero baseline with exact tabular figures.
+10. **Assets are portable & inlined.** For standalone HTML presentations, generated multi-megabyte imagery is downsampled to 1600px JPEG and embedded as Base64 data URIs.
+11. **Parallel with its neighbours.** Repeated elements in the same position; section headers identical to each other.
+12. **Look at it.** Render the slide and open the capture — see below.
 
 ## Look wide, then filter — never both at once
 

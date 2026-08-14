@@ -20,6 +20,8 @@ The router picks the target from the *destination*, not the content. Each refere
 
 **Verification that isn't ceremonial.** A per-slide gate while building, and one delivery pass at the end. Built on three rules: rendering an image is not seeing one; the question you bring to a capture determines what you find in it (ask "what is wrong with this?", never "is this done?"); and a clean gate means *no known defect is present*, never *verified* — reported as separate claims with a never-empty not-checked line.
 
+**First-pass design resilience (v1.8.0).** Pure deterministic SVG charts by default (eliminates external CDN failures), automated image downsampling and Base64 inlining for single-file portability, strict dual-theme contrast rules for dark bands, `IntersectionObserver` active slide tracking with sticky header offset guards, and clean card semantic discipline.
+
 **Progressive direction-finding.** The template libraries on the machine are read as evidence, not menus — the bold pack's selection index before any `design.md`, two or three matching open-design systems, a named brand's portable design system. No bulk reads.
 
 ## Installation

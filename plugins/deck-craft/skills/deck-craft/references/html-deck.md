@@ -156,7 +156,48 @@ Most of what a deck review finds is preventable in the stylesheet rather than re
 
 /* Terminate every font stack with a generic: a bare family that fails to load
    falls back to serif and the deck silently changes character. */
-:root { --font-display: Figtree, system-ui, sans-serif; }
+:root {
+  --font-display: Figtree, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+
+/* Universal accessible focus outline */
+:focus-visible {
+  outline: 2px solid var(--color-primary, #D72229);
+  outline-offset: 3px;
+}
+
+/* Guard against sticky header occlusion when navigating to slide anchors */
+.slide-section, .slide, .slide-wrap {
+  scroll-margin-top: var(--header-height, 60px);
+}
+
+/* Dual-theme contrast tokens on dark bands (#2E2B2B / #181717) */
+.slide-dark {
+  --color-primary-on-dark: #FF5A5F;
+  --color-success-on-dark: #4ADE80;
+  --color-info-on-dark: #60A5FA;
+}
+.slide-dark .badge-primary { background: rgba(215, 34, 41, 0.25); color: var(--color-primary-on-dark); }
+.slide-dark .badge-success { background: rgba(74, 222, 128, 0.15); color: var(--color-success-on-dark); }
+.slide-dark .badge-info    { background: rgba(96, 165, 250, 0.15); color: var(--color-info-on-dark); }
+
+/* Badges over photo scrim overlays must be solid primary with crisp white text */
+.scrim-overlay .stat-badge, .media-frame .scrim .stat-badge {
+  background: var(--color-primary, #D72229) !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
 ```
 
 The nowrap and tabular-numbers rule is the highest-yield line in the block. A real validation pass spent 24 minutes finding, by eye and one slide at a time, three defects this single rule prevents outright.
@@ -236,6 +277,26 @@ document.elementFromPoint(r.left + 10, r.top + 10);   // must be the text, not t
 ```
 
 **Check the composite, not the asset.** A texture buried under a near-opaque colour wash ships the wash, and an image at low opacity behind other paint is a compliance token rather than a material. Judge every asset in the rendered capture beside what it was meant to be.
+
+### The Asset Optimization & Inlining Pipeline (Single-File Portability)
+
+When generating high-resolution photography or renders (e.g. via `media-gen-pro`) for standalone HTML presentations:
+1. **Downsample raw multi-megabyte assets to 1600px width at 80–85% JPEG quality**:
+   ```bash
+   sips -s format jpeg -s formatOptions 82 -Z 1600 raw_asset.webp --out asset_1600.jpg
+   ```
+2. **Embed assets directly as Base64 Data URIs** inside the HTML file:
+   ```python
+   import base64
+
+   def get_b64(path):
+       with open(path, 'rb') as f:
+           return 'data:image/jpeg;base64,' + base64.b64encode(f.read()).decode('utf-8')
+   ```
+   ```html
+   <img src="data:image/jpeg;base64,/9j/4AAQSkZJRg..." alt="Documentary description" />
+   ```
+3. **Why this is mandatory**: Standalone HTML presentations must open flawlessly over `file://`, in headless browser tests, and across sandbox environments without broken relative path dependencies or CDN network latency.
 
 With no real assets, use honest placeholders and say so: a striped background with a monospace label naming the asset and its dimensions. A placeholder shows intent; a hand-drawn SVG of a person or an abstract concept shows you didn't have the asset, and a gradient standing in for a photograph shows it while pretending otherwise.
 

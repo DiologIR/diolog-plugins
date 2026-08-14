@@ -91,6 +91,8 @@ If a block reads like a mood, the direction isn't decided yet. "Serious and conf
 
 **Contrast floor:** body text ≥4.5:1 against its background, large text (≥24px bold / ≥32px) ≥3:1. Projection loses contrast — a pairing that passes marginally on your monitor fails in a bright room. Check the muted roles specifically: mid-grey captions on a tinted near-white ground are the most common failure in generated decks.
 
+**Dual-theme contrast on dark bands:** When alternating between light paper and dark canvas sections (`#2E2B2B` / `#181717`), a primary brand colour chosen against light backgrounds will fail AA contrast on dark grounds. Always define a dedicated lifted accent token (e.g. `--color-primary-on-dark: #FF5A5F` against `#2E2B2B`). Use translucent pill backgrounds (`rgba(255,255,255,0.12)` or `rgba(color, 0.15)`) with high-contrast text (`#4ADE80`, `#60A5FA`). Badges placed directly over photographic scrims must use a solid brand background with bold white text.
+
 ## 5. Hierarchy and rhythm
 
 **Hierarchy is built from five vectors, not size alone:** scale, weight, colour, spacing (more room = more important), and position. The dominant element needs at least two working the same direction — size-only hierarchy collapses the moment a long headline forces the size down.
@@ -116,8 +118,9 @@ Each rule leads with the move to make; the trailing clause names what to avoid.
 - **No imitation material.** CSS bevels, embossing, faux letterpress, fake foil, stamped-metal and chalk effects standing in for a material the slide never actually renders read as machine-made faster than any other tell — and decks reach for them more than web pages do, usually on a cover. Either the material is a real asset or the surface is honestly flat. A gradient standing where a texture belongs ships the gradient.
 - **Depth with an offset and a soft blur, from one light source.** A zero-offset coloured halo is paint, not elevation; a hard offset block shadow (`4px 4px 0`) is a costume that only a genuinely neobrutalist direction earns.
 - **Backgrounds with intent.** A flat toned ground, one photograph, or one geometric device. Avoid the default corporate wash: blue-purple gradient, faint hex grid, floating translucent circles.
-- **Card discipline.** Separate with a thin all-round border, a subtle shadow, or background contrast. Reserve `border-left: 4px solid` for real semantic emphasis — as a default card it reads as SaaS template.
+- **Card discipline.** Separate with a thin all-round border, a subtle shadow, or background contrast. **Never use `border-left: 4px solid` on generic cards, quotes, or metric tiles** — reserve left borders strictly for genuine system warnings or semantic alert banners. On quotes and leadership cards, use subtle background contrast and role chips instead.
 - **Charts show the point.** Cut every series and column that doesn't support the slide's claim. Avoid 3D, avoid gratuitous legends where direct labels work, and never truncate a value axis on a comparison — that's a defect, not a style.
+
 
 ## 7. Accessibility floor
 
