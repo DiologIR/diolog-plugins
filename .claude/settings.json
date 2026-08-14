@@ -1,6 +1,7 @@
 {
   "env" : {
-    "ANTHROPIC_BASE_URL" : "http:\/\/127.0.0.1:8857",
+    "ANTHROPIC_API_KEY" : "local-proxy-supplies-the-real-credential",
+    "ANTHROPIC_BASE_URL" : "http:\/\/127.0.0.1:8858",
     "ANTHROPIC_CUSTOM_HEADERS" : "X-Perch-Binding: daiolog",
     "CLAUDE_CODE_MAX_RETRIES" : "30",
     "CLAUDE_CODE_RETRY_WATCHDOG" : "true",
