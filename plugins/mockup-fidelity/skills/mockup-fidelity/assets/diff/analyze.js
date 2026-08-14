@@ -2,7 +2,7 @@
 //
 // THIS REPLACES the three-file two-step pipeline (extract-mock.js + diff.mjs +
 // structure-diff.mjs). It is ONE self-contained, eval-injectable browser IIFE — no Node,
-// no imports — that runs via `playwright-cli eval "$(cat analyze.js)"` and returns a JSON
+// no imports — that runs via `obscura serve` + CDP Runtime.evaluate and returns a JSON
 // STRING.
 //
 // It has two MODES, selected by whether a reference analysis is present on globalThis:
@@ -45,14 +45,15 @@
 //   SYSTEMATIC PSEUDO-ELEMENT STYLE capture (`pseudoStyle` per node: ::before/::after content, border-
 //   width/-color, background/-image, box-shadow, position, border-radius) and a MODE-B pass that compares
 //   it for EVERY paired element (not just illustrations / not just the border-fold), so a pseudo-DRAWN
-//   border or overlay present/different on one side is caught universally. The other three v2.5.0 layers
-//   (CDP rendered-font, element-scoped odiff raster diff, IoU bounding-box pairing for text-less nodes) run
-//   in the Node-side HARNESS `capture.mjs` (Playwright node API + odiff-bin), which injects THIS analyze.js
+//   border or overlay present/different on one side is caught universally. The other v2.5.0 layers
+//   (element-scoped odiff raster diff, IoU bounding-box pairing for text-less nodes) run
+//   in the Node-side HARNESS `capture.mjs` (`obscura serve` over CDP + odiff-bin), which injects THIS analyze.js
 //   verbatim (MODE A on the reference, MODE B on the target — contract unchanged) and ENRICHES its findings
-//   with bbox-delta + odiff mismatch% + the genuinely-rendered typeface. The CDP rendered-font check
-//   (CSS.getPlatformFontsForNode) is the root-cause font instrument getComputedStyle cannot provide: it sees
-//   that live renders its loaded web font while the target falls back to the system face even though both
-//   declare the same font-family. See run.md § v2.5.0 and capture.mjs.
+//   with bbox-delta + odiff mismatch%. The third layer — the CDP rendered-font check
+//   (CSS.getPlatformFontsForNode) — is UNAVAILABLE under Obscura: it returns {}, DOM.requestNode is not
+//   implemented, and no web font is ever loaded, so both sides render the same fallback face. The harness
+//   records that layer as `available:false` rather than as zero divergences. Confirm any typeface question
+//   in a real browser. See run.md § v2.5.0 and capture.mjs.
 //
 // v2.4.0 — three additive low-noise detectors closing recall-test blind spots:
 //   (1) PER-ELEMENT VERTICAL OFFSET (`position/rel-offset`) — a matched element MOVED inside its parent
@@ -685,9 +686,9 @@
     // requested feature is INEFFECTIVE (the font lacks the glyph) ⇒ a `font/feature-ineffective` finding.
     //
     // RASTERISATION MECHANISM — chosen by capability TEST, not assumption:
-    //  · canvas `ctx.fontFeatureSettings` (CanvasRenderingContext2D): if THIS Chromium supports it we draw
+    //  · canvas `ctx.fontFeatureSettings` (CanvasRenderingContext2D): if THIS engine supports it we draw
     //    both variants to a canvas with the loaded document font and compare `getImageData` pixel hashes —
-    //    fully IN-PAGE, no runner round-trip. (As of current Chromium this is NOT implemented — we test
+    //    fully IN-PAGE, no runner round-trip. (No engine in use implements it today — we test
     //    `'fontFeatureSettings' in ctx` at runtime and only take this path when true.)
     //  · RUNNER-ASSISTED fallback (when canvas lacks the property): an SVG-`<img>` rasteriser cannot see
     //    the page's loaded @font-face faces, so we instead render persistent on-screen probe-PAIR nodes
@@ -710,7 +711,7 @@
         }
         if (!combos.size) return { ran: false, reason: 'no feature-requesting text', canvasSupported: null, probes: [], combos: [] };
 
-        // capability TEST — does this Chromium's 2D context expose fontFeatureSettings?
+        // capability TEST — does this engine's 2D context expose fontFeatureSettings?
         let canvasSupported = false;
         try {
           const tc = document.createElement('canvas').getContext('2d');
@@ -1582,7 +1583,7 @@
           locator: '[font-feature self-check]', section: null, class: 'font', property: 'feature-check-pending',
           target: `${pending} feature combo(s) unresolved`, reference: 'glyph-shape pixel-diff needed',
           severity: 'low',
-          suggestedChange: `this Chromium lacks canvas fontFeatureSettings, so the rendered-glyph-shape self-check needs the RUNNER step: screenshot the page and run feature-check.mjs over analysis.featureCheck.probes (pixel-diff each on/off probe pair); inject the result via globalThis.__MF_FEATURE_DIFFS__ and re-run MODE B to resolve ${pending} requested OpenType feature(s)`,
+          suggestedChange: `this engine lacks canvas fontFeatureSettings, so the rendered-glyph-shape self-check needs the RUNNER step: screenshot the page and run feature-check.mjs over analysis.featureCheck.probes (pixel-diff each on/off probe pair); inject the result via globalThis.__MF_FEATURE_DIFFS__ and re-run MODE B to resolve ${pending} requested OpenType feature(s). The runner step needs a browser that loads web fonts — see run.md § v2.1.0`,
         });
       }
     }

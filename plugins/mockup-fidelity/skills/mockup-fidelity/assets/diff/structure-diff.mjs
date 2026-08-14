@@ -43,7 +43,7 @@ const ANCHOR = args.anchor ? norm(args.anchor) : null;
 
 const load = (p) => {
   let v = JSON.parse(readFileSync(p, 'utf8'));
-  if (typeof v === 'string') v = JSON.parse(v); // playwright-cli --filename double-encodes
+  if (typeof v === 'string') v = JSON.parse(v); // tolerate a double-encoded capture
   return v;
 };
 function norm(s) { return String(s ?? '').replace(/\s+/g, ' ').trim(); }

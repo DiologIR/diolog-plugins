@@ -1,11 +1,18 @@
 // feature-check.mjs (v2.1.0) — RUNNER step for the RENDERED-GLYPH-SHAPE / font-feature-effectiveness
-// self-check, used ONLY when this Chromium's canvas lacks `ctx.fontFeatureSettings` (the current case).
+// self-check, used ONLY when the engine's canvas lacks `ctx.fontFeatureSettings` (the current case).
+//
+// NOT USABLE UNDER OBSCURA. Obscura does not load web fonts at all — a working remote woff2 and a 404'd
+// one measure identically, and every @font-face stays `unloaded` — so the on/off probe pairs render the
+// same fallback face on both rows and every pair comes back identical. Identical here MEANS "the feature
+// is ineffective", so running this against an Obscura screenshot reports every requested feature as a
+// defect, confidently and wrongly. Capture the page in a real browser when this check is wanted; there is
+// no Obscura-side substitute, because the signal is the rasterised glyph of a font it never fetched.
 //
 // WHY a runner step. A requested OpenType feature (cv11 single-story 'a', ss01, onum, …) can be DECLARED
 // and the font can APPLY, yet have NO EFFECT because the self-hosted woff2 is a SUBSET that STRIPPED that
 // feature's glyph — and the single-vs-default letterform is the SAME WIDTH, so width / DOM-span / glyph-
 // extent checks are structurally blind. The only signal is the rasterised glyph SHAPE. analyze.js can do
-// this fully in-page IF canvas exposes `fontFeatureSettings`; current Chromium does NOT (analyze.js tests
+// this fully in-page IF canvas exposes `fontFeatureSettings`; the engines in use do NOT (analyze.js tests
 // `'fontFeatureSettings' in ctx` and falls back to this runner path). In the fallback, analyze.js MODE A
 // rendered persistent on-screen probe PAIRS (the requested-ffs row directly above the `normal` row, same
 // family/size/weight) and recorded each pair's on/off rects in `analysis.featureCheck.probes`. This script
@@ -16,8 +23,7 @@
 // it emits the `font/feature-ineffective` finding inline (and escalates when the reference IS effective).
 //
 //   # 1) capture MODE A (leaves the probe host in the page) → analysis json (has featureCheck.probes)
-//   # 2) screenshot the page at the SAME viewport
-//   #      playwright-cli screenshot --filename page.png
+//   # 2) screenshot the page at the SAME viewport, from a browser that loads web fonts
 //   # 3) pixel-diff the probe pairs:
 //   node feature-check.mjs --analysis target.json --png page.png --out target-featdiffs.json
 //   #    → [{ key, effective, pctDifferent }]  (effective:false = INEFFECTIVE feature, the defect)

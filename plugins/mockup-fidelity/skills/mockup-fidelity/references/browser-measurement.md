@@ -4,9 +4,9 @@ You need a real browser to read computed styles and capture screenshots. This ap
 
 ## Tools (any that read the DOM + screenshot works)
 
-- **`playwright-cli`** — Playwright selector ergonomics; good for DOM/console/network inspection. `playwright-cli -s=<session> open <url>`, `screenshot <selector> --filename <path>`, `--raw eval "<js>"`. Output paths are usually restricted to inside the repo — write screenshots to a repo-local scratch dir (gitignore it). Use a separate `-s=<session>` per surface so reference and target stay loaded at once.
+- **`obscura`** — one static binary on PATH. `obscura fetch <url> --eval "<js>" --screenshot <path>` for a single settled render (viewport only — there is no full-page flag); `obscura serve --port 9222` + CDP when you need a viewport matrix, a full-page capture (`Page.captureScreenshot` with `captureBeyondViewport` and a clip from `Page.getLayoutMetrics`) or a promise awaited; `obscura mcp` when you must click your way to a surface. No output-path restriction, and no shared session to collide over — every `fetch` is its own render, so reference and target can be measured concurrently. A localhost target needs `--allow-private-network` **before** the subcommand.
 - **`agent-browser`** — drives SPAs on `http://localhost/` (not a public HSTS host). Use a viewport **≥ 1680px** for desktop multi-column layouts; **wrap each `eval` in an IIFE** (evals share one global scope); results come back **double-JSON-encoded** — decode twice.
-- **Chrome MCP** (`mcp__claude-in-chrome__*`) — load via `ToolSearch` first; good when a logged-in profile is already where you need it.
+- **`obscura mcp`** — the session-holding lane: `browser_navigate`, `browser_click`, `browser_fill`, `browser_evaluate` and the rest, for a surface you must drive to. No viewport control, and `browser_evaluate` does not await a promise.
 
 **Serving a static mock:** open the HTML directly; if `file://` blocks its scripts/fonts, serve the folder (`python3 -m http.server <port>`) and open `http://localhost:<port>/<file>.html`.
 

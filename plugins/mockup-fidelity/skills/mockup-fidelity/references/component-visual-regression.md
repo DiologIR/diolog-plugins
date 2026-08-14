@@ -30,8 +30,12 @@ commit the crops as fixtures:
 
 ```bash
 # in the served reference, screenshot each composite's bounding box to a fixture file
-playwright-cli -s=ref open "http://localhost:8770/<mock>.html"
-playwright-cli -s=ref screenshot "#hero .module-cards" --filename fixtures/visual/module-cards.ref.png
+# `obscura fetch --screenshot` has no element target, so measure the component's box first
+# and clip the capture to it over CDP.
+obscura --allow-private-network fetch "http://localhost:8770/<mock>.html" \
+  --eval "(() => JSON.stringify(document.querySelector('#hero .module-cards').getBoundingClientRect()))()"
+#   → pass that box to Page.captureScreenshot as `clip` (with captureBeyondViewport when the
+#     component sits below the fold) to write fixtures/visual/module-cards.ref.png
 # …one crop per composite, named after the story
 ```
 
@@ -46,10 +50,10 @@ Render the story at the **same viewport / DPR** as the crop, or the pixel diff i
      args: { items: referenceFixture.moduleCards },   // the mock's exact copy/data
    };
    ```
-2. **A snapshot test** (Storybook test-runner, or Playwright against the story iframe) that
+2. **A snapshot test** (Storybook test-runner, or a `node:test` spec driving Obscura against the story iframe) that
    screenshots the rendered story and diffs it against the committed crop:
    ```ts
-   // visual.spec.ts — Playwright/test-runner
+   // visual.spec.mjs — node:test / Storybook test-runner
    test('ModuleCards matches reference', async ({ page }) => {
      await page.goto(storyUrl('modulecards--as-reference'));
      await expect(page.locator('#storybook-root')).toHaveScreenshot('module-cards.ref.png', {

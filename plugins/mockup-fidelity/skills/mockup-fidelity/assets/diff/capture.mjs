@@ -1,37 +1,43 @@
 // mockup-fidelity CAPTURE HARNESS (v2.5.0) — the Node-side orchestrator around the browser-injectable
-// analyze.js. It adds the three trustworthy RENDERED signals that a getComputedStyle dump (and therefore
+// analyze.js. It adds the trustworthy RENDERED signals that a getComputedStyle dump (and therefore
 // analyze.js alone) structurally cannot provide:
 //
-//   1. CDP RENDERED-FONT (the headline fix).  Per visible text node it calls
-//      `CSS.getPlatformFontsForNode` over a raw CDP session and records the ACTUAL rendered familyName +
-//      isCustomFont — the genuinely-rendered typeface, not the declared font-family. Live can resolve to its
-//      loaded web font ("Inter Medium", isCustomFont:true) while the target silently falls back to the system
-//      face ("Helvetica", isCustomFont:false) even though getComputedStyle font-family still lists Inter first
-//      on BOTH sides. analyze.js's DOM-span probe approximates this; CDP MEASURES it. The two are recorded
-//      keyed by normalised text + tag + frame-relative bbox so MODE B can pair them.
-//
-//   2. ELEMENT-SCOPED RASTER DIFF (odiff).  A full-page screenshot is captured per side; each PAIRED element
+//   1. ELEMENT-SCOPED RASTER DIFF (odiff).  A full-page screenshot is captured per side; each PAIRED element
 //      (paired by analyze.js MODE B's structure — text/structure pairing, plus the v2.5.0 IoU text-less
 //      pairing) is cropped from both screenshots by its bounding box and the two equal-size crops are run
 //      through odiff. A localized mismatch% with computed styles MATCHING ⇒ a layout/occlusion/rendering
 //      anomaly the DOM passes are blind to — most importantly a MISSING DECORATIVE CHILD (a trailing → svg,
 //      a divider, an icon) the structure pass passed because both element boxes exist.
 //
-//   3. IoU TEXT-LESS PAIRING.  analyze.js pairs by text + structural path; a bare <svg> / icon / decorative
+//   2. IoU TEXT-LESS PAIRING.  analyze.js pairs by text + structural path; a bare <svg> / icon / decorative
 //      div has no text. After the normal pairing we pair the remaining text-less nodes across sides by
 //      Intersection-over-Union of bounding boxes (≥0.9), so an arrow/icon becomes a paired candidate the
 //      raster + presence checks can evaluate.
 //
-// All of this is orchestrated HERE in Node (playwright-core + odiff-bin) because the raw CDP font path and a
-// real headless screenshot are unreachable through the `playwright-cli eval` wrapper that drives analyze.js.
-// analyze.js's injectable MODE A/B contract is UNCHANGED — this harness injects it verbatim and consumes its
-// JSON, then ENRICHES the findings with bbox-delta + odiff mismatch% + rendered-font where relevant.
+// WHAT THIS HARNESS NO LONGER DOES — the CDP RENDERED-FONT layer. It used `CSS.getPlatformFontsForNode` to
+// record the ACTUAL rendered typeface per text node, which caught the headline case: live resolves to its
+// loaded web font ("Inter Medium", isCustomFont:true) while the target silently falls back to the system
+// face ("Helvetica", isCustomFont:false) with getComputedStyle font-family still listing Inter first on BOTH
+// sides. Obscura cannot support that check at any level:
+//   · `CSS.getPlatformFontsForNode` returns `{}`, and `DOM.requestNode` — the only route from a Text node to
+//     a nodeId — is not implemented;
+//   · more fundamentally, Obscura DOES NOT LOAD WEB FONTS. A working remote woff2 and a 404'd one measure
+//     identically, `document.fonts` reports every @font-face as `unloaded` forever, and named families
+//     collapse onto three generic metric buckets (Georgia==serif, Arial==Impact==sans-serif, Courier
+//     New==monospace).
+// So the FONT class is not measurable here at all, and the harness reports the layer as UNAVAILABLE rather
+// than reporting zero divergences — a silent zero on this layer reads as "the fonts match", which is the
+// exact defect the layer existed to catch. Confirm typeface identity in a real browser.
 //
-// FONT-RENDER-HINTING DETERMINISM: chromium is launched with ['--font-render-hinting=none'] so glyph
-// rasterisation is stable across machines, reducing font-edge false positives in the raster crops. NOTE
-// (documented in run.md): this does NOT make headless == a real browser. The CDP rendered-font check — not
-// any width number and not the raster %, both of which a headless renderer can still skew — is the
-// trustworthy signal for the FONT class.
+// All of this is orchestrated HERE in Node (obscura + odiff-bin) because a real full-page screenshot and the
+// per-element crops are unreachable from inside a single injected eval. analyze.js's injectable MODE A/B
+// contract is UNCHANGED — this harness injects it verbatim and consumes its JSON, then ENRICHES the findings
+// with bbox-delta + odiff mismatch% where relevant.
+//
+// RASTER DETERMINISM: Obscura is one static binary rasterising the same way on every machine, so glyph-edge
+// noise is stable without a hinting flag. NOTE (documented in run.md): stable is not the same as faithful.
+// It is a Rust engine, not packaged Chrome, and a raster mismatch is a TRIGGER to go and measure, never on
+// its own the verdict that the target is wrong.
 //
 // USAGE:
 //   node capture.mjs --ref <refURL|file> --target <targetURL|file> --out <dir> [options]
@@ -46,26 +52,31 @@
 //     --iou       IoU threshold for text-less pairing (default 0.9)
 //     --raster-min  minimum element area (px²) to raster-diff (default 64; skips 1px slivers)
 //     --raster-max  max paired elements to raster-diff (default 600; protects runtime)
-//     --no-raster   skip the odiff raster layer (CDP fonts + analyze.js only)
-//     --no-fonts    skip the CDP rendered-font layer
+//     --no-raster   skip the odiff raster layer (analyze.js only)
+//     --cdp-port    attach to an `obscura serve` already running instead of starting one
 //
 // OUTPUT (in --out):
 //   reference.analysis.json   MODE-A analysis of the reference
 //   target.findings.json      MODE-B { summary, findings, noiseExcluded, analysis } ENRICHED with
-//                             renderedFont / raster blocks + summary.layers
-//   reference.fonts.json      per-text-node CDP rendered fonts (reference)
-//   target.fonts.json         per-text-node CDP rendered fonts (target)
+//                             raster blocks + summary.layers
 //   reference.full.png        full-page reference screenshot (raster source)
 //   target.full.png           full-page target screenshot (raster source)
 //   raster/*.png              per-element diff crops for raster findings (diff masks)
 
-import { chromium } from 'playwright-core';
 import { compare } from 'odiff-bin';
+import { spawn, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve, isAbsolute } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+if (spawnSync('obscura', ['--version'], { stdio: 'ignore' }).error) {
+  console.error('ERROR: obscura is not on PATH. Download the aarch64-macos release from\n' +
+                '       https://github.com/h4ckf0r0day/obscura and put it in ~/.local/bin');
+  process.exit(2);
+}
+
 
 // ---------- arg parsing ----------
 function parseArgs(argv) {
@@ -99,8 +110,8 @@ const IOU_THRESHOLD = parseFloat(args.iou ?? '0.9');
 const RASTER_MIN_AREA = parseInt(args['raster-min'] ?? '64', 10);
 const RASTER_MAX = parseInt(args['raster-max'] ?? '600', 10);
 const DO_RASTER = !args['no-raster'];
-const DO_FONTS = !args['no-fonts'];
 const CHROME_SELECTOR = args['chrome-selector'] ?? '__none__';
+const CDP_PORT = args['cdp-port'] ? parseInt(String(args['cdp-port']), 10) : null;
 
 if (!existsSync(ANALYZE_PATH)) { console.error(`ERROR: analyze.js not found at ${ANALYZE_PATH}`); process.exit(2); }
 mkdirSync(OUT, { recursive: true });
@@ -117,21 +128,108 @@ function toNavTarget(s) {
   return 'file://' + p;
 }
 
+// ---------- Obscura driver ----------
+// `obscura serve` speaks Chrome-compatible CDP, so a raw WebSocket is the whole client — Node 22 has a
+// global WebSocket, and there is no browser package to install. --allow-private-network is not optional:
+// a target on 127.0.0.1 or a 192.168.* host is blocked by default and the navigation fails as an SSRF
+// block, which reads like a broken page rather than a blocked fetch.
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function startObscura(port) {
+  const proc = spawn('obscura', ['--allow-private-network', 'serve', '--port', String(port), '--quiet'],
+    { stdio: 'ignore' });
+  const deadline = Date.now() + 15000;
+  while (Date.now() < deadline) {
+    try { if ((await fetch(`http://127.0.0.1:${port}/json/version`)).ok) return proc; } catch (e) {}
+    await sleep(200);
+  }
+  proc.kill();
+  throw new Error(`obscura serve did not come up on port ${port}`);
+}
+
+async function connectCdp(port) {
+  const version = await (await fetch(`http://127.0.0.1:${port}/json/version`)).json();
+  const ws = new WebSocket(version.webSocketDebuggerUrl);
+  const pending = new Map();
+  ws.addEventListener('message', (e) => {
+    const msg = JSON.parse(e.data);
+    if (msg.id && pending.has(msg.id)) { pending.get(msg.id)(msg); pending.delete(msg.id); }
+  });
+  await new Promise((res, rej) => { ws.addEventListener('open', res); ws.addEventListener('error', rej); });
+  let nextId = 0;
+  const send = (method, params = {}, sessionId) => new Promise((resolve) => {
+    const id = ++nextId;
+    pending.set(id, resolve);
+    ws.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
+  });
+  return { send, close: () => ws.close() };
+}
+
+// A page: one Obscura target with just the surface this harness uses. `evaluate` takes an EXPRESSION
+// string rather than a function, which is what analyze.js already expects — it is an async IIFE whose
+// source IS the expression.
+async function newPage(cdp, { width, height }) {
+  const created = await cdp.send('Target.createTarget', { url: 'about:blank' });
+  const targetId = created.result?.targetId;
+  const attached = await cdp.send('Target.attachToTarget', { targetId, flatten: true });
+  const sessionId = attached.result?.sessionId;
+  for (const domain of ['Page', 'Runtime', 'DOM']) await cdp.send(`${domain}.enable`, {}, sessionId);
+  if (width && height) {
+    await cdp.send('Emulation.setDeviceMetricsOverride',
+      { width, height, deviceScaleFactor: 1, mobile: false }, sessionId);
+  }
+  const page = {
+    sessionId,
+    async goto(url, timeoutMs = 45000) {
+      const r = await cdp.send('Page.navigate', { url }, sessionId);
+      if (r.error) throw new Error(`navigate failed: ${JSON.stringify(r.error)}`);
+      const deadline = Date.now() + timeoutMs;
+      while (Date.now() < deadline) {
+        if (await page.evaluate('document.readyState') === 'complete') return;
+        await sleep(150);
+      }
+    },
+    async evaluate(expression) {
+      const r = await cdp.send('Runtime.evaluate',
+        { expression, returnByValue: true, awaitPromise: true }, sessionId);
+      if (r.error) throw new Error(JSON.stringify(r.error));
+      if (r.result?.exceptionDetails) {
+        throw new Error(r.result.exceptionDetails.exception?.description
+          || r.result.exceptionDetails.text || 'evaluate threw');
+      }
+      return r.result?.result?.value;
+    },
+    async fullPageScreenshot(file) {
+      const m = await cdp.send('Page.getLayoutMetrics', {}, sessionId);
+      const size = m.result?.contentSize ?? m.result?.cssContentSize;
+      const params = { format: 'png' };
+      if (size) {
+        params.clip = { x: 0, y: 0, width: size.width, height: size.height, scale: 1 };
+        params.captureBeyondViewport = true;
+      }
+      const r = await cdp.send('Page.captureScreenshot', params, sessionId);
+      const data = r.result?.data;
+      if (!data) return false;
+      writeFileSync(file, Buffer.from(data, 'base64'));
+      return true;
+    },
+    async close() { await cdp.send('Target.closeTarget', { targetId }); },
+  };
+  return page;
+}
+
 // ---------- analyze.js injection (MODE A / MODE B) ----------
-// analyze.js is an `(async function(){…})()` IIFE that READS globals and RETURNS a JSON string. We run it
-// via page.evaluate by wrapping it so the page sets the globals first, then returns the IIFE's resolved
-// value. Because page.evaluate serialises a function, we build the body as a string and use `new Function`
-// shape via evaluate(string). playwright's evaluate(pageFunction|string) accepts a string expression.
+// analyze.js is an `(async function(){…})()` IIFE that READS globals and RETURNS a JSON string. We set the
+// globals first, then evaluate the IIFE source as an expression and await it — Runtime.evaluate with
+// awaitPromise:true resolves the returned promise, so the JSON comes back in one round trip.
 async function runAnalyze(page, { reference } = {}) {
-  // Set globals, then evaluate the IIFE source as an expression and await it.
   await page.evaluate(
-    ({ opts, ref }) => {
-      globalThis.__MF_OPTS__ = opts;
-      globalThis.__MF_REFERENCE__ = ref || null;
+    `(() => {
+      globalThis.__MF_OPTS__ = ${JSON.stringify(buildOpts())};
+      globalThis.__MF_REFERENCE__ = ${JSON.stringify(reference ?? null)};
       globalThis.__MF_REFERENCE_BYWIDTH__ = null;
       globalThis.__MF_TARGET_BYWIDTH__ = null;
-    },
-    { opts: buildOpts(), ref: reference ?? null },
+    })()`,
   );
   // analyze.js source IS the IIFE expression (it ends with `})()`), so evaluating it returns the promise.
   const raw = await page.evaluate(ANALYZE_SRC);
@@ -153,7 +251,7 @@ function buildOpts() {
 // raster crop we need VIEWPORT/page coordinates. We read the frame root's bounding rect in page coords here,
 // using the SAME frame-selection logic analyze.js uses, so node.rect.{x,y} + frameOrigin = page coords.
 async function readFrameOrigin(page) {
-  return await page.evaluate((opts) => {
+  return await page.evaluate(`((opts) => {
     const SEL = opts.frameSelector;
     const TITLE = opts.frameTitle;
     const INDEX = opts.frameIndex;
@@ -170,7 +268,7 @@ async function readFrameOrigin(page) {
     else if (INDEX != null) root = screenOf([...document.querySelectorAll(FRAME_SEL)][INDEX - 1]);
     else if (TITLE) {
       const fig = [...document.querySelectorAll(FRAME_SEL)].find(
-        (f) => ((f.querySelector(CAP_SEL) || {}).textContent || '').replace(/\s+/g, ' ').includes(TITLE),
+        (f) => ((f.querySelector(CAP_SEL) || {}).textContent || '').replace(/\\s+/g, ' ').includes(TITLE),
       );
       root = screenOf(fig);
     } else root = document.body;
@@ -178,122 +276,18 @@ async function readFrameOrigin(page) {
     const r = root.getBoundingClientRect();
     // page (document) coords = client rect + scroll offset
     return { x: r.left + (window.scrollX || 0), y: r.top + (window.scrollY || 0), found: true, dpr: window.devicePixelRatio || 1 };
-  }, buildOpts());
+  })(${JSON.stringify(buildOpts())})`);
 }
 
 // ======================================================================
-// CDP RENDERED-FONT EXTRACTION (the PROVEN sequence)
+// SIDE CAPTURE — one page: analyze.js + frame origin + screenshot
 // ======================================================================
-// Per visible text node we get the genuinely-rendered typeface via CSS.getPlatformFontsForNode. The two
-// non-obvious gotchas (proven in the spike) are baked in:
-//   (1) you can NOT get a usable CDP objectId from a Playwright JSHandle (handle._object is undefined in
-//       pw 1.61) — instead do the element lookup INSIDE a CDP Runtime.evaluate and keep the result as a
-//       RemoteObject (returnByValue:false → objectId);
-//   (2) you MUST call DOM.getDocument BEFORE DOM.requestNode, or the returned nodeId is unresolvable
-//       ("Could not find node with given id").
-// We harvest EVERY visible text node in one Runtime.evaluate (tagging each with a sequential index + its
-// normalised text + tag + frame-relative bbox), then for each index re-resolve the node object and call
-// getPlatformFontsForNode. Keyed for MODE-B pairing by `${tag}|${normText}` (+ bbox for disambiguation).
-async function extractRenderedFonts(page, frameOrigin) {
-  const client = await page.context().newCDPSession(page);
+async function captureSide(cdp, navTarget, { reference, label } = {}) {
+  const page = await newPage(cdp, { width: VW, height: VH });
   try {
-    await client.send('DOM.enable');
-    await client.send('CSS.enable');
-    await client.send('Runtime.enable');
-    await client.send('DOM.getDocument', { depth: -1, pierce: true }); // REQUIRED first
-
-    // (1) Catalogue every visible text node into a page-global array, returning lightweight metadata.
-    //     We keep the actual Text nodes referenced from window.__MF_TEXTNODES__ so a follow-up
-    //     Runtime.evaluate can return each by index as a RemoteObject (objectId).
-    const fox = frameOrigin?.x || 0, foy = frameOrigin?.y || 0;
-    const { result: catResult } = await client.send('Runtime.evaluate', {
-      expression: `(() => {
-        const norm = (s) => (s || '').replace(/\\s+/g, ' ').trim();
-        const fox = ${JSON.stringify(fox)}, foy = ${JSON.stringify(foy)};
-        const nodes = [];
-        const meta = [];
-        const walker = document.createTreeWalker(document.body || document.documentElement, NodeFilter.SHOW_TEXT);
-        let n;
-        while ((n = walker.nextNode())) {
-          const t = norm(n.nodeValue);
-          if (!t) continue;
-          const parent = n.parentElement;
-          if (!parent) continue;
-          // visibility / layout gate — skip script/style/hidden/zero-box text
-          const tag = parent.tagName ? parent.tagName.toLowerCase() : '';
-          if (tag === 'script' || tag === 'style' || tag === 'noscript') continue;
-          let rect;
-          try { const rng = document.createRange(); rng.selectNodeContents(n); rect = rng.getBoundingClientRect(); } catch (e) { continue; }
-          if (!rect || rect.width <= 0 || rect.height <= 0) continue;
-          const cs = getComputedStyle(parent);
-          if (cs.visibility === 'hidden' || cs.display === 'none' || parseFloat(cs.opacity) === 0) continue;
-          const idx = nodes.length;
-          nodes.push(n);
-          meta.push({
-            idx, tag, text: t.slice(0, 80),
-            declaredFamily: (cs.fontFamily || '').split(',')[0].replace(/["']/g, '').trim(),
-            declaredWeight: cs.fontWeight, declaredSize: cs.fontSize,
-            // frame-relative bbox (page coords minus frame origin) — matches analyze.js node.rect space
-            rect: {
-              x: +(rect.left + (window.scrollX || 0) - fox).toFixed(1),
-              y: +(rect.top + (window.scrollY || 0) - foy).toFixed(1),
-              w: +rect.width.toFixed(1), h: +rect.height.toFixed(1),
-            },
-          });
-        }
-        window.__MF_TEXTNODES__ = nodes;
-        return JSON.stringify(meta);
-      })()`,
-      returnByValue: true,
-    });
-    const meta = JSON.parse(catResult.value || '[]');
-
-    const out = [];
-    // (2) Per index: re-resolve the Text node as a RemoteObject, requestNode → nodeId,
-    //     getPlatformFontsForNode → the ACTUAL rendered typefaces.
-    for (const m of meta) {
-      let entry = { ...m, fonts: [], rendered: null, isCustomFont: null };
-      try {
-        const { result } = await client.send('Runtime.evaluate', {
-          expression: `window.__MF_TEXTNODES__[${m.idx}]`,
-          returnByValue: false, // keep as RemoteObject → objectId
-        });
-        if (!result || !result.objectId) { out.push(entry); continue; }
-        const { nodeId } = await client.send('DOM.requestNode', { objectId: result.objectId });
-        const { fonts } = await client.send('CSS.getPlatformFontsForNode', { nodeId });
-        // fonts[] is ordered by glyph coverage; the first (most glyphs) is the dominant rendered face.
-        const mapped = (fonts || []).map((f) => ({
-          familyName: f.familyName, isCustomFont: !!f.isCustomFont, glyphCount: f.glyphCount,
-          postScriptName: f.postScriptName,
-        }));
-        const dominant = mapped.slice().sort((a, b) => (b.glyphCount || 0) - (a.glyphCount || 0))[0] || null;
-        entry.fonts = mapped;
-        entry.rendered = dominant ? dominant.familyName : null;
-        entry.isCustomFont = dominant ? dominant.isCustomFont : null;
-      } catch (e) {
-        entry.error = String(e && e.message || e);
-      }
-      out.push(entry);
-    }
-    // clean up the page global we created
-    try { await client.send('Runtime.evaluate', { expression: 'delete window.__MF_TEXTNODES__', returnByValue: true }); } catch (e) {}
-    return out;
-  } finally {
-    try { await client.detach(); } catch (e) {}
-  }
-}
-
-// ======================================================================
-// SIDE CAPTURE — one page: analyze.js + frame origin + screenshot + CDP fonts
-// ======================================================================
-async function captureSide(browser, navTarget, { reference, label } = {}) {
-  const ctx = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: 1 });
-  const page = await ctx.newPage();
-  try {
-    try { await page.goto(navTarget, { waitUntil: 'networkidle', timeout: 45000 }); }
-    catch (e) { await page.goto(navTarget, { waitUntil: 'domcontentloaded', timeout: 45000 }); await page.waitForTimeout(2500); }
-    try { await page.evaluate(() => document.fonts && document.fonts.ready); } catch (e) {}
-    await page.waitForTimeout(400);
+    await page.goto(navTarget);
+    try { await page.evaluate('document.fonts && document.fonts.ready'); } catch (e) {}
+    await sleep(2500);
 
     const analysis = await runAnalyze(page, { reference });
     const frameOrigin = await readFrameOrigin(page);
@@ -301,18 +295,14 @@ async function captureSide(browser, navTarget, { reference, label } = {}) {
     let pngPath = null;
     if (DO_RASTER) {
       pngPath = join(OUT, `${label}.full.png`);
-      await page.screenshot({ path: pngPath, fullPage: true });
+      await page.fullPageScreenshot(pngPath);
     }
-    let fonts = null;
-    if (DO_FONTS) {
-      try { fonts = await extractRenderedFonts(page, frameOrigin); }
-      catch (e) { fonts = { error: String(e && e.message || e) }; }
-    }
-    return { analysis, frameOrigin, pngPath, fonts };
+    return { analysis, frameOrigin, pngPath };
   } finally {
-    await ctx.close();
+    await page.close();
   }
 }
+
 
 // ======================================================================
 // MODE-B PAIRING REPLAY — recover {mock node, target node} pairs from analyze.js's analyses.
@@ -403,18 +393,17 @@ function buildPairs(refAnalysis, tgtAnalysis) {
 // RASTER LAYER — crop each paired element from both full-page PNGs and odiff the equal-size crops.
 // ======================================================================
 // We crop each full-page PNG by re-opening it in a fresh data-URL page and slicing it on a <canvas>. That
-// keeps deps to playwright-core + odiff only (no sharp / no native image lib), and odiff needs each side's
-// crop as its own PNG file. (CDP Runtime.evaluate interpolations in this file are only JSON-stringified
-// NUMBERS — frame-origin coords and node indices — never untrusted strings, so there is no injection path;
-// the analyze.js source string passed to page.evaluate is read from disk and is the trusted skill asset.)
-async function cropFromPng(browser, pngPath, rect, dpr, outPath) {
+// keeps deps to obscura + odiff only (no sharp / no native image lib), and odiff needs each side's crop as
+// its own PNG file. (Runtime.evaluate interpolations in this file are only JSON-stringified NUMBERS —
+// frame-origin coords and node indices — never untrusted strings, so there is no injection path; the
+// analyze.js source string passed to page.evaluate is read from disk and is the trusted skill asset.)
+async function cropFromPng(cdp, pngPath, rect, dpr, outPath) {
   // rect is in PAGE coordinates (frame-relative + frameOrigin already applied by caller). Screenshot pixels
   // are page-px × dpr; with deviceScaleFactor:1 dpr==1, so page coords == screenshot px.
-  const ctx = await browser.newContext();
-  const page = await ctx.newPage();
+  const page = await newPage(cdp, {});
   try {
     const dataUrl = 'data:image/png;base64,' + readFileSync(pngPath).toString('base64');
-    const ok = await page.evaluate(async ({ url, r, scale }) => {
+    const cropUrl = await page.evaluate(`(async (url, r, scale) => {
       const img = new Image();
       await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
       const sx = Math.max(0, Math.round(r.x * scale));
@@ -425,20 +414,18 @@ async function cropFromPng(browser, pngPath, rect, dpr, outPath) {
       c.width = sw; c.height = sh;
       const g = c.getContext('2d');
       g.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
-      window.__MF_CROP__ = c.toDataURL('image/png');
-      return true;
-    }, { url: dataUrl, r: rect, scale: dpr || 1 });
-    if (!ok) return false;
-    const cropUrl = await page.evaluate(() => window.__MF_CROP__);
+      return c.toDataURL('image/png');
+    })(${JSON.stringify(dataUrl)}, ${JSON.stringify(rect)}, ${JSON.stringify(dpr || 1)})`);
+    if (!cropUrl) return false;
     const b64 = String(cropUrl).split(',')[1];
     writeFileSync(outPath, Buffer.from(b64, 'base64'));
     return true;
   } finally {
-    await ctx.close();
+    await page.close();
   }
 }
 
-async function rasterLayer(browser, pairs, refSide, tgtSide) {
+async function rasterLayer(cdp, pairs, refSide, tgtSide) {
   const refOrigin = refSide.frameOrigin || { x: 0, y: 0, dpr: 1 };
   const tgtOrigin = tgtSide.frameOrigin || { x: 0, y: 0, dpr: 1 };
   const refDpr = refOrigin.dpr || 1, tgtDpr = tgtOrigin.dpr || 1;
@@ -461,8 +448,8 @@ async function rasterLayer(browser, pairs, refSide, tgtSide) {
     const tgtCrop = join(RASTER_DIR, `pair-${i}-tgt.png`);
     const diffCrop = join(RASTER_DIR, `pair-${i}-diff.png`);
     let okR = false, okT = false;
-    try { okR = await cropFromPng(browser, refSide.pngPath, refRect, refDpr, refCrop); } catch (e) {}
-    try { okT = await cropFromPng(browser, tgtSide.pngPath, tgtRect, tgtDpr, tgtCrop); } catch (e) {}
+    try { okR = await cropFromPng(cdp, refSide.pngPath, refRect, refDpr, refCrop); } catch (e) {}
+    try { okT = await cropFromPng(cdp, tgtSide.pngPath, tgtRect, tgtDpr, tgtCrop); } catch (e) {}
     if (!okR || !okT) continue;
     let res;
     try {
@@ -485,98 +472,36 @@ async function rasterLayer(browser, pairs, refSide, tgtSide) {
 }
 
 // ======================================================================
-// FONT LAYER — pair reference vs target CDP rendered fonts by tag+text (+ nearest bbox), emit findings when
-// the genuinely-RENDERED typeface differs (a custom face on one side, a system fallback on the other).
+// FONT LAYER — UNAVAILABLE under Obscura, and reported as such rather than as zero divergences.
 // ======================================================================
-function fontLayer(refFonts, tgtFonts) {
-  if (!Array.isArray(refFonts) || !Array.isArray(tgtFonts)) return { findings: [], summary: { compared: 0, divergent: 0 } };
-  const key = (e) => e.tag + '|' + normText(e.text);
-  const tgtByKey = new Map();
-  for (const e of tgtFonts) { const k = key(e); if (!tgtByKey.has(k)) tgtByKey.set(k, []); tgtByKey.get(k).push(e); }
-  const findings = [];
-  let compared = 0;
-  const seenKeys = new Set();
-  for (const r of refFonts) {
-    if (!r.rendered) continue;
-    const k = key(r);
-    const cands = tgtByKey.get(k);
-    if (!cands || !cands.length) continue;
-    // disambiguate repeated text by nearest bbox (frame-relative).
-    const t = cands.slice().sort((a, b) => {
-      const da = Math.hypot((a.rect?.x || 0) - (r.rect?.x || 0), (a.rect?.y || 0) - (r.rect?.y || 0));
-      const db = Math.hypot((b.rect?.x || 0) - (r.rect?.x || 0), (b.rect?.y || 0) - (r.rect?.y || 0));
-      return da - db;
-    })[0];
-    if (!t || !t.rendered) continue;
-    compared++;
-    const rfam = String(r.rendered).trim(), tfam = String(t.rendered).trim();
-    // dedup per (declaredFamily|renderedRef|renderedTgt) — a site-wide fallback is ONE root cause.
-    const dk = (r.declaredFamily || '') + '|' + rfam.toLowerCase() + '|' + tfam.toLowerCase();
-    const sameRendered = rfam.toLowerCase() === tfam.toLowerCase();
-    if (sameRendered) continue;
-    // genuine divergence: the CDP-reported rendered face differs. This fires EVEN when getComputedStyle
-    // font-family agrees or is a generic — the headline case (live "Inter Medium" isCustomFont:true vs
-    // target "Helvetica" isCustomFont:false on the SAME declared Inter stack).
-    findings.push({
-      tag: r.tag, text: normText(r.text).slice(0, 48),
-      declaredFamily: r.declaredFamily || null,
-      referenceRendered: rfam, referenceCustom: r.isCustomFont,
-      targetRendered: tfam, targetCustom: t.isCustomFont,
-      rect: t.rect || r.rect || null,
-      dedupKey: dk,
-      firstOfDedup: !seenKeys.has(dk),
-    });
-    seenKeys.add(dk);
-  }
-  // mark dedup counts
-  const counts = new Map();
-  for (const f of findings) counts.set(f.dedupKey, (counts.get(f.dedupKey) || 0) + 1);
-  for (const f of findings) f.dedupCount = counts.get(f.dedupKey);
-  return { findings, summary: { compared, divergent: findings.length, distinctRootCauses: counts.size } };
-}
+// The layer paired reference vs target CDP rendered fonts and emitted a finding when the genuinely-RENDERED
+// typeface differed — a custom face on one side, a system fallback on the other. Obscura cannot answer the
+// question at any level (see the header): the CDP call returns nothing, and web fonts never load, so both
+// sides fall back identically and every comparison would agree. An agreeing comparison here is precisely the
+// wrong answer, so nothing is compared and the summary carries the reason instead.
+const FONT_LAYER_UNAVAILABLE = {
+  available: false,
+  reason: 'Obscura does not load web fonts and CSS.getPlatformFontsForNode returns nothing. Typeface '
+        + 'identity cannot be measured here — confirm it in a real browser.',
+  compared: 0,
+};
 
 // ======================================================================
-// ENRICHMENT — fold the font + raster layers into the analyze.js findings payload (the deterministic
-// "diff-as-instruction" shape): each finding carries bbox-delta + odiff mismatch% + rendered-font where
-// relevant. We ADD new findings for the two new classes and ATTACH raster/font evidence onto existing
-// findings whose locator targets the same element box.
+// ENRICHMENT — fold the raster layer into the analyze.js findings payload (the deterministic
+// "diff-as-instruction" shape): each finding carries bbox-delta + odiff mismatch% where relevant. We ADD
+// new findings for the raster class and ATTACH raster evidence onto existing findings whose locator targets
+// the same element box.
 // ======================================================================
-function enrich(modeB, fontResult, rasterResults, pairs) {
+function enrich(modeB, rasterResults, pairs) {
   // Defensive: modeB may be an error or a bare analysis (MODE A) if injection was dropped.
   if (!modeB || !modeB.findings) {
-    return { ...(modeB || {}), _harnessNote: 'MODE-B result missing findings; font/raster layers attached separately', renderedFont: fontResult, raster: rasterResults };
+    return { ...(modeB || {}), _harnessNote: 'MODE-B result missing findings; raster layer attached separately', renderedFont: FONT_LAYER_UNAVAILABLE, raster: rasterResults };
   }
   const findings = modeB.findings;
   let nextId = findings.length;
   const newFindings = [];
 
-  // ---- (1) CDP RENDERED-FONT findings — the root-cause font instrument ----
-  for (const f of (fontResult?.findings || [])) {
-    if (!f.firstOfDedup) continue; // emit ONE per root cause; dedupCount carries the breadth
-    const n = (f.targetCustom === false && f.referenceCustom === true)
-      ? `the target renders the SYSTEM fallback "${f.targetRendered}" (isCustomFont:false) while the reference renders the loaded web font "${f.referenceRendered}" (isCustomFont:true)`
-      : `the genuinely-rendered typeface differs: reference "${f.referenceRendered}"${f.referenceCustom ? ' (custom)' : ''} vs target "${f.targetRendered}"${f.targetCustom ? ' (custom)' : ''}`;
-    newFindings.push({
-      id: 'mf-cdpfont-' + (++nextId),
-      locator: `text "${f.text}"  ·  ${f.tag}${f.rect ? `  ·  @${Math.round(f.rect.x)},${Math.round(f.rect.y)} ${Math.round(f.rect.w)}×${Math.round(f.rect.h)}` : ''}`,
-      section: null,
-      class: 'font',
-      property: 'cdp-rendered-font',
-      target: `${f.targetRendered}${f.targetCustom === false ? ' (system fallback)' : ''}`,
-      reference: `${f.referenceRendered}${f.referenceCustom ? ' (web font)' : ''}`,
-      severity: 'high',
-      renderedFont: {
-        declaredFamily: f.declaredFamily,
-        reference: { familyName: f.referenceRendered, isCustomFont: f.referenceCustom },
-        target: { familyName: f.targetRendered, isCustomFont: f.targetCustom },
-        affectedNodes: f.dedupCount,
-        source: 'CDP CSS.getPlatformFontsForNode',
-      },
-      suggestedChange: `${n} — getComputedStyle font-family does NOT reveal this (it still lists ${f.declaredFamily || 'the declared family'} first on both sides). Ensure the ${f.referenceRendered} webfont actually LOADS and is APPLIED to this element on the target (check @font-face load, unicode-range, and that the family is wired to it). Affects ${f.dedupCount} text node(s) with this root cause.`,
-    });
-  }
-
-  // ---- (2) ELEMENT-SCOPED RASTER findings — visual diffs the DOM passes are blind to ----
+  // ---- ELEMENT-SCOPED RASTER findings — visual diffs the DOM passes are blind to ----
   // Classify per the research:
   //   · odiff mismatch + computed-style MATCHES ⇒ layout/occlusion/rendering anomaly (incl. a missing
   //     decorative child the DOM passed). Localized small-element ⇒ likely a style/glyph diff.
@@ -637,14 +562,13 @@ function enrich(modeB, fontResult, rasterResults, pairs) {
       byClass,
       layers: {
         analyze: (modeB.findings || []).length,
-        cdpRenderedFont: { compared: fontResult?.summary?.compared ?? 0, divergent: fontResult?.summary?.divergent ?? 0, distinctRootCauses: fontResult?.summary?.distinctRootCauses ?? 0, emitted: newFindings.filter((f) => f.class === 'font' && f.property === 'cdp-rendered-font').length },
+        cdpRenderedFont: FONT_LAYER_UNAVAILABLE,
         raster: { pairsCompared: (rasterResults || []).length, mismatches: (rasterResults || []).filter((r) => r.match === false).length, emitted: newFindings.filter((f) => f.class === 'raster').length },
         iouTextlessPairs: pairs.iouPaired,
       },
     },
     findings: allFindings,
     noiseExcluded: modeB.noiseExcluded || {},
-    renderedFontDetail: fontResult?.findings || [],
     rasterDetail: rasterResults || [],
     analysis: modeB.analysis,
   };
@@ -655,19 +579,19 @@ function enrich(modeB, fontResult, rasterResults, pairs) {
 // ======================================================================
 async function main() {
   const t0 = Date.now();
-  const browser = await chromium.launch({ headless: true, args: ['--font-render-hinting=none'] });
+  const port = CDP_PORT ?? 9200 + Math.floor(Math.random() * 300);
+  const server = CDP_PORT ? null : await startObscura(port);
+  const cdp = await connectCdp(port);
   try {
     // (1) reference — MODE A
     console.error('[mf] capturing reference:', REF);
-    const refSide = await captureSide(browser, toNavTarget(REF), { reference: null, label: 'reference' });
+    const refSide = await captureSide(cdp, toNavTarget(REF), { reference: null, label: 'reference' });
     if (refSide.analysis?.error) { console.error('[mf] reference analyze error:', refSide.analysis.error); }
     writeFileSync(join(OUT, 'reference.analysis.json'), JSON.stringify(refSide.analysis));
-    if (refSide.fonts) writeFileSync(join(OUT, 'reference.fonts.json'), JSON.stringify(refSide.fonts));
 
     // (2) target — MODE B (inject the reference analysis)
     console.error('[mf] capturing target:', TARGET);
-    const tgtSide = await captureSide(browser, toNavTarget(TARGET), { reference: refSide.analysis, label: 'target' });
-    if (tgtSide.fonts) writeFileSync(join(OUT, 'target.fonts.json'), JSON.stringify(tgtSide.fonts));
+    const tgtSide = await captureSide(cdp, toNavTarget(TARGET), { reference: refSide.analysis, label: 'target' });
 
     const modeB = tgtSide.analysis;
     if (modeB?.error) console.error('[mf] MODE-B error:', modeB.error);
@@ -680,23 +604,18 @@ async function main() {
     }
     console.error('[mf] pairs:', pairs.pairs.length, '(', pairs.iouPaired, 'via IoU text-less )');
 
-    // (4) CDP rendered-font layer
-    let fontResult = { findings: [], summary: { compared: 0, divergent: 0 } };
-    if (DO_FONTS && Array.isArray(refSide.fonts) && Array.isArray(tgtSide.fonts)) {
-      fontResult = fontLayer(refSide.fonts, tgtSide.fonts);
-      console.error('[mf] CDP fonts compared:', fontResult.summary.compared, 'divergent:', fontResult.summary.divergent);
-    }
+    console.error('[mf] font layer: UNAVAILABLE —', FONT_LAYER_UNAVAILABLE.reason);
 
-    // (5) raster layer
+    // (4) raster layer
     let rasterResults = [];
     if (DO_RASTER && refSide.pngPath && tgtSide.pngPath && pairs.pairs.length) {
-      rasterResults = await rasterLayer(browser, pairs, refSide, tgtSide);
+      rasterResults = await rasterLayer(cdp, pairs, refSide, tgtSide);
       const mm = rasterResults.filter((r) => r.match === false).length;
       console.error('[mf] raster pairs diffed:', rasterResults.length, 'mismatches:', mm);
     }
 
-    // (6) enrich + write
-    const enriched = enrich(modeB, fontResult, rasterResults, pairs);
+    // (5) enrich + write
+    const enriched = enrich(modeB, rasterResults, pairs);
     writeFileSync(join(OUT, 'target.findings.json'), JSON.stringify(enriched));
 
     console.error('[mf] done in', ((Date.now() - t0) / 1000).toFixed(1) + 's',
@@ -704,7 +623,8 @@ async function main() {
       '· layers', JSON.stringify(enriched.summary?.layers || {}));
     console.error('[mf] wrote:', join(OUT, 'target.findings.json'));
   } finally {
-    await browser.close();
+    cdp.close();
+    if (server) server.kill();
   }
 }
 

@@ -13,7 +13,7 @@
 // measure a region, never as the proof of a match (frontier vision recall is too low).
 //
 //   node overlay.mjs --ref ref.png --app target.png [--out .mockup-fidelity/diff/overlay.html]
-//   playwright-cli open "file://$PWD/.mockup-fidelity/diff/overlay.html"   # then screenshot
+//   obscura fetch "file://$PWD/.mockup-fidelity/diff/overlay.html" --screenshot overlay.png
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';

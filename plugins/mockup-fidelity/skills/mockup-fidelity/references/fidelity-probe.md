@@ -16,8 +16,8 @@ What it is and isn't:
 
 Per-tool injection:
 - **agent-browser** — wrap in an IIFE; the eval result comes back double-JSON-encoded, so decode twice: `(function(){ /* paste fn */ return JSON.stringify(probeFidelity({elements:{...}})); })()`
-- **playwright-cli** — `page.evaluate(() => { /* paste fn */ return probeFidelity({elements:{...}}); })`
-- **Chrome MCP** (`mcp__claude-in-chrome__javascript_tool` / `evaluate_script`) — paste the function, then `return JSON.stringify(probeFidelity({elements:{...}}))`.
+- **Obscura** — `obscura fetch <url> --eval "(() => { /* paste fn */ return probeFidelity({elements:{...}}); })()"` (`--eval` takes an expression, not a function, and does not await a promise)
+- **Obscura MCP** (`browser_evaluate`) — for a state you must click your way to; the param is `expression`, and like `--eval` it does not await a promise.
 
 Open every gated state (modal/drawer/popover/expanded) in the **same** session — drive each trigger, then probe that state before moving on — so all states are captured in one navigation rather than one navigation per modal.
 

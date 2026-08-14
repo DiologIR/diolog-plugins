@@ -85,7 +85,7 @@ construction and only presentation is variable. Don't chase these in CSS.
 
 ```bash
 node overlay.mjs --ref ref.png --app target.png [--out .mockup-fidelity/diff/overlay.html]
-playwright-cli open "file://$PWD/.mockup-fidelity/diff/overlay.html"   # then screenshot
+obscura fetch "file://$PWD/.mockup-fidelity/diff/overlay.html" --screenshot overlay.png
 ```
 
 Zero-dep: reads two PNGs, writes a self-contained `overlay.html` with three views — a

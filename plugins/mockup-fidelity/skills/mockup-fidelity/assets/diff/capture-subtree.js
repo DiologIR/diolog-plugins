@@ -11,10 +11,14 @@
 // BOTH a cleaned `html` string AND a structured `tree` (for to-stylex.mjs to turn into
 // an embed component or a StyleX skeleton).
 //
-//   playwright-cli open "http://localhost:<port>/<mock>.html"
-//   playwright-cli eval "() => { window.MF_CAPTURE_SELECTOR = '#hero .vignette'; }"
-//   playwright-cli eval "$(cat capture-subtree.js)" --filename capture.hero.json
+//   obscura --allow-private-network fetch "http://localhost:<port>/<mock>.html" \
+//     --eval "(() => { window.MF_CAPTURE_SELECTOR = '#hero .vignette'; return ($(cat capture-subtree.js))(); })()" \
+//     --output capture.hero.json
 //   node to-stylex.mjs --capture capture.hero.json --name HeroVignette --mode embed   # or --mode stylex
+//
+// The selector and the capture go in ONE eval: each fetch is a fresh page, so a global set by an
+// earlier call is gone. The wrapping `(…)()` matters too — this file is a bare arrow function and
+// --eval takes an expression.
 //
 // CHOOSE the mode by editability: `embed` for decorative/static (pixel-exact, fast);
 // `stylex` for anything that must become a real, token-driven, CMS-editable component.
@@ -25,8 +29,20 @@
 
   // The computed properties worth carrying so the lifted markup renders faithfully
   // without its original stylesheet. Defaults are dropped to keep the output small.
+  //
+  // SHORTHANDS ARE NOT TRUSTWORTHY under Obscura, so every shorthand here is paired
+  // with its longhands and the longhands are listed AFTER it (later declarations win
+  // in the inline style string). Measured: `padding`, `margin` and `borderRadius`
+  // resolve to "0px" whatever the element sets; `border`, `background`, `boxShadow`,
+  // `textTransform`, `flex` and `gap` resolve to the EMPTY STRING and are dropped by
+  // the `v === ''` guard below. An empty value from getComputedStyle therefore means
+  // "this engine does not report the property", NOT "the element does not set it" —
+  // so a lift made here can be quietly missing a shadow, a gradient or a border that
+  // is plainly visible in the render. Compare the lifted component against the
+  // reference before trusting it as pixel-exact.
   const KEEP = [
     'display', 'flexDirection', 'flexWrap', 'alignItems', 'justifyContent', 'gap',
+    'rowGap', 'columnGap',
     'gridTemplateColumns', 'gridTemplateRows', 'gridAutoFlow',
     'position', 'top', 'right', 'bottom', 'left', 'zIndex', 'overflow',
     'width', 'height', 'maxWidth', 'minWidth', 'flex',
@@ -36,6 +52,11 @@
     'textAlign', 'textTransform', 'color', 'whiteSpace',
     'background', 'backgroundColor', 'backgroundImage',
     'borderRadius', 'border', 'borderTop', 'borderBottom', 'borderLeft', 'borderRight',
+    'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomRightRadius', 'borderBottomLeftRadius',
+    'borderTopWidth', 'borderTopStyle', 'borderTopColor',
+    'borderRightWidth', 'borderRightStyle', 'borderRightColor',
+    'borderBottomWidth', 'borderBottomStyle', 'borderBottomColor',
+    'borderLeftWidth', 'borderLeftStyle', 'borderLeftColor',
     'boxShadow', 'opacity', 'transform',
   ];
   const DEFAULTS = {
@@ -43,12 +64,15 @@
     marginTop: '0px', marginRight: '0px', marginBottom: '0px', marginLeft: '0px',
     paddingTop: '0px', paddingRight: '0px', paddingBottom: '0px', paddingLeft: '0px',
     border: '0px none rgb(0, 0, 0)', borderRadius: '0px', boxShadow: 'none',
+    borderTopLeftRadius: '0px', borderTopRightRadius: '0px',
+    borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px',
     backgroundColor: 'rgba(0, 0, 0, 0)', backgroundImage: 'none', opacity: '1',
     transform: 'none', overflow: 'visible', zIndex: 'auto', textTransform: 'none',
     fontStyle: 'normal', whiteSpace: 'normal', flex: '0 1 auto', minWidth: 'auto',
     maxWidth: 'none', flexWrap: 'nowrap', gridAutoFlow: 'row',
     // flex/grid container props are noise on a non-container; drop their initial values
     flexDirection: 'row', alignItems: 'normal', justifyContent: 'normal', gap: 'normal',
+    rowGap: 'normal', columnGap: 'normal',
     gridTemplateColumns: 'none', gridTemplateRows: 'none', letterSpacing: 'normal',
     top: 'auto', right: 'auto', bottom: 'auto', left: 'auto',
   };

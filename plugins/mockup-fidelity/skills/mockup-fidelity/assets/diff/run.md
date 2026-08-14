@@ -2,46 +2,49 @@
 
 `analyze.js` REPLACES the three-file two-step pipeline (`extract-mock.js` → `diff.mjs` +
 `structure-diff.mjs`). It is ONE self-contained, eval-injectable **browser** IIFE — no Node, no
-imports — that runs via `playwright-cli eval` and returns a **JSON string**. The agent's logic
+imports — that runs via `mfeval.mjs` (Obscura over CDP) and returns a **JSON string**. The agent's logic
 acts on the returned JSON directly; there is no intermediate Node diff step and no JSON
 round-trip between scripts.
 
 > The old three files are kept for ONE version as a **deprecated fallback** (each carries a
 > deprecation header). Nothing in-flight breaks, but new work uses `analyze.js`.
 
-> ## ➜ v2.5.0: the `capture.mjs` HARNESS — the RASTER + CDP-rendered-font layer
+> ## ➜ v2.5.0: the `capture.mjs` HARNESS — the RASTER layer
 >
-> For web↔web, **prefer the `capture.mjs` harness over the raw `playwright-cli eval` flow below.** It is a
-> Node orchestrator (`playwright-core` + `odiff-bin`) that injects THIS `analyze.js` verbatim (MODE A on the
-> reference, MODE B on the target — the injectable contract is **unchanged**) AND adds the three RENDERED
-> signals a `getComputedStyle` dump structurally cannot give you:
-> 1. **CDP rendered-font** — per visible text node it calls `CSS.getPlatformFontsForNode` and records the
->    *genuinely-rendered* typeface (`familyName` + `isCustomFont`). Live can resolve to its loaded web font
->    (`Inter Medium`, custom) while the target falls back to the system face (`Helvetica`, not custom) even
->    though `getComputedStyle` font-family lists Inter first on BOTH sides. **This is the trustworthy font
->    signal** — `analyze.js`'s DOM-span probe approximates it, CDP measures it.
-> 2. **element-scoped raster diff (odiff)** — a full-page screenshot per side; each PAIRED element is cropped
+> For web↔web, **prefer the `capture.mjs` harness over the raw `mfeval.mjs` flow below.** It is a Node
+> orchestrator (`obscura` + `odiff-bin`) that injects THIS `analyze.js` verbatim (MODE A on the reference,
+> MODE B on the target — the injectable contract is **unchanged**) AND adds the RENDERED signals a
+> `getComputedStyle` dump structurally cannot give you:
+> 1. **element-scoped raster diff (odiff)** — a full-page screenshot per side; each PAIRED element is cropped
 >    by its bbox and the two crops run through `odiff`. A same-size box with a high pixel-diff and no other
 >    finding is a *rendering anomaly* — a **missing decorative child** (a trailing → svg, a divider, an icon),
 >    an occlusion, or a paint difference the DOM passes are blind to.
-> 3. **IoU text-less pairing** — after text/structure pairing, remaining text-less nodes (bare svg/icon/
+> 2. **IoU text-less pairing** — after text/structure pairing, remaining text-less nodes (bare svg/icon/
 >    decorative div) are paired across sides by bbox Intersection-over-Union ≥ 0.9, so an arrow/icon becomes a
 >    raster-checkable pair.
 >
+> **The CDP rendered-font layer is GONE, and nothing replaces it.** Obscura does not load web fonts —
+> a working remote woff2 and a 404'd one measure identically, `document.fonts` reports every `@font-face`
+> as `unloaded`, and named families collapse onto three generic metric buckets — and
+> `CSS.getPlatformFontsForNode` returns nothing. The harness records the layer as UNAVAILABLE with that
+> reason rather than reporting zero divergences, because a silent zero here reads as "the fonts match",
+> which is the exact defect the layer existed to catch. **Every FONT-class conclusion needs a real
+> browser.** See [§ the font class](#the-font-class-is-not-measurable-here).
+>
 > ```bash
-> npm install            # in assets/diff — installs odiff-bin@4.3.8 + playwright-core@1.61.1 (no browser DL,
->                        # reuses the host ms-playwright chromium cache; clean & fast, no node-gyp)
+> npm install            # in assets/diff — installs odiff-bin@4.3.8 (prebuilt binaries, no node-gyp).
+>                        # The browser is `obscura` on PATH; there is no browser package to install.
 > node capture.mjs --ref https://diolog.app/ --target http://diolog.site/ --out ./mf-home --width 1280 --height 2000
-> #   → ./mf-home/target.findings.json  — the analyze.js findings ENRICHED with renderedFont + raster blocks
-> #     and summary.layers; plus reference.analysis.json, {reference,target}.fonts.json, *.full.png, raster/*.png
+> #   → ./mf-home/target.findings.json  — the analyze.js findings ENRICHED with raster blocks and
+> #     summary.layers; plus reference.analysis.json, *.full.png, raster/*.png
 > ```
 >
-> Read the enriched findings exactly like the MODE-B shape below, plus the new `class:"font"
-> property:"cdp-rendered-font"` and `class:"raster" property:"element-raster-diff"` rows and `summary.layers`.
-> Full flag list + classification + the font-hinting note are in [§ v2.5.0](#v250--raster-layer--cdp-rendered-font--iou-text-less-pairing--systematic-pseudo).
-> The raw `playwright-cli eval` flow below still works and remains correct for the responsive multi-width
-> capture and for RN-adjacent cases the harness doesn't cover; the harness is the web↔web default because the
-> CDP font path and a real headless screenshot are unreachable through the `playwright-cli` wrapper.
+> Read the enriched findings exactly like the MODE-B shape below, plus the new `class:"raster"
+> property:"element-raster-diff"` rows and `summary.layers`.
+> Full flag list + classification are in [§ v2.5.0](#v250--raster-layer--iou-text-less-pairing--systematic-pseudo).
+> The raw `mfeval.mjs` flow below still works and remains correct for the responsive multi-width capture and
+> for RN-adjacent cases the harness doesn't cover; the harness is the web↔web default because a full-page
+> screenshot and per-element crops are unreachable from inside a single injected eval.
 
 ## The architecture
 
@@ -125,24 +128,32 @@ summary finding.
 
 ## The flow
 
+`mfeval.mjs` is the shell-facing runner: it navigates at a chosen viewport, evaluates a `--setup`
+expression in that same page, then evaluates the injectable and writes what it returns. It exists because
+neither cheaper entry point can do this job — `obscura fetch` renders at a fixed 1280x720 with no resize and
+does not await a returned promise (so an async IIFE comes back as `{}`), and `obscura mcp`'s
+`browser_evaluate` holds a session but likewise does not await and has no viewport control.
+
 ```bash
 # (1) MODE A on the LIVE reference → reference.json
-playwright-cli open "https://diolog.app/"               # the LIVE rendered site, NOT a re-served scrape
-playwright-cli resize 1280 2000                          # same viewport both sides
-playwright-cli eval "() => { globalThis.__MF_OPTS__ = { chromeSelector: '__none__' }; globalThis.__MF_REFERENCE__ = null; return 'a'; }"
-playwright-cli eval "$(cat analyze.js)" --filename reference.json   # returns the analysis (a double-encoded JSON string)
+node mfeval.mjs --url "https://diolog.app/" --width 1280 --height 2000 \
+  --setup -e "(() => { globalThis.__MF_OPTS__ = { chromeSelector: '__none__' }; globalThis.__MF_REFERENCE__ = null; return 'a'; })()" \
+  --eval analyze.js --out reference.json
+#   the LIVE rendered site, NOT a re-served scrape. --out writes the returned JSON verbatim —
+#   there is no second layer of encoding to unwrap.
 
-# (2) On the TARGET: set window.__MF_REFERENCE__ = <reference.json>, then eval analyze.js → findings
-#     reference.json holds a (double-encoded) JSON string — un-double-encode before injecting.
-node -e 'const fs=require("fs");let v=JSON.parse(fs.readFileSync("reference.json","utf8"));if(typeof v==="string")v=JSON.parse(v);fs.writeFileSync("__setref.js","() => { globalThis.__MF_OPTS__ = { chromeSelector: \"__none__\" }; globalThis.__MF_REFERENCE__ = "+JSON.stringify(v)+"; return \"r\"; }")'
-playwright-cli open "http://diolog.site/"
-playwright-cli resize 1280 2000
-playwright-cli eval "$(cat __setref.js)"                 # injects the reference object
-playwright-cli eval "$(cat analyze.js)" --filename findings.json   # MODE B → the actionable findings
+# (2) On the TARGET: set globalThis.__MF_REFERENCE__ = <reference.json>, then eval analyze.js → findings
+node -e 'const fs=require("fs");let v=JSON.parse(fs.readFileSync("reference.json","utf8"));if(typeof v==="string")v=JSON.parse(v);fs.writeFileSync("__setref.js","(() => { globalThis.__MF_OPTS__ = { chromeSelector: \"__none__\" }; globalThis.__MF_REFERENCE__ = "+JSON.stringify(v)+"; return \"r\"; })()")'
+node mfeval.mjs --url "http://diolog.site/" --width 1280 --height 2000 \
+  --setup __setref.js --eval analyze.js --out findings.json    # MODE B → the actionable findings
 
 # (3) The agent reads findings.json and applies each finding's suggestedChange.
 node -e 'let v=JSON.parse(require("fs").readFileSync("findings.json","utf8"));if(typeof v==="string")v=JSON.parse(v);console.log("score",v.summary.score,"·",v.summary.totalFindings,"findings");v.findings.filter(f=>f.severity==="high").slice(0,40).forEach(f=>console.log("["+f.severity+"] "+f.class+"/"+f.property+" @ "+(f.section||"-")+" :: "+f.suggestedChange))'
 ```
+
+A target on `localhost` or `127.0.0.1` needs no extra flag here — `mfeval.mjs` starts its `obscura serve`
+with `--allow-private-network` already, because without it every navigation fails as an SSRF block and reads
+like a broken page.
 
 Helper scripts `run-mode-a.sh <url> <out.json>` and `run-mode-b.sh <target-url> <ref.json>
 <out.json>` (used to validate) wrap exactly these steps.
@@ -193,11 +204,11 @@ at 390 and 768 and surfaces the highest-signal mobile findings prefixed `respons
 # ── (1) MODE A on BOTH sides at all three widths ───────────────────────────────
 WIDTHS="390 768 1280"
 mka () { # url out width
-  playwright-cli open "$1"; playwright-cli resize "$3" 4000; sleep 1.5
-  playwright-cli eval "() => { globalThis.__MF_OPTS__={chromeSelector:'__none__'};
-    globalThis.__MF_REFERENCE__=null; globalThis.__MF_REFERENCE_BYWIDTH__=null;
-    globalThis.__MF_TARGET_BYWIDTH__=null; return 'a'; }"
-  playwright-cli eval "$(cat analyze.js)" --filename "$2"
+  node mfeval.mjs --url "$1" --width "$3" --height 4000 --settle 1500 \
+    --setup -e "(() => { globalThis.__MF_OPTS__={chromeSelector:'__none__'};
+      globalThis.__MF_REFERENCE__=null; globalThis.__MF_REFERENCE_BYWIDTH__=null;
+      globalThis.__MF_TARGET_BYWIDTH__=null; return 'a'; })()" \
+    --eval analyze.js --out "$2"
 }
 for w in $WIDTHS; do
   mka "https://diolog.app/"  "home-ref-$w.json" "$w"     # LIVE reference
@@ -207,10 +218,10 @@ done
 # ── (2) Inject the 6 captures, then MODE B at 1280 ─────────────────────────────
 # The reference + bywidth maps are MULTI-MB → they EXCEED the 1MB argv cap (ARG_MAX), so they
 # CANNOT be passed inline via "$(cat …)". Serve them over a CORS-enabled localhost file server
-# and fetch() them in a small setref eval (the fetch fits in argv; the payload does not):
+# and fetch() them in a small setup eval (the fetch fits in argv; the payload does not):
 node mfserve.js "$PWD" 8799 &                              # tiny CORS static server (assets/diff/mfserve.js)
-playwright-cli open "http://diolog.site/"; playwright-cli resize 1280 4000; sleep 1.5
-playwright-cli eval "async () => {
+cat > __setbywidth.js <<'JS'
+(async () => {
   const B='http://localhost:8799/', S='home';
   const ld=async n=>{const r=await fetch(B+n);let v=await r.json();if(typeof v==='string')v=JSON.parse(v);return v;};
   const refBy={}, tgtBy={};
@@ -220,17 +231,21 @@ playwright-cli eval "async () => {
   globalThis.__MF_REFERENCE_BYWIDTH__=refBy;             // {390,768,1280} reference analyses
   globalThis.__MF_TARGET_BYWIDTH__=tgtBy;                // {390,768,1280} target analyses
   return 'set';
-}"
-playwright-cli eval "$(cat analyze.js)" --filename home-findings.json    # MODE B + interaction + responsive
+})()
+JS
+node mfeval.mjs --url "http://diolog.site/" --width 1280 --height 4000 \
+  --setup __setbywidth.js --eval analyze.js --out home-findings.json   # MODE B + interaction + responsive
 ```
 
 > **Why the localhost fetch, not `$(cat …)`?** A single 1280 reference is already ~1MB and the
-> three-width pair is ~6MB — both blow the shell's `ARG_MAX` (1 MB on macOS). `playwright-cli`
-> errors with `argument list too long` if you pass the reference inline. The CORS server +
-> in-page `fetch()` is the reliable injection path for any reference above a few hundred KB; it
-> also keeps each MODE-A file double-encoded (`JSON.parse` twice) exactly as `--filename` wrote it.
-> The bundled `mfserve.js` is a ~12-line zero-dep static server that sets
-> `Access-Control-Allow-Origin: *`.
+> three-width pair is ~6MB — both blow the shell's `ARG_MAX` (1 MB on macOS), which fails with
+> `argument list too long` if you pass the reference inline. The CORS server + in-page `fetch()` is
+> the reliable injection path for any reference above a few hundred KB. The bundled `mfserve.js` is
+> a ~12-line zero-dep static server that sets `Access-Control-Allow-Origin: *`; the page fetching
+> from it is why `mfeval.mjs` runs Obscura with `--allow-private-network`.
+>
+> Note the `--setup` file is an ASYNC IIFE, and `mfeval.mjs` awaits it — the shell-facing
+> alternatives do not, which is the whole reason it exists.
 
 `run-mode-b.sh` accepts an optional `--bywidth <slug>` to drive the multi-width capture + fetch
 injection automatically.
@@ -328,8 +343,9 @@ Both fixes are capture-side + diff-side; `node --check` clean. Validated on cont
 vs forced-fallback; arrow-present vs arrow-absent).
 
 > **`capture()` is now async** (it awaits `document.fonts.ready`), so the injected IIFE is
-> `(async function(){…})()` and resolves to the JSON string. `playwright-cli eval` awaits the returned
-> promise transparently — no runner change needed.
+> `(async function(){…})()` and resolves to the JSON string. `mfeval.mjs` and `capture.mjs` both evaluate
+> with `awaitPromise:true`, so this resolves transparently. `obscura fetch --eval` and the MCP
+> `browser_evaluate` do NOT await — they return `{}` for an async IIFE — so neither can run `analyze.js`.
 
 ## v2.1.0 — RENDERED-GLYPH-SHAPE / font-feature-effectiveness detector
 
@@ -357,7 +373,7 @@ ESCALATES (names the reference) when the REFERENCE's same feature IS effective b
 - **canvas supported → fully IN-PAGE.** It draws both variants to a canvas with the loaded document font and
   compares `getImageData` pixel hashes; `featureCheck.combos[].effective` is resolved in the analysis itself,
   **no runner step**.
-- **canvas NOT supported (current Chromium) → RUNNER-assisted.** An SVG-`<img>` rasteriser cannot see the
+- **canvas NOT supported (the current engines) → RUNNER-assisted.** An SVG-`<img>` rasteriser cannot see the
   page's loaded `@font-face` faces, so `capture()` instead mounts persistent on-screen probe-PAIR nodes
   (`data-mf-fprobe`, the requested-ffs row directly above the `normal` row, same family/size/weight, parked at
   the viewport origin and mounted AFTER the node walk so they never enter `analysis.nodes` / become `extra`
@@ -366,16 +382,16 @@ ESCALATES (names the reference) when the REFERENCE's same feature IS effective b
 
 #### Exact runner commands (canvas-unsupported path)
 
+> **This whole path needs a browser that loads web fonts, so it cannot run on Obscura.** The probe pairs
+> render the requested-ffs row against the `normal` row; with no web font loaded both rows render the same
+> fallback face, every pair comes back identical, and identical MEANS "ineffective" — so an Obscura capture
+> reports every requested feature as a defect, confidently and wrongly. Capture the pages and the screenshot
+> in a real browser, then run steps (2) and (3) as below. There is no Obscura-side substitute: the signal is
+> the rasterised glyph of a font it never fetched.
+
 ```bash
 # (1) MODE A on BOTH sides — capture() mounts the probe host; screenshot the page WHILE it is mounted.
-mka_feat () { # url out png
-  playwright-cli open "$1"; playwright-cli resize 1280 2000; sleep 1.5
-  playwright-cli eval "() => { globalThis.__MF_OPTS__={chromeSelector:'__none__'}; globalThis.__MF_REFERENCE__=null; return 'a'; }"
-  playwright-cli eval "$(cat analyze.js)" --raw > "$2"     # analysis JSON (has featureCheck.probes)
-  playwright-cli screenshot --filename "$3"                # probe host still mounted → screenshot
-}
-mka_feat "https://diolog.app/"  reference.json  ref-page.png   # LIVE reference
-mka_feat "http://diolog.site/"  target.json     tgt-page.png   # target
+#     Do this in a real browser (see the note above), leaving reference.json/target.json and the two PNGs.
 
 # (2) Pixel-diff each on/off probe pair → per-side { key, effective } verdicts.
 node feature-check.mjs --analysis reference.json --png ref-page.png --out ref-featdiffs.json
@@ -387,10 +403,9 @@ node feature-check.mjs --analysis target.json    --png tgt-page.png --out tgt-fe
 node -e 'const fs=require("fs");let ref=JSON.parse(fs.readFileSync("reference.json","utf8"));if(typeof ref==="string")ref=JSON.parse(ref);
   const rFD=JSON.parse(fs.readFileSync("ref-featdiffs.json","utf8")), tFD=JSON.parse(fs.readFileSync("tgt-featdiffs.json","utf8"));
   const diffs={reference:rFD.map(v=>({key:v.key,effective:v.effective})), target:tFD.map(v=>({key:v.key,effective:v.effective}))};
-  fs.writeFileSync("__setref.js","() => { globalThis.__MF_OPTS__={chromeSelector:\"__none__\"}; globalThis.__MF_REFERENCE__="+JSON.stringify(ref)+"; globalThis.__MF_FEATURE_DIFFS__="+JSON.stringify(diffs)+"; return \"r\"; }")'
-playwright-cli open "http://diolog.site/"; playwright-cli resize 1280 2000; sleep 1.5
-playwright-cli eval "$(cat __setref.js)"
-playwright-cli eval "$(cat analyze.js)" --raw > findings.json     # MODE B with feature-effectiveness resolved
+  fs.writeFileSync("__setref.js","(() => { globalThis.__MF_OPTS__={chromeSelector:\"__none__\"}; globalThis.__MF_REFERENCE__="+JSON.stringify(ref)+"; globalThis.__MF_FEATURE_DIFFS__="+JSON.stringify(diffs)+"; return \"r\"; })()")'
+node mfeval.mjs --url "http://diolog.site/" --width 1280 --height 2000 \
+  --setup __setref.js --eval analyze.js --out findings.json   # MODE B with feature-effectiveness resolved
 ```
 
 > **Honest "unresolved" note, never a silent pass.** If canvas is unsupported AND no
@@ -401,17 +416,21 @@ playwright-cli eval "$(cat analyze.js)" --raw > findings.json     # MODE B with 
 
 > **Same-viewport / same-DPR.** `feature-check.mjs` reads `featureCheck.dpr` (recorded at capture) and scales
 > the probe rects to screenshot pixels; pass `--dpr N` to override. The probe pairs are tiny (a few 240×30px
-> rows at the viewport origin), so the page screenshot already contains them.
+> rows at the viewport origin), so the page screenshot already contains them. The analysis and the screenshot
+> must come from the SAME engine and the same run — a probe rect measured in one browser and a PNG rasterised
+> by another do not line up.
 
 ### Notes
 
-- **`playwright-cli eval` echoes the script source to stdout** — that's harmless noise. The real
-  return value lands in the `--filename` file (a double-encoded JSON string; `JSON.parse` twice).
-  **CAVEAT (some playwright-cli builds):** `--filename` may run the eval in a FRESH page context that
-  LOSES globals set by a prior `eval` — so the MODE-B `__MF_REFERENCE__` injection is dropped and
-  `analyze.js` falls back to MODE A. If your findings file comes out as a `{title,viewportW,…,nodes}`
-  analysis (MODE A) instead of `{summary,findings,…}`, use `--raw` instead of `--filename` (it echoes the
-  same double-encoded JSON to stdout AND preserves globals): `playwright-cli eval "$(cat analyze.js)" --raw > findings.json`.
+- **`--setup` and `--eval` run in the SAME page**, which is the whole point of `mfeval.mjs`. Every
+  `obscura fetch` is a fresh render, so a global set by one call is gone by the next — set the
+  `__MF_*` globals in `--setup`, never in a separate command. If your findings file comes out as a
+  `{title,viewportW,…,nodes}` analysis (MODE A) instead of `{summary,findings,…}`, the reference
+  injection did not land: check that `--setup` ran and that its file is a *called* expression
+  (`(() => {…})()`, not a bare `() => {…}`).
+- **`--out` writes the returned value verbatim** — a returned JSON string lands as JSON, with no second
+  layer of encoding. The `if (typeof v === 'string') JSON.parse(v)` guards in the older scripts are
+  harmless and stay for captures written by the previous runner.
 - **Same viewport on both sides** so absolute geometry (center-x/width/height) compares
   like-for-like; geometry auto-enables when the two frames match within 5%.
 - **Reference the LIVE URL, never a re-served scrape** — a runtime-hydrated framework (Framer,
@@ -531,7 +550,7 @@ ADDITIVE, low-noise detectors. All ride the normal MODE-A/B flow — no new flag
 > 2px floor hid — not false positives), so they do NOT flood. `node --check` clean. See
 > references/issue-to-check-map.md #34–#36.
 
-## v2.5.0 — RASTER layer + CDP rendered-font + IoU text-less pairing + systematic pseudo
+## v2.5.0 — RASTER layer + IoU text-less pairing + systematic pseudo
 
 The prior detectors all read `getComputedStyle`. Four classes survive that — and three of them need a
 RENDERED measurement a computed-style dump structurally cannot give:
@@ -539,7 +558,8 @@ RENDERED measurement a computed-style dump structurally cannot give:
 - **The declared font matches but the RENDERED face differs.** `getComputedStyle` reports the same
   `font-family` (Inter first) on both sides, and `document.fonts.check` passes on both — yet live renders its
   loaded web font while the target silently falls back to the system face. The DOM-span probe (#20) is an
-  approximation; the ground truth is what the engine actually rasterised.
+  approximation; the ground truth is what the engine actually rasterised. **This one is no longer covered
+  here at all** — see § *the font class* below.
 - **A missing DECORATIVE CHILD passes the structure diff.** The structure pass matches an element when both
   boxes exist; a trailing → svg, a hairline divider, or an icon the target omits *inside* a matched element
   is invisible to it (the element pairs; only its missing child differs).
@@ -550,15 +570,14 @@ RENDERED measurement a computed-style dump structurally cannot give:
   compares the content STRING — neither catches a `::after { border }` that differs across sides, or an
   overlay present on one side only, on an ordinary element.
 
-### (1) The harness — `capture.mjs` (Node: `playwright-core` + `odiff-bin`)
+### (1) The harness — `capture.mjs` (Node: `obscura` + `odiff-bin`)
 
-`capture.mjs` is the orchestrator. It launches chromium **with `['--font-render-hinting=none']`** (see the
-determinism note), injects `analyze.js` verbatim — MODE A on the reference, MODE B on the target, the
-injectable contract **unchanged** — and layers on the three rendered signals, writing one enriched
-`target.findings.json`.
+`capture.mjs` is the orchestrator. It starts `obscura serve`, injects `analyze.js` verbatim — MODE A on the
+reference, MODE B on the target, the injectable contract **unchanged** — and layers on the rendered signals,
+writing one enriched `target.findings.json`.
 
 ```bash
-npm install            # in assets/diff
+npm install            # in assets/diff — odiff-bin only; the browser is `obscura` on PATH
 node capture.mjs --ref <refURL|file> --target <targetURL|file> --out <dir> [flags]
 ```
 
@@ -573,25 +592,30 @@ node capture.mjs --ref <refURL|file> --target <targetURL|file> --out <dir> [flag
 | `--iou` | `0.9` | IoU threshold for text-less pairing |
 | `--raster-min` | `64` | min element area (px²) to raster-diff (skips 1px slivers) |
 | `--raster-max` | `600` | cap on paired elements raster-diffed (runtime guard) |
-| `--no-raster` / `--no-fonts` | off | skip a layer |
+| `--no-raster` | off | skip the raster layer |
+| `--cdp-port` | — | attach to an `obscura serve` already running instead of starting one |
 
 Outputs in `--out`: `reference.analysis.json` (MODE A), **`target.findings.json`** (MODE B + the v2.5.0
-layers), `{reference,target}.fonts.json` (per-text-node CDP fonts), `{reference,target}.full.png` (raster
-sources), `raster/pair-N-diff.png` (diff crops for raster findings).
+layers), `{reference,target}.full.png` (raster sources), `raster/pair-N-diff.png` (diff crops for raster
+findings).
 
-### (2) CDP rendered-font (the headline fix)
+### (2) The FONT class is not measurable here
 
-Per visible text node the harness gets the genuinely-rendered typeface via the **PROVEN CDP sequence** — the
-two non-obvious gotchas are baked in: you can NOT get a usable CDP `objectId` from a Playwright JSHandle
-(do the element lookup *inside* a `Runtime.evaluate`, `returnByValue:false`); and you MUST call
-`DOM.getDocument` BEFORE `DOM.requestNode` or the `nodeId` is unresolvable. Then
-`CSS.getPlatformFontsForNode({nodeId})` returns the actual `{familyName, isCustomFont, glyphCount}`. The font
-layer pairs reference↔target nodes by `tag|text` (disambiguating repeated text by nearest bbox) and emits a
-high `font/cdp-rendered-font` finding when the rendered `familyName` DIFFERS — **even when `getComputedStyle`
-font-family agrees or is a generic**. Deduped per `(declaredFamily|renderedRef|renderedTgt)` — a site-wide
-fallback is ONE root cause carrying the `affectedNodes` count. (Observed against the real sites: live's
-"See the platform"/"Book a demo" buttons render `Inter Medium` (`isCustomFont:true`) while the target falls
-back to `Helvetica`/`Inter`; `getComputedStyle` would have hidden it.)
+The rendered-font layer is gone and there is no substitute. Three measured facts, any one of which is
+sufficient:
+
+- **Obscura does not load web fonts.** A working remote woff2 and a 404'd one produce identical text
+  metrics, and `document.fonts` reports every registered `@font-face` as `unloaded` indefinitely.
+- **Named families collapse onto three generic buckets.** Georgia measures as `serif`, Arial and Impact as
+  `sans-serif`, Courier New as `monospace`. There is no font matching to observe.
+- **`CSS.getPlatformFontsForNode` returns `{}`**, and `DOM.requestNode` — the only route from a Text node to
+  a `nodeId` — is not implemented.
+
+So `analyze.js`'s DOM-span probe, the `rendered-width-ratio` detector, the glyph-shape feature check and the
+CDP layer all read the same fallback face on both sides and agree. **An agreement here is not evidence.** The
+harness records `summary.layers.cdpRenderedFont = { available: false, reason }` rather than a zero, because
+a silent zero reads as "the fonts match" — the exact defect the layer existed to catch. Confirm every
+FONT-class question in a real browser.
 
 ### (3) Element-scoped raster diff (odiff)
 
@@ -628,30 +652,30 @@ content, border-width/-color (top+bottom), background + background-image, box-sh
 `border/pseudo-before-presence`, … — so a pseudo-drawn border/overlay present-on-one-side or differing is
 caught universally. Deduped (every card's `::after` border → ≤3 rows + a `[×N elements]` summary).
 
-### Font-render-hinting determinism
+### Raster determinism
 
-The harness launches chromium with `['--font-render-hinting=none']` so glyph rasterisation is stable across
-machines, which reduces font-edge false positives in the raster crops. **This does NOT make headless == a
-real browser.** A headless renderer can still skew a width number or a raster %; the **CDP rendered-font
-check — not any width and not the raster % — is the trustworthy signal for the FONT class.** Treat a raster
-% as a TRIGGER to inspect the diff crop, and the rendered-font finding as the authority on whether the right
-typeface is actually applied.
+Obscura is one static binary rasterising the same way on every machine, so glyph-edge noise is stable
+without a hinting flag. **Stable is not the same as faithful.** It is a Rust engine, not packaged Chrome, and
+its own documentation expects divergence in long-tail CSS, service workers, some Web APIs, native media,
+GPU/compositor effects and font rasterization — and it loads no web fonts at all, so every text crop is drawn
+in a fallback face on BOTH sides. Treat a raster % as a TRIGGER to go and measure the element, never on its
+own as the verdict that the target is wrong, and never as evidence about which typeface renders.
 
 ### Enriched JSON payload (the "diff-as-instruction" shape)
 
 `target.findings.json` is the normal MODE-B shape with:
-- new `findings[]` rows of `class:"font" property:"cdp-rendered-font"` (carrying a `renderedFont:{declaredFamily,
-  reference:{familyName,isCustomFont}, target:{…}, affectedNodes}` block) and `class:"raster"
-  property:"element-raster-diff"` (carrying `raster:{mismatchPct, classifiedAs, sizeMismatch, refRect, targetRect,
-  diffImage}` + `bboxDelta`);
-- `summary.layers = { analyze, cdpRenderedFont:{compared,divergent,distinctRootCauses,emitted}, raster:{pairsCompared,
-  mismatches,emitted}, iouTextlessPairs }`;
-- `renderedFontDetail[]` and `rasterDetail[]` (the full per-pair evidence) alongside `analysis`.
+- new `findings[]` rows of `class:"raster" property:"element-raster-diff"` (carrying `raster:{mismatchPct,
+  classifiedAs, sizeMismatch, refRect, targetRect, diffImage}` + `bboxDelta`);
+- `summary.layers = { analyze, cdpRenderedFont:{available:false, reason}, raster:{pairsCompared,
+  mismatches,emitted}, iouTextlessPairs }` — read `cdpRenderedFont.available` before drawing any font
+  conclusion from this run;
+- `rasterDetail[]` (the full per-pair evidence) alongside `analysis`.
 
 The score is re-computed over the merged set (same `100·e^(−penalty/900)` curve). `node --check` clean.
 
 > **The target dir needs its own `node_modules`.** When the skill copies `assets/diff/*` into a project's
-> `.mockup-fidelity/`, run `npm install` there too (the harness imports `playwright-core` + `odiff-bin`).
+> `.mockup-fidelity/`, run `npm install` there too (the harness imports `odiff-bin`). `obscura` comes from
+> PATH, not from `node_modules`.
 
 ## v2.5.1 — the TYPOGRAPHIC-DECLARATION check (same font, different declared shaping)
 

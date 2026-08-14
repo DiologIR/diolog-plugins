@@ -24,12 +24,15 @@
 // class set resolves the same way. Only getComputedStyle gives the final value —
 // read THAT, never the individual class rules.
 //
-// Run against the SERVED mock (a real browser; file:// often blocks fonts/CSS):
-//   playwright-cli open http://localhost:<port>/<mock>.html
-//   # pick the frame: a CSS selector, or (for multi-frame HTML mocks) a caption substring
-//   playwright-cli eval "() => { window.MF_FRAME_SELECTOR = '#screen-2 .scr'; }"
+// Run against the SERVED mock (file:// often blocks fonts/CSS):
+//   # pick the frame with a CSS selector, or (for multi-frame HTML mocks) a caption
+//   # substring, in the SAME eval — `obscura fetch` is one stateless call per run, so
+//   # the global and the extraction go together:
+//   obscura --allow-private-network fetch http://localhost:<port>/<mock>.html \
+//     --eval "(() => { window.MF_FRAME_SELECTOR = '#screen-2 .scr'; return ($(cat extract-mock.js))(); })()" \
+//     --output mock.<screen>.json
 //   #   …or: window.MF_FRAME_TITLE = 'Discover · home'
-//   playwright-cli eval "$(cat extract-mock.js)" --filename mock.<screen>.json
+//   # --output writes the returned value verbatim, so there is no double-encoding to unwrap.
 //
 // Emits, for every element under the frame root: its COMPUTED style subset and a
 // FRAME-RELATIVE rect (measured from the frame's own top-left), so the left/right

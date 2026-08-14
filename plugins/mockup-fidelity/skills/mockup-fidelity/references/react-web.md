@@ -4,8 +4,8 @@ When **both** sides render to a browser DOM — a React/Next reference *and* a
 React/Next target — this is the easiest case the skill handles, and a fundamentally
 different one from React Native. Everything is `getComputedStyle`: the reference and
 the target go through the **same** extractor (`assets/diff/extract-mock.js`), the
-**same** differ (`assets/diff/diff.mjs`), and the **same** browser tool
-(`playwright-cli` / `agent-browser` / Chrome MCP). There is **no** simulator, no
+**same** differ (`assets/diff/diff.mjs`), and the **same** browser
+(`obscura`). There is **no** simulator, no
 Metro, no CDP/Fusebox handshake, no `axe`, and no in-app harness — the entire
 `references/react-native.md` apparatus is bypassed. Read this doc for a web target;
 read `react-native.md` for a native one.
@@ -78,22 +78,30 @@ sides regardless of class-name churn:
 // in the rendered page, via the browser tool: tag the content column (the area
 // RIGHT of the sidebar — i.e. exclude shared chrome only if you mean to; usually
 // you tag the <main>/content column and KEEP the chrome in a separate frame).
-playwright-cli -s=app eval "() => {
+// Tagging, the frame globals and the extraction all go in ONE eval: every `obscura fetch`
+// is a fresh render, so a global set by a previous call is gone.
+obscura --allow-private-network fetch "<target-url>" --eval "(() => {
   document.querySelectorAll('[data-mf-root]').forEach(e => e.removeAttribute('data-mf-root'));
   const root = document.querySelector('main') /* or your content-column heuristic */;
-  root.setAttribute('data-mf-root', ''); return root.getBoundingClientRect();
-}"
-playwright-cli -s=app eval "() => { window.MF_FRAME_SELECTOR='[data-mf-root]'; window.MF_CHROME_SELECTOR='__none__'; }"
-playwright-cli -s=app eval "$(cat extract-mock.js)" --filename app.<screen>.json
+  root.setAttribute('data-mf-root', '');
+  window.MF_FRAME_SELECTOR='[data-mf-root]'; window.MF_CHROME_SELECTOR='__none__';
+  return ($(cat extract-mock.js))();
+})()" --output app.<screen>.json
 ```
 
-Run the identical tag-and-extract on the reference session (`-s=ref`). Keep one
-`playwright-cli` session per surface so both stay loaded — the reference is immutable
-for the whole pass; measure it once and re-measure only the target after a fix.
+Run the identical tag-and-extract against the reference URL. The reference is immutable
+for the whole pass; measure it once and re-measure only the target after a fix. Nothing
+is "loaded" between calls, so there is no session to keep alive and none to collide over.
 
-> `playwright-cli eval … --filename` writes the returned string **double-JSON-encoded**;
-> `diff.mjs`'s loader already `JSON.parse`s twice, but if you inspect a dump yourself,
-> parse it twice before reading `.nodes`.
+> `obscura fetch --output` writes the returned string **verbatim** — single-encoded.
+> `diff.mjs`'s loader `JSON.parse`s defensively, so both single- and double-encoded dumps
+> load; when you inspect one yourself, parse once for a new dump and twice for one written
+> by the previous runner.
+>
+> **A viewport other than 1280×720 needs CDP**, not `fetch` — `obscura fetch` renders at a
+> fixed size with no resize flag. Use `assets/diff/mfeval.mjs`, which sets
+> `Emulation.setDeviceMetricsOverride` and runs the same `--setup` / `--eval` pair in one
+> page.
 
 ## Rendering a protected target (the Diolog quickstart)
 
@@ -101,20 +109,30 @@ The reference (`diolog.mock`) is unauthenticated. The target (`diolog.ai`) needs
 dev session and a company with **populated** data — an empty screen grades nothing
 (`SKILL.md` Done-criteria: verify the *populated* state, never the fallback).
 
-```bash
+Both of these need CLICKING (an SPA sidebar; a login flow), so they are the `obscura mcp`
+lane — a session that survives a click — not `obscura fetch`, which discards the page
+between calls. Both hosts are local, so the MCP server needs
+`OBSCURA_ALLOW_PRIVATE_NETWORK=1` in its env or every navigation fails as an SSRF block.
+
+```
 # REFERENCE — the web-design-system preview app (React via Babel/CDN, real DOM)
-playwright-cli -s=ref open "http://diolog.mock/preview/preview.html"
-playwright-cli -s=ref resize 1680 1050
-# the preview app is an SPA navigated in-app (no URL routing): click the sidebar
-# item by its label (e.g. "Tasks"), then tag the content root and extract.
+browser_navigate   http://diolog.mock/preview/preview.html
+#   the preview app is an SPA navigated in-app (no URL routing): browser_snapshot to find
+#   the sidebar item by its label (e.g. "Tasks"), browser_click it, then tag the content
+#   root and extract with browser_evaluate.
 
 # TARGET — apps/web
-playwright-cli -s=app open "http://diolog.ai/login"
-playwright-cli -s=app resize 1680 1050          # SAME viewport as the reference
-# click "Log in as Luke (dev)" → /select-company → pick the company with real data
-# (the internal "Diolog" company has real Tasks; NH3 is the demo tenant), then:
-playwright-cli -s=app goto "http://diolog.ai/quorum/board"   # the route for that screen
+browser_navigate   http://diolog.ai/login
+#   browser_click "Log in as Luke (dev)" → /select-company → pick the company with real
+#   data (the internal "Diolog" company has real Tasks; NH3 is the demo tenant), then:
+browser_navigate   http://diolog.ai/quorum/board      # the route for that screen
 ```
+
+Two things to know about `browser_evaluate`: it takes an **expression** (wrap a function
+as `(() => {…})()`), and it does **not** await a promise — an async expression returns
+`{}`. There is also no viewport tool, so a run that must match a specific width has to go
+through `mfeval.mjs`/CDP instead, and a protected target then needs its cookies carried
+across (`browser_storage_state` out, `Network.setCookie`-equivalent in).
 
 Map each reference surface to its target route. The preview app's `REGISTRY`
 (`apps/web-design-system/preview/app.jsx`) lists every mock page id/label; `apps/web`'s
@@ -157,9 +175,10 @@ the RN `references/batch-orchestration.md` (sequential Workflow loop / N-lane
 sim-cloning) — that exists solely to serialise one sim. The web target uses the plain
 `SKILL.md` Phase 6 shape: fan out one `Agent` per screen/region in waves of ≈5, hand
 each the already-captured reference dump (no agent re-renders the reference), and have
-each render only its own target route in its own `playwright-cli` session. Serialise
-only edits to a **shared** primitive/token file, exactly as on any parallel-worktree
-job.
+each render only its own target route. Concurrent Obscura runs cannot interfere — each
+`fetch` is its own process and its own page — so the wave size is about page-load cost,
+not contention. Serialise only edits to a **shared** primitive/token file, exactly as on
+any parallel-worktree job.
 
 ## What still applies unchanged
 

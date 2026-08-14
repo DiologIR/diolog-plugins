@@ -54,7 +54,7 @@ if (!APP || !MOCK) {
 
 const load = p => {
   let v = JSON.parse(readFileSync(p, 'utf8'));
-  if (typeof v === 'string') v = JSON.parse(v); // playwright-cli --filename double-encodes a returned string
+  if (typeof v === 'string') v = JSON.parse(v); // tolerate a double-encoded capture (obscura --output writes the raw value)
   return v;
 };
 const appDoc = load(APP);

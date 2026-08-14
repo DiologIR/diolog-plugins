@@ -18,9 +18,10 @@ React component, in one of two modes.
 ## Step 1 — capture-subtree.js (lift the rendered subtree)
 
 ```bash
-playwright-cli open "http://localhost:<port>/<mock>.html"
-playwright-cli eval "() => { window.MF_CAPTURE_SELECTOR = '#hero .vignette'; }"
-playwright-cli eval "$(cat capture-subtree.js)" --filename capture.hero.json
+obscura --allow-private-network fetch "http://localhost:<port>/<mock>.html" \
+  --eval "(() => { window.MF_CAPTURE_SELECTOR = '#hero .vignette'; return ($(cat capture-subtree.js))(); })()" \
+  --output capture.hero.json
+#   one call: each fetch is a fresh page, so the global and the capture must go together
 ```
 
 Walks the subtree under `MF_CAPTURE_SELECTOR`, inlines a curated **computed-style** set onto

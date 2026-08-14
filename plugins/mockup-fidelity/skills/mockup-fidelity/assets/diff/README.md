@@ -58,12 +58,15 @@ atomic class set resolves the same way. Reading the class rules by hand misses i
 `getComputedStyle` is the only truth.
 
 ```bash
-playwright-cli open "http://localhost:8770/<mock>.html"   # or the React/StyleX route
-# pick the frame ONE of three ways:
-playwright-cli eval "() => { window.MF_FRAME_SELECTOR = '#screen .scr'; }"  # any CSS selector (a React/StyleX screen root)
-playwright-cli eval "() => { window.MF_FRAME_TITLE = 'Discover · home'; }"  # caption substring (gallery)
-playwright-cli eval "() => { window.MF_FRAME_INDEX = 13; }"                 # 1-based ordinal (gallery, when captions aren't unique)
-playwright-cli eval "$(cat extract-mock.js)" --filename mock.discover.json
+# Frame selection and extraction go in ONE eval: every `obscura fetch` is a fresh render,
+# so a global set by an earlier call is gone. Pick the frame ONE of three ways:
+#   window.MF_FRAME_SELECTOR = '#screen .scr'  any CSS selector (a React/StyleX screen root)
+#   window.MF_FRAME_TITLE    = 'Discover · home'  caption substring (gallery)
+#   window.MF_FRAME_INDEX    = 13                 1-based ordinal (gallery, when captions aren't unique)
+obscura --allow-private-network fetch "http://localhost:8770/<mock>.html" --eval "(() => {
+  window.MF_FRAME_SELECTOR = '#screen .scr';
+  return ($(cat extract-mock.js))();
+})()" --output mock.discover.json
 ```
 
 **Multi-frame galleries come in two markups and the extractor handles BOTH** out of
@@ -296,7 +299,9 @@ measurement. Full rationale in [`run.md`](./run.md) § *v2.0.2*.
   decorative/hidden svg no longer reads as a match, and a genuinely visible arrow difference is caught.
 
 (`capture()` is now async — awaits `document.fonts.ready` — so the injected IIFE is `(async function(){…})()`;
-`playwright-cli eval` awaits the returned promise transparently.)
+`mfeval.mjs` and `capture.mjs` evaluate with `awaitPromise:true`, so the promise resolves transparently.
+`obscura fetch --eval` and the MCP `browser_evaluate` do **not** await, and return `{}` for this — run it
+through `mfeval.mjs`.)
 
 ### v2.1.0 — RENDERED-GLYPH-SHAPE / font-feature-effectiveness detector (in `analyze.js` + `feature-check.mjs`)
 
@@ -321,7 +326,7 @@ reveals it. Full rationale + runner commands in [`run.md`](./run.md) § *v2.1.0*
   computed font props.
 - **The rasteriser is TESTED, not assumed.** `capture()` probes `'fontFeatureSettings' in ctx`
   (CanvasRenderingContext2D). **Supported → fully in-page** (pixel-hash both canvas variants). **NOT supported
-  (current Chromium) → runner-assisted:** an SVG-`<img>` rasteriser cannot see the page's loaded `@font-face`
+  (the current case) → runner-assisted:** an SVG-`<img>` rasteriser cannot see the page's loaded `@font-face`
   faces, so `capture()` mounts persistent probe-PAIR nodes (recorded in `featureCheck.probes`, mounted after
   the node walk so they never leak into `analysis.nodes`/`extra`), and the zero-dep `feature-check.mjs`
   screenshots + pixel-diffs the pairs into `{ key, effective }` verdicts that you inject via
@@ -329,6 +334,10 @@ reveals it. Full rationale + runner commands in [`run.md`](./run.md) § *v2.1.0*
   `font/feature-check-pending` note — never a silent pass. Validated on controlled fixtures: a full
   InterVariable (cv11 ON vs OFF → ~5–12 % pixel difference ⇒ effective) vs a feature-less subset (0 % ⇒
   INEFFECTIVE) — the detector fires high on the subset and does NOT flag when cv11 genuinely takes effect.
+  **The runner-assisted path cannot run on Obscura** — it loads no web fonts, so both probe rows render the
+  same fallback face, every pair comes back identical, and identical MEANS "ineffective" ⇒ every requested
+  feature is reported as a defect. Capture in a real browser for this check; there is no substitute here,
+  because the signal is the rasterised glyph of a font Obscura never fetched (`run.md` § v2.1.0).
 
 ### v2.2.0 — FONT-METRIC / VERSION detector (`font/rendered-width-ratio`, in `analyze.js`)
 
@@ -421,22 +430,24 @@ low-noise detectors — all ride the normal MODE-A/B flow, no new flags. Full ra
   (`diolog.app`→`diolog.site`) → 0 `position`, 0 block-flow, 5 genuine residual line-height rows (real
   sub-2px drift, no false positives). `node --check` clean.
 
-### v2.5.0 — RASTER + CDP-rendered-font + IoU-text-less + systematic-pseudo layer (`capture.mjs` + `analyze.js`)
+### v2.5.0 — RASTER + IoU-text-less + systematic-pseudo layer (`capture.mjs` + `analyze.js`)
 
 The detectors above read `getComputedStyle`. Four classes survive that — three of which need a RENDERED
 measurement a computed-style dump structurally cannot provide. v2.5.0 adds the **`capture.mjs` HARNESS**
-(Node — `playwright-core` + `odiff-bin`) that injects `analyze.js` verbatim (MODE A on the reference, MODE B
-on the target — the injectable contract is **unchanged**) and layers on three rendered signals, plus a
-fourth (systematic pseudo) inside `analyze.js`. Full flow, flags, classification, and the font-hinting note:
-[`run.md`](./run.md) § *v2.5.0*. Install: `npm install` in `assets/diff` (odiff-bin@4.3.8 +
-playwright-core@1.61.1 — prebuilt binaries, no node-gyp, reuses the host chromium cache).
+(Node — `obscura serve` over CDP + `odiff-bin`) that injects `analyze.js` verbatim (MODE A on the reference,
+MODE B on the target — the injectable contract is **unchanged**) and layers on the rendered signals, plus a
+further one (systematic pseudo) inside `analyze.js`. Full flow, flags, classification, and the measured
+limits: [`run.md`](./run.md) § *v2.5.0*. Install: `npm install` in `assets/diff` (odiff-bin@4.3.8 — prebuilt
+binaries, no node-gyp; the browser is `obscura` on PATH).
 
-- **CDP rendered-font (the headline fix, `font/cdp-rendered-font`).** Per visible text node the harness calls
-  `CSS.getPlatformFontsForNode` over a raw CDP session and records the *genuinely-rendered* typeface
-  (`familyName` + `isCustomFont`). It flags when the rendered face DIFFERS across sides — **even when
-  `getComputedStyle` font-family agrees or is a generic** (live renders the loaded web font `Inter Medium`
-  / `isCustomFont:true` while the target falls back to the system `Helvetica`). This is the trustworthy font
-  signal; `analyze.js`'s DOM-span probe (#20) approximates it, CDP measures it. Deduped per root cause.
+- **CDP rendered-font — UNAVAILABLE (`font/cdp-rendered-font` is not emitted).** The headline signal of this
+  version was `CSS.getPlatformFontsForNode` over a raw CDP session: the *genuinely-rendered* typeface per
+  text node (`familyName` + `isCustomFont`), which fires even when `getComputedStyle` font-family agrees.
+  Obscura cannot supply it — `getPlatformFontsForNode` returns `{}`, `DOM.requestNode` is not implemented,
+  and it loads no web fonts at all, so both sides render the same fallback face and agree by construction.
+  The harness records `summary.layers.cdpRenderedFont = { available:false, reason }` rather than a zero,
+  because a silent zero reads as "the fonts match" — the exact defect this layer existed to catch. Confirm
+  every FONT-class question in a real browser (`run.md` § *Measured limits*).
 - **Element-scoped raster diff (`raster/element-raster-diff`, via `odiff`).** A full-page screenshot per
   side; each PAIRED element is cropped by its bbox and the two crops run through `odiff`. odiff mismatch +
   **same-size box** (computed styles match) ⇒ a HIGH rendering anomaly — a **missing decorative child** (a
@@ -453,11 +464,11 @@ playwright-core@1.61.1 — prebuilt binaries, no node-gyp, reuses the host chrom
   (`border/pseudo-after-border-width`, `container-bg/pseudo-after-background`, `shadow/pseudo-after-box-shadow`,
   `border/pseudo-before-presence`, …). Deduped to ≤3 rows + a `[×N elements]` summary.
 
-The enriched `target.findings.json` carries the normal MODE-B shape plus the new `font/cdp-rendered-font` and
-`raster/element-raster-diff` rows (each with a `renderedFont` / `raster` + `bboxDelta` evidence block) and a
-`summary.layers` block. **Font-render-hinting determinism:** chromium launches with
-`--font-render-hinting=none` for stable raster crops — but this does NOT make headless == a real browser; the
-**CDP rendered-font check, not any width and not the raster %, is the trustworthy signal for the font class.**
+The enriched `target.findings.json` carries the normal MODE-B shape plus the new `raster/element-raster-diff`
+rows (each with a `raster` + `bboxDelta` evidence block) and a `summary.layers` block — in which
+`cdpRenderedFont` reports `available:false` with its reason. **Both sides render in the same engine**, so the
+raster crops are comparable — but that does NOT make Obscura a real browser: a raster % is a tripwire, not a
+verdict, and the font class has no signal left here at all.
 See references/issue-to-check-map.md #37–#40.
 
 ### v2.5.1 — the TYPOGRAPHIC-DECLARATION check (same font, different declared shaping, in `analyze.js`)
@@ -676,12 +687,12 @@ them so you neither chase a phantom nor blanket-dismiss a real one:
 ## Prior art — when to reach for an off-the-shelf tool instead
 
 - **Web/DOM target:** **OverlayQA** / **Pixelay** (design-QA tools that extract
-  computed CSS and diff a live page against a **Figma** spec) and Playwright's
-  **`toHaveCSS`** (per-locator computed-style assertion) overlap with this differ.
-  Prefer them when your source of truth is Figma and you're not in an agent/CI
-  loop — but note `toHaveCSS` can't target `::placeholder`, the overlay tools are
-  Figma-bound and AI-narrated rather than deterministic, and none scope an RN
-  device dump.
+  computed CSS and diff a live page against a **Figma** spec) overlap with this
+  differ. Prefer them when your source of truth is Figma and you're not in an
+  agent/CI loop — but note they are Figma-bound and AI-narrated rather than
+  deterministic, and none scope an RN device dump. (Assertion libraries built on a
+  packaged-browser driver — Playwright's `toHaveCSS` and the like — are not an
+  option here: that driver is gone, and this differ is what replaced it.)
 - **Pixel/visual regression (Percy, Chromatic, BackstopJS, Applitools):** these
   diff an app against **its own** screenshot baseline, not against a design — and
   fine-grained-UI recall from vision is low. Complementary (catches overlap /

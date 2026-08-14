@@ -30,15 +30,15 @@ function brief(sec) {
 
 STEP 0 — METHOD: skim ${SKILL}. The key rule for THIS task: STRUCTURE before STYLE. The per-property style differ is BLIND to layout (a 2×2 grid rendered 1×4, a missing icon node, a row that should be a column, dash-vs-check bullets). Run the structure diff and the overlay FIRST.
 
-Use a DEDICATED browser session: prefix every playwright-cli command with \`-s=${sec.name}\`.
+Each \`obscura fetch\` is its own stateless render, so lanes cannot collide over a shared session — but they do each cost a full page load, so batch what you can into one \`--eval\`. Localhost needs \`--allow-private-network\` or the fetch fails as an SSRF block.
 
 1. SCREENSHOT both sides at the same viewport (${VP}), scoped to this section (scroll to the text "${sec.anchor}"):
-   - reference: open ${REF}, scroll to "${sec.anchor}", \`screenshot --filename ${DIFF}/${sec.name}-REF.png\`
-   - target: open ${TGT}, scroll to "${sec.anchor}", \`screenshot --filename ${DIFF}/${sec.name}-TGT.png\`
+   - reference: \`obscura --allow-private-network fetch ${REF} --eval "(() => { const e = [...document.querySelectorAll('*')].find(n => n.textContent.includes('${sec.anchor}')); e && e.scrollIntoView(); return 'ok'; })()" --screenshot ${DIFF}/${sec.name}-REF.png\`
+   - target: same command against ${TGT}, writing \`${DIFF}/${sec.name}-TGT.png\`
    READ both PNGs and list every STRUCTURAL difference (grid columns, card anatomy, icon presence/position, number/badge position, bullet style, dividers, alignment, density).
-2. VISUAL OVERLAY (catches what the eye misses fast): \`node ${DIFF}/overlay.mjs --ref ${DIFF}/${sec.name}-REF.png --app ${DIFF}/${sec.name}-TGT.png --out ${DIFF}/${sec.name}-overlay.html\`, open it (\`file://${DIFF}/${sec.name}-overlay.html\`), screenshot, READ — bright regions in the difference view = where they diverge.
+2. VISUAL OVERLAY (catches what the eye misses fast): \`node ${DIFF}/overlay.mjs --ref ${DIFF}/${sec.name}-REF.png --app ${DIFF}/${sec.name}-TGT.png --out ${DIFF}/${sec.name}-overlay.html\`, screenshot it (\`obscura fetch "file://${DIFF}/${sec.name}-overlay.html" --screenshot ${DIFF}/${sec.name}-overlay.png\`), READ — bright regions in the difference view = where they diverge.
 3. STRUCTURE DIFF (re-extract only the target; reuse the shared ${DIFF}/ref.json):
-   - \`playwright-cli -s=${sec.name} eval "() => { window.MF_FRAME_SELECTOR='body'; window.MF_CHROME_SELECTOR='__none__'; return 'set'; }"\` then \`playwright-cli -s=${sec.name} eval "$(cat ${DIFF}/extract-mock.js)" --filename ${DIFF}/${sec.name}-tgt.json\` and unwrap (\`node -e "const fs=require('fs');let p=JSON.parse(fs.readFileSync('${DIFF}/${sec.name}-tgt.json','utf8'));if(typeof p==='string')fs.writeFileSync('${DIFF}/${sec.name}-tgt.json',p)"\`).
+   - \`obscura --allow-private-network fetch ${TGT} --eval "(() => { window.MF_FRAME_SELECTOR='body'; window.MF_CHROME_SELECTOR='__none__'; return ($(cat ${DIFF}/extract-mock.js))(); })()" --output ${DIFF}/${sec.name}-tgt.json\` — the globals and the extraction go in ONE eval because each fetch is a fresh page, and \`--output\` writes the value verbatim so there is nothing to unwrap.
    - \`node ${DIFF}/structure-diff.mjs --mock ${DIFF}/ref.json --app ${DIFF}/${sec.name}-tgt.json --anchor "${sec.anchor}" --out ${DIFF}/${sec.name}-structure.md\` — READ it. Fix every layout mismatch / MISSING / EXTRA in \`${sec.composite}\` (grid columns, add missing icon/divider nodes, fix flex-direction/order, remove app-extras).
 4. STYLE DIFF: \`node ${DIFF}/diff.mjs --mock ${DIFF}/ref.json --app ${DIFF}/${sec.name}-tgt.json --anchor "${sec.anchor}" --out ${DIFF}/${sec.name}-style.md\` — fix the remaining computed-style deltas (padding/radius/bg/border/shadow/font/size/colour) with literal px/hex where no token matches.
 5. RE-VERIFY: re-extract the target section, re-run structure-diff + style-diff to confirm they drop, re-screenshot and READ it against the reference PNG. Iterate until the section matches.
