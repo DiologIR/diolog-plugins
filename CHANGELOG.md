@@ -4,6 +4,38 @@ Notable changes to the plugins in this marketplace. Newest first.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); each plugin carries its own version in its `plugin.json`, and this file records what moved and why.
 
+## 2026-08-15
+
+### The Obscura migration — every browser-driving skill
+
+Playwright, `playwright-cli`, `agent-browser` and the Chrome MCP are gone from the machine; [Obscura](https://github.com/h4ckf0r0day/obscura) is the only browser lane. Each skill below was rewritten against what Obscura actually does, not against a find-and-replace of the command name — including, where it applies, what the swap **costs**, because a capability quietly lost is worse than one that was never claimed.
+
+Three engine facts drive most of the rewrites: localhost is blocked unless `--allow-private-network` precedes the subcommand (otherwise every local navigation fails as an SSRF block that reads like a broken app); every `obscura fetch` is a fresh render, so state set in one call is gone by the next; and Obscura loads no web fonts and resolves `padding` / `margin` / `borderRadius` shorthands to `0px`, so any measurement takes the longhands and any typeface question goes to a real browser.
+
+- **acceptance-e2e 1.5.0 → 1.6.0.** Default runner moves off `@playwright/test` to `node:test` driving Obscura over CDP. `references/e2e-playbook.md` §9 now stands a harness up in one `e2e/harness.mjs` (a raw `WebSocket` CDP client, `Target.createTarget` → `attachToTarget` → per-verb helpers) with nothing to `npm i`. The a11y gate injects `axe-core` directly — verified firing on a seeded fixture — with the two rules that fail quiet named: `color-contrast` lands in `incomplete` and never in `violations`, and CSS animations never execute, so "settle before sampling" is unenforceable. Flake discipline becomes explicit polling with a deadline, and the conversion cost is stated plainly: no fixtures, no auto-retry, no parallel workers, no HTML reporter, no trace viewer. The Diolog harness reference describes the on-disk Playwright suite as what it is — predating the migration, unconverted, safe to read and extend.
+- **mockup-fidelity 2.5.3 → 2.6.0.** `capture.mjs` re-platformed onto `obscura serve` over CDP; `playwright-core` dropped, leaving `odiff-bin` as the only dependency (differ package 2.5.0 → 2.6.0). The element-scoped raster and IoU text-less layers stand. The CDP rendered-font layer does not: `CSS.getPlatformFontsForNode` returns `{}`, `DOM.requestNode` is unimplemented, and with no web fonts both sides agree by construction — so the harness records `summary.layers.cdpRenderedFont = { available:false, reason }` rather than zero divergences, because a silent zero reads as "the fonts match", the exact defect the layer existed to catch. Same treatment for the font-feature rasteriser probe. New `assets/diff/mfeval.mjs` evaluates with `awaitPromise:true`, which `obscura fetch --eval` and the MCP `browser_evaluate` do not.
+- **design-md-from-website 1.0.1 → 1.1.0.** `references/playwright-probe.md` replaced by `references/obscura-probe.md`, and a new `assets/capture-page.mjs` does the page capture over CDP — full-page screenshots are unreachable from `obscura fetch`, which renders the viewport only and silently drops everything below the fold. Type is now labelled as **declared** rather than rendered, since the engine never loads the site's fonts. Screenshot artifacts no longer have to live under the repo root.
+- **email-mockups 1.6.0 → 1.7.0.** Live mock-reading moves to the `obscura mcp` session lane (a click has to survive to the next call); per-artboard capture becomes measure-then-crop, or a CDP `clip`. The parallel-agent rule is re-derived rather than inherited: `fetch` runs cannot collide, but the MCP session can, so captures still serialise.
+- **create-company-deck 1.3.1 → 1.4.0.** `run_gates.sh` rewritten to drive the viewport matrix over CDP — `obscura fetch` renders at a fixed 1280×720, and a single viewport is what the script exists to refuse. Console capture is a page-side hook installed before navigation, because Obscura emits no `Runtime.consoleAPICalled`. PDF checks are explicitly sent to a real browser.
+- **diolog-tasks-pipeline 2.4.0 → 2.4.1**, **ship-feature 1.5.3 → 1.5.4**, **company-overview-from-website 1.0.0 → 1.0.1** — verification and crawl lanes restated for Obscura, including the private-network flag.
+
+### deck-craft 1.9.0 → 1.10.0
+
+- **Preflight is mandatory and self-scoring.** `scripts/run-preflight.sh` now evaluates the summary itself and exits non-zero on any blocker, in `python3` rather than `node` so a machine without node cannot report a gate that never ran as a clean deck. The skill runs it on every build and revision without being asked.
+- **No synthetic AI portraits of real named people** — directors, executives, key personnel. Structured typographic credential cards, company logos or authentic facility photography instead.
+- **Two honest chart constructions, and the one that fails.** Declared HTML bars (`data-chart="bars"` + `data-value` + an inline `height:NN.NN%`) are measured exactly; inline SVG falls back to a strict detector and counts as *unverified* rather than passing. The construction that actually breaks is a flex column with an indefinite height. `gap: 0` so per-column baselines abut into one continuous axis; a value label travels with its own fill and is never pinned to the far end of the track.
+- **Three classes of false finding, each measured.** A scaled stage measures in two unit systems at once, so an overflow constant per container class and identical on every instance is arithmetic, not a defect. A rasterizer that is not packaged Chrome drops whole text runs while the layout underneath is perfect — the DOM probe that separates the two ships with the reference, and glyph rendering then goes in *not checked* rather than *looked at*. And a fix can starve its neighbour: space in a fixed stage is conserved, so re-run the whole gate, not the region you touched.
+- Non-IFRS measures the source publishes without reconciling: what to state, and the two things it does not license.
+
+### design-craft 1.15.0 → 1.16.0, ux-craft 1.6.0 → 1.7.0
+
+- **design-craft:** the browser-verification lane is Obscura; `references/visual-verification.md` gains the scaled-surface unit-system law and the dropped-glyph law (both measured, both with the probe); `references/data-viz.md` gains the value-travels-with-its-mark rule, one baseline under a bar group, and counting accent *marks* rather than accent text.
+- **ux-craft:** a derived figure the surface cannot reconcile — adjusted, underlying, pro-forma, EBITDA — sits between "from the record" and "illustrative" and needs its own label; plus two checklist rows (fixed-width columns sized from the longest real string in the face that column uses, and every value sitting with the mark it describes).
+
+### Housekeeping
+
+`marketplace.json` re-synced from every `plugin.json` — it had drifted two versions behind on `deck-craft` and one on `create-company-deck`, and carried a stale `deck-craft` description.
+
 ## 2026-08-14
 
 ### deck-craft 1.8.0 → 1.9.0
