@@ -24,6 +24,24 @@ will, and it will render as the strongest claim available. In a schema this mean
 the provenance field: an omission must be an error, not an inference. That single default is the
 most dangerous line in a data contract of this kind.
 
+## A derived figure the surface cannot reconcile
+
+A fourth case sits between "from the record" and "illustrative", and surfaces skip it because it
+looks like the first: a figure that *is* from the record, but whose derivation the record does not
+show. Adjusted, underlying, normalised, pro-forma, run-rate, free cash flow, EBITDA — each is a
+real published number computed from statutory ones by a method that lives somewhere else.
+
+Presenting it with the same weight as a statutory figure implies a reconciliation the reader
+cannot perform. Label what kind of number it is and point at where the working lives:
+
+> Free cash flow and EBITDA are non-statutory measures. They are not defined or reconciled in this
+> release; the reconciled statutory figures are in the annual report.
+
+This is a regulatory requirement in several jurisdictions and a plain honesty requirement
+everywhere. The failure mode to watch for is the derived figure being the *headline* while the
+statutory one it derives from is absent from the surface entirely — at which point the label is
+doing no work, because there is nothing for the reader to compare it against.
+
 ## The marker has to survive being ignored
 
 An illustrative value needs a visible marker at the point of use — a dotted underline and a

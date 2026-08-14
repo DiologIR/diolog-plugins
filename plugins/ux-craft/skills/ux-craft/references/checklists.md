@@ -11,6 +11,8 @@ Condensed verification passes. Run the matching list before calling any build/mo
 - [ ] Errors: what + how-to-fix, adjacent, not color-only
 - [ ] Nothing requires remembering an earlier step (recognition over recall)
 - [ ] Real content tested: longest name, 0 items, 100 items, missing image
+- [ ] Fixed-width columns sized from the longest real string in the face that column uses — monospace and tabular figures are wider than they look, and an overlong cell overlaps its neighbour silently, with no scrollbar and no warning
+- [ ] Every value sits with the mark it describes — a bar's number beside or inside its own fill, never pinned to the far end of a track where a short bar strands it
 - [ ] Reversible actions have undo, not confirmation; destructive actions have proportional friction with named consequences
 - [ ] Copy passes ux-writing rules: outcome-verb buttons, no jargon, front-loaded meaning, correct typography
 - [ ] No dead ends anywhere the user can land: not-found/error routes are designed (a 404 that names the problem and offers search/home/key paths — the raw system page is a wayfinding failure), and every page offers a way onward

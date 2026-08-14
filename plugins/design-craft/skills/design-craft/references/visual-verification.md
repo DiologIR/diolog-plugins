@@ -44,6 +44,37 @@ Corollary: `line-height` below ~0.95 of the font size makes the box **shorter th
 
 **10. A DOM assertion that passes is not a component that looks right — and the gap is usually an unsized icon.** An inline `<svg>` with no intrinsic width or height fills whatever box it is dropped into. A validation-error icon added to a form's error row rendered as a **250px black disc under every field**, while every assertion about that form — three error messages, three `aria-invalid`, focus on the first invalid field, a live region present before submit — passed. The DOM was exactly right and the page was unusable. Any element you *add* while fixing behaviour gets a capture, not just the behaviour you were fixing; and every inline SVG carries explicit dimensions and a colour, because "it inherits" is only true of the ones that do.
 
+**11. A scaled surface measures in two unit systems at once, and mixing them manufactures findings.** Inside a `transform: scale()` — a deck stage, a zoomable canvas, a design-tool preview, a print preview — `getBoundingClientRect()` returns *rendered* pixels while `getComputedStyle()` returns the *authored* value. A probe that compares a child's rendered edge against its parent's computed padding is subtracting one unit system from the other, and the difference it reports is not a defect. Measured on a 1920px stage rendered at `s = 0.667`: an audit reported copy overflowing its container by exactly 52px on every slide, every card by 16px, every stat tile by 12px. Those are `104 × (1−s)/s`, `32 × (1−s)/s` and `24 × (1−s)/s` — each container's own padding, converted by the scale. Nothing was clipped anywhere.
+
+The tell is that the reported overflow is **constant per container class and identical across every instance**; a real overflow varies with content. Convert first, then compare within one system:
+
+```js
+const s = stage.getBoundingClientRect().width / AUTHORED_WIDTH;      // the live scale
+const cs = getComputedStyle(parent);
+const inset = (parseFloat(cs.paddingRight) + parseFloat(cs.borderRightWidth)) * s;
+const overflowAuthored =
+  (el.getBoundingClientRect().right - (parent.getBoundingClientRect().right - inset)) / s;
+```
+
+Everything downstream inherits this: a type-floor gate on a scaled surface must divide measured sizes by `s` before comparing them to a floor, and a contrast checker reading `fontSize` sees the authored size while the viewer sees `fontSize × s` — so hold body copy to 4.5:1 regardless of what the nominal size would permit.
+
+**12. A renderer that drops content is not a layout that lost it.** A rasterizer that is not packaged Chrome fails in ways that look exactly like your bug: whole text runs render blank while the surrounding layout is perfect. Measured on Obscura, Aug 2026 — a 13-slide deck captured with two of six cards on one screen entirely empty and two more cut mid-sentence. The output was byte-identical at a 2-second and an 8-second settle, and byte-identical again with every image stripped, so neither paint timing nor decode memory explained it. The DOM said otherwise: all six strings present, at correct boxes, correct colour, correct size, and `elementFromPoint` at each heading returning the heading rather than something painted over it.
+
+When a capture accuses a surface you believe is correct, audit the DOM before changing anything, and audit it for the four things the capture was supposed to show you:
+
+```js
+[...root.querySelectorAll('*')]
+  .filter(el => (el.textContent || '').trim() && !el.children.length)
+  .map(el => { const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+    return { text: el.textContent.trim().slice(0, 30), box: [r.width, r.height],
+             size: cs.fontSize, color: cs.color, visibility: cs.visibility,
+             onTop: document.elementFromPoint(r.left + 4, r.top + 4) === el }; });
+```
+
+Text that is present, boxed, sized, coloured and on top is a correct surface being drawn wrongly. Report it that way: the layout is verified, the glyphs are not, so the visual claim belongs in "not checked" rather than in "looked at". An anomaly that survives a change which should have moved it, or that appears identically on two different surfaces, is the engine.
+
+Two smaller members of the same family, both measured on that run. An SVG `<text>` sized with the `font-size` *attribute* reports `16px` from `getComputedStyle`, so a type-floor gate fails text authored at 30px — set SVG type with inline `style="font-size:30px"`, which is exact in every engine and is the number you actually wrote. And an inline `<span>` that is the only child of a plain block can return a zero-size rect, which reads as "invisible" to every probe — give a text leaf a block box wherever a gate has to measure it.
+
 ## Phase 1: Layout integrity checklist
 
 Serve over HTTP (never `file://`), load the page, and check — at minimum — at these widths:
@@ -124,6 +155,7 @@ Screenshots are the evidence; take them so they're cheap to retake and honest to
 - **One issue per fix, verify, then the next.** Batch-fixing layout issues hides which change broke what.
 - Prefer the structural fix over the suppressive one: `min-width: 0` on the flex child, `repeat(auto-fit, minmax(250px, 1fr))` on the grid, a real `max-width` on the container — before reaching for `overflow: hidden`, which silences the symptom and clips content.
 - After each fix, **re-check the neighbors**: the other viewports, and the sections above/below the change (spacing fixes leak). Watch for CSS specificity collisions — a generic `.section` rule silently overriding component spacing is a classic generated-CSS failure.
+- **A fix can starve its neighbour, so re-run the whole gate rather than the region you touched.** Measured: widening a table's unit column by 44px to stop a mono string colliding with the bar beside it left the next column 20px short, and its text ran into the following cell — a defect the same gate had reported clean one run earlier. Space inside a fixed-width container is conserved; every widening is also a narrowing somewhere, and the new victim is the column you were not looking at.
 - **Three attempts per issue, then stop and report it** with the screenshot and the attempted fixes — an issue that survives three targeted fixes usually means the diagnosis is wrong, and that's a finding for the user, not a loop to hide in.
 
 ## Phase 4: Report

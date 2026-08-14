@@ -32,6 +32,8 @@ The chart's visual budget goes to the data marks; everything else whispers:
 - **No chart junk**: no 3D, no shadows or gradients on data marks, no background fills behind the plot, no icons inside bars. A bar is a flat rectangle in a deliberate color — trend over decoration.
 - **Numbers use the type system**: `font-variant-numeric: tabular-nums` on every axis, tick, table column, and stat tile so digits align; data labels at 11–12px minimum with the tracking rules from `hierarchy-rhythm-review.md`.
 - **Value outranks label** on stat tiles (the number speaks, the label whispers) — and the comparison ("+12% vs last month") outranks both in usefulness; a lone number without a reference point is a fact, not a message.
+- **A value label travels with its mark, and "inside the track" is not "with the bar".** On a horizontal comparison bar, a value pinned to the right edge of the *track* sits at a distance proportional to how short the bar is — measured, a 5%-wide bar left its `$0.4m` roughly 700px away from the mark it belonged to, reading as a column of loose numbers rather than as two labelled bars. Lay the track out as a flex row and let the value follow the fill; when the fill reaches 100% and there is no room after it, put the value *inside* the fill, right-aligned, in the on-fill colour. Both cases then read as one object.
+- **One baseline under a bar group, not one per column.** A common construction gives each column its own track with a `border-bottom` and separates the columns with a flex `gap` — which draws the axis as three disconnected segments with gaps in it. Set the gap to zero and let `flex: 1` columns abut so the borders join into a single continuous rule, then centre each bar inside its column with `max-width`. The bars keep their spacing and the axis becomes one line.
 
 ## Phase 3: Color as encoding, not paint
 
@@ -42,6 +44,7 @@ Chart color is semantic — it encodes series identity, magnitude, or deviation,
 - **Colorblind-safe by construction**: never red-vs-green as the only distinction; check series pairs at similar lightness; give every encoding a **second signal** — direct labels, marker shapes, line dash, or position — so the chart survives grayscale (this is SKILL.md ch. 9's "never color alone" applied to data).
 - Semantic red/green (loss/gain) is legitimate *when paired with sign or direction markers* (`▲ +4.2%` / `▼ −1.8%`).
 - One palette across the whole dashboard: the same metric keeps the same color on every chart; two charts using the same color for different things is a near-miss-grade violation.
+- **Count accent *marks*, not accent text.** An automated accent-budget check usually walks text-bearing leaves, so it scores a filled bar, a progress track, a status dot and a rule at zero. Measured on one surface: four accent-filled "complete" progress bars plus one accent chip read as five accent objects to the eye and as one to the gate. Judge the budget on the rendered capture by counting every mark that carries the colour, then demote until one thing does — the fill that means "complete" can be the neutral ink, because the word beside it already says so.
 
 ## Phase 4: Honesty rules
 
