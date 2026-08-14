@@ -66,3 +66,34 @@ if [ -z "$OUT" ]; then
   exit 4
 fi
 printf '%s\n' "$OUT"
+
+# Evaluate summary blockers and return a deterministic exit code.
+#
+# python3 rather than node: this script already requires python3 for the fallback
+# server, so using it here removes a second runtime dependency. A machine without
+# node previously failed this block and reported the failure as a deck blocker —
+# which is the one thing the script exists to prevent, a gate that did not run
+# being indistinguishable from a clean deck.
+BLOCKERS="$(printf '%s' "$OUT" | python3 -c '
+import json, sys
+try:
+    s = json.load(sys.stdin).get("summary", {})
+except Exception as e:
+    print("preflight ran, but its summary could not be parsed (%s) — blockers NOT evaluated." % e,
+          file=sys.stderr)
+    sys.exit(0)
+keys = ["stageGeometry", "overflow", "chromeCollisions", "textOverlaps",
+        "invisibleText", "provenanceMissing", "chartsNotZeroBased"]
+found = ["%s: %s" % (k, s[k]) for k in keys if s.get(k)]
+n = s.get("slidesExamined", 0)
+if found:
+    print("\n[DECK-PREFLIGHT FAIL] %d blocker(s) across %s slides: %s"
+          % (len(found), n, ", ".join(found)), file=sys.stderr)
+    sys.exit(1)
+print("\n[DECK-PREFLIGHT PASS] 0 blockers across %s slides examined." % n)
+print("A pass means no KNOWN defect is present. It does not mean verified — "
+      "walk the deck per references/deck-review.md.")
+' 2>&1)" && { printf '%s\n' "$BLOCKERS"; exit 0; }
+
+printf '%s\n' "$BLOCKERS" >&2
+exit 1

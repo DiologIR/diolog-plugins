@@ -134,6 +134,23 @@ Avoid generic SaaS card grids. Translate the issuer's physical domain into autho
 | **United States (SEC)** | **Regulation FD**<br>**Regulation G & Item 10(e)** | • Decks must be furnished on Form 8-K or posted simultaneously with any intentional disclosure.<br>• Every non-GAAP measure requires **equal-or-greater prominence** to the most comparable GAAP measure, plus a quantitative reconciliation schedule. |
 | **United Kingdom / EU** | **FRC Strategic Report Guidance**<br>**ESMA APM Guidelines** | • Alternative Performance Measures (APMs) must not overshadow IFRS metrics and must maintain consistent multi-year definitions. |
 
+### 5.1 When the source publishes a non-IFRS measure without reconciling it
+
+A quarterly update routinely quotes free cash flow, EBITDA or underlying NPAT while the
+reconciliation lives in the annual report or the Appendix 4E, not in the release the deck is built
+from. The deck cannot invent the reconciliation and cannot silently present the measure as though
+it were statutory. State what kind of number it is and where the working lives, once in the
+disclosures block and once in the foot of any slide that leads on it:
+
+> Free cash flow and EBITDA are non-IFRS measures. They are not defined or reconciled to statutory
+> measures in this announcement; refer to the Company's statutory financial reports.
+
+Two things this does not license. It does not license a non-IFRS measure as the deck's only
+headline figure with no statutory measure anywhere in the deck — SEC Item 10(e) requires
+equal-or-greater prominence and ASIC RG 230 expects the same balance. And it does not license
+deriving the reconciliation yourself: a ratio or a bridge you computed from the release is your
+arithmetic, not the issuer's disclosure, and it is a figure the board did not authorise.
+
 ---
 
 ## 6. HTML/CSS Technical Presentation Engineering

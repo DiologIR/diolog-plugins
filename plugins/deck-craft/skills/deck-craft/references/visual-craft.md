@@ -85,6 +85,8 @@ If a block reads like a mood, the direction isn't decided yet. "Serious and conf
 
 **Spend the accent once per slide.** One thing matters; give it the colour. An accent on four elements is decoration.
 
+**Three places the budget goes without anyone deciding**, all measured on one deck. A data table whose column headers are set in the accent spends it four times before the slide has said anything — move the colour to the 2px rule beneath the headers, which keeps the structural signal and returns the whole budget. A set of status marks spends one per row; charcoal marks distinguished by fill weight, glyph and word read correctly in greyscale and leave the accent for the one thing the slide is actually about. And a numeral chip on every card in a six-card grid is six — those are labels, so `ink-muted` is the right colour and the eye still finds them. Count in the rendered capture rather than in the stylesheet: an automated check walks text-bearing leaves, so filled bars, rules, tracks and dots score zero while the eye counts every one of them.
+
 **Tone the neutrals.** `#FAFAFA` / `#1A1A1A` rather than pure `#FFFFFF` on `#000000` — pure black-on-white is harsh projected and reads unfinished.
 
 **Never encode meaning in colour alone.** Pair with position, label, or shape. Roughly 8% of men have a colour-vision deficiency, and a projector's gamma will flatten your careful red/green distinction anyway.
@@ -106,6 +108,8 @@ Two failure modes, and their fixes: **flat** (everything at similar weight; step
 **Value outranks label.** On a stat, "$48.2m" is larger and heavier than "Revenue". The label whispers; the number speaks.
 
 **Cross-slide discipline.** Section headers look identical to each other. Card groups align across columns — titles at the same Y, footers pinned to the same line — because misaligned baselines across side-by-side cards read as broken rather than varied.
+
+**A list laid out as a grid needs its rhythm from `row-gap`, not from item margins.** `li:first-child { margin-top: 0 }` zeroes only the DOM-first item, so in a two-column grid the second column's first row keeps its margin and sits a full gap below its neighbour — a misalignment that looks like a rendering fault and is arithmetic. Zero every item's margin in grid mode and let `gap: 22px 72px` carry both axes. The general form: when a rule keys off document order but the layout is two-dimensional, the rule and the layout disagree about which item is first.
 
 ## 6. Anti-slop
 
@@ -139,6 +143,8 @@ Not an add-on; on a projector it's just legibility. Contrast per §4. Never enco
 
 Before delivering, remove one thing. Review rounds accrete — a rule here, a badge there, a second accent that crept in. Find the element the deck doesn't need and cut it. If you genuinely can't find one, ship.
 
+The reliable place to find it is a **hero numeral standing for something that isn't a metric**. A stat tile reading `3` over "Jurisdictions" borrows the visual weight the deck reserves for its financial figures and spends it on a count of countries — it is a fact wearing a metric's clothes, and it is the element a sceptical reader questions first. Cut the tile, fold the fact into the prose beside it, and nothing is lost but the borrowed authority.
+
 
 ## Provenance on a slide
 
@@ -147,8 +153,10 @@ rules, all learned on an ASX-derived deck:
 
 - **Every number on a slide traces to the source document.** If it is not in the source, it is
   not on the slide. There is no "roughly" on a slide a board will read as a statement.
-- **A generated photograph is disclosed on the artifact**, and never depicts a real named person.
-  A text card carrying someone's actual credentials beats a fabricated likeness, always.
+- **NEVER depict a real named person with a generated AI photograph.** Fabricating an AI likeness for a real named executive, board director, CEO, or key personnel produces uncanny visual artifacts (distorted hands, synthetic attire, hallucinated background text) and destroys deck credibility. On leadership and governance slides:
+  - Use **structured typographic credential cards** (Degree, Professional Body e.g. AusIMM / AICD / CPA, Prior Executive Track Record, Board Sub-Committees).
+  - Use authentic company facility/infrastructure photography or corporate insignias.
+  - A clean typographic credential card outranks a fabricated synthetic portrait 100% of the time.
 - **Precision is a claim.** If the source says a quarter, the slide says a quarter. Inventing a
   date or a decimal to make a chart tidier fabricates specificity the record does not support.
 

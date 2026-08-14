@@ -2,22 +2,25 @@
 
 Two loops. The **per-slide gate** runs while you build, because a mistake on slide 2 propagates into every slide that copies its layout. The **delivery pass** runs once at the end and owns what a per-slide gate can't see: consistency *between* slides, the argument as a whole, the export.
 
+**CRITICAL REQUIREMENT: Automatic Preflight & Review Execution is Mandatory.** You must execute `scripts/run-preflight.sh <url> [--regulated]` automatically on every deck build and revision. Never wait for or require the user to ask for preflight or review. Any non-zero blocker (`stageGeometry`, `textOverlaps`, `overflow`, `chromeCollisions`, `provenanceMissing`) blocks delivery (`fix` / `rebuild`).
+
 ## The per-slide gate
 
 After drafting each slide, before starting the next. **Run `scripts/run-preflight.sh` first** — it settles the computable half in seconds and leaves the looking for what only an eye can judge. Then the cheap checks:
 
 1. **Does it say one thing?** Name the slide's single claim out loud. If that takes two sentences joined by "and", it's two slides.
-2. **Does every slot say something different?** A template with kicker / title / body / caption fills easily and empties nothing. The failure shape, measured on a real generated surface: eyebrow = the item's name, title = a truncated blurb ending mid-clause, body = *that identical string again*, caption = the eyebrow once more. Four slots, two pieces of information, and the hierarchy inverted — the name demoted to a label and a sentence fragment promoted to the headline. A slot with nothing of its own to say is left empty, not filled; and **a title is written short, never cut short** — a heading ending in an ellipsis is body copy in the title slot.
+2. **Does every slot say something different?** A template with kicker / title / body / caption fills easily and empties nothing. The failure shape, measured on a real generated surface: eyebrow = the item's name, title = a truncated blurb ending mid-clause, body = *that identical string again*, caption = the eyebrow once more. Four slots, two pieces of information, and the hierarchy inverted — the name demoted to a label and a sentence fragment promoted to the headline. A slot with nothing of its own to say is left empty, not filled; and **a title is written short, never cut short** — a heading ending in an ellipsis is body copy in the title slot. The mildest and commonest form is the eyebrow restating its own title (`Outlook` over "Outlook"; `Shell Program · build and allocation` over "Shell Program build status") — three of thirteen slides on one deck. The eyebrow's job is to place the slide in a structure the title does not carry: the occasion, the as-at date, the review section it belongs to.
 3. **Does the slide's payload restate its own title?** A three-row table under a headline that already states all three rows is a slide's worth of space carrying no information. Cut the table or cut the headline.
 4. **Type on the scale & Two-Tier Floor (ISO 9241-303 / DISCAS).** Primary content at or above the distance minimum: ≥24px on a 1920 canvas (reading deck) or ≥44px (projected boardroom deck), with 68px–104px headlines and 96px hero metrics. Auxiliary metadata (eyebrows, table cells, chart ticks, legal footnotes) sits at 18px–20px without competing with primary body copy.
-5. **Does the text fit its box** at its stated size, with the longest real string rather than the sample one? In an absolute-geometry format nothing shrinks to fit; in HTML nothing warns you.
-6. **Grounding & Regulatory Non-GAAP Prominence.** Every figure and claim traces to the source material. In IR and financial decks, verify that non-GAAP metrics (EBITDA, Underlying NPAT) are accompanied by statutory IFRS/GAAP measures with equal or greater prominence, and every chart carries an as-at date and disclosure provenance.
-7. **Accent spent once & dual-theme contrast checked.** One thing carries the colour. On a dark ground, check the accent's *measured* contrast: ensure dark-band lifted tokens (`--color-primary-on-dark: #FF5A5F`) and high-contrast badge text (`#4ADE80`, `#60A5FA`) are used. Badges on photo scrims must use solid primary backgrounds with white text.
-8. **Text over imagery is legible, judged on the composite.** A scrim declared in the stylesheet is not a scrim doing its job: check the rendered slide, at the point where the text actually sits, over the busiest part of the photograph rather than an average of it. Can you read every word over the image, and is the smallest text over it still above the type floor?
-9. **Charts are deterministic pure SVG & IBCS compliant.** Bar and column charts start at zero baseline (Long & Kay 2024: truncation cannot be cured by footnotes). Asymmetric ROI/cost-benefit uses shared-scale horizontal comparison bars. All charts render inline with zero runtime CDN script dependencies.
-10. **Assets are portable & inlined.** For standalone HTML presentations, generated multi-megabyte imagery is downsampled to 1600px JPEG and embedded as Base64 data URIs.
-11. **Parallel with its neighbours.** Repeated elements in the same position; section headers identical to each other.
-12. **Look at it.** Render the slide and open the capture — see below.
+5. **Does the text fit its box and have zero overlaps?** Check for `textOverlaps: 0`. Ensure no flex column labels overflow upward into card headings. In an absolute-geometry format nothing shrinks to fit; in HTML nothing warns you. **In a fixed-column table, size each column from the longest *real* string in the face that column actually uses** — monospace is the trap, because a unit reference like `AX-10 (#1)` is 10 characters at a fixed 0.6em advance and needs 138px at 23px type, which a 132px column overlaps into its neighbour with no scrollbar and no warning. Then check the whole row again: the space is conserved, so widening one column narrows another.
+6. **No synthetic AI human portraits of real named people.** Never use generative AI face images for real named directors, executives, or personnel. Verify leadership slides use structured typographic cards or authentic facility photos.
+7. **Grounding & Regulatory Non-GAAP Prominence.** Every figure and claim traces to the source material. In IR and financial decks, verify that non-GAAP metrics (EBITDA, Underlying NPAT) are accompanied by statutory IFRS/GAAP measures with equal or greater prominence, and every chart carries an as-at date and disclosure provenance.
+8. **Accent spent once & dual-theme contrast checked.** One thing carries the colour. On a dark ground, check the accent's *measured* contrast: ensure dark-band lifted tokens (`--color-primary-on-dark: #FF5A5F`) and high-contrast badge text (`#4ADE80`, `#60A5FA`) are used. Badges on photo scrims must use solid primary backgrounds with white text.
+9. **Text over imagery is legible, judged on the composite.** A scrim declared in the stylesheet is not a scrim doing its job: check the rendered slide, at the point where the text actually sits, over the busiest part of the photograph rather than an average of it. Can you read every word over the image, and is the smallest text over it still above the type floor?
+10. **Charts are deterministic pure SVG & IBCS compliant.** Bar and column charts start at zero baseline (Long & Kay 2024: truncation cannot be cured by footnotes). Asymmetric ROI/cost-benefit uses shared-scale horizontal comparison bars. All charts render inline with zero runtime CDN script dependencies.
+11. **Assets are portable & inlined.** For standalone HTML presentations, generated multi-megabyte imagery is downsampled to 1600px JPEG and embedded as Base64 data URIs.
+12. **Parallel with its neighbours.** Repeated elements in the same position; section headers identical to each other.
+13. **Look at it.** Render the slide and open the capture — see below.
 
 ## Look wide, then filter — never both at once
 
@@ -38,6 +41,8 @@ So when a finding is repaired, ask the two questions that catch this:
 
 A per-slide fix list against a deck-wide cause is how a review closes with everything ticked and the same defect still shipping.
 
+**And the reciprocal: a fix can starve its neighbour.** Space inside a fixed stage is conserved, so every widening is also a narrowing somewhere. Measured on one deck: widening a table's unit column by 44px to stop a mono string colliding with the bar beside it left the next column 20px short, and its text ran into the following cell's status chips — a defect the same gate had reported clean one run earlier. Re-run the whole gate after each repair batch rather than the region you touched; a fix round that only re-checks its own edits converges on a moving defect.
+
 ## Looking is the part that gets skipped
 
 Three rules make verification real rather than ceremonial:
@@ -53,6 +58,21 @@ Three rules make verification real rather than ceremonial:
 **Capture after the build-in has finished, and know that it has.** A slide with a staged reveal captures mid-animation as a slide missing half its content, and a colour measured mid-fade is not that element's colour — a contrast gate sampled 400ms into a 700ms entrance read a `#E85A2A` accent as `#6a2d18` and reported a fix making things worse. Drain `document.getAnimations()` before capturing, and if you are measuring rather than looking, record how many were still running.
 
 **Suspect the engine before the page.** A rendering engine that is not packaged Chrome will diverge, and the divergence arrives looking exactly like a defect in your deck. Measured on Obscura, 14 Aug 2026: it resolves `height:84.0%` and `height:86.4%` to the *same* computed pixel value and returns a bounding rect matching neither, which turns a provably zero-based chart into a false axis-truncation finding; it drops single `l` glyphs from Figtree at some sizes, so "Complete" captures as "Comp ete" and "plan" as "p an" in decks whose source is correct; and `DOMMatrixReadOnly` is absent, so any probe constructing one throws and returns nothing. Before changing a deck on the strength of a capture, check the declared value in the source. Two decks showing the *same* anomaly is the tell: that is the engine, not two authors making one mistake.
+
+**The severe form is whole text runs rendering blank**, and it is worth knowing because it is indistinguishable from a broken slide. Measured 15 Aug 2026 on the same engine: a 13-slide deck captured with two of six cards on one slide entirely empty and two more cut mid-sentence, with the output **byte-identical at a 2-second and an 8-second settle**, and byte-identical again with every base64 image stripped — so neither paint timing nor decode memory explained it. Establishing which it is takes one probe, and it checks the four things the capture was meant to show:
+
+```js
+[...slide.querySelectorAll('*')]
+  .filter(el => (el.textContent || '').trim() && !el.children.length)
+  .map(el => { const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+    return { text: el.textContent.trim().slice(0, 30), box: [r.width, r.height],
+             size: cs.fontSize, color: cs.color,
+             onTop: document.elementFromPoint(r.left + 4, r.top + 4) === el }; });
+```
+
+Text present, boxed, sized, coloured and on top is a correct deck being drawn wrongly. Two consequences for the report: composition, spacing, imagery, alignment and chrome are all still judgeable from what *did* render, so keep looking; and the glyph rendering goes in **not checked** rather than in **looked at**, because you did not see it.
+
+**A third false-finding class comes from the scale itself.** `getBoundingClientRect()` returns rendered pixels and `getComputedStyle()` returns authored ones, so a probe comparing a child's rendered edge against its parent's computed padding reports an overflow that is not there. At `s = 0.667` one audit reported copy overflowing by exactly 52px on every slide, cards by 16px and stat tiles by 12px — `104 × (1−s)/s`, `32 × (1−s)/s`, `24 × (1−s)/s`, each container's own padding. An overflow that is **constant per container class and identical on every instance** is arithmetic, not a defect; a real one varies with content. `html-deck.md` Phase 8 carries the conversion.
 
 Do this yourself. A deck is a handful of tool calls to walk, and delegating it costs a whole context to learn what a crop would have told you.
 
@@ -71,7 +91,7 @@ An adaptation is intentional only when it cites the thing that forced it — a u
 
 **Consistency between slides.** Palette drift (a second blue that's 5% off the first is worse than a clearly different colour — it reads as almost-right and therefore wrong), type-scale drift, spacing drift, a footer that wanders, section headers that don't match each other.
 
-**Overflow and collision.** Nothing escaping its slide bounds; no unintended overlap; long words and URLs wrapped; ellipses appearing where truncation was designed. In HTML, check at several viewport sizes — the stage should letterbox, never re-layout. In an absolute-geometry format, check every element's box against the canvas: `x + w > canvas.w` is off-slide and `y > canvas.h` renders nothing at all, silently.
+**Overflow and collision.** Nothing escaping its slide bounds; no unintended overlap; long words and URLs wrapped; ellipses appearing where truncation was designed. In HTML, verify strictly at the **13" MacBook Air standard screen resolution (1470×956 / 1440×900)** — no need to test multiple arbitrary device viewports. Ensure the stage letterboxes cleanly, sits vertically centered, and has zero cutoff on the final slide. In an absolute-geometry format, check every element's box against the canvas: `x + w > canvas.w` is off-slide and `y > canvas.h` renders nothing at all, silently.
 
 **Overflow and collision are two checks, not one.** "Nothing past the stage bounds" is silent about content that runs *into* the footer, the page number, or a section band — all of which sit inside the bounds. Measure content against the chrome as well as against the edge:
 

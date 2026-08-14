@@ -33,6 +33,48 @@ Math.abs(r.width / r.height - 16 / 9) < 0.02;   // must be true
 
 `scripts/run-preflight.sh` runs this across every slide along with the rest of the computable gate.
 
+### Phase 0B: Presentation Viewport Centering & Snap Mechanics (Vertical Decks)
+
+When building a vertical single-page presentation deck, an unbuffered container causes the **final slide** (and any slide navigated to via `End` or `scrollIntoView`) to be cut off at the bottom, occluded by fixed floating HUD controls or scrolled past the viewport bounds.
+
+To guarantee that **every slide (including the last slide) is vertically centered and 100% visible on any screen**:
+1. **Viewport-Adaptive Slide Wrap**:
+   ```css
+   .slide-wrap {
+     width: min(92vw, calc((100vh - 96px) * 16 / 9), 1920px);
+     aspect-ratio: 16 / 9;
+     position: relative;
+     overflow: hidden;
+     background: var(--canvas);
+     border-radius: var(--radius-md);
+     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+     scroll-snap-align: center;
+     scroll-snap-stop: always;
+     flex-shrink: 0;
+   }
+   ```
+2. **Centered Container Viewport Padding**:
+   ```css
+   .deck-container {
+     width: 100vw;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 32px;
+     padding: calc((100vh - min(92vw * 9 / 16, calc(100vh - 96px), 1080px)) / 2) 0;
+     scroll-snap-type: y mandatory;
+   }
+   ```
+3. **Block-Center Navigation**:
+   ```javascript
+   function goTo(i) {
+     if (i < 0 || i >= total) return;
+     wraps[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+     updateHUD(i);
+   }
+   ```
+This provides equal top and bottom margins on the target **13" MacBook Air standard screen resolution (1470×956 / 1440×900)**, keeping the slide content completely clear of floating HUD bars.
+
 ## Phase 1: Build the shell once
 
 Don't hand-roll scaling per slide. The shell holds every slide, scales the stage, handles keyboard/tap nav, shows a counter, and persists position to `localStorage` so a reload doesn't lose the presenter's place.
@@ -137,7 +179,13 @@ Most of what a deck review finds is preventable in the stylesheet rather than re
 
 /* Reserve the foot of every slide. This space is structural: it is what keeps
    the last line of body copy off the footer rule and out from under any
-   floating control dock. */
+   floating control dock — and it is a QUANTITY, not a guess. The reserve must
+   exceed the foot's RENDERED height including any wrap, and a foot string that
+   fits the full width can wrap to two lines inside a column narrowed by an
+   editorial photo, which silently eats it. Measured: one 22px shortfall here
+   put content into the footer on three separate slides, and it read as three
+   separate bugs. Set it generously, and keep foot strings to one line at the
+   NARROWEST column the deck uses. */
 .slide > .pad { padding-bottom: var(--pad-bottom, 80px); }
 
 /* A table given less width than its columns need clips silently at the
@@ -153,6 +201,17 @@ Most of what a deck review finds is preventable in the stylesheet rather than re
 .slide > .copy { position: relative; }
 .scrim { position: absolute; inset: 0;
          background: linear-gradient(90deg, rgba(16,15,15,.92), rgba(20,18,18,.55)); }
+
+/* A bullet list laid out as a CSS grid: `li:first-child { margin-top: 0 }`
+   zeroes only the DOM-first item, so the second column's first row keeps its
+   margin and sits a gap lower than the first column's. Use row-gap for the
+   rhythm and zero every item's margin in grid mode. */
+.chevlist.chevgrid li { margin-top: 0; }        /* pair with `gap: 22px 72px` */
+
+/* Give a text leaf a block box wherever a gate has to measure it: an inline
+   <span> that is the only child of a plain block can return a zero-size rect
+   in some engines, which every probe reads as "invisible". */
+.card-num { display: block; margin: 0; }
 
 /* Terminate every font stack with a generic: a bare family that fails to load
    falls back to serif and the deck silently changes character. */
@@ -264,6 +323,13 @@ Add once to the base styles:
 
 Keep one in-flow wrapper per slide. **Any other top-level element must be `position: absolute` *and* excluded from that selector** — give it a `.pinned` class and extend the `:not()` chain. Positioning it absolutely is not enough on its own: the rule still applies `height: 100%`, so a footer pinned with `bottom: 44px` becomes a 1080px-tall box growing *upward*, and its flex content renders at the top of the slide instead. The tell is a sliver of footer text along the slide's top edge and nothing at the bottom — and because the element is present and styled, every overflow and collision check passes.
 
+**A percentage height resolves against a parent sized by `top`/`bottom` less reliably than against one sized by `inset`.** The editorial media column is where this bites: `.media { position: absolute; top: 0; bottom: 0; width: 700px }` with `.media img { width: 100%; height: 100% }` renders the photograph at its *natural* height in some engines, so a 3:4 image in a 700px column stops at 933px of a 1080px slide and leaves a band of blank canvas beneath it. The tell is that the full-bleed cover photo on the same deck is correct — because that one is pinned with `inset: 0`. Pin the image the same way and the class disappears:
+
+```css
+.media     { position: absolute; top: 0; bottom: 0; height: 100%; overflow: hidden; }
+.media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+```
+
 **Never negate a CSS function directly.** `-clamp(...)`, `-min(...)`, `-max(...)` are silently ignored — the declaration does nothing and the layout is subtly wrong with no error. Use `calc(-1 * clamp(...))`.
 
 ## Phase 5: Imagery
@@ -287,6 +353,18 @@ document.elementFromPoint(r.left + 10, r.top + 10);   // must be the text, not t
 ```
 
 **Check the composite, not the asset.** A texture buried under a near-opaque colour wash ships the wash, and an image at low opacity behind other paint is a compliance token rather than a material. Judge every asset in the rendered capture beside what it was meant to be.
+
+### Fonts travel with the file too
+
+A generic fallback stops a missing family from breaking the page; it does not stop the deck arriving in a different typeface. A deck that must open offline, over `file://`, or inside a sandboxed portal carries its own fonts as base64 `woff2`, which costs far less than it sounds: a variable Figtree plus two IBM Plex Mono weights is ~40KB for the latin subsets.
+
+```bash
+# Ask Google Fonts for CSS2 with a browser UA, then take the /* latin */ blocks only —
+# the response also carries cyrillic, greek and vietnamese subsets you do not need.
+curl -s -A "$UA" "https://fonts.googleapis.com/css2?family=Figtree:wght@400..900&display=swap"
+```
+
+Parse out each `/* latin */` block's `url(...)`, fetch the `woff2`, base64 it into an `@font-face` `src`, and keep the generic at the end of the stack anyway. One variable font file covers every weight you author.
 
 ### The Asset Optimization & Inlining Pipeline (Single-File Portability)
 
@@ -335,6 +413,26 @@ Serve over HTTP, never `file://` — module scripts, fetches and some fonts fail
 **Run `scripts/run-preflight.sh <url>` first.** It measures, in one call, what would otherwise be nine slides × three tool round-trips of looking: stage geometry against 16:9, the type floor, overflow, collision with chrome, text laid over text, copy invisible under its own photograph, chart axis honesty, the accent budget, dead bands at a slide's foot, and — with `--regulated` — whether the deck states its disclosures at all. Fix what it names, then spend the looking on what it cannot see. A validation pass that inspected a nine-slide deck screenshot-by-screenshot took 24 minutes and still missed both of that deck's truncated-axis charts; the script finds them in seconds and returns the implied baseline.
 
 Read its output the way it is written: a non-empty `notes` entry saying a check *failed* means that check did **not run**, which is not the same as clean. An empty result is not a pass either — the runner exits non-zero and says so.
+
+**Measure a scaled stage in one unit system.** `getBoundingClientRect()` returns rendered pixels; `getComputedStyle()` returns the authored value. Comparing a child's rendered edge against its parent's computed padding subtracts one system from the other, and what it reports is not a defect. Measured at `s = 0.667`: an audit reported copy overflowing its container by exactly 52px on every slide, cards by 16px, stat tiles by 12px — which are `104 × (1−s)/s`, `32 × (1−s)/s` and `24 × (1−s)/s`, each container's own padding converted by the scale. Nothing was clipped. The signature is an overflow that is **constant per container class and identical on every instance**, where a real one varies with content. Convert first:
+
+```js
+const s = stage.getBoundingClientRect().width / 1920;
+const cs = getComputedStyle(parent);
+const inset = (parseFloat(cs.paddingRight) + parseFloat(cs.borderRightWidth)) * s;
+const overflowAuthored =
+  (el.getBoundingClientRect().right - (parent.getBoundingClientRect().right - inset)) / s;
+```
+
+`deck-preflight.js` already normalises sizes to the authored canvas; any probe you write beside it needs the same conversion.
+
+**On a vertical scroll deck, isolate the slide you want to capture.** A URL fragment does not reliably scroll the page before the capture fires, so `deck.html#s07` returns the same image as `deck.html`. Write a copy of the file per slide with one injected rule and capture that — the slide then sits at the top of the document, filling the viewport at exactly 16:9, with the real floating chrome over it:
+
+```js
+src.replace('</head>', `<style>.slide-wrap:not(#s07){display:none!important}</style></head>`)
+```
+
+Give every `.slide-wrap` a stable `id` for this, and the deck gains portal deep-links for free.
 
 **Capture the viewport, not the element.** An element screenshot (a `Page.captureScreenshot` with a `clip` taken from the stage's own `getBoundingClientRect()`) renders the element's own box and is structurally blind to where that box actually sits: a stage shifted 120px off-centre, half of it past the right edge of the window, screenshots as a perfect slide. So does a stage sitting under a floating control bar. Element captures are for cropping a component you have already located; they can never establish that the deck fits its window.
 
