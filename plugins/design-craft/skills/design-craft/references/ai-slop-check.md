@@ -144,6 +144,20 @@ Any one of these can be a deliberate choice. All of them together — especially
 
 **Detect:** a committed palette everywhere except the selection highlight (still system blue), the caret (still black), and the link underline (still the browser's default offset and thickness). This is the cheapest signal that a page was *built* rather than assembled, and the one most reliably skipped — its absence is a finding even when nothing else on the page is wrong.
 
+### 17. Structure — the outline is the deepest tell
+
+**Default:** the section list is written from the material, then checked against the brief — never the other way round. Sections land in an order the brief never proposed, at least one of the brief's topics is absent because the material did not support a section on it, and at least one section exists that nobody asked for. Headings are claims a reader could disagree with, not noun-phrase filing labels.
+
+**The governing principle: a page's section list is a design decision, and it is the one nobody audits.** Every check above operates on a surface; this one operates on the skeleton underneath it, which is why it survives a complete visual pass. A page can have a committed palette, intentional type, real data and zero slop tells, and still be a template — because its sections came from the request rather than from the material.
+
+**Detect & fix:** lay the section headings beside the brief that commissioned the page. If they are the brief's own list in the brief's own order, the structure was inherited — a six-part request that becomes six sections named after its six parts is the signature, and it looks like thoroughness. Measured on two builds from one body of material, two blind judges in opposite orderings both named this as the first thing separating them, ahead of every visual difference. Same family: headings that are all noun phrases (`Process topology`, `Deployment model`, `Security posture`) — a noun phrase tells a scanner what a section is *about* but never what it *says*. A page whose headings could be reordered without anyone noticing does not have a spine.
+
+### 18. Explainer vocabulary — the technical page's stock costume
+
+**Default:** find the one distinction the subject actually turns on, build a component for *that*, and use it everywhere. The device should be re-drawable from the subject alone — if a reader who understood the topic could sketch it, it belongs to the topic.
+
+**Detect & fix:** every genre has a default kit, and for technical explainers, docs sites and research write-ups it is specific enough to name — **a trio of cards each with an icon in a rounded square**, **coloured status pills** (green *Supported* / red *Blocked* / amber *Partial*), a **feature-comparison matrix**, a **numbered pipeline strip**, and a dark background with one saturated accent, usually blue. None of these is wrong; they are the default because they work. The tell is reaching for them *first*, so the page is assembled from the genre's kit rather than from its own subject. Apply the swap test to components rather than to the whole page: change the subject to something unrelated, and if the same card trio, pills and matrix would serve a database, a payments API or a CI tool with only the strings edited, the vocabulary expresses the genre and not the material. A page built on one subject-derived device repeated across every figure reads as authored; the same page built from the stock kit reads as competent and anonymous, and the difference shows up in blind comparison even when the stock version is the more polished of the two.
+
 ## Phase 3: Fix and summarize
 
 Apply fixes directly. For decisions where multiple options are reasonable (e.g. which non-Inter font to use), pick the most defensible default and note the choice in your summary so the user can override.
