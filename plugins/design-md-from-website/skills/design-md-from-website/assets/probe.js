@@ -1,5 +1,5 @@
 /* DIO design-md-from-website — MEASURED design tokens for one page.
- * Run via: playwright-cli -s=probe-<slug> --raw eval "$(cat assets/probe.js)"
+ * Run via: obscura fetch <url> --eval "$(cat assets/probe.js)" --output probe-<slug>.json
  * Returns a JSON string of getComputedStyle values by role — the AUTHORITATIVE
  * source for the DESIGN.md's colours / fonts / radii / spacing (never guess these
  * from the screenshot). Self-contained IIFE; safe to paste inline if your shell

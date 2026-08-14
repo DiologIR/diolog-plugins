@@ -35,11 +35,11 @@ one run rendered a company's privacy policy under "What the group actually does"
 
 ## Mechanics
 
-`playwright-cli` or `agent-browser` — whichever the machine already has.
+`obscura`, on PATH.
 
 ```bash
-playwright-cli open https://company.com/
-playwright-cli eval "() => document.querySelector('main')?.innerText ?? document.body.innerText" --raw
+obscura fetch https://company.com/ --dump text
+obscura fetch https://company.com/ --eval "(() => document.querySelector('main')?.innerText ?? document.body.innerText)()"
 ```
 
 Two things worth knowing before you start:
@@ -52,10 +52,10 @@ capturing images as well as text, scroll the page first.
 loses `src` attributes.
 
 ```bash
-playwright-cli eval "() => ({
+obscura fetch https://company.com/ --eval "(() => ({
   images: [...document.images].map(i => ({ src: i.currentSrc || i.src, alt: i.alt })).filter(i => i.alt),
   pdfs: [...document.querySelectorAll('a[href\$=\".pdf\"]')].map(a => ({ href: a.href, text: a.textContent.trim() })),
-})" --raw
+}))()" --output assets.json
 ```
 
 ## Placeholder images

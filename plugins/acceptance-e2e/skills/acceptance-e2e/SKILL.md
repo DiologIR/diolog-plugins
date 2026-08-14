@@ -1,6 +1,6 @@
 ---
 name: acceptance-e2e
-description: Use this skill whenever the user wants end-to-end UI tests for a web feature derived from its requirements — e.g. "write e2e tests for TICKET-123", "create a Playwright test suite for the presentations page from the ticket and plan", "test the calendar feature at <url> against its acceptance criteria", "the chart element looks broken, are we testing for that", "add e2e coverage for this feature and run it", or any request that combines a requirements source (an issue/ticket, a spec or plan*.md, or a written description) with a live/local app and "create tests", "test coverage", "e2e", "acceptance tests", "verify the feature works". Turns the requirements + the running app into an acceptance-criteria-traceable Playwright suite in the project's OWN e2e harness, runs it, then goes PROACTIVE — state-matrix forcing, fault injection, interaction-integrity, keyboard+axe, data-shape stress, security-surface and multi-user sweeps — hands rendered quality to /design-review, fixes the tractable bugs, and promotes every sweep into a permanent guard. Carries lanes for native apps (Maestro/XCUITest), MCP servers (agent-driven acceptance), and marketing sites. Project-agnostic: discovers the repo's harness, auth, run command, and base URL. Reach for it even when the user only names the issue or the URL and not "e2e" explicitly.
+description: Use this skill whenever the user wants end-to-end UI tests for a web feature derived from its requirements — e.g. "write e2e tests for TICKET-123", "create an e2e test suite for the presentations page from the ticket and plan", "test the calendar feature at <url> against its acceptance criteria", "the chart element looks broken, are we testing for that", "add e2e coverage for this feature and run it", or any request that combines a requirements source (an issue/ticket, a spec or plan*.md, or a written description) with a live/local app and "create tests", "test coverage", "e2e", "acceptance tests", "verify the feature works". Turns the requirements + the running app into an acceptance-criteria-traceable suite in the project's OWN e2e harness, runs it, then goes PROACTIVE — state-matrix forcing, fault injection, interaction-integrity, keyboard+axe, data-shape stress, security-surface and multi-user sweeps — hands rendered quality to /design-review, fixes the tractable bugs, and promotes every sweep into a permanent guard. Carries lanes for native apps (Maestro/XCUITest), MCP servers (agent-driven acceptance), and marketing sites. Project-agnostic: discovers the repo's harness, auth, run command, and base URL. Reach for it even when the user only names the issue or the URL and not "e2e" explicitly.
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write, Agent, ToolSearch
 ---
 
@@ -26,9 +26,10 @@ the live page is how you discover real selectors and verify, not what you test
 *for*. And you assert **content/render correctness** — that a chart actually draws
 a chart, that a figure is actually sourced — not just that an element exists.
 
-This skill assumes **Playwright** as the default runner (adapt if the repo already
-uses another). It does **not** assume any particular app: **Phase 0 discovers** the
-project's harness, auth model, tenant/context model, run command, and base URL. The
+This skill assumes **`node:test` driving Obscura over CDP** as the default runner
+(adapt if the repo already uses another). It does **not** assume any particular app:
+**Phase 0 discovers** the project's harness, auth model, tenant/context model, run
+command, and base URL. The
 portable method + full pattern catalogue lives in **`references/e2e-playbook.md`** —
 read it before writing specs. If you happen to be in the Diolog web repo, the
 optional **`references/diolog-e2e-harness.md`** carries the exact recipes and two
@@ -93,11 +94,11 @@ impose a foreign shape:
   (Diolog Tasks/Jira/GitHub issues, via its MCP or CLI), local `docs/specs` + `docs/plans`
   markdown, or just the description the user handed you? Identify it and pull it in
   full (Phase 1).
-- **The e2e harness:** find the existing test setup — the runner (Playwright/Cypress/…),
-  its config, the fixtures, the existing specs, and the **run command** (search
-  `package.json` scripts, a `Makefile`, CI config). Match its layout and conventions
-  exactly. If the repo has **no** e2e harness yet, set up a minimal Playwright one
-  following its structure and say so in your report — don't over-build it.
+- **The e2e harness:** find the existing test setup — the runner, its config, the
+  fixtures, the existing specs, and the **run command** (search `package.json` scripts,
+  a `Makefile`, CI config). Match its layout and conventions exactly. If the repo has
+  **no** e2e harness yet, set up a minimal `node:test` + Obscura one following its
+  structure (playbook §9) and say so in your report — don't over-build it.
 - **Auth + context:** how does a test authenticate — a dev-login button, a seeded
   test user, a saved `storageState`, an API token? Is there a **tenant/workspace/
   account context** that scopes what data is visible? Drive that context via a
@@ -153,8 +154,9 @@ worked example are in the playbook reference.
 Now open the running app to discover the *real* selectors and data shapes — never
 guess them. Authenticate the way this project does (Phase 0), set the correct
 tenant/account context, go to the feature route, and probe the actual interactive
-flows and the API payloads. Use `playwright-cli` (preferred) or the Chrome MCP
-(`mcp__claude-in-chrome__*`). For each AC, find the concrete affordance (role+name, a
+flows and the API payloads. Use `obscura serve --port 9222` over CDP (preferred), or `obscura mcp` when you need a
+session that survives a click. A local app needs the global `--allow-private-network`
+flag *before* the subcommand, or every navigation fails as an SSRF block. For each AC, find the concrete affordance (role+name, a
 `data-*` hook, the real menu items, the persisted shape) — and the **API/response
 shape you'll assert against** (the field, its enum values over the wire, the mutation
 that proves persistence). Capture the traps the playbook documents (substring +
@@ -206,7 +208,7 @@ companion `test-plan/<area>.md` (led by the AC matrix). Match the existing harne
 ### 5. Run + stabilize
 
 Run with the repo's own command (whatever Phase 0 found — e.g. a `test:e2e:<area>`
-script, or `playwright test --project=<area>`). Iterate on failures: fix
+script, or `node --test e2e/<area>/`). Iterate on failures: fix
 selector/timing issues; reframe assertions that are *environment*-fragile (not
 bug-fragile) to the robust signal (e.g. assert the immediate UI/canvas effect rather
 than a state a known local-only sync quirk corrupts); scope-allow genuinely
@@ -214,12 +216,21 @@ pre-existing app-shell console noise to the suite (never weaken a global
 zero-console-errors guard, if the harness has one). A green run must mean the ACs
 hold, not that the asserts were watered down. **Run the full suite TWICE** — flakes
 (optimistic-id timing, parallel-load 5xx, leftover state) only surface on the second
-run, and green-twice also proves isolation. Current flake discipline is checkable,
-so wire it rather than intend it: web-first assertions only, lint-banned
-`waitForTimeout`/`networkidle` (eslint-plugin-playwright/Biome rules), CI `retries:
-1–2` with `--fail-on-flaky-tests`, quarantine only with a fix-or-delete SLA, and
-`--only-changed` for cheap PR-time test-impact selection (full suite still runs on
-the integration branch).
+run, and green-twice also proves isolation. Flake discipline is now yours to wire
+rather than a runner flag: **poll for a condition, never sleep** — every wait is a
+`while` loop over a `Runtime.evaluate` with a deadline, and a bare `setTimeout` in a
+spec is the thing to ban in review. `node --test` gives no retries and no
+`--fail-on-flaky-tests`, so a flaky spec is a spec to fix or delete, not to quarantine;
+run the suite twice in CI and treat any disagreement between the two runs as the flake
+signal the runner used to give you.
+
+**What converting off `@playwright/test` costs, stated plainly:** no fixtures (shared
+setup is a `before`/`after` in each spec file or a helper you import), no auto-retry of
+a failing test, no parallel workers (`node --test` runs files concurrently but there is
+no worker-scoped identity or sharding), no HTML reporter, and no trace viewer — a
+failure gives you the assertion and whatever you screenshotted, not a timeline you can
+scrub. Budget for more explicit screenshots at the point of failure, because there is
+no trace to go back to.
 
 **A committed spec carries its run record — "authored, not run locally" is a defect, not a caveat.** Never commit a spec file whose run output you have not captured: the commit (or the run report) must carry the pass/fail counts of an actual execution, and a suite committed unrun must be assumed red — one real suite shipped that way sat red for 14 days encoding the exact acceptance criterion a later fix needed, and nobody knew. Same discipline for `test.fixme`/`test.fail`: each carries a precise comment naming the bug/ticket and the un-fixme condition, and a fixme whose *assertion encodes a since-reversed requirement* must be rewritten or deleted, never left hiding — it reads as coverage while asserting the old world.
 
@@ -377,8 +388,8 @@ sweeps, guard promotion) transfers — the harness changes:
   wrapped/inert). The sweeps translate: 6b = kill the backend/expire the key
   mid-call; 6e = oversized and malformed tool inputs; 6f = the write-gating env flag
   off ⇒ writes refused.
-- **Marketing/content sites.** Playwright is routinely installed and unused on these
-  — stand the lane up: every route × 4 viewports loads clean (console + network),
+- **Marketing/content sites.** These routinely have an e2e harness installed and
+  unused — stand the lane up: every route × 4 viewports loads clean (console + network),
   links resolve, one h1 and sane heading order per page, meta/OG present, and the
   content-grounding invariant where the site makes claims (every figure/claim has a
   source row; unconfigured data renders an honest empty state, never an invented

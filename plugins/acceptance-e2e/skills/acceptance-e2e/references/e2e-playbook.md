@@ -22,10 +22,11 @@ is the same ideas instantiated with exact recipes and worked examples.)
 ## 1. Grounding a new project
 
 Before writing a spec, answer these from the repo itself (never assume):
-- **Runner + layout:** which test runner (Playwright/Cypress/…), where its config and
-  fixtures live, and how existing specs are organised. Match it exactly.
+- **Runner + layout:** which test runner, where its config and helpers live, and how
+  existing specs are organised. Match it exactly.
 - **Run command:** the real invocation — a `package.json`/`Makefile`/`Taskfile` script,
-  or `npx playwright test …`. Find how to scope to one project/file/case.
+  or `node --test e2e/`. Find how to scope to one file/case (`node --test e2e/x.spec.mjs`,
+  `--test-name-pattern`).
 - **Auth:** how a test becomes an authenticated user — a dev-login affordance, a seeded
   user + password, a saved `storageState`, an injected token. Persist it once (a setup
   project), don't log in per test.
@@ -272,12 +273,39 @@ three mutations, and the one that does not bite is the one worth having run.
 
 ## 9. If the project has no harness yet
 
-Set up the **minimum** Playwright harness that fits the repo — don't build a framework:
-- `npm i -D @playwright/test && npx playwright install` (or the repo's package manager).
-- A single `playwright.config.ts` with a `setup` project (auth → `storageState`) + one
-  browser project; `baseURL` from an env var so it points at the local branch server.
-- One extended `fixtures/test.ts` if you need a shared console guard or request helper —
-  otherwise import `@playwright/test` directly.
-- Add a run script to `package.json`.
+Set up the **minimum** `node:test` + Obscura harness that fits the repo — don't build a
+framework. There is nothing to `npm i`: `node:test` and `node:assert` are built in, Node
+22 has a global `WebSocket`, and the browser is the `obscura` binary on PATH (aarch64-macos
+release from <https://github.com/h4ckf0r0day/obscura> into `~/.local/bin` if it is missing).
+
+- **`e2e/harness.mjs`** — the whole harness, in one file:
+  - `startStack()` — start the dev server if it isn't already answering, then
+    `obscura --allow-private-network serve --port 9222`, and return a stop function.
+    The private-network flag is not optional; without it every navigation against
+    localhost fails as an SSRF block, which reads like a broken app.
+  - `connect()` — one raw `WebSocket` to the `webSocketDebuggerUrl` from
+    `http://127.0.0.1:9222/json/version`, with an id→resolver map. That is the entire
+    CDP client; no package.
+  - `newPage(cdp, {width, height})` — `Target.createTarget` → `Target.attachToTarget`
+    (`flatten: true`, and pass the returned `sessionId` on every later call) →
+    `Page/Runtime/DOM.enable` → `Emulation.setDeviceMetricsOverride`. Return an object
+    with the handful of verbs specs need: `goto`, `evaluate`, `textOf`, `byRole`,
+    `click`, `fill`, `screenshot`, `close`.
+  - Keep raw CDP inside this file. A spec that speaks protocol is a spec nobody edits.
+- **`e2e/<area>.spec.mjs`** — `import { test, before, after } from 'node:test'` and
+  `assert from 'node:assert/strict'`; `before` opens the stack and connects, `after`
+  closes both.
+- Add `"test:e2e": "node --test e2e/"` to `package.json`.
+
+**Waiting is yours now.** There is no web-first assertion and no auto-retry, so every
+wait is an explicit poll: a `while` loop over `Runtime.evaluate` with a deadline, which
+throws a named error when the deadline passes. Put those loops in `harness.mjs`
+(`textOf`, `byRole` above) and never write a bare `setTimeout` in a spec.
+
+**Say what this costs.** Relative to `@playwright/test` you lose fixtures, auto-retry,
+parallel workers, the HTML reporter and the trace viewer. A failure gives you the
+assertion message and whatever you screenshotted at the point of failure — so screenshot
+deliberately, because there is no trace to go back to.
+
 Note in your report that you introduced the harness, and keep it small enough that the team
 can see the whole thing at a glance. Simplicity first — grow it only when a real need appears.

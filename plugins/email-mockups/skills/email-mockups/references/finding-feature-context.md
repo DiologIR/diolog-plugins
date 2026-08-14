@@ -44,7 +44,7 @@ Lift your mockup copy from here.
 
 This is how the feature is actually laid out and styled. **Read the *rendered*
 mock, not the raw `.tsx`.** Open the live design-system host in a browser with
-`playwright-cli` (or `agent-browser` / the Chrome MCP) and lift the real
+`obscura` and lift the real
 structure, copy and hierarchy from the actual DOM. The rendered HTML is the
 truthful source — it shows the composed screen with real demo data, the actual
 spacing, and the real hero element — whereas raw JSX makes you reconstruct the
@@ -67,30 +67,37 @@ metrics", …), so you can find your feature's screen by meaning and read its re
 composition in one shot. Use the Interactive app mode when you need a screen's
 live state or to see how you arrive at it.
 
-### Driving it with playwright-cli
+### Driving it with Obscura
 
-`open` the host, drive the SPA to the feature, then pull what you need — the
-rendered DOM (`snapshot` / `eval`) for structure and copy, and a `screenshot` for
-a visual reference design-craft can build against:
+Driving the SPA to a feature needs a session that survives a click, so this is the
+`obscura mcp` lane rather than `obscura fetch` — every `fetch` is a fresh render, so
+a click in one call is gone by the next. Register it once
+(`claude mcp add obscura --scope user obscura mcp`), then:
 
-```bash
-# Web — open, find the nav item's ref, click it, then read the rendered page
-playwright-cli open http://web.diolog.mock/preview/preview.html
-playwright-cli snapshot                       # find the sidebar item's ref (e.g. e34 "Inbox")
-playwright-cli click <ref-of-Inbox>           # switches the React view — wait a beat for re-render
-playwright-cli snapshot                       # the rendered Inbox page: labels, structure, hierarchy
-playwright-cli screenshot inbox.png           # a visual reference of the real surface
+```
+# Web — navigate, find the nav item, click it, then read the rendered page
+browser_navigate            http://web.diolog.mock/preview/preview.html
+browser_snapshot            # the accessibility tree: find the sidebar item (e.g. "Inbox")
+browser_click               # switches the React view — wait a beat for re-render
+browser_snapshot            # the rendered Inbox page: labels, structure, hierarchy
+browser_screenshot          # a visual reference of the real surface
 
-# Mobile — open, switch to Storyboard, screenshot the section you need
-playwright-cli open http://customer.diolog.mock/
-playwright-cli snapshot                        # find the "Storyboard · N screens" toggle ref
-playwright-cli click <ref-of-Storyboard>
-playwright-cli screenshot customer-storyboard.png
+# Mobile — navigate, switch to Storyboard, screenshot the section you need
+browser_navigate            http://customer.diolog.mock/
+browser_snapshot            # find the "Storyboard · N screens" toggle
+browser_click
+browser_screenshot
 ```
 
-`playwright-cli eval "() => document.querySelector('main')?.innerText"` pulls the
-real on-screen copy verbatim — the labels and microcopy your graphic should echo.
-Prefer `--raw snapshot` / `--raw eval` when piping the output elsewhere.
+`browser_evaluate` with `(() => document.querySelector('main')?.innerText)()` pulls
+the real on-screen copy verbatim — the labels and microcopy your graphic should echo.
+Note it does **not** await a promise: an async expression comes back as `{}`.
+
+For a single static surface with no clicking, one `obscura --allow-private-network
+fetch <url> --screenshot out.png --dump text` is cheaper than the whole session. The
+`.mock` hosts are local, so `--allow-private-network` (before the subcommand) is
+required either way — set `OBSCURA_ALLOW_PRIVATE_NETWORK=1` in the MCP server's env
+so the session lane gets it too.
 
 ### Capture two things the premium register needs
 
@@ -102,8 +109,9 @@ the playbook §4A and §2). So when you read the rendered mock, deliberately cap
    lit and which to ghost), the top-bar layout (company switcher, search/bell, avatar),
    and the route/URL (`app.diolog.com/<area>`). This is what makes the window read as the
    real product. You can pull exact structure and even computed spacing for a region with
-   `playwright-cli eval` on the element's `outerHTML` / `getComputedStyle` if you want the
-   rebuild structurally true — but you are still *rebuilding on the kit*, not scraping the
+   `browser_evaluate` on the element's `outerHTML` / `getComputedStyle` if you want the
+   rebuild structurally true — read spacing from the LONGHANDS (`paddingTop`, `marginLeft`),
+   because Obscura resolves `padding` and `margin` to `0px` whatever the element sets — but you are still *rebuilding on the kit*, not scraping the
    DOM into the output.
 2. **A real, specific example of the feature producing value** — an actual question and a
    smart answer, a real verdict with its reasoning, a real number with its source. Lift

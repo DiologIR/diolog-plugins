@@ -13,7 +13,9 @@
 // Every result carries its denominator. `failures: 0` is not a result;
 // `examined: 41, failures: 0` is, and `examined: 0` is a gate that never ran.
 //
-// Usage:  playwright-cli eval "$(cat gates.js)"
+// Usage:  obscura fetch <url> --eval "($(cat gates.js))()"
+//         (the wrapping call matters — this file is a bare arrow function and
+//          --eval takes an expression. run_gates.sh drives the viewport matrix.)
 () => {
   const deck = document.getElementById('deck');
   const slides = [...document.querySelectorAll('.slide')];

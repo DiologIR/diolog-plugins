@@ -28,8 +28,12 @@ repo. Read the section you need; you don't need all of it at once.
 
 - **Base URL:** `http://diolog.ai` (Docker reverse proxy on :80) — never
   `localhost:3000`. The app must be up (`./scripts/dev-docker.sh status`).
-- **Framework:** Playwright (`@playwright/test`). Single config:
-  `apps/web/e2e/playwright.config.ts` with multiple *projects*.
+- **Framework:** the suite on disk today is Playwright (`@playwright/test`), single
+  config `apps/web/e2e/playwright.config.ts` with multiple *projects*. It **predates the
+  Obscura migration** and has not been converted — it is described here as it is, so you
+  can read and extend it. **New harnesses go up in the `node:test` + Obscura shape**
+  (playbook §9); converting this one is its own job, not something to do halfway inside a
+  feature's suite.
 - **Layout:**
   ```
   apps/web/e2e/
@@ -68,9 +72,14 @@ repo. Read the section you need; you don't need all of it at once.
   `chromium` (NH3) project so they only run in the tenant project.
 - **Default company = NH3** (`696311310c0a6af07874e39a`). The presentations suite uses
   **Telstra** (`6971c5335c36590cc0ccd836`) — verified live via `GET /api/presentations`.
-- **playwright-cli for live discovery** (not for persisting auth): `playwright-cli open …`
-  resets context — use `goto` for in-session nav. `--raw snapshot` → the role/name
-  tree; `--raw eval "<js>"` → run JS / fetch APIs (`fetch(url,{credentials:'include'})`).
+- **Obscura for live discovery** (not for persisting auth): `obscura mcp` holds a session
+  across clicks — `browser_navigate` for in-session nav, `browser_snapshot` → the role/name
+  tree, `browser_evaluate` → run JS / fetch APIs (`fetch(url,{credentials:'include'})`).
+  `browser_evaluate` takes an **expression** and does **not** await it — an async
+  expression returns `{}`, so wrap and resolve inside the page or drive `obscura serve`
+  over CDP with `awaitPromise:true`. `http://diolog.ai` is a local proxy origin, so the
+  server needs `--allow-private-network` (set `OBSCURA_ALLOW_PRIVATE_NETWORK=1` in the MCP
+  server's env) or every navigation fails as an SSRF block.
 
 ## 3. Selector conventions + the trap catalogue
 
@@ -230,7 +239,7 @@ ACs, flag-off paths, reduced-motion) so nothing is silently uncovered.
 
 The reference build (DIO-4775/4777/4798/4820/4840 → `/presentations`). ~110 cases
 across `apps/web/e2e/tests/presentations/{gallery,themes,editor,generate}.spec.ts`,
-a dedicated `presentations` Playwright project on a `setup-telstra` storageState,
+a dedicated `presentations` project on a `setup-telstra` storageState,
 `fixtures/presentations.ts` (clone helpers + console-noise allowlists), and a plan
 led by the AC matrix. Run: `pnpm test:e2e:presentations` (`--workers=2`). Studying
 those files is the fastest way to copy the conventions exactly.
@@ -276,11 +285,11 @@ both writing and reading. All are instances of §10.
   default (NH3). Discover it live (the seed migration names it; e.g. presentations →
   Telstra, Tasks → the internal "Diolog" company), then add a dedicated setup
   storageState project for it.
-- **Live grounding (playwright-cli) is session-fragile:** element `ref`s go stale across
-  navigations and the session drops after idle. Prefer `--raw eval` DOM queries
-  (`getByRole` can't run there) over ref-clicks, and re-login after a gap. Drive
-  controlled React inputs with real keystrokes (`pressSequentially`/`type`), not a
-  direct `.value` set (which won't fire onChange).
+- **Live grounding is session-fragile:** snapshot refs go stale across navigations and
+  the session drops after idle. Prefer `browser_evaluate` DOM queries over ref-clicks,
+  and re-login after a gap. Drive controlled React inputs with real keystrokes
+  (`Input.dispatchKeyEvent`, or `browser_type`), not a direct `.value` set — which won't
+  fire onChange.
 - **Run the full suite TWICE.** Flakes only appear on the second run — optimistic-id
   timing, parallel-load 5xx, leftover state. A green-once suite isn't proven; green
   twice in a row is the bar (it also proves isolation).

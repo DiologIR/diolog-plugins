@@ -43,10 +43,11 @@ hero element + the layout to evoke** is the long pole. Fan it out:
   (`features-build/plain/NN-*.md`, `product-feature-guide.md`, the `*-design-system` stories)
   and returns a tight per-feature brief: verbatim on-screen labels, 2–3 candidate smart-copy
   lines grounded in Flight Centre, the hero element + what to ghost, the demo data.
-- **Keep those agents off the browser.** `playwright-cli` (and `agent-browser`) drive a single
-  shared browser instance — multiple agents driving it at once collide and corrupt each other's
-  sessions. So: doc-research fans out wide; **all rendered-mock screenshots go through one
-  driver, serially** (you, or a single dedicated capture agent). Capture the hero surfaces once
+- **Keep those agents off the browser.** Every `obscura fetch` is its own render, so parallel
+  agents cannot corrupt each other's session the way a single shared browser did — but each one
+  is a full page load of the same mock host, and `obscura mcp` *does* hold one shared session that
+  concurrent callers would fight over. So: doc-research fans out wide; **all rendered-mock
+  screenshots go through one driver, serially** (you, or a single dedicated capture agent). Capture the hero surfaces once
   (dashboard, conversations, the verdict/monitoring page, the mobile Home, …) and hand the PNGs
   to the build.
 
@@ -115,17 +116,22 @@ composition.
 also design-craft's `ai-slop-check` / `polish-pass` territory; let it run those. Check the
 playbook bar: the one idea reads at 50%; nothing important clipped; the copy is the real words.
 
-### playwright-cli gotchas (they cost real time the first run)
+### Obscura gotchas (they cost real time the first run)
 
-- **`file://` is blocked.** Serve the file and open the `http://` URL:
-  `python3 -m http.server 8823 --bind 127.0.0.1 &` then
-  `playwright-cli open http://127.0.0.1:8823/<file>.html`. Kill the server when done.
-- **`screenshot` takes `--filename`, not a positional path.** The positional arg is an *element
-  target/selector*. Full page: `playwright-cli screenshot --filename out.png --full-page`.
-- **Per-artboard capture** uses the figure as the selector:
-  `playwright-cli screenshot ".dio-canvas > figure:nth-of-type(N) .dio-board" --filename ab-N.png`
-  — clean, tight crops, one per graphic, ideal for review and for the eventual PNG export.
-- **One browser.** Don't run parallel agents that each drive playwright; serialise captures.
+- **Localhost is blocked by default.** Serve the file, then pass the global flag BEFORE the
+  subcommand: `python3 -m http.server 8823 --bind 127.0.0.1 &` then
+  `obscura --allow-private-network fetch http://127.0.0.1:8823/<file>.html --screenshot out.png`.
+  Without the flag it fails as an SSRF block, which reads like a broken page. Kill the server
+  when done.
+- **`--screenshot <file>` captures the settled page**, and there is no element-target argument —
+  a `fetch` capture is always the whole page.
+- **Per-artboard capture** needs the crop done yourself: measure the figure's box in the same
+  call, then crop the PNG — `obscura --allow-private-network fetch <url> --eval "(() =>
+  JSON.stringify([...document.querySelectorAll('.dio-canvas > figure .dio-board')].map(e => e.getBoundingClientRect())))()"`
+  — or drive `obscura serve` over CDP and pass the box as `Page.captureScreenshot`'s `clip`,
+  which is the cleaner route when you want one tight crop per graphic.
+- **`--wait N` is a fixed N-second delay, not a ceiling.** Omit it and you get adaptive settling
+  capped at 5s, which is what you want for a static artboard.
 
 If there's **no write-capable Figma MCP**, these per-artboard PNGs *are* the most useful next
 deliverable — offer to export the lot (the email drops one PNG per feature).

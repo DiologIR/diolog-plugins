@@ -78,11 +78,21 @@ them locally. Force them:
 - **Keyboard-only journey** through the primary flow: Tab order is logical, focus is always
   visible, Enter/Space activate, Esc dismisses, arrow keys work in menus/lists/tabs, and there
   is no trap outside intentional modal traps.
-- **Automated a11y gate:** run axe (`@axe-core/playwright`) per surface — and per forced state
-  from 6a, since an error banner or empty state can introduce its own violations. Bar: **zero
-  serious/critical** per surface; scoped, documented exclusions only for known third-party debt.
-  Never sample mid-animation — settle the page first (drain animations / wait for idle), or the
-  contrast numbers are confidently wrong.
+- **Automated a11y gate:** run axe per surface — and per forced state from 6a, since an error
+  banner or empty state can introduce its own violations. There is no runner integration to
+  install: inject `axe.min.js` with a `Runtime.evaluate`, then evaluate
+  `axe.run(document).then(r => JSON.stringify(r.violations))` with `awaitPromise:true`.
+  Verified working under Obscura — a fixture with a nameless button, an alt-less image and an
+  unlabelled input returns `button-name`, `image-alt`, `label`, `landmark-one-main`,
+  `page-has-heading-one` and `region`. Bar: **zero serious/critical** per surface; scoped,
+  documented exclusions only for known third-party debt.
+  **Two rules do not survive the engine, and both fail quiet.** `color-contrast` lands in
+  `incomplete`, never in `violations` — read `incomplete` as well or the gate reports clean on a
+  surface it never assessed, and take contrast from a direct `backgroundColor`/`color`
+  measurement (both are reliable) rather than from axe. And Obscura does not execute CSS
+  animations, so "settle the page before sampling" is unenforceable here — nothing was ever
+  moving, and equally nothing entrance-animated ever arrived. A surface whose content depends on
+  an entrance animation needs a real browser.
 - Native lane: `performAccessibilityAudit()` per screen (XCUITest) is the equivalent gate —
   contrast, Dynamic Type, clipped text, labels, hit-region ≥44pt (see the native lane in
   SKILL.md).
@@ -136,7 +146,7 @@ sessions — self-approval must fail server-side (this pairs with 6f).
 
 ## 6h — Agentic exploratory pass (optional, never a gate)
 
-Where an agent-browser lane exists (Playwright's bundled CLI+Skills/MCP, claude-in-chrome),
+Where an agent-browser lane exists (`obscura mcp` — 37 tools, session-holding),
 one unscripted agent pass over the feature — "accomplish <the user's goal> and report
 anything broken, dishonest, or confusing" — finds goal-level defects the scripted suite
 can't express. Use it as Slack Engineering's 2026 study places it: **an exploratory top
@@ -145,9 +155,8 @@ layer, not a CI gate** ("tests enforce journeys; agents verify goals") — agent
 non-deterministic by construction. Two disciplines make it safe: every agent finding is
 **converted to a deterministic spec** (or a filed bug) before it counts — an agent
 transcript is a lead, not coverage; and self-healing/generated selectors ship only
-through a human-reviewed diff — of Playwright's official agents, independent review
-endorses the healer; treat planner/generator output as drafts requiring the Phase 5
-assertion-strength gate like anything else.
+through a human-reviewed diff — treat any planner/generator output as drafts requiring the
+Phase 5 assertion-strength gate like anything else.
 
 ## Current-practice notes (researched 2026-08, panel-corroborated)
 
@@ -161,17 +170,17 @@ sweeps are implemented today. Re-verify when the toolchain moves:
   external service) reserved for genuinely visual surfaces. **Vision-LLM review is
   triage/advisory only — never a merge-blocking oracle** (no rigorous CI case study
   exists; the /design-review call is the sanctioned judged layer).
-- **A11y floor specifics:** `@axe-core/playwright` + Playwright's native ARIA
-  assertions (`toHaveAccessibleName`, `toHaveRole`, `toHaveAccessibleErrorMessage`);
-  `page.accessibility` is removed. Automated rules ≠ WCAG conformance — `target-size`
-  is effectively the only automated WCAG 2.2 rule; the judged criteria stay human/
-  design-review territory.
-- **Flake discipline is now checkable:** web-first assertions only; lint-ban
-  `waitForTimeout` and `networkidle` (eslint-plugin-playwright / Biome ship the
-  rules); CI runs `retries: 1–2` + `--fail-on-flaky-tests`; quarantine carries a
-  fix-or-delete SLA; `retryStrategy: 'isolated'` separates app flake from parallel
-  collisions; `--only-changed` gives cheap test-impact selection on PRs. Per-worker
-  identities (`test.info().parallelIndex`-keyed accounts) are the official answer to
+- **A11y floor specifics:** `axe-core` injected into the page, plus name/role assertions
+  read from `Accessibility.getFullAXTree` (implemented and working) — there are no
+  runner-provided ARIA matchers to lean on, so assert the accessible name from the AX tree
+  yourself. Automated rules ≠ WCAG conformance — `target-size` is effectively the only
+  automated WCAG 2.2 rule, and under this engine `color-contrast` is not automated at all
+  (see 6g); the judged criteria stay human/design-review territory.
+- **Flake discipline is now yours to wire:** poll for a condition with a deadline, never
+  sleep — a bare `setTimeout` in a spec is the thing to ban in review. `node --test` has no
+  retries, no `--fail-on-flaky-tests` and no worker identities, so run the suite twice and
+  treat any disagreement between the two runs as the flake signal; a flaky spec is fixed or
+  deleted rather than quarantined. Per-test identities are the answer to
   shared mutable backends.
 - **Deeper isolation when the stack allows:** Postgres → DB-branch-per-PR
   (Neon-style copy-on-write); MongoDB has no native branching → Testcontainers

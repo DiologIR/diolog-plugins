@@ -330,5 +330,5 @@ or a template without reading its comments.
 | `deck-craft` | step 0 for its direction round when there is no design system to measure; step 8 for `references/deck-review.md`; and as the destination whenever the ask turns out to be a `.pptx` |
 | `design-review` | step 8, on the served deck, before calling it done |
 | `mcp__media-gen-pro__generate_image` | step 5 — a tool, not a skill |
-| `playwright-cli` | step 7 — `run_gates.sh` drives it; the gates do not run without it |
+| `obscura` | step 7 — `run_gates.sh` drives it over CDP; the gates do not run without it on PATH |
 

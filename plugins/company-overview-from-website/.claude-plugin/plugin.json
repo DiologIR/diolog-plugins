@@ -1,6 +1,6 @@
 {
   "name": "company-overview-from-website",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Produce the company-overview markdown that the investor-portal generator reads: what a listed company does, who leads it, what it has lodged, and every image and PDF it publishes \u2014 crawled from the company's own site so every fact is attributable rather than authored. Pairs with design-md-from-website to form the two inputs generate-investor-portal requires. Carries the output contract the generator parses, including the exclusions (privacy policies, crawler scaffolding, cart and login pages) that have silently become fake business units on real runs.",
   "author": {
     "name": "DiologIR",

@@ -32,8 +32,9 @@ stayed true throughout the production defect, because the box was the right
 distances against the band the stage is supposed to occupy, all of which must be
 zero.
 
-**Measured, not screenshotted.** `locator.screenshot()` and `playwright-cli
-screenshot "#s4 .stage"` render the element's **own box**, so they are blind to
+**Measured, not screenshotted.** An element capture — a `Page.captureScreenshot`
+whose `clip` came from the stage's own `getBoundingClientRect()` — renders the
+element's **own box**, so it is blind to
 the entire class of defects about where that box sits — clipped past the window
 edge, shifted off-centre, hidden under sticky chrome. A stage pushed 120px past
 the right edge element-screenshots as a flawless slide, on every viewport, every

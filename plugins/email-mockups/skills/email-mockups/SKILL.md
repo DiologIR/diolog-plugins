@@ -76,7 +76,7 @@ feature collect three things:
    section) and `docs/marketing/features-build/plain/NN-*.md`. This gives you the
    real on-screen labels and the on-brand phrasing to put in the graphic.
 2. **The real layout** — the **rendered** mock UI, read in a browser via
-   `playwright-cli`: `http://web.diolog.mock/preview/preview.html` (web — click the
+   `obscura`: `http://web.diolog.mock/preview/preview.html` (web — click the
    sidebar item), `http://customer.diolog.mock/` and `http://investor.diolog.mock/`
    (mobile — switch to Storyboard). Lift the real structure, labels and hierarchy
    from the actual DOM, and grab a screenshot to hand design-craft. The `.tsx` source
@@ -84,7 +84,7 @@ feature collect three things:
    *which* screen a feature is — and the fallback if a host is down. ⚠️ The mobile
    apps use their **own** section numbering — match by meaning, never by assuming the
    guide's numbers carry over. `references/finding-feature-context.md` has the hosts,
-   the playwright-cli commands and the numbering gotcha.
+   the Obscura commands and the numbering gotcha.
 3. **The design spec + tokens** — `DESIGN.md` at the repo root is the canonical
    design authority (palette, type, the one-accent / two-blue rules, radii,
    shadows, component inventory, voice). Read the relevant parts so the mock obeys
@@ -205,8 +205,8 @@ not invent new tokens, shadows, or a second blue.
 
 ## 5. Verify the render
 
-Open the HTML in a browser, screenshot it, **and read the screenshot** (use the `playwright-cli` or
-`agent-browser` skill, or the Chrome MCP). Capturing is not seeing: a shot that succeeded against a
+Open the HTML in a browser, screenshot it, **and read the screenshot** (`obscura fetch <url>
+--screenshot out.png`). Capturing is not seeing: a shot that succeeded against a
 404 looks exactly like a shot that succeeded against the artboard, and only opening the image tells
 them apart. Ask each capture *"what is wrong with this?"*, never *"is this done?"*. This is design-craft's `ai-slop-check` /
 `polish-pass` territory — if design-craft built it, let it run those — and then
@@ -218,7 +218,7 @@ every clean shot carries a `.dio-artboard__note` with **no em/en-dashes**. A fas
 lint** (grep the assembled file for emoji, banned puffery, `#007AFF`, serif-bold,
 `border-left` stripes, em-dashes inside notes, and stray non-token hex) catches the mechanical
 slop before the visual pass — `references/building-and-verifying.md` has the exact checks plus
-the playwright-cli gotchas (serve over http, `--filename`, per-figure `nth-of-type` capture).
+the Obscura gotchas (serve over http, `--allow-private-network`, per-figure crop).
 Fix drift before going to Figma.
 
 ## 6. Build in Figma
@@ -288,7 +288,7 @@ clean, convertible product surface over email-only treatments.
 ## Bundled resources
 
 - `references/finding-feature-context.md` — the served mock hosts (web / customer /
-  investor) and how to read their rendered HTML via playwright-cli, where the feature
+  investor) and how to read their rendered HTML with Obscura, where the feature
   docs and `.tsx` source live across web + the two mobile islands, and the
   section-numbering gotcha.
 - `references/mockup-playbook.md` — the impressions-but-rich brief: lead with the wow,
@@ -298,7 +298,7 @@ clean, convertible product surface over email-only treatments.
   split), the real logo, tokens, type, voice, framing hygiene, and sizes. Hand this to design-craft.
 - `references/building-and-verifying.md` — the harness for a *large* set: the feature
   coverage ledger, the parallel doc-research + build fan-out (one master brief → per-agent
-  fragment files → assembly), the deterministic verification lint, and the playwright-cli
+  fragment files → assembly), the deterministic verification lint, and the Obscura
   gotchas. Read it whenever the set is more than a few graphics.
 - `references/figma-build.md` — discovering a write-capable Figma MCP and building
   the canvas tool-agnostically.
