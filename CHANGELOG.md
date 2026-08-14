@@ -6,6 +6,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); eac
 
 ## 2026-08-14
 
+### deck-craft 1.8.0 → 1.9.0
+
+Integrates deep research findings from multi-model expert panels on Investor Relations, retail investor comprehension, and empirical slide presentation engineering:
+
+- **Added Dedicated Investor Relations Guide (`references/investor-relations.md`)**:
+  - **Mathematical Typography Derivation (ISO 9241-303 & AVIXA DISCAS)**: Closed-form formula $\text{font\_px} = \frac{\text{arcmin} \times \text{VR}}{2.228}$ governing the $24\text{px}$ reading floor ($\text{VR} \approx 3$), $\ge 44\text{px}$ projection floor ($\text{VR} = 6$), and the quantitative defense of the $96\text{px}$ hero metric ($\text{VR} = 10$).
+  - **Rennekamp (JAR 2012) Fluency Safeguards**: Codified structural visual truth requirements to counter the risk of visual fluency inducing unwarranted retail investor sentiment without true comprehension.
+  - **IBCS Financial Chart Standards**: Strict zero-baseline mandate (citing Long & Kay 2024 proving baseline truncation distortion cannot be mitigated by footnotes), shared-scale horizontal comparison bars for asymmetric ROI/cost-benefit, and cash flow waterfall bounds (20–25 bars).
+  - **Regulatory Disclosures**: Codified ASX Listing Rule 3.1 & GN14 (separate lodgement order), ASIC RG 230 non-IFRS reconciliation rules, and SEC Reg FD / Reg G equal-or-greater prominence requirements.
+- **Added IR Deck Recipes (`references/recipes.md`)**:
+  - `quarterly-operational-strategic`: 12-slide uncompressed quarterly update spine.
+  - `capital-allocation-dividend`: 8-slide capital allocation framework and dividend reinstatement scorecard.
+- **Calibrated Preflight & Verification Gate (`scripts/deck-preflight.js` & `references/deck-review.md`)**:
+  - Two-tier `isAccessory` check allowing $18\text{px} - 20\text{px}$ auxiliary metadata (eyebrows, table cells, footnotes) while strictly enforcing $\ge 24\text{px}$ on primary body copy.
+  - Inlined percentage style extraction for exact DECLARED chart honesty checks.
+  - Floating navigation chrome exclusions preventing false collision alarms.
+- **Codified Asymmetric Editorial Splits & Brand Signatures (`references/visual-craft.md` & `references/html-deck.md`)**:
+  - Standardised $1.06\text{fr} : 0.94\text{fr}$ full-height photo splits with soft gradient scrims.
+  - Added authored CSS polygon chevron list bullets (`.chevlist li::before`), $8\text{px}$ structural grounding beams (`.rule`), and angled footer divider seams (`.chev-band`).
+
 ### deck-craft 1.7.0 → 1.8.0
 
 Hardens first-pass presentation deck generation against common design-review failure modes identified during ASX quarterly and strategic deck audits:

@@ -44,6 +44,8 @@ Match the brief against `whenToUse` and the signal words. One recipe at most. If
 | `internal-strategy` | Strategy offsite, planning, operating-model change. Signals: *strategy, offsite, planning, operating model* | cover-statement → definition-strip → competitive-position → matrix-2x2 → routing-alternatives → org-target-state → decision-request |
 | `budget-review` | Budget, forecast or spend review. Signals: *budget, forecast review, spend, reforecast* | cover-title → budget-variance → spend-breakdown → range-not-point → assumption-load-bearing → capacity-vs-demand → decision-request |
 | `all-hands` | Company or team all-hands. Signals: *all hands, town hall, team update* | cover-image-bleed → agenda-progress → speedrun-summary → metric-dashboard → release-notes → hiring-plan → attention-reset → qa |
+| `quarterly-operational-strategic` | 12-slide comprehensive quarterly operational & strategic update. Signals: *quarterly update, operational update, strategic update, 4C strategic* | cover-image-bleed → quarterly-highlights → strategy-delivery → segment-operational-split → asset-build-matrix → contracted-backlog → restructuring-roi → net-debt-trajectory → dividend-pathway → governance-director → outlook-guidance → corporate-directory |
+| `capital-allocation-dividend` | Capital allocation framework & dividend reinstatement pathway. Signals: *capital allocation, dividend policy, capital framework, cash waterfall* | cover-title → capital-allocation-framework → cashflow-waterfall → balance-sheet-optimization → dividend-reinstatement-pathway → reinvestment-growth → shareholder-returns → governance-disclaimer |
 
 ---
 

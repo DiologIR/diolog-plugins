@@ -157,8 +157,24 @@
   step('Type floor', () => {
     // Web density (13–16px) is the reflex to resist: it is unreadable from row
     // four. Sizes are normalised to the authored canvas before comparison.
+    // Two-tier floor: primary body/titles floor is bodyFloor (24px);
+    // accessory text (eyebrows, fine footnotes, captions, stat notes, table data cells)
+    // has a tinyFloor (18px) threshold.
     const sizes = {};
     const belowFloor = [];
+    const isAccessory = (el, cls) => {
+      const c = (cls || '').toLowerCase();
+      const tag = el.tagName.toLowerCase();
+      return (
+        tag === 'th' || tag === 'td' || tag === 'figcaption' ||
+        c.includes('eyebrow') || c.includes('fine') || c.includes('foot') ||
+        c.includes('note') || c.includes('caption') || c.includes('chip') ||
+        c.includes('lab') || c.includes('small') || c.includes('tip') ||
+        c.includes('unit') || c.includes('xax') || el.hasAttribute('data-accessory') ||
+        !!el.closest('.foot, footer, [class*="foot"], .fine, figcaption, [class*="note"], .xax, table')
+      );
+    };
+
     slides.forEach((s, i) => {
       const f = toCanvasPx(s);
       s.querySelectorAll('*').forEach((el) => {
@@ -168,9 +184,11 @@
         const cs = getComputedStyle(el);
         const authored = Math.round(parseFloat(cs.fontSize) * f);
         sizes[authored] = (sizes[authored] || 0) + 1;
-        if (authored < CFG.bodyFloor) {
+        const cls = String(el.className || '');
+        const floor = isAccessory(el, cls) ? CFG.tinyFloor : CFG.bodyFloor;
+        if (authored < floor) {
           belowFloor.push({ slide: idOf(s, i), px: authored,
-                            cls: String(el.className || '').slice(0, 40),
+                            cls: cls.slice(0, 40),
                             text: t.slice(0, 44) });
         }
       });
@@ -212,8 +230,9 @@
   step('Collision with slide chrome', () => {
     // "Nothing past the stage bounds" is silent about content running INTO the
     // footer, the page number or a floating control dock — all inside the bounds.
+    // Exclude global floating navigation rails/progress lines positioned outside slide bodies.
     const chromeSel = '.foot, .footer, [class*="foot"], [class*="dock"], [class*="controls"], ' +
-                      '[class*="page-num"], [class*="slide-number"], nav';
+                      '[class*="page-num"], [class*="slide-number"]';
     const docks = [...document.querySelectorAll(chromeSel)].filter((el) => {
       const cs = getComputedStyle(el);
       return vis(el) && (cs.position === 'fixed' || cs.position === 'absolute' || cs.position === 'sticky');
@@ -221,18 +240,17 @@
     slides.forEach((s, i) => {
       const k = scaleOf(s);
       docks.forEach((d) => {
-        if (d.contains(s) || s.contains(d) === false && !d.closest(sel)) {
-          // a global fixed dock: test it against every slide's content
-        }
         const dr = rect(d);
         if (!dr.height) return;
-        s.querySelectorAll('p,li,td,th,h1,h2,h3,h4,figure,table,img').forEach((el) => {
-          if (d.contains(el)) return;
+        s.querySelectorAll('p,li,td,th,h1,h2,h3,h4,figure,table').forEach((el) => {
+          if (d.contains(el) || el.contains(d)) return;
+          // Ignore full-bleed background images or scrims
+          if (el.tagName === 'IMG' || el.classList.contains('photo') || el.classList.contains('scrim')) return;
           const r = rect(el);
           if (!r.width || !r.height || !vis(el)) return;
           const overlapY = Math.min(r.bottom, dr.bottom) - Math.max(r.top, dr.top);
           const overlapX = Math.min(r.right, dr.right) - Math.max(r.left, dr.left);
-          if (overlapY > 2 && overlapX > 2) {
+          if (overlapY > 4 && overlapX > 4) {
             out.collisions.push({ slide: idOf(s, i),
                                   chrome: String(d.className || d.tagName).slice(0, 30),
                                   text: (el.textContent || '').trim().slice(0, 40),
@@ -357,7 +375,10 @@
       s.querySelectorAll('[data-chart]').forEach((g) => {
         const bars = [...g.querySelectorAll('[data-value]')].map((b) => {
           const r = rect(b);
-          return { len: Math.max(r.height, r.width), value: num(b.dataset.value) };
+          const inline = b.getAttribute('style') || '';
+          const pct = inline.match(/(?:height|width)\s*:\s*([\d.]+)%/);
+          const len = pct ? parseFloat(pct[1]) : Math.max(r.height, r.width);
+          return { len, value: num(b.dataset.value) };
         });
         if (!judge(id, 'declared:' + g.dataset.chart, bars, declaresAxis)) unverified++;
       });

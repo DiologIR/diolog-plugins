@@ -129,6 +129,32 @@ In local file runs, headless browser reviews, and offline presentation laptops, 
 </svg>
 ```
 
+### Pattern C: Shared-Scale Horizontal Comparison Bars (ROI / Cost vs Benefit)
+When comparing a one-off cost against ongoing savings (e.g. $0.4m restructuring cost vs ~$8.0m annualised benefit), draw both bars on a **shared scale from zero**. The visual disparity instantly demonstrates the return:
+```html
+<div class="hbars" role="img" aria-label="Restructuring cost of $0.4m against targeted benefit of ~$8.0m on a shared scale from zero.">
+  <div class="hbar">
+    <p class="lab"><span>Restructuring cost incurred</span></p>
+    <div class="track"><span class="fill" style="width: 5%"></span><span class="v">$0.4m</span></div>
+  </div>
+  <div class="hbar key">
+    <p class="lab"><span>Targeted annualised pre-tax cash benefit</span></p>
+    <div class="track"><span class="fill" style="width: 100%"></span><span class="v">~$8.0m</span></div>
+  </div>
+</div>
+```
+
+### Pattern D: Tabular Progress Completion Bars
+Inside project execution or equipment build tables, pair numeric percentage labels with visual horizontal progress tracks:
+```html
+<div class="barcell" style="display: flex; align-items: center; gap: 16px;">
+  <div class="bar" style="width: 200px; height: 10px; background: var(--surface-sunken); border-radius: 9999px; overflow: hidden; position: relative;">
+    <span style="position: absolute; inset: 0 auto 0 0; width: 75%; background: var(--ink); border-radius: 9999px;"></span>
+  </div>
+  <span class="d" style="font-family: var(--font-mono); font-weight: 500;">~75%</span>
+</div>
+```
+
 ## 3. Cut to the point
 
 - **Every series and column that doesn't support the slide's one idea comes

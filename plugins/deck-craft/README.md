@@ -22,6 +22,8 @@ The router picks the target from the *destination*, not the content. Each refere
 
 **First-pass design resilience (v1.8.0).** Pure deterministic SVG charts by default (eliminates external CDN failures), automated image downsampling and Base64 inlining for single-file portability, strict dual-theme contrast rules for dark bands, `IntersectionObserver` active slide tracking with sticky header offset guards, and clean card semantic discipline.
 
+**Investor Relations & Retail Investor domain craft (v1.9.0).** Dedicated domain guide (`references/investor-relations.md`) codifying ISO 9241-303 / AVIXA DISCAS visual angle typography derivations, calibrated two-tier type floor gates, IBCS financial chart standards (shared-scale ROI comparison bars, zero-baseline mandate, waterfall bridge bounds), asymmetric editorial photo splits, brand geometric signatures (custom polygon chevrons, 8px grounding rules, structural divider seams), uncompressed 12-slide quarterly and capital allocation recipes, and floating minimalist glass chrome.
+
 **Progressive direction-finding.** The template libraries on the machine are read as evidence, not menus — the bold pack's selection index before any `design.md`, two or three matching open-design systems, a named brand's portable design system. No bulk reads.
 
 ## Installation

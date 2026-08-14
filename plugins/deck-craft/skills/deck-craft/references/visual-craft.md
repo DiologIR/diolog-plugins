@@ -118,13 +118,22 @@ Each rule leads with the move to make; the trailing clause names what to avoid.
 - **No imitation material.** CSS bevels, embossing, faux letterpress, fake foil, stamped-metal and chalk effects standing in for a material the slide never actually renders read as machine-made faster than any other tell — and decks reach for them more than web pages do, usually on a cover. Either the material is a real asset or the surface is honestly flat. A gradient standing where a texture belongs ships the gradient.
 - **Depth with an offset and a soft blur, from one light source.** A zero-offset coloured halo is paint, not elevation; a hard offset block shadow (`4px 4px 0`) is a costume that only a genuinely neobrutalist direction earns.
 - **Backgrounds with intent.** A flat toned ground, one photograph, or one geometric device. Avoid the default corporate wash: blue-purple gradient, faint hex grid, floating translucent circles.
-- **Card discipline.** Separate with a thin all-round border, a subtle shadow, or background contrast. **Never use `border-left: 4px solid` on generic cards, quotes, or metric tiles** — reserve left borders strictly for genuine system warnings or semantic alert banners. On quotes and leadership cards, use subtle background contrast and role chips instead.
+- **Card discipline.** Separate with a thin all-round border, a subtle shadow, or background contrast. **Never use `border-left: 4px solid` on generic cards, quotes, or metric tiles** — reserve left borders strictly for genuine system warnings or semantic alert banners. On quotes and leadership cards, use **top accent rules** (`border-top: 4px–6px solid var(--primary)`), subtle background contrast, and role chips instead.
+- **Asymmetric Editorial Layouts.** Move beyond identical card grids: pair a full-height editorial photograph on one half of the slide (`grid-template-columns: 1.06fr 0.94fr` or `.92fr 1.08fr`) with an overlaid gradient scrim and a zero-based chart/bullet list on the other half. Full-height imagery grounds the slide in reality.
+- **Brand Geometric Signatures.** Translate the subject's physical and industrial world into authored CSS geometry:
+  - Custom list bullets using SVG/CSS polygon clip-paths (e.g. chevron marks `clip-path: polygon(...)`) instead of generic round bullet dots.
+  - Heavy grounding accent rules (`.rule` e.g. `width: 96px; height: 8px; background: var(--primary)`) at the top of headers, evoking structural beams or rule lines.
+  - Section divider bands (`.chev-band` with angled `clip-path: polygon(...)`) separating content zones.
 - **Charts show the point.** Cut every series and column that doesn't support the slide's claim. Avoid 3D, avoid gratuitous legends where direct labels work, and never truncate a value axis on a comparison — that's a defect, not a style.
 
 
-## 7. Accessibility floor
+## 7. Accessibility & Typography Floors
 
 Not an add-on; on a projector it's just legibility. Contrast per §4. Never encode by colour alone. Keep interactive affordances (in an HTML deck: nav, links) keyboard-reachable with a visible focus ring — `:focus-visible { outline: 2px solid …; outline-offset: 2px }`, never `outline: none` with no replacement. Respect `prefers-reduced-motion`: under it, builds apply instantly but keep their click steps, because build order is content rather than decoration. Meaningful images get alt text; decorative ones get `alt=""`.
+
+**Two-Tier Typographic Scale on 1920×1080 Canvas:**
+- **Primary Content Floor (≥24px, ideally 28px–34px+):** Body prose, slide titles (68px–104px), lead paragraphs (32px–40px), hero stats (56px–96px), chart values (28px–38px).
+- **Auxiliary/Accessory Floor (≥18px–20px):** Eyebrow category overlines (18px uppercase tracking `0.12–0.14em`), tabular data table cells (20px), chart axis sub-labels (20px–23px), stat descriptive notes (20px), and statutory footnotes/timestamps (20px). Do not artificially inflate 18px eyebrows or legal footnotes to 24px; doing so compresses visual hierarchy and makes metadata compete with body copy.
 
 ## 8. The last look
 
@@ -146,3 +155,4 @@ rules, all learned on an ASX-derived deck:
 If a deck and a data-driven surface are built from the same material, the surface's provenance
 model is the better source: read `ux-craft/references/data-provenance.md` and carry its three
 states into what you choose to put on a slide.
+

@@ -22,6 +22,8 @@ Ambiguous? The tell is the *destination*, not the content. "Send it to the board
 
 **Read only the reference for your target.** Each one is self-contained. Reading all three costs tokens and produces a deck confused about its own format.
 
+**When the deck is for Investor Relations, earnings releases, quarterly updates, capital allocation, dividend pathways, roadshows, or retail investor software**: also read `references/investor-relations.md` alongside your target reference for ISO 9241-303 / DISCAS mathematical legibility derivations, IBCS financial chart standards (shared-scale ROI bars, zero-baseline mandate), and regulatory invariants (ASX GN14, ASIC RG 230, SEC Reg FD/G).
+
 ## 2. Before any slide: the discovery round
 
 Ask once, in one consolidated round (`AskUserQuestion` where available), then execute. What actually changes the deck:
@@ -131,6 +133,7 @@ Before laying out a decision deck (board pack, investment case, proposal), shape
 This skill is self-contained — it needs no other skill installed. Read only the reference for your target, plus the review file.
 
 - `references/visual-craft.md` — **the design layer, read on every build**: consuming a `DESIGN.md` / token file, authoring a direction, type, colour, hierarchy and rhythm, anti-slop, the accessibility floor, the subtractive last look.
+- `references/investor-relations.md` — **the Investor Relations & Retail Investor domain guide**: ISO 9241-303 / DISCAS visual angle derivations, IBCS financial chart standards (shared-scale ROI bars, zero-based column plots, waterfall bridges), cognitive science & processing fluency traps, regulatory compliance (ASX GN14, ASIC RG 230, SEC Reg FD/G), and 12-slide quarterly results spines.
 - `references/html-deck.md` — the HTML target: the scaling shell, type-scale tokens, static-markup discipline, the wrapper-collapse failure mode, speaker notes, print/PDF.
 - `references/lecturn-json.md` — the `lecturn.deck/1` target: root shape, the element union, locating and driving the converter (`from-pptx` / `to-pptx` / `validate` / `inspect`), and the validator rules that bite.
 - `references/diolog-templates.md` — the template-assembly target: read order, the `render_deck` loop, the job envelope, the theme type scale, `x.diolog.structure`, the deck producer handoff, and the read discipline that keeps a deck run from becoming a repository sweep.

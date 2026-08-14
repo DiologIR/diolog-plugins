@@ -210,6 +210,16 @@ The nowrap and tabular-numbers rule is the highest-yield line in the block. A re
          transform: scale(var(--s)); transform-origin: center center; }
 ```
 
+### The Floating Minimalist Chrome Standard (Never Sticky Website Navbars)
+
+A slide deck is an unencumbered fullscreen presentation, **not a multi-page web application**. 
+- **Never add a sticky top header or website navbar** (e.g. `<header id="top-nav-bar">` with logo, company name, and ticker). A top navbar steals vertical space, compromises the 16:9 stage aspect, and transforms a presentation deck into a generic portal.
+- **Implement the standard floating trinity**:
+  1. **Top Scroll Progress Line (`#progress-bar`)**: Fixed 4px hairline across the top of the viewport (`height: 4px; background: var(--primary); transition: width 80ms ease-out;`).
+  2. **Right-Hand Floating Dot Rail (`#side-nav`)**: Vertical glassmorphic pill (`background: rgba(24, 23, 23, 0.85); backdrop-filter: blur(12px); border-radius: 9999px;`) with interactive dot indicators and hover tooltips showing slide titles (`01 Cover`, `02 Highlights`, ...).
+  3. **Bottom Floating Controller (`#controls`)**: Glassmorphic pill containing previous/next arrow buttons, slide counter (`01 / 12`), and a dedicated PDF print button (`window.print()`).
+  4. **Keyboard Navigation Support**: Always bind `ArrowDown`/`PageDown`/`j`/`J` (next), `ArrowUp`/`PageUp`/`k`/`K` (prev), `Home` (slide 1), and `End` (last slide).
+
 **If the deck has persistent chrome — a control bar, a progress rail — give it its own band rather than floating it over the stage.** Reserve the space in the scaling container (`inset: 0 0 104px 0`) and compute `s` against *that* box, not the viewport. Chrome floated at `bottom: 28px` sits on slide content at every 16:9-ish window, where the letterbox is only a few dozen pixels.
 
 **Auto-hiding controls hold open on `:focus-visible`, not `document.activeElement`.** A mouse click leaves focus on the button it clicked, so an `activeElement` check re-arms the timer forever and the chrome never retires again for the rest of the session. `controls.querySelector(':focus-visible')` matches keyboard focus only, which is the case that actually needs the hold. Hidden chrome must also stay keyboard-reachable: wake it on `keydown` so the first Tab brings it back before focus resolves.
