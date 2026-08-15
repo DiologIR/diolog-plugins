@@ -283,25 +283,24 @@ Full detection mechanics, assertion patterns, and the scale rules are in
 **`references/proactive-sweeps.md`** — read it before running the phase. Sweep
 findings route into Phase 8 like any red assertion; sweep specs are Phase 9's input.
 
-### 7. Rendered-quality handoff — call `/design-review`
+### 7. Rendered-quality handoff — call `/design-review` & `/be-my-witness`
 
 The sweeps assert *behaviour*; they deliberately do not judge how the result *looks*.
-When the feature has meaningful UI (any new or visibly changed surface), invoke the
-**`/design-review`** skill on the primary surfaces — it runs its own worklist-contract
-pipeline (deterministic WCAG/contrast/motion/layout-integrity gates, structural render
-at the viewport matrix, the nine-state matrix, component inventory, craft, flow and
-systematisation passes) and returns severity-ranked findings with evidence. Feed it:
-the surface list (from Phase 0's axes), the auth recipe, and the forced-state
-URLs/fixtures built in 6a so its state stage sees the states you can force. Where the
-feature has a design-of-record (an HTML mock, DESIGN.md), also point it at the
-parity/mock question (its `parity-oracle.md`) or run the `mockup-fidelity` skill —
-agreement with the mock is measured on the rendered tree, never eyeballed.
+When the feature has meaningful UI (any new or visibly changed surface):
 
-Triage its findings like sweep reds: functional defects (a dead control it found, a
+1. **Automated Visual Diff-Masking via `/be-my-witness`**:
+   - When a design-of-record exists (HTML mocks in `design/mocks`, Figma exports, PNG references), invoke the **`/be-my-witness`** skill on the captured screenshots.
+   - `/be-my-witness` executes deterministic pre-scans, component-slice YIQ delta masks, and applies the **Dual-Oracle Discipline** (the design mock is the visual oracle for alignment, spacing, typography, and control hierarchy; test expectations govern behavior).
+   - Component-level slicing catches fine structural defects (e.g. centered menu buttons instead of leading-aligned rows with trailing chevrons) before they are smoothed over by whole-surface anti-aliasing.
+
+2. **Design Craft & A11y Audit via `/design-review`**:
+   - Invoke **`/design-review`** on the primary surfaces — it runs its own worklist-contract pipeline (deterministic WCAG/contrast/motion/layout-integrity gates, structural render at the viewport matrix, the nine-state matrix, component inventory, craft, flow and systematisation passes) and returns severity-ranked findings with evidence. Feed it: the surface list (from Phase 0's axes), the auth recipe, and the forced-state URLs/fixtures built in 6a so its state stage sees the states you can force.
+
+Triage findings like sweep reds: functional defects (a dead control it found, a
 contrast gate, a state that dead-ends) go to Phase 8; judged visual findings ride the
 report with their severity for the human. Do not re-litigate its gates here, and do
 not duplicate its stages in specs — the suite asserts behaviour forever; the review
-judges rendering at this milestone. If `/design-review` is unavailable, say so in the
+judges rendering at this milestone. If `/design-review` or `/be-my-witness` is unavailable, say so in the
 report — its absence is a named coverage gap, not a silent skip.
 
 ### 8. Catch bugs — and fix the tractable ones
@@ -354,22 +353,15 @@ The phases above assume a browser app. The portfolio this skill serves also ship
 native apps, MCP servers, and content sites; the *method* (AC-first, drive-and-assert,
 sweeps, guard promotion) transfers — the harness changes:
 
-- **Native apps (Expo / SwiftUI — iOS, iPadOS, macOS).** The runner is **Maestro**
-  (iOS Simulator; YAML flows against a DEBUG fixture build that boots signed-in and
-  seeded) and **Proctor / XCUITest** (macOS — Maestro cannot drive it; and everywhere
-  `performAccessibilityAudit()` is the 6d gate: contrast, Dynamic Type, clipped text,
-  labels, hit-region ≥44pt). **Navigate deep-link-first** — every `maestro test` pays
-  a ~15–20s driver-startup tax, so reach screens via `xcrun simctl openurl <SIM>
-  "<scheme>://<route>"` and reserve Maestro for assertions and the taps a deep link
-  can't reach, batched into one flow. States and data shapes ride the fixture's
-  launch flags; multi-user = two Simulators; structural facts come from the
-  accessibility tree (`axe describe-ui` / Maestro hierarchy / `app.debugDescription`),
-  since native has no `getComputedStyle`.
+- **Native apps (Expo / SwiftUI — iOS, iPadOS, macOS, Windows).**
+  - **macOS Apps**: Drive via the **`/proctor`** skill and the Proctor MCP server. Attach to live AppKit/SwiftUI windows and menu extras (never headless SPM `ImageRenderer`), drive user flows via `proctor_act`, assert accessibility and geometry via `proctor_assert` (especially `kind: "horizontalAlignment"`, `alignedWith`, `containedIn`, `frameEquals`, `minHitSize`), and capture high-res frames via `proctor_capture` / `proctor_zoom`.
+  - **iOS Apps**: Drive via **Maestro** on iOS Simulator (`.maestro` YAML flows, navigate deep-link-first via `xcrun simctl openurl`), capturing state snapshots for all user journeys.
+  - **Windows Apps**: Drive via WinAppDriver / UI Automation, capturing flyout and window states.
   
   **Mandatory Native Visual & Layout Verification Rules:**
   1. **No Headless SPM Rasterizers (`ImageRenderer`) as Visual Proof**: `SwiftUI.ImageRenderer` during headless `swift test` runs without an active window server and event loop. On macOS AppKit, controls like `Menu` and `NSPopUpButton` fail silently to render their real AppKit geometry (rendering yellow placeholder glyphs). Native UI tests must attach to **live attached windows or menu extras** via Proctor/AX or run in host apps.
   2. **Component-Level Layout Invariants**: Assert horizontal alignment (`leading` vs `center`), trailing chevron tokens (`›` vs system `⌄`), and control spacing.
-  3. **Phase 7 Automated Visual Regression Gate**: Run automated `/be-my-witness` component slice diff-masking against design mocks before marking visual acceptance as complete.
+  3. **Phase 7 Automated Visual Regression Gate (`/be-my-witness`)**: Route all captured native frames and component slices through `/be-my-witness` to perform deterministic pre-scan, YIQ diff-masking, and mock conformance grading before marking acceptance complete.
 - **MCP servers (FastMCP/TypeScript).** The hermetic vitest tier is unit testing, not
   acceptance. Acceptance = **drive the built server through a real MCP client** — the
   Claude Agent SDK or a scripted `claude` CLI session against the stdio binary — and
