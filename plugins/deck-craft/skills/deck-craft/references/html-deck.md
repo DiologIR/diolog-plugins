@@ -177,6 +177,13 @@ Most of what a deck review finds is preventable in the stylesheet rather than re
   font-feature-settings: "tnum";
 }
 
+/* Keep the nowrap list to things that are genuinely atomic. `.stat` is the
+   TILE, not its number: putting the tile in this list makes white-space:nowrap
+   cascade to its label and note, so a long note cannot wrap, the tile's
+   min-content blows past its grid track, and the last tile in a four-up row is
+   clipped at the slide edge. Measured — it cost one rebuild. List `.stat-num`,
+   never `.stat`. The same trap applies to any wrapper whose child is the atom. */
+
 /* Reserve the foot of every slide. This space is structural: it is what keeps
    the last line of body copy off the footer rule and out from under any
    floating control dock — and it is a QUANTITY, not a guess. The reserve must
@@ -187,6 +194,21 @@ Most of what a deck review finds is preventable in the stylesheet rather than re
    separate bugs. Set it generously, and keep foot strings to one line at the
    NARROWEST column the deck uses. */
 .slide > .pad { padding-bottom: var(--pad-bottom, 80px); }
+
+/* Two rules that keep that reserve honest, both learned the same way:
+   1. The reserve must exceed the foot's RENDERED height. A foot at
+      `bottom: 46px` with 18px padding, a 1px rule and one 21px line is 97px
+      tall from the slide's base — so 116px reserved left 19px, and a foot
+      string that wrapped to two lines on the narrowest column ate it and put
+      body copy through the rule on five slides at once.
+   2. So keep every foot string to ONE line at the deck's narrowest column.
+      An editorial split's copy column is ~810px, not 1712px; write the foot
+      to fit there and the wide slides get the margin for free. */
+
+/* A rowspan cell draws its own bottom border below the LAST row it spans, so
+   a grouped table ends with a stray hairline under one column only. It reads
+   as a rendering fault and is one declaration. */
+.data-table td[rowspan] { border-bottom: none; }
 
 /* A table given less width than its columns need clips silently at the
    container edge — no scrollbar, no warning, just a truncated last column.
@@ -280,6 +302,22 @@ A slide deck is an unencumbered fullscreen presentation, **not a multi-page web 
   4. **Keyboard Navigation Support**: Always bind `ArrowDown`/`PageDown`/`j`/`J` (next), `ArrowUp`/`PageUp`/`k`/`K` (prev), `Home` (slide 1), and `End` (last slide).
 
 **If the deck has persistent chrome — a control bar, a progress rail — give it its own band rather than floating it over the stage.** Reserve the space in the scaling container (`inset: 0 0 104px 0`) and compute `s` against *that* box, not the viewport. Chrome floated at `bottom: 28px` sits on slide content at every 16:9-ish window, where the letterbox is only a few dozen pixels.
+
+**Size the reserve by arithmetic, then measure it.** The reserve is a quantity, not a round number that felt safe. On a vertically-centred deck the slide's margin is half the reserve, so the controller clears the stage only when
+
+```
+reserve / 2  >  controllerBottomOffset + controllerHeight   (+ ~20px of visible gap)
+```
+
+Worked on a real deck: controller at `bottom: 20px`, measured height 56px, so it occupies the lower 76px. A 156px reserve gives 78px of margin and **2px** of clearance — arithmetically a pass and visually touching. 200px gives 100px of margin and 24px of clearance, which is what shipped. Getting this wrong is not subtle at review time and is invisible at build time: a second deck from the same brief floated its controller with no reserve at all and it sat over the stage on all twelve slides, while a text-versus-dock check scored zero because the footer line happened to stop 17px short of it. Measure the box, not the last line of text:
+
+```js
+const w = document.querySelector('.slide-wrap').getBoundingClientRect();
+const c = document.getElementById('controls').getBoundingClientRect();
+({ gapToControls: Math.round(c.top - w.bottom),      // must be > 0, want ≥ 20
+   marginTop: Math.round(w.top),
+   marginBottom: Math.round(innerHeight - w.bottom) });  // these two must match
+```
 
 **Auto-hiding controls hold open on `:focus-visible`, not `document.activeElement`.** A mouse click leaves focus on the button it clicked, so an `activeElement` check re-arms the timer forever and the chrome never retires again for the rest of the session. `controls.querySelector(':focus-visible')` matches keyboard focus only, which is the case that actually needs the hold. Hidden chrome must also stay keyboard-reachable: wake it on `keydown` so the first Tab brings it back before focus resolves.
 

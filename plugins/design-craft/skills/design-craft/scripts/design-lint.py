@@ -144,6 +144,41 @@ def check_file(path):
             f"{len(hits)} text node(s) contain emoji (first: \"{t[:40]}…\") — only when the brand "
             "uses them or the emoji is functional; no emoji beats performative emoji")
 
+    # --- self-containment ------------------------------------------------------
+    # A page that <link>s a webfont or a CDN script opens in a different typeface
+    # offline, behind a strict CSP and inside a sandboxed portal — three of the
+    # places a shipped artifact is most often actually read. Measured: one deck
+    # carried 3 such requests and its comparison carried 0.
+    ext = re.findall(r'(?:href|src)\s*=\s*["\'](https?:)?//[^"\']+', html, re.I)
+    if ext:
+        add("major", path, lineno(html, html.lower().find("//")), "external-resource",
+            f"{len(ext)} external resource request(s) — inline fonts and assets as base64 "
+            "so the artifact renders identically offline and under CSP")
+
+    # --- verification output leaked into copy ----------------------------------
+    # A surface built to satisfy a checker starts printing the checker's working
+    # where the disclosure belongs. Measured: "Constant ratio 1.1765%" beside the
+    # legitimate axis note on three slides of one investor deck.
+    leak = re.compile(r"constant ratio|scale factor\s*[:=]|zero-?based\s*[:=]\s*true|"
+                      r"gate (?:passed|clean)|preflight", re.I)
+    for ln, t in text_content(html):
+        if leak.search(t):
+            add("major", path, ln, "leaked-verification",
+                f'"{t[:52]}" — verification arithmetic is not provenance; show the reader '
+                "the source, the as-at date and what the axis does, never your proof of compliance")
+            break
+
+    # --- hue budget: deliberately NOT checked here -----------------------------
+    # Counting hue families is one of the highest-value measurements available
+    # (measured: 1 family in a designed artifact against 3 in its generic twin),
+    # but it cannot be done honestly from source. A well-tokenised file writes
+    # `color: var(--success)` and the hex appears exactly once, in :root, whether
+    # that token is used on forty chips or never — so a static count under-reports
+    # on precisely the code most worth reviewing, and a rule that cannot fire is
+    # indistinguishable from a clean file. Count hue families in the RENDER:
+    # `deck-craft/scripts/deck-preflight.js` reports `hueFamilies`, and the same
+    # walk works on any page via getComputedStyle.
+
 
 def main(argv):
     if len(argv) < 2:

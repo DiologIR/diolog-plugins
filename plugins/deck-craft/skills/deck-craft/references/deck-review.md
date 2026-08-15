@@ -14,7 +14,7 @@ After drafting each slide, before starting the next. **Run `scripts/run-prefligh
 4. **Type on the scale & Two-Tier Floor (ISO 9241-303 / DISCAS).** Primary content at or above the distance minimum: ≥24px on a 1920 canvas (reading deck) or ≥44px (projected boardroom deck), with 68px–104px headlines and 96px hero metrics. Auxiliary metadata (eyebrows, table cells, chart ticks, legal footnotes) sits at 18px–20px without competing with primary body copy.
 5. **Does the text fit its box and have zero overlaps?** Check for `textOverlaps: 0`. Ensure no flex column labels overflow upward into card headings. In an absolute-geometry format nothing shrinks to fit; in HTML nothing warns you. **In a fixed-column table, size each column from the longest *real* string in the face that column actually uses** — monospace is the trap, because a unit reference like `AX-10 (#1)` is 10 characters at a fixed 0.6em advance and needs 138px at 23px type, which a 132px column overlaps into its neighbour with no scrollbar and no warning. Then check the whole row again: the space is conserved, so widening one column narrows another.
 6. **No synthetic AI human portraits of real named people.** Never use generative AI face images for real named directors, executives, or personnel. Verify leadership slides use structured typographic cards or authentic facility photos.
-7. **Grounding & Regulatory Non-GAAP Prominence.** Every figure and claim traces to the source material. In IR and financial decks, verify that non-GAAP metrics (EBITDA, Underlying NPAT) are accompanied by statutory IFRS/GAAP measures with equal or greater prominence, and every chart carries an as-at date and disclosure provenance.
+7. **Grounding — read every claim, not every number.** The numbers are the easy half and are usually right. What ships is fabricated *texture*: facility dimensions the source never states, a second operating region, a positioning phrase the issuer has never used, and a ratio the deck computed from two real figures and set as a chip. Check the verbs too — a source that says a measure *targets* $8m does not support a title saying it *delivers* $8m. Then the regulatory half: non-GAAP metrics (EBITDA, Underlying NPAT, FCF) accompanied by statutory measures at equal or greater prominence, and every chart carrying an as-at date and disclosure provenance. In IR and financial decks, verify that non-GAAP metrics (EBITDA, Underlying NPAT) are accompanied by statutory IFRS/GAAP measures with equal or greater prominence, and every chart carries an as-at date and disclosure provenance.
 8. **Accent spent once & dual-theme contrast checked.** One thing carries the colour. On a dark ground, check the accent's *measured* contrast: ensure dark-band lifted tokens (`--color-primary-on-dark: #FF5A5F`) and high-contrast badge text (`#4ADE80`, `#60A5FA`) are used. Badges on photo scrims must use solid primary backgrounds with white text.
 9. **Text over imagery is legible, judged on the composite.** A scrim declared in the stylesheet is not a scrim doing its job: check the rendered slide, at the point where the text actually sits, over the busiest part of the photograph rather than an average of it. Can you read every word over the image, and is the smallest text over it still above the type floor?
 10. **Charts are deterministic pure SVG & IBCS compliant.** Bar and column charts start at zero baseline (Long & Kay 2024: truncation cannot be cured by footnotes). Asymmetric ROI/cost-benefit uses shared-scale horizontal comparison bars. All charts render inline with zero runtime CDN script dependencies.
@@ -117,6 +117,32 @@ A slide that gains two lines of body copy passes the overflow gate and quietly p
 
 **The last look is subtractive.** Remove one element the deck doesn't need. Review rounds accrete; this is the counterweight.
 
+## The A/B that calibrates every number above
+
+Two 12-slide investor decks, same prompt, same source announcement, same
+`DESIGN.md`, different models. Both returned an identical clean gate summary.
+Opened side by side they were not close. The table is the argument for why the
+looking is not optional, and every row is now either a gate check or a named
+rule:
+
+| | better deck | worse deck | now caught by |
+|---|---|---|---|
+| largest type on the deck | 132px | 76px | `noDisplayTier` (warn) |
+| distinct type sizes | 19 | 13 | — judged |
+| hue families | 1 | 3 | `hueFamilies` (warn) |
+| accent marks per slide, mean / max | 1.8 / 3 | 3.7 / 7 | judged; count marks in the capture |
+| external resource requests | 0 | 3 | `externalRefs` (warn) |
+| ink past the slide box | 0 | 85px on one slide | `inkPastSlide` (**blocker**) |
+| floating chrome over the stage | 0 | every slide | `chromeOverStage` (**blocker**) |
+| checker arithmetic printed on slides | 0 | 3 slides | `leakedArithmetic` (**blocker**) |
+| fabricated facts | 0 | 4 | judged — read every claim against the source |
+| title grammar | 12 consistent noun phrases | 7 declarative + 5 noun | judged |
+| slides that are an identical card row | 0 | 7 of 12 | judged |
+
+The lesson is not "add more checks", though six were added. It is that the
+gate's clean summary was **identical** for a deck with a clipped table row and
+a deck without one. A gate clears the floor. It has never ranked two decks.
+
 ## What a clean gate proves
 
 A passing check means **no known defect is present**. It never means *verified*. Every rule in any gate was written after someone met the defect it catches — it is structurally incapable of finding the one nobody has met yet, and a rule whose selector matches nothing passes silently rather than warning you.
@@ -124,7 +150,8 @@ A passing check means **no known defect is present**. It never means *verified*.
 So report the two claims separately, in these words:
 
 ```
-Gates:       preflight 12/12 slides · 0 stage · 0 below type floor · 1 chart not zero-based
+Gates:       preflight 12/12 slides · 0 stage · 0 ink past slide · 0 chrome over stage ·
+             0 overlaps · 3/3 charts zero-based · 1 hue family · 0 external refs
 Looked at:   12 slide crops @2x, cover + section breaks, 1280 and 1920
 Not checked: the PDF export, the chart's empty state
 ```

@@ -6,6 +6,72 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); eac
 
 ## 2026-08-15
 
+### The A/B that closed the gap between "passes the gate" and "is good"
+
+Two 12-slide investor decks were built from **one prompt, one source ASX
+announcement and one shared `DESIGN.md`**, by two different models. Both returned
+byte-identical clean summaries from `deck-preflight` as it stood: 0 stage
+geometry, 0 overflow, 0 chrome collisions, 0 text overlaps, 3/3 charts
+zero-based, provenance complete. Opened side by side they were not close.
+
+What separated them, and where each item now lives:
+
+| | designed | generic | now |
+|---|---|---|---|
+| ink past the slide box | 0 | 85px — a clipped table row | `inkPastSlide` — **blocker** |
+| floating chrome over the stage | 0 | every slide | `chromeOverStage` — **blocker** |
+| checker arithmetic printed on slides | 0 | 3 slides | `leakedArithmetic` — **blocker** |
+| largest type on the deck | 132px | 76px | `noDisplayTier` — warning |
+| hue families | 1 | 3 | `hueFamilies` — warning |
+| external resource requests | 0 | 3 | `externalRefs` — warning |
+| accent marks per slide, mean / max | 1.8 / 3 | 3.7 / 7 | named rule + count-in-the-render |
+| fabricated facts | 0 | 4 | named rule, `investor-relations.md` §5.2 |
+| slides that are an identical card row | 0 of 12 | 7 of 12 | named rule, `ai-slop-check.md` §11 |
+
+The headline lesson is not that six checks were missing. It is that the gate's
+summary was **identical** for a deck with a clipped table row and a deck without
+one — so the gate clears a floor and has never ranked two artifacts.
+
+- **deck-craft 1.10.0 → 1.11.0.** Six new checks in `scripts/deck-preflight.js`.
+  The load-bearing one is `inkPastSlide`: the existing overflow check asked
+  `scrollHeight > clientHeight`, and a slide whose table ran 85px past its own
+  bottom edge reported `scrollHeight === clientHeight === 624`, because a
+  clipping ancestor erases `scrollHeight` without moving the ink. It now walks
+  text leaves and images and compares their rects to the slide box in authored
+  px. Also `chromeOverStage` (a dock that clears the last line of text and still
+  sits on the artwork), `hueFamilies`, `noDisplayTier`, `externalRefs` and
+  `leakedArithmetic`. **Fixed a false-positive generator**: the chrome-collision
+  check took its docks from a document-wide selector, so on a vertical scroll
+  deck every slide was compared against every other slide's pinned footer — 10
+  phantom collisions on a deck whose real count was 0. Docks are now scoped to
+  their owning slide. `run-preflight.sh` gates on the three new blockers and
+  prints the three warnings separately. Prose: the display tier and the one-hue
+  rule in `SKILL.md`; the chrome-reserve arithmetic, the `.stat`-in-the-nowrap-list
+  trap and the rowspan hairline in `html-deck.md`; the A/B table in
+  `deck-review.md`; and `investor-relations.md` §5.2 — the three ways a
+  compliant-looking deck states something the issuer never did (a derived ratio
+  promoted to a chip, a target read as a result, operational texture with no
+  source).
+- **design-craft 1.16.0 → 1.17.0.** `ai-slop-check.md` gains a Phase 1b of six
+  measurable metrics that separated the two artifacts before any judgement was
+  applied, and §11 gains module monotony as the measurable form of the
+  layout-rhythm trope. `design-lint.py` gains `external-resource` and
+  `leaked-verification`. A hue-budget check was written, tested, and **removed**:
+  `var()` indirection means a well-tokenised file writes the hex once in `:root`
+  whether the token is used forty times or never, so a static count
+  under-reports on exactly the code most worth reviewing — the reason is recorded
+  where the check would have been, and the measurement lives at runtime. The
+  ≤96px display ceiling is now scoped to web pages: on a fixed 1920×1080 canvas
+  96px is the cover floor, not the ceiling.
+- **ux-craft 1.7.0 → 1.8.0.** Two non-negotiables: persistent chrome reserves its
+  own space rather than floating over content, with the arithmetic
+  (`reserve / 2 > dockOffset + dockHeight + 20px` — a 156px reserve against a
+  76px dock left 2px, a pass on paper and touching on screen); and never show the
+  reader your verification output. `data-provenance.md` gains the addition rule —
+  a surface may compress, order and illustrate its source but may not add to it,
+  with the derived-ratio case and the target-versus-delivers verb check.
+
+
 ### Antigravity & Strict YAML 1.2 Frontmatter Normalisation
 
 - **Antigravity CLI Compatibility**: Added top-level `plugin.json` manifests across all 52 plugins in the marketplace to enable seamless zero-config discovery in Google Antigravity CLI (`agy`).

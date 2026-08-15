@@ -79,3 +79,26 @@ Four questions, all answerable by looking:
 3. Is the disclosure page generated from the same data, or written alongside it?
 4. Does any "not available" state show a value anyway — a dash that looks like data, a zero, a
    stale figure?
+
+## The surface may compress the source; it may not add to it
+
+The provenance states above govern figures. The failure that gets past them is
+**texture**: prose, dimensions, place names and positioning claims that no source
+carries, arranged around figures that are all correct. Measured on one generated
+investor deck whose every headline number traced cleanly: a facility given
+dimensions the source never states, a second operating region named in a bullet,
+a competitive claim the issuer has never made, and a ratio computed from two real
+figures and set in a chip as though disclosed.
+
+The last one is the instructive case. Its arithmetic was right, which is why it
+survived: a derived ratio is *your* claim, not the source's, and putting it in the
+visual position a disclosure occupies borrows authority the record does not grant.
+Show the two figures on a shared scale and let the reader do the division.
+
+Check the verbs as well as the values. A source that says a programme *targets* a
+benefit does not support a headline saying it *delivers* one — a single verb moves
+a forward-looking statement into reported fact, and the headline is the line a
+reader is most likely to carry away.
+
+Where a surface feels thin without an addition, the honest fixes are a larger
+figure, more white space, or one fewer surface.

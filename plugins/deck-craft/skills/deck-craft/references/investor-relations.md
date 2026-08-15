@@ -151,6 +151,30 @@ equal-or-greater prominence and ASIC RG 230 expects the same balance. And it doe
 deriving the reconciliation yourself: a ratio or a bridge you computed from the release is your
 arithmetic, not the issuer's disclosure, and it is a figure the board did not authorise.
 
+### 5.2 The three ways a compliant-looking deck states something the issuer never did
+
+All three shipped on one generated quarterly deck whose headline figures were every one correct,
+which is exactly why they survived its own review:
+
+1. **The derived ratio, promoted to a chip.** The release gave a $0.4m restructuring cost and a
+   targeted ~$8.0m annualised benefit. The deck set **"20X ANNUALISED PAYBACK"** in a pill beside
+   them. The arithmetic is right and the claim is not the issuer's — it is a return metric the
+   board never published, in the visual position a disclosure occupies. Draw both bars on a shared
+   scale and let the reader see the ratio; never name it.
+2. **The target read as a result.** The release says the measures *target* ~$8m of annualised
+   pre-tax cash benefits. The slide title read *"Workshop Consolidation Delivers ~$8m Annual
+   Benefit"*. Forward-looking becomes reported in one verb, and a title is the line a retail
+   reader is most likely to carry away. Check every declarative title against the source's tense.
+3. **Operational texture with no source.** Facility dimensions (*"3,000 sqm undercover fabrication
+   workshop with 30-tonne overhead cranes and 5-acre hardstand"*), a second operating region named
+   in a bullet, and a competitive claim (*"dominant Hunter Valley engineering moat"*) — none in the
+   announcement the deck cited as its sole source. Detail of this kind reads as inside knowledge
+   and is the most persuasive thing on the slide, which is precisely the exposure.
+
+The working rule: **the deck may compress, order and illustrate the source; it may not add to it.**
+Where a slide feels thin without an addition, the honest fixes are a larger figure, more white
+space, or one fewer slide — never a fact the record does not carry.
+
 ---
 
 ## 6. HTML/CSS Technical Presentation Engineering

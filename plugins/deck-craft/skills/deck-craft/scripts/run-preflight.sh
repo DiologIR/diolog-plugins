@@ -82,10 +82,24 @@ except Exception as e:
     print("preflight ran, but its summary could not be parsed (%s) — blockers NOT evaluated." % e,
           file=sys.stderr)
     sys.exit(0)
-keys = ["stageGeometry", "overflow", "chromeCollisions", "textOverlaps",
-        "invisibleText", "provenanceMissing", "chartsNotZeroBased"]
+keys = ["stageGeometry", "overflow", "inkPastSlide", "chromeCollisions",
+        "chromeOverStage", "textOverlaps", "invisibleText", "provenanceMissing",
+        "chartsNotZeroBased", "leakedArithmetic"]
 found = ["%s: %s" % (k, s[k]) for k in keys if s.get(k)]
+# Warnings do not gate: each has a legitimate exception, so they are reported
+# for a human to rule on rather than blocking a build.
+warn = []
+if s.get("noDisplayTier"):
+    warn.append("noDisplayTier: the largest type on the deck is below the cover floor")
+if (s.get("hueFamilies") or 0) > 1:
+    warn.append("hueFamilies: %s (one accent is the rule; a second hue needs a reason)"
+                % s["hueFamilies"])
+if s.get("externalRefs"):
+    warn.append("externalRefs: %s (the deck will change typeface offline or under CSP)"
+                % s["externalRefs"])
 n = s.get("slidesExamined", 0)
+if warn:
+    print("\n[DECK-PREFLIGHT WARN] " + "; ".join(warn), file=sys.stderr)
 if found:
     print("\n[DECK-PREFLIGHT FAIL] %d blocker(s) across %s slides: %s"
           % (len(found), n, ", ".join(found)), file=sys.stderr)

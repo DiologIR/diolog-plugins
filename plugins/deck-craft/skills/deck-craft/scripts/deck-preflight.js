@@ -36,6 +36,7 @@
     bodyFloor: 24,           // px on a 1920-wide canvas
     tinyFloor: 18,           // px on a 1920-wide canvas; below this is unreadable at distance
     deadBandPx: 120,         // empty band at a slide's foot worth reporting
+    displayFloorPx: 96,      // a deck with no type this large has no display tier
     overlapMinPx2: 12,       // ignore sub-pixel kisses
   }, __CFG_IN || {});
 
@@ -43,6 +44,8 @@
     config: {}, slides: 0, stage: [], type: {}, overflow: [], collisions: [],
     textOverlap: [], paintOrder: [], charts: [], accent: [], deadSpace: [],
     textOverImage: [], provenance: null, notes: [],
+    inkExtent: [], chromeReserve: [], hues: null, displayTier: null,
+    externalRefs: [], leakedArithmetic: [],
   };
 
   // ── Locate the slides ────────────────────────────────────────────────────
@@ -240,6 +243,13 @@
     slides.forEach((s, i) => {
       const k = scaleOf(s);
       docks.forEach((d) => {
+        // A dock that lives inside ANOTHER slide is not this slide's chrome. On a
+        // vertical scroll deck every slide coexists in the layout, so comparing
+        // slide N's content against slide M's pinned footer manufactures
+        // collisions that no viewer can ever see. Measured: 10 such phantoms on
+        // a deck whose real collisions were 0.
+        const owner = slides.find((x) => x.contains(d));
+        if (owner && owner !== s) return;
         const dr = rect(d);
         if (!dr.height) return;
         s.querySelectorAll('p,li,td,th,h1,h2,h3,h4,figure,table').forEach((el) => {
@@ -598,6 +608,147 @@
 
   });
 
+  // ── 11. Ink extent — the check `scrollHeight` structurally cannot make ───
+  step('Ink extent past the slide box', () => {
+    // Measured on a real deck, 15 Aug 2026: a slide whose table ran 85px past
+    // its own bottom edge reported scrollHeight === clientHeight === 624, so
+    // the scroll-extent check above scored it CLEAN while an entire table row
+    // sat clipped under the floating chrome. A clipping ancestor (or
+    // overflow:hidden) erases scrollHeight; it does not move the ink. So
+    // measure where the ink actually is, in authored px, per slide.
+    slides.forEach((s, i) => {
+      const k = scaleOf(s);
+      const sr = rect(s);
+      let worstB = 0, worstR = 0, whoB = '', whoR = '';
+      s.querySelectorAll('*').forEach((el) => {
+        const paints = isLeafText(el) || ['IMG', 'SVG', 'CANVAS', 'VIDEO'].includes(el.tagName);
+        if (!paints || !vis(el)) return;
+        const r = rect(el);
+        if (!r.width || !r.height) return;
+        const b = (r.bottom - sr.bottom) / k;
+        const rt = (r.right - sr.right) / k;
+        const label = ((el.textContent || '').trim() || el.tagName).slice(0, 34);
+        if (b > worstB) { worstB = b; whoB = label; }
+        if (rt > worstR) { worstR = rt; whoR = label; }
+      });
+      if (worstB > 2 || worstR > 2) {
+        out.inkExtent.push({ slide: idOf(s, i),
+                             pastBottomPx: Math.round(worstB), atBottom: whoB,
+                             pastRightPx: Math.round(worstR), atRight: whoR });
+      }
+    });
+  });
+
+  // ── 12. Floating chrome against the slide BOX, not just its text ─────────
+  step('Floating chrome reserve', () => {
+    // A dock that clears the last line of text but sits over the slide's lower
+    // edge still reads as chrome on top of the artwork, and it hides whatever
+    // the next revision puts there. Measured: a controller overlapping the
+    // stage on all 12 slides of one deck while the text-vs-dock check scored 0,
+    // because the footer line happened to stop 17px short of it.
+    const docks = [...document.querySelectorAll('*')].filter((el) => {
+      if (!vis(el) || getComputedStyle(el).position !== 'fixed') return false;
+      if (slides.some((s) => s.contains(el) || el.contains(s))) return false;
+      const r = rect(el);
+      return r.width > 40 && r.height > 16 && r.width < innerWidth * 0.92;
+    });
+    docks.forEach((d) => {
+      const dr = rect(d);
+      slides.forEach((s, i) => {
+        const sr = rect(s);
+        const oy = Math.min(sr.bottom, dr.bottom) - Math.max(sr.top, dr.top);
+        const ox = Math.min(sr.right, dr.right) - Math.max(sr.left, dr.left);
+        if (oy > 2 && ox > 2) {
+          out.chromeReserve.push({ slide: idOf(s, i),
+            chrome: String(d.className || d.id || d.tagName).slice(0, 24),
+            overlapPx: Math.round(Math.min(oy, ox)) });
+        }
+      });
+    });
+  });
+
+  // ── 13. Hue budget — one accent, counted across the whole deck ───────────
+  step('Hue budget', () => {
+    // "One accent, never two" is a rule every brand states and every generated
+    // deck breaks the same way: status chips reach for green for done and blue
+    // for in-progress, and the deck now carries three hues. Measured on two
+    // decks from one brief and one DESIGN.md: 1 hue family against 3.
+    const hueOf = (c) => {
+      const m = String(c).match(/[\d.]+/g);
+      if (!m || m.length < 3) return null;
+      if (m.length > 3 && parseFloat(m[3]) < 0.06) return null;
+      const v = m.slice(0, 3).map((x) => Number(x) / 255);
+      const mx = Math.max.apply(null, v), mn = Math.min.apply(null, v), d = mx - mn;
+      if (d < 0.10 || mx < 0.12) return 'neutral';
+      let hh = 0;
+      if (mx === v[0]) hh = 60 * (((v[1] - v[2]) / d) % 6);
+      else if (mx === v[1]) hh = 60 * ((v[2] - v[0]) / d + 2);
+      else hh = 60 * ((v[0] - v[1]) / d + 4);
+      return Math.round(((hh + 360) % 360) / 30) * 30 % 360;
+    };
+    const fam = {};
+    slides.forEach((s) => {
+      s.querySelectorAll('*').forEach((el) => {
+        if (!vis(el)) return;
+        const r = rect(el); if (!r.width || !r.height) return;
+        const cs = getComputedStyle(el);
+        [isLeafText(el) ? cs.color : null, cs.backgroundColor].forEach((c) => {
+          if (!c) return;
+          const hv = hueOf(c);
+          if (hv === null || hv === 'neutral') return;
+          fam[hv] = (fam[hv] || 0) + 1;
+        });
+      });
+    });
+    // 3+ marks before a hue counts as a family: one stray swatch is not a palette.
+    const fams = Object.keys(fam).filter((k) => fam[k] >= 3)
+      .map((k) => ({ hue: Number(k), marks: fam[k] }))
+      .sort((a, b) => b.marks - a.marks);
+    out.hues = { families: fams, count: fams.length,
+                 extra: fams.slice(1) };
+  });
+
+  // ── 14. Display tier ─────────────────────────────────────────────────────
+  step('Display tier present', () => {
+    // A deck whose largest type is 76px on a 1920 canvas has no display tier:
+    // its cover reads as a web hero and every slide below inherits the flat
+    // ramp. Measured across two decks from one brief: 132px against 76px, and
+    // the smaller ramp carried 13 distinct sizes against 19.
+    const mx = out.type && out.type.largestPx;
+    if (mx && mx < CFG.displayFloorPx) {
+      out.displayTier = { largestPx: mx, floorPx: CFG.displayFloorPx,
+        note: 'no display tier: the deck\'s largest type is below the cover floor' };
+    }
+  });
+
+  // ── 15. Single-file portability ──────────────────────────────────────────
+  step('Single-file portability', () => {
+    // A deck that <link>s a webfont opens in a different typeface offline, on a
+    // plane, behind a strict CSP, and inside a sandboxed investor portal — the
+    // four places a deck is most often actually read.
+    out.externalRefs = [...document.querySelectorAll('link[href],script[src],img[src],source[src]')]
+      .map((el) => el.getAttribute('href') || el.getAttribute('src') || '')
+      .filter((u) => /^(https?:)?\/\//i.test(u))
+      .slice(0, 12);
+  });
+
+  // ── 16. Checker arithmetic leaked into slide copy ────────────────────────
+  step('Leaked gate arithmetic', () => {
+    // A deck written to satisfy its own gate starts printing the gate's working
+    // where the disclosure belongs. Measured: "Constant ratio 1.1765%" in the
+    // chart note on three slides of one investor deck. The reader is owed the
+    // axis disclosure and the as-at date; the author's proof of honesty is not
+    // a disclosure and reads as one.
+    const RX = /(constant ratio|ratio\s*[:=]\s*[\d.]+|scale factor\s*[:=]|zero-?based\s*[:=]\s*true|gate (passed|clean)|preflight)/i;
+    slides.forEach((s, i) => {
+      s.querySelectorAll('*').forEach((el) => {
+        if (!isLeafText(el) || !vis(el)) return;
+        const t = (el.textContent || '').trim();
+        if (t && RX.test(t)) out.leakedArithmetic.push({ slide: idOf(s, i), text: t.slice(0, 72) });
+      });
+    });
+  });
+
   // ── Summary ──────────────────────────────────────────────────────────────
   out.summary = {
     slidesExamined: slides.length,
@@ -614,6 +765,12 @@
     deadFootBands: out.deadSpace.length,
     unprotectedTextOverImage: out.textOverImage.length,
     provenanceMissing: out.provenance ? out.provenance.missing.length : null,
+    inkPastSlide: out.inkExtent.length,
+    chromeOverStage: out.chromeReserve.length,
+    hueFamilies: out.hues ? out.hues.count : null,
+    noDisplayTier: out.displayTier ? 1 : 0,
+    externalRefs: out.externalRefs.length,
+    leakedArithmetic: out.leakedArithmetic.length,
   };
   out.notes.push('Denominator: ' + slides.length + ' slides examined. A zero with no ' +
                  'denominator is not a result. This finds no known computable defect; ' +

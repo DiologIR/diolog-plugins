@@ -10,6 +10,33 @@ Each rule below is **positive-first**: lead with the default to reach for, then 
 
 Find what to review, in order: (1) the HTML/CSS file the user just edited or asked about; (2) files modified in the current session; (3) if unclear, ask which file or component. Read the file. Skim referenced CSS, tokens, and component files so you can resolve actual values.
 
+## Phase 1b: Measure specification before you judge taste
+
+The tell-list below is judgement, and judgement is where two reviewers disagree.
+Six numbers are not, and they separated two artifacts built from **one prompt, one
+source document and one shared `DESIGN.md`** — a pair that returned byte-identical
+clean results from every deterministic gate then in place:
+
+| Metric | designed | generic | how to read it |
+|---|---|---|---|
+| largest type size | 132px | 76px | no display tier means the top rung of the ramp is missing, and every level below it compresses |
+| distinct type sizes | 19 | 13 | a real ramp has rungs; a short list means sizes were picked per-component |
+| hue families (non-neutral) | 1 | 3 | count across the whole artifact — the second hue always arrives as a status chip |
+| accent marks per surface, mean / max | 1.8 / 3 | 3.7 / 7 | count marks in the render, not selectors in the CSS |
+| external resource requests | 0 | 3 | a self-contained artifact that isn't |
+| surfaces built as an identical card row | 0 of 12 | 7 of 12 | module monotony, the strongest layout tell |
+
+Run these first. They cost seconds, they do not vary between reviewers, and a
+failure on any of them predicts a long list below. **Hue families must be
+counted in the render, never from source**: a well-tokenised file writes
+`color: var(--success)` and that hex appears once in `:root` whether the token is
+used on forty chips or none, so a static count under-reports on exactly the code
+most worth reviewing. `deck-craft/scripts/deck-preflight.js` reports `hueFamilies`
+from computed styles; the same walk works on any page. **Count marks in the rendered
+capture rather than in the stylesheet** — a filled bar, a rule, a progress track
+and a dot each read as an accent object to the eye and as nothing to a selector
+scan, so an automated count under-reports by exactly the amount that matters.
+
 ## Phase 2: Single-pass review for AI tropes
 
 Walk through the design and apply each rule below. Single agent — these patterns are obvious enough that parallel dispatch is overkill.
@@ -113,6 +140,16 @@ Any one of these can be a deliberate choice. All of them together — especially
 **Detect & remove** extra hero tenants: tiny taglines below CTAs, trust micro-strips, pricing teasers, feature bullet lists, social-proof avatar rows — all move to their own sections below. Logo walls live under the hero, never inside it — built from real SVG marks (Simple Icons CDN, `https://cdn.simpleicons.org/{slug}/{hex}`, for known brands; a simple inline-SVG monogram for invented ones — styled text wordmarks in a row read as placeholder), logos only: no category labels under each mark (`Stripe · payments` tells the user nothing they don't know), and legible in both themes.
 
 ### 11. Layout rhythm — vary the section families
+
+**The measurable form of this trope is module monotony**, and it is invisible while
+you build because each surface's grid was a reasonable local choice. Measured: seven
+of twelve slides in one deck were the same 3-or-4-across bordered card row; the
+comparison deck used stat tiles, an editorial photo split, a data table, a progress
+matrix, a milestone grid, a shared-scale bar pair and a full-bleed photograph across
+the same twelve. Before reaching for a card row, name what the content *is* — a
+comparison, a sequence, a matrix, a single figure, a quotation — and let that choose
+the module. If two consecutive surfaces would take the same module, one of them is
+wrong or they are one surface.
 
 **Default:** a page of 8 sections uses at least 4 different layout families; density alternates (one tight section, one breathing one).
 
