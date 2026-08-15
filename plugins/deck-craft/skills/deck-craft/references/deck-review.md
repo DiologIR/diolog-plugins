@@ -6,7 +6,17 @@ Two loops. The **per-slide gate** runs while you build, because a mistake on sli
 
 ## The per-slide gate
 
-After drafting each slide, before starting the next. **Run `scripts/run-preflight.sh` first** — it settles the computable half in seconds and leaves the looking for what only an eye can judge. Then the cheap checks:
+After drafting each slide, before starting the next. **Everything here except
+item 13 is cheap and stays.** Item 13 — rendering and opening a capture of this
+one slide — is **optional**, and deliberately so: it is the step that gets
+skipped under time pressure, and skipping it silently is worse than not planning
+on it. The looking is not being dropped, it is being moved to where it works
+better. One pass over the finished deck finds more, because the defects that
+matter most between slides — palette drift, a spacing rule applied unevenly, a
+component bug repeated six times, an inconsistent footer — are visible in a row
+of crops and nearly invisible one crop at a time. Capture per slide when a slide
+is doing something new or you have a specific suspicion; otherwise build, gate
+computationally, and walk the whole deck once. **Run `scripts/run-preflight.sh` first** — it settles the computable half in seconds and leaves the looking for what only an eye can judge. Then the cheap checks:
 
 1. **Does it say one thing?** Name the slide's single claim out loud. If that takes two sentences joined by "and", it's two slides.
 2. **Does every slot say something different?** A template with kicker / title / body / caption fills easily and empties nothing. The failure shape, measured on a real generated surface: eyebrow = the item's name, title = a truncated blurb ending mid-clause, body = *that identical string again*, caption = the eyebrow once more. Four slots, two pieces of information, and the hierarchy inverted — the name demoted to a label and a sentence fragment promoted to the headline. A slot with nothing of its own to say is left empty, not filled; and **a title is written short, never cut short** — a heading ending in an ellipsis is body copy in the title slot. The mildest and commonest form is the eyebrow restating its own title (`Outlook` over "Outlook"; `Shell Program · build and allocation` over "Shell Program build status") — three of thirteen slides on one deck. The eyebrow's job is to place the slide in a structure the title does not carry: the occasion, the as-at date, the review section it belongs to.
@@ -20,7 +30,7 @@ After drafting each slide, before starting the next. **Run `scripts/run-prefligh
 10. **Charts are deterministic pure SVG & IBCS compliant.** Bar and column charts start at zero baseline (Long & Kay 2024: truncation cannot be cured by footnotes). Asymmetric ROI/cost-benefit uses shared-scale horizontal comparison bars. All charts render inline with zero runtime CDN script dependencies.
 11. **Assets are portable & inlined.** For standalone HTML presentations, generated multi-megabyte imagery is downsampled to 1600px JPEG and embedded as Base64 data URIs.
 12. **Parallel with its neighbours.** Repeated elements in the same position; section headers identical to each other.
-13. **Look at it.** Render the slide and open the capture — see below.
+13. **Look at it** *(optional per slide; mandatory once for the finished deck)*. Render and open the capture — see below. Worth doing mid-build for the cover, the first slide of a new layout family, and any slide whose gate output you distrust.
 
 ## Look wide, then filter — never both at once
 

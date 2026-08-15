@@ -424,6 +424,15 @@ When generating high-resolution photography or renders (e.g. via `media-gen-pro`
    ```
 3. **Why this is mandatory**: Standalone HTML presentations must open flawlessly over `file://`, in headless browser tests, and across sandbox environments without broken relative path dependencies or CDN network latency.
 
+**Author against the placeholder even when the real images are coming.** The
+imagery is commissioned early and generated in parallel (`SKILL.md` §4b), so for
+most of the build it has not landed yet. That is not a reason to leave the slide
+half-built: a placeholder with the asset's exact box gives the layout its real
+geometry, so overflow, chrome reserve and ink extent all measure correctly, and
+the final swap is one `src` edit that moves nothing. Building the slide around a
+gap and fitting the picture afterwards inverts that and re-opens every
+measurement.
+
 With no real assets, use honest placeholders and say so: a striped background with a monospace label naming the asset and its dimensions. A placeholder shows intent; a hand-drawn SVG of a person or an abstract concept shows you didn't have the asset, and a gradient standing in for a photograph shows it while pretending otherwise.
 
 ## Phase 6: Speaker notes (only when asked)

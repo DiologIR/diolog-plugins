@@ -69,6 +69,41 @@ Pick **one** grammatical style and hold it: short topic noun-phrases ("Market po
 
 Then read the sequence back and cut the AI-isms that mark a deck as generated: punchline titles ("The magic moment"), verdict-delivering takeaways, manufactured tension ("It's not X. It's Y."), heavy-handed reframing, faux-insight. A title introduces its slide; it is not the speaker's punchline, and a deck whose every title lands a zinger has no hierarchy of importance left.
 
+## 4b. Commission the imagery the moment you know what it depicts
+
+Image generation is the long pole and it is almost entirely independent of the
+build. The moment the title sequence exists you already know what every picture
+has to show — that is exactly the input a generator needs, and it arrives well
+before the first slide is authored. Waiting until you reach the slide that uses a
+photograph serialises minutes of generation behind work that never needed to wait.
+
+So the order is: title sequence → **shot list → dispatch → keep building**.
+
+Write the shot list as one line per image: the slide it serves, what it depicts,
+the aspect ratio the layout needs (full-bleed covers 16:9, editorial split
+columns 3:4), and the constraints that keep it usable — documentary rather than
+CGI, the palette, no readable text or signage, no identifiable faces. Then hand
+the whole list to **one agent** and carry on authoring slides while it runs.
+
+```
+Agent(description="Generate deck imagery", prompt=<the shot list verbatim, plus:
+      use the media-gen-pro MCP; write to <dir>; downsample each to 1600px JPEG
+      q82 with sips; open every result and re-generate any that carries text, a
+      face, or the wrong aspect ratio; report the final paths>)
+```
+
+Two rules make this safe rather than merely fast. **Author every slide against an
+honest placeholder** — a striped ground with a monospace label naming the asset
+and its dimensions — so the layout is finished and measured whether or not the
+images have landed; swapping a placeholder for a real file at the end is one edit
+and changes no geometry. And **view every returned image yourself before placing
+it**: the agent's report that it generated six images is not evidence that any of
+them is usable, and a generated picture with legible fake signage or a synthetic
+face is worse than the placeholder it replaced.
+
+If the deck needs no photography — a data-only board pack — skip this entirely
+rather than commissioning decoration to fill a slot.
+
 ## 5. The craft that holds across all three targets
 
 **A slide is a fixed 16:9 box, and that is a boundary rather than a preference.** Author at one canvas size (1920×1080 unless the brief says otherwise) and scale the whole stage to fit the viewport, letterboxing rather than reflowing. A "slide" built as a fluid section — `width: 100%` with a `min-height` — is a web page section wearing a slide's name, and the failure cascades: because the box is fluid, type has to be authored at web density to fit, so body copy lands at 13–16px; because there is no fixed height, "overflow" stops being computable and becomes a judgement call at whatever window the author happened to use. One measured example: a nine-slide investor deck built this way rendered every slide at 1240×820 (aspect 1.51, not 1.78), carried **294 text elements below the 24px floor** with a median size of 22px, and left 200–330px voids at the foot of seven slides. Every one of those numbers is a consequence of the missing stage, not nine separate mistakes. Check it with one line — `slide.getBoundingClientRect()`, width/height must equal 16/9 — before authoring the second slide.
@@ -111,7 +146,7 @@ Fabrication does not arrive as an invented headline figure — that much is obvi
 
 A named slide count is a contract. Twelve slides means twelve, each gated. If you genuinely must stop early, say "8 of 12 complete, resuming at 9" — never silently compress twelve slides' content into eight, and never pad eight slides' content into twelve. Padding is the more common failure and the harder one to see: it produces a deck where three slides say what one slide said.
 
-Gate each slide as you finish it, before starting the next — a mistake on slide 2 otherwise propagates into every slide that copies its layout. The per-slide gate and the delivery review are in `references/deck-review.md`.
+Gate each slide as you finish it, before starting the next — a mistake on slide 2 otherwise propagates into every slide that copies its layout. That gate is the cheap checks plus the computable run. **Capturing and opening a screenshot of every slide as you build is optional**: it is the step that gets skipped in practice, so do not plan around it. What is not optional is looking at the whole deck once it is built — the same defects surface in one pass and in better context, because a palette drift, a repeated spacing error or a component bug is far easier to see across twelve crops side by side than in one crop at a time. The per-slide gate and the delivery review are in `references/deck-review.md`.
 
 **Gate the first slide hardest.** The cover carries the run's ambition and every slide after it inherits whatever it fell short of. Judge scale, density and material as *quantities* rather than impressions — a texture at a tenth of its intended coverage, or display type at half its intended weight, is a different deck however similar the structure looks. A retry here costs minutes; the same shortfall found at delivery costs a rebuild.
 
@@ -127,9 +162,9 @@ Gate each slide as you finish it, before starting the next — a mistake on slid
 
 **`scrollHeight` cannot see clipped content, so the ink-extent check exists.** Measured 15 Aug 2026: a slide whose table ran 85px past its own bottom edge reported `scrollHeight === clientHeight === 624`, so the scroll-extent overflow check scored it clean while a whole table row sat clipped under the floating controller. A clipping ancestor erases `scrollHeight`; it does not move the ink. `inkPastSlide` walks the text leaves and images and compares their rects to the slide box in authored px, which is the measurement that cannot be erased. It takes seconds and returns numbers. The looking then goes on judgment, which is where it is worth spending, instead of on finding a collision a rectangle comparison finds in 30ms. This is also the cheaper lever: model vision improves most when it is paired with tools that crop and measure, not when it is asked to look harder.
 
-**Do the looking yourself — target exclusively the 13" MacBook Air resolution.** Render the deck and visually verify key slides (cover, complex data cards, final slide) at the standard **13" MacBook Air screen resolution (1470×956 / 1440×900)**. There is no need to test or verify across multiple arbitrary screen sizes, phones, or tablet viewports. Focus visual inspection entirely on ensuring that every slide (especially the final slide) is vertically centered in the window, has zero cutoff, and maintains clear buffer space above floating HUD bars. A screenshot you generated but didn't open is not evidence. **When a capture shows text missing or cut mid-sentence, measure the DOM before changing the slide** — a rasterizer that is not packaged Chrome drops whole text runs while the layout underneath is perfect, and `deck-review.md` carries the probe that separates the two along with the two other false-finding classes this engine produces. Inside the Diolog deck producer this has a name — `render_deck`, mandatory, looped until it reports zero blockers; see `references/diolog-templates.md`.
+**Do the looking yourself, once, on the finished deck — target exclusively the 13" MacBook Air resolution.** Per-slide captures during the build are optional; this walk is not, and it is where the defects actually get found. Render the deck and open a crop of **every** slide at the standard **13" MacBook Air screen resolution (1470×956 / 1440×900)**. There is no need to test or verify across multiple arbitrary screen sizes, phones, or tablet viewports. Focus visual inspection entirely on ensuring that every slide (especially the final slide) is vertically centered in the window, has zero cutoff, and maintains clear buffer space above floating HUD bars. A screenshot you generated but didn't open is not evidence. **When a capture shows text missing or cut mid-sentence, measure the DOM before changing the slide** — a rasterizer that is not packaged Chrome drops whole text runs while the layout underneath is perfect, and `deck-review.md` carries the probe that separates the two along with the two other false-finding classes this engine produces. Inside the Diolog deck producer this has a name — `render_deck`, mandatory, looped until it reports zero blockers; see `references/diolog-templates.md`.
 
-**Delegate at most one agent, and only for a wide review of a finished long deck** — say twelve slides or more, split into lenses that genuinely don't overlap. Anything you can finish in a handful of tool calls, do yourself; re-checking a slide you just wrote costs a whole context to learn what a crop would have told you. Never spawn an agent to verify another agent's findings.
+**Delegate for exactly two things: generating the imagery (§4b, dispatched early so it runs beside the build) and a wide review of a finished long deck** — say twelve slides or more, split into lenses that genuinely don't overlap. Anything you can finish in a handful of tool calls, do yourself; re-checking a slide you just wrote costs a whole context to learn what a crop would have told you. Never spawn an agent to verify another agent's findings.
 
 **Hold the scope.** Build the deck asked for. If the brief looks wrong — nine slides for a topic that needs four, a chart with no underlying data — say so in a sentence and build what was asked. Don't quietly re-scope.
 

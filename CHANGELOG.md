@@ -6,6 +6,31 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); eac
 
 ## 2026-08-15
 
+### deck-craft 1.11.0 → 1.12.0 — imagery runs beside the build, per-slide captures stop pretending
+
+- **Imagery is commissioned as soon as its subject is known, not when the slide
+  that uses it is reached.** New `SKILL.md` §4b: the title sequence already
+  determines what every picture must depict, so the order is title sequence →
+  shot list → dispatch → keep building. The shot list goes to **one agent**
+  (media-gen-pro, downsample, self-check for text/faces/aspect, report paths)
+  and generation overlaps the authoring instead of blocking it. Two guards keep
+  it honest: author every slide against a placeholder box of the real dimensions
+  so geometry is final and the swap is one `src` edit, and view every returned
+  image yourself — an agent reporting six generated images is not evidence any
+  of them is usable.
+- **Per-slide screenshot validation is now explicitly optional.** It was written
+  as mandatory, it is skipped in practice, and a step that is nominally required
+  and actually skipped is worse than one that is honestly optional. The
+  computable per-slide gate stays; the *looking* moves to one mandatory walk of
+  the finished deck, which is where it works better anyway — palette drift, an
+  unevenly applied spacing rule, a component bug repeated six times and a
+  wandering footer are visible across a row of crops and nearly invisible one
+  crop at a time. Capture mid-build for the cover, the first slide of a new
+  layout family, or a gate result you distrust.
+- `references/deck-review.md` item 13 downgraded with its reason;
+  `references/html-deck.md` Phase 5 gains the placeholder-first rule.
+
+
 ### The A/B that closed the gap between "passes the gate" and "is good"
 
 Two 12-slide investor decks were built from **one prompt, one source ASX
