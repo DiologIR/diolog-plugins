@@ -356,7 +356,7 @@ sweeps, guard promotion) transfers — the harness changes:
 
 - **Native apps (Expo / SwiftUI — iOS, iPadOS, macOS).** The runner is **Maestro**
   (iOS Simulator; YAML flows against a DEBUG fixture build that boots signed-in and
-  seeded) and **XCUITest** (macOS — Maestro cannot drive it; and everywhere
+  seeded) and **Proctor / XCUITest** (macOS — Maestro cannot drive it; and everywhere
   `performAccessibilityAudit()` is the 6d gate: contrast, Dynamic Type, clipped text,
   labels, hit-region ≥44pt). **Navigate deep-link-first** — every `maestro test` pays
   a ~15–20s driver-startup tax, so reach screens via `xcrun simctl openurl <SIM>
@@ -364,19 +364,12 @@ sweeps, guard promotion) transfers — the harness changes:
   can't reach, batched into one flow. States and data shapes ride the fixture's
   launch flags; multi-user = two Simulators; structural facts come from the
   accessibility tree (`axe describe-ui` / Maestro hierarchy / `app.debugDescription`),
-  since native has no `getComputedStyle`. A green flow asserts behaviour + geometry
-  only — rendered quality still goes to the fidelity/design-review layer.
-  **When XCUITest is structurally unavailable** — a SwiftPM app with no `.xcodeproj`
-  has no target to put it in — the macOS runner is the app's own **Accessibility
-  tree**, driven via System Events / `AXUIElement`, with a launch-flag fixture mode
-  for determinism (it also reaches surfaces without stealing foreground focus).
-  Read **`references/macos-ax-acceptance.md`** before writing one: it carries the
-  assert-actions-not-just-identifiers rule (an identifier can sit on a *label*, so
-  all 13 sidebar ids resolved while none could be activated), the fixture-must-match-
-  real-data rule (a spend panel passed every gate while rendering `$0` for 100% of
-  real traffic), and seven measured traps — zombie-instance activation, unbound
-  `entire contents` reading zero, App Translocation zeroing the tree under `$TMPDIR`,
-  and the rest — each of which produced a confident wrong diagnosis first.
+  since native has no `getComputedStyle`.
+  
+  **Mandatory Native Visual & Layout Verification Rules:**
+  1. **No Headless SPM Rasterizers (`ImageRenderer`) as Visual Proof**: `SwiftUI.ImageRenderer` during headless `swift test` runs without an active window server and event loop. On macOS AppKit, controls like `Menu` and `NSPopUpButton` fail silently to render their real AppKit geometry (rendering yellow placeholder glyphs). Native UI tests must attach to **live attached windows or menu extras** via Proctor/AX or run in host apps.
+  2. **Component-Level Layout Invariants**: Assert horizontal alignment (`leading` vs `center`), trailing chevron tokens (`›` vs system `⌄`), and control spacing.
+  3. **Phase 7 Automated Visual Regression Gate**: Run automated `/be-my-witness` component slice diff-masking against design mocks before marking visual acceptance as complete.
 - **MCP servers (FastMCP/TypeScript).** The hermetic vitest tier is unit testing, not
   acceptance. Acceptance = **drive the built server through a real MCP client** — the
   Claude Agent SDK or a scripted `claude` CLI session against the stdio binary — and
