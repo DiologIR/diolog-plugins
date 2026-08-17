@@ -764,9 +764,28 @@
         const lh = parseFloat(cs.lineHeight) || (parseFloat(cs.fontSize) * 1.15);
         const r = rect(h);
         if (!r.width || !r.height) return;
-        const clientRects = h.getClientRects();
-        const lines = clientRects.length > 0 ? clientRects.length : Math.max(1, Math.round(r.height / lh));
-        const isCover = i === 0 || s.id === 'slide-1' || h.tagName.toLowerCase() === 'h1' || (parseFloat(cs.fontSize) / k) >= CFG.displayFloorPx;
+        // Count lines from the box, NOT from getClientRects(). A heading is a
+        // block, and getClientRects() on a block returns exactly ONE rect per
+        // spec — its border box — so `clientRects.length` is 1 for a title
+        // wrapping onto five lines, and reading it first made this check
+        // unfireable. A predicate that always returns 1 reports every deck
+        // clean, which is indistinguishable from a deck with no wrapped titles.
+        //
+        // Both operands must be in the same space: getBoundingClientRect is
+        // POST-transform while computed line-height and padding are authored
+        // values, so the height is divided back up by the stage scale first.
+        // Measured on a title at 64px/70.4px wrapping to three lines inside a
+        // stage at k=0.646: r.height 136 gives 136/70.4 = 2 lines (wrong, and
+        // under the threshold), where (136/0.646)/70.4 = 3 (right).
+        const padY = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+        const lines = Math.max(1, Math.round((r.height / (k || 1) - padY) / lh));
+        // Computed font-size is ALREADY an authored value — an ancestor
+        // transform scales the painted box, not the resolved CSS. Dividing it by
+        // the stage scale inflated it by 1/k, which both mis-set the cover
+        // threshold and printed a wrong number into the finding: a title
+        // authored at 64px inside a stage at k=0.646 was reported as 99px.
+        const authoredFontPx = parseFloat(cs.fontSize);
+        const isCover = i === 0 || s.id === 'slide-1' || h.tagName.toLowerCase() === 'h1' || authoredFontPx >= CFG.displayFloorPx;
         const maxAllowed = isCover ? 2 : 3;
         if (lines > maxAllowed) {
           out.titleWrap.push({
@@ -774,7 +793,7 @@
             text: (h.textContent || '').trim().slice(0, 48),
             lines,
             maxAllowed,
-            fontSizePx: Math.round(parseFloat(cs.fontSize) / k)
+            fontSizePx: Math.round(authoredFontPx)
           });
         }
       });
