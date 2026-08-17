@@ -8,6 +8,8 @@ description: >-
 
 Create new macOS app designs — windows and icons — that are **native to the platform** (correct), **committed to a direction** (beautiful), and **distinct from each other** (varied). This skill is the generation counterpart to `mac-design-digest`: it consumes taste learned from 135 curated apps and the ground truth of Apple's macOS 27 UI kit.
 
+**Running as a Gemini model?** Read `gemini.md` in this directory first, then follow this file with the overrides it names. The precedence chain below is the right instrument for that family's measured misses, but a run read it and did not enter it — chrome metrics, accents and casing came from none of its four tiers. `gemini.md` makes the chain a metric table filled in before the first line of CSS with a tier tagged per cell, turns step 6's seven audits into seven reported rows, and states what a second platform needs before it can be themed rather than reskinned. Other models skip it.
+
 ## Knowledge sources — load before designing
 
 **Bundled (always read):**

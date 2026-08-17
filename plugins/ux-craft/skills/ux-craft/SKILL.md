@@ -15,6 +15,8 @@ Two convictions anchor everything:
 
 This skill is the **UX brain**. `design-craft` is the visual hands (aesthetics, anti-slop, artifact production). When a task needs both — e.g. "design the onboarding flow" — do the UX thinking here (flow shape, states, copy, psychology), and apply design-craft's visual craft for the artifact itself. Never let visual polish override a usability call; surface must serve skeleton (Garrett).
 
+**Running as a Gemini model?** Read `gemini.md` in this directory before picking a mode, then follow this file with the overrides it names. The canon here transfers to that family unchanged; what does not transfer is the assumption that a rule stated in prose gets executed — Build mode's six states were named with an explicit completeness condition and a measured run delivered one. `gemini.md` turns the state matrix, the accessibility floor and the destructive-action gates into cells to fill and numbers to report. Other models skip it.
+
 ---
 
 ## Mode detection
