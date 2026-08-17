@@ -2,7 +2,7 @@
 
 Two loops. The **per-slide gate** runs while you build, because a mistake on slide 2 propagates into every slide that copies its layout. The **delivery pass** runs once at the end and owns what a per-slide gate can't see: consistency *between* slides, the argument as a whole, the export.
 
-**CRITICAL REQUIREMENT: Automatic Preflight & Review Execution is Mandatory.** You must execute `scripts/run-preflight.sh <url> [--regulated]` automatically on every deck build and revision. Never wait for or require the user to ask for preflight or review. Any non-zero blocker (`stageGeometry`, `textOverlaps`, `overflow`, `chromeCollisions`, `provenanceMissing`) blocks delivery (`fix` / `rebuild`).
+**CRITICAL REQUIREMENT: Automatic Preflight & Review Execution is Mandatory.** You must execute `scripts/run-preflight.sh <url> [--regulated]` automatically on every deck build and revision. Never wait for or require the user to ask for preflight or review. Any non-zero blocker (`stageGeometry`, `stageContentOverflow`, `titleWrap`, `cardOverflow`, `textOverlaps`, `overflow`, `chromeCollisions`, `inkPastSlide`, `provenanceMissing`, `chartsNotZeroBased`) blocks delivery (`fix` / `rebuild`).
 
 ## The per-slide gate
 
@@ -138,6 +138,11 @@ rule:
 | | better deck | worse deck | now caught by |
 |---|---|---|---|
 | largest type on the deck | 132px | 76px | `noDisplayTier` (warn) |
+| title line count explosion | 2 lines max | 3+ lines wrapping | `titleWrap` (**blocker**) |
+| internal stage / content overflow | 0 | 45px inside scaled stage | `stageContentOverflow` (**blocker**) |
+| card / panel container overflow | 0 | text clipped past card bottom | `cardOverflow` (**blocker**) |
+| stage bottom margin clearance | ≥24px | 2px crowded against bezel | `stageBottomClearance` (warn) |
+| vertical gap collapsed between blocks | ≥16px | 0px squished siblings | `verticalSquish` (warn) |
 | distinct type sizes | 19 | 13 | — judged |
 | hue families | 1 | 3 | `hueFamilies` (warn) |
 | accent marks per slide, mean / max | 1.8 / 3 | 3.7 / 7 | judged; count marks in the capture |
@@ -149,7 +154,7 @@ rule:
 | title grammar | 12 consistent noun phrases | 7 declarative + 5 noun | judged |
 | slides that are an identical card row | 0 | 7 of 12 | judged |
 
-The lesson is not "add more checks", though six were added. It is that the
+The lesson is not "add more checks", though new programmatic probes were added. It is that the
 gate's clean summary was **identical** for a deck with a clipped table row and
 a deck without one. A gate clears the floor. It has never ranked two decks.
 
@@ -160,8 +165,9 @@ A passing check means **no known defect is present**. It never means *verified*.
 So report the two claims separately, in these words:
 
 ```
-Gates:       preflight 12/12 slides · 0 stage · 0 ink past slide · 0 chrome over stage ·
-             0 overlaps · 3/3 charts zero-based · 1 hue family · 0 external refs
+Gates:       preflight 12/12 slides · 0 stage · 0 stage content overflow · 0 title wrap ·
+             0 card overflow · 0 ink past slide · 0 chrome over stage · 0 overlaps ·
+             3/3 charts zero-based · 1 hue family · 0 external refs
 Looked at:   12 slide crops @2x, cover + section breaks, 1280 and 1920
 Not checked: the PDF export, the chart's empty state
 ```

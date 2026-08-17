@@ -46,6 +46,8 @@
     textOverImage: [], provenance: null, notes: [],
     inkExtent: [], chromeReserve: [], hues: null, displayTier: null,
     externalRefs: [], leakedArithmetic: [],
+    titleWrap: [], stageContentOverflow: [], stageBottomClearance: [],
+    verticalSquish: [], cardOverflow: [],
   };
 
   // ── Locate the slides ────────────────────────────────────────────────────
@@ -749,12 +751,177 @@
     });
   });
 
+  // ── 17. Title line wrapping & heading explosion ───────────────────────────
+  step('Title line wrapping and heading explosion', () => {
+    // A headline wrapping onto 3+ lines (or cover title onto >2 lines) steals
+    // 100-200px of vertical budget, forcing content downward into chrome or clipping.
+    // Detects line count and awkward wrap explosions programmatically without screenshotting.
+    slides.forEach((s, i) => {
+      const k = scaleOf(s);
+      const titles = [...s.querySelectorAll('h1, h2, .slide-title, [class*="slide-title"], [class*="hero-title"]')].filter(vis);
+      titles.forEach((h) => {
+        const cs = getComputedStyle(h);
+        const lh = parseFloat(cs.lineHeight) || (parseFloat(cs.fontSize) * 1.15);
+        const r = rect(h);
+        if (!r.width || !r.height) return;
+        const clientRects = h.getClientRects();
+        const lines = clientRects.length > 0 ? clientRects.length : Math.max(1, Math.round(r.height / lh));
+        const isCover = i === 0 || s.id === 'slide-1' || h.tagName.toLowerCase() === 'h1' || (parseFloat(cs.fontSize) / k) >= CFG.displayFloorPx;
+        const maxAllowed = isCover ? 2 : 3;
+        if (lines > maxAllowed) {
+          out.titleWrap.push({
+            slide: idOf(s, i),
+            text: (h.textContent || '').trim().slice(0, 48),
+            lines,
+            maxAllowed,
+            fontSizePx: Math.round(parseFloat(cs.fontSize) / k)
+          });
+        }
+      });
+    });
+  });
+
+  // ── 18. Internal stage & content overflow ──────────────────────────────────
+  step('Internal stage content overflow', () => {
+    // When a slide-wrapper has overflow:hidden and a scaled stage inside,
+    // wrapper.scrollHeight matches clientHeight while stage content quietly overflows.
+    // This probes the unscaled stage and its content boxes directly.
+    slides.forEach((s, i) => {
+      const k = scaleOf(s);
+      const sr = rect(s);
+      const stage = s.querySelector('.slide-stage, .stage, [class*="stage"]') || s;
+      if (stage !== s && (stage.scrollHeight > CFG.canvasH + 4 || stage.scrollWidth > CFG.canvasW + 4)) {
+        out.stageContentOverflow.push({
+          slide: idOf(s, i),
+          overflowY: Math.max(0, stage.scrollHeight - CFG.canvasH),
+          overflowX: Math.max(0, stage.scrollWidth - CFG.canvasW),
+          container: String(stage.className || stage.tagName).slice(0, 30)
+        });
+      }
+      const contents = s.querySelectorAll('.stage-content, .slide-content, [class*="content"]');
+      contents.forEach((c) => {
+        if (!vis(c)) return;
+        const cr = rect(c);
+        const authoredH = cr.height / k;
+        if (authoredH > CFG.canvasH - 16) {
+          const lastChild = c.lastElementChild;
+          if (lastChild) {
+            const lcr = rect(lastChild);
+            const bottomAuthored = (lcr.bottom - sr.top) / k;
+            if (bottomAuthored > CFG.canvasH + 2) {
+              out.stageContentOverflow.push({
+                slide: idOf(s, i),
+                overflowY: Math.round(bottomAuthored - CFG.canvasH),
+                container: String(c.className || c.tagName).slice(0, 30)
+              });
+            }
+          }
+        }
+      });
+    });
+  });
+
+  // ── 19. Stage bottom clearance floor ───────────────────────────────────────
+  step('Stage bottom clearance floor', () => {
+    // Content running within a few pixels of the stage bottom border looks squeezed
+    // and collides with presentation docks or hardware bezel clipping.
+    slides.forEach((s, i) => {
+      const k = scaleOf(s);
+      const sr = rect(s);
+      let lowestInk = sr.top;
+      let hasFooter = false;
+      let footerTop = sr.bottom;
+      s.querySelectorAll('*').forEach((el) => {
+        if (!vis(el)) return;
+        if (el.matches('.foot, .footer, [class*="foot"], footer')) {
+          hasFooter = true;
+          const fr = rect(el);
+          if (fr.top < footerTop) footerTop = fr.top;
+          return;
+        }
+        const isInk = isLeafText(el) || el.matches('img,svg,canvas,video,hr,[class*="bar"],[class*="card"]');
+        if (!isInk) return;
+        const r = rect(el);
+        if (r.height && r.bottom > lowestInk && r.bottom <= sr.bottom + 10) {
+          lowestInk = r.bottom;
+        }
+      });
+      const clearancePx = Math.round((sr.bottom - lowestInk) / k);
+      if (!hasFooter && clearancePx < 16) {
+        out.stageBottomClearance.push({
+          slide: idOf(s, i),
+          clearancePx,
+          minRequiredPx: 20,
+          note: 'content extends to canvas bottom edge with insufficient margin'
+        });
+      }
+      if (hasFooter && footerTop > lowestInk) {
+        const gapAboveFooter = Math.round((footerTop - lowestInk) / k);
+        if (gapAboveFooter < 6) {
+          out.stageBottomClearance.push({
+            slide: idOf(s, i),
+            clearancePx: gapAboveFooter,
+            minRequiredPx: 10,
+            note: 'content crowded against footer top edge'
+          });
+        }
+      }
+    });
+  });
+
+  // ── 20. Vertical block clearance ───────────────────────────────────────────
+  step('Vertical block clearance', () => {
+    // When elements in flex/grid are too large, vertical gaps collapse to 0,
+    // squishing titles, card grids, highlight strips, and footers together.
+    slides.forEach((s, i) => {
+      const k = scaleOf(s);
+      const stageContent = s.querySelector('.stage-content, .slide-content, .slide-stage, .stage') || s;
+      const blocks = [...stageContent.children].filter((c) => vis(c) && !['IMG', 'VIDEO'].includes(c.tagName) && !c.classList.contains('stage-bg-image') && !c.classList.contains('stage-scrim-dark') && !c.classList.contains('scrim') && getComputedStyle(c).position !== 'absolute');
+      for (let b = 0; b < blocks.length - 1; b++) {
+        const topEl = blocks[b];
+        const btmEl = blocks[b + 1];
+        const rTop = rect(topEl);
+        const rBtm = rect(btmEl);
+        if (!rTop.height || !rBtm.height) continue;
+        const gap = (rBtm.top - rTop.bottom) / k;
+        if (gap < 2 && gap >= -2) {
+          out.verticalSquish.push({
+            slide: idOf(s, i),
+            between: [String(topEl.className || topEl.tagName).slice(0, 24), String(btmEl.className || btmEl.tagName).slice(0, 24)],
+            gapPx: Math.round(gap),
+            minExpectedPx: 8
+          });
+        }
+      }
+    });
+  });
+
+  // ── 21. Card & panel container overflow ────────────────────────────────────
+  step('Card & panel container overflow', () => {
+    slides.forEach((s, i) => {
+      s.querySelectorAll('.stat-card, .card-surface, [class*="card"], .chart-panel').forEach((card) => {
+        if (!vis(card)) return;
+        if (card.scrollHeight > card.clientHeight + 2 || card.scrollWidth > card.clientWidth + 2) {
+          out.cardOverflow.push({
+            slide: idOf(s, i),
+            card: String(card.className || card.tagName).slice(0, 30),
+            overflowY: Math.max(0, card.scrollHeight - card.clientHeight),
+            overflowX: Math.max(0, card.scrollWidth - card.clientWidth)
+          });
+        }
+      });
+    });
+  });
+
   // ── Summary ──────────────────────────────────────────────────────────────
   out.summary = {
     slidesExamined: slides.length,
     stageGeometry: out.stage.length,
     typeBelowFloor: out.type.belowBodyFloor,
     overflow: out.overflow.length,
+    stageContentOverflow: out.stageContentOverflow.length,
+    titleWrap: out.titleWrap.length,
+    cardOverflow: out.cardOverflow.length,
     chromeCollisions: out.collisions.length,
     textOverlaps: out.textOverlap.length,
     invisibleText: out.paintOrder.length,
@@ -763,6 +930,8 @@
     chartGroupsUnverified: out.chartsUnverified || 0,
     accentOverspent: out.accent.length,
     deadFootBands: out.deadSpace.length,
+    stageBottomClearance: out.stageBottomClearance.length,
+    verticalSquish: out.verticalSquish.length,
     unprotectedTextOverImage: out.textOverImage.length,
     provenanceMissing: out.provenance ? out.provenance.missing.length : null,
     inkPastSlide: out.inkExtent.length,

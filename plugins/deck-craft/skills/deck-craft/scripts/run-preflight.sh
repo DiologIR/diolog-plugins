@@ -82,13 +82,20 @@ except Exception as e:
     print("preflight ran, but its summary could not be parsed (%s) — blockers NOT evaluated." % e,
           file=sys.stderr)
     sys.exit(0)
-keys = ["stageGeometry", "overflow", "inkPastSlide", "chromeCollisions",
-        "chromeOverStage", "textOverlaps", "invisibleText", "provenanceMissing",
-        "chartsNotZeroBased", "leakedArithmetic"]
+keys = ["stageGeometry", "overflow", "stageContentOverflow", "titleWrap",
+        "cardOverflow", "inkPastSlide", "chromeCollisions", "chromeOverStage",
+        "textOverlaps", "invisibleText", "provenanceMissing", "chartsNotZeroBased",
+        "leakedArithmetic"]
 found = ["%s: %s" % (k, s[k]) for k in keys if s.get(k)]
 # Warnings do not gate: each has a legitimate exception, so they are reported
 # for a human to rule on rather than blocking a build.
 warn = []
+if s.get("stageBottomClearance"):
+    warn.append("stageBottomClearance: %s (content crowded against slide bottom or footer)"
+                % s["stageBottomClearance"])
+if s.get("verticalSquish"):
+    warn.append("verticalSquish: %s (vertical gap collapsed between stacked blocks)"
+                % s["verticalSquish"])
 if s.get("noDisplayTier"):
     warn.append("noDisplayTier: the largest type on the deck is below the cover floor")
 if (s.get("hueFamilies") or 0) > 1:
