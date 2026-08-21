@@ -82,7 +82,13 @@ completed prefix would otherwise be re-run.
 
 A Dossier research run on checkpoint/restore designs for agent state, idempotent replay in
 orchestrators, and whether reconciling against version control rather than an agent's claimed
-results is documented practice was started on the free local lane (`dr_25769da4d8898a65`,
-$0.00). Its findings are not incorporated here: the load-bearing evidence for this skill is
-the locally-measured runtime above, and the run had not returned when the skill was written.
-The paid six-backend panel ($2.25-$9.70) was available and not bought.
+results is documented practice was started on the free local lane
+(`dr_25769da4d8898a65`). It **failed** after starting — the backing CLI exited on a SIGTERM,
+on a machine that was already under the load described above — and returned nothing. Cost
+$0.00. The paid six-backend panel ($2.25-$9.70) was available and not bought.
+
+So this skill rests entirely on the measured runtime above and on the two out-of-family design
+referrals, with no literature survey behind it. That is a real gap rather than a tidy one: the
+prior art on durable execution and idempotent replay (Temporal, LangGraph checkpointers, Ray)
+would likely sharpen the splice-versus-fresh-run decision in §4 of SKILL.md, which currently
+rests on one measured mechanism and two models disagreeing about it.
