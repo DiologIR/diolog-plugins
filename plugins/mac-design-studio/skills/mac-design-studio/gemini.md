@@ -78,8 +78,8 @@ the kit, the HIG page, the Fluent reference, or the corpus entry, and put the va
 the table with its tier. Google supplies a ready-made system instruction for exactly
 this posture, worth adopting verbatim when the design must not exceed its sources —
 *"rely only on the facts that are directly mentioned in that context … any facts or
-details that are not directly mentioned in the context must be considered completely
-unsupported."*
+details that are not directly mentioned in the context must be considered **completely
+untruthful** and **completely unsupported**."*
 
 ## The override: fill the metric table before the first line of CSS
 

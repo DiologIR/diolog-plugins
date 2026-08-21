@@ -64,7 +64,7 @@ this file's central override, in Google's own vocabulary.
 **[docs]** A second mechanism compounds it, from the same checklist — **Too many
 tasks**: *"If the prompt asks the model to perform several distinct cognitive actions
 in a single pass … it is likely trying to accomplish too much. Break the requests into
-separate prompts."* "All surfaces, states, menus, flows and actions" is five distinct
+separate prompts."* `All surfaces, states, menus, flows and actions` is five distinct
 cognitive actions in one pass, so the collapse is over-determined: the nouns are
 ambiguous *and* the pass is overloaded. Google's remedy is chaining — one pass per
 axis, each output feeding the next. Build the surfaces, then run a states pass across
@@ -180,13 +180,13 @@ under-delivers. Replace it with a count:
   airport board") returns the data. So per crop: say what is in it — the elements, the
   copy, the spacing — then judge. A verdict reached without the description step is the
   generic caption wearing a review's clothes. Their disambiguation trick applies too:
-  when a judgement looks wrong, ask what is in the image *first*, to separate "did not
-  see it" from "saw it and reasoned badly".
-- **Ask each crop "what is wrong with this?"** — never "is this done?". The skill
+  when a judgement looks wrong, ask what is in the image *first*, to separate `did not
+  see it` from `saw it and reasoned badly`.
+- **Ask each crop `what is wrong with this?`** — never `is this done?`. The skill
   already carries this; on Gemini pair it with a floor: name three candidate failure
   modes for that component and rule each out by pointing at pixels, or the crop is
   unreviewed.
-- **Report the fraction.** *"100 of 100 cells captured, 100 opened"* — or the real
+- **Report the fraction.** `100 of 100 cells captured, 100 opened` — or the real
   numbers, honestly.
 
 ## Retry ceiling
