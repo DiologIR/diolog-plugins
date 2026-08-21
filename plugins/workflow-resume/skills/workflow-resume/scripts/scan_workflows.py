@@ -17,6 +17,7 @@ stdlib only. Read-only.
 from __future__ import annotations
 
 import argparse
+import glob
 import json
 import os
 import re
@@ -43,15 +44,46 @@ def _mtime(p: Path) -> float:
         return 0.0
 
 
+_LIVE_IDS: set[str] | None = None
+
+
+def _live_session_ids() -> set[str]:
+    """Session ids Claude Code currently has open, from its own registry.
+
+    ~/.claude/sessions/<PID>.json carries {"pid", "sessionId", "cwd", "name", "status"} for
+    each running session. Measured 2026-08-21 against 21 live sessions.
+
+    The previous probe here grepped `ps` output for the session id and reported every one of
+    those 21 as ended: the id is not in the top-level process's argv, only in the environment
+    of its transient children. The scratchpad path is no better — it is named by a
+    per-process id that stops matching the session id once a session has been resumed.
+    """
+    global _LIVE_IDS
+    if _LIVE_IDS is None:
+        _LIVE_IDS = set()
+        try:
+            out = subprocess.run(["ps", "-axo", "pid=,comm="], capture_output=True,
+                                 text=True, timeout=15).stdout
+        except Exception:
+            out = ""
+        pids = {}
+        for line in out.splitlines():
+            pid, _, comm = line.strip().partition(" ")
+            if pid.isdigit():
+                pids[int(pid)] = comm.strip()
+        for f in (Path.home() / ".claude" / "sessions").glob("*.json"):
+            rec = _load(f) or {}
+            sid, pid = rec.get("sessionId"), rec.get("pid")
+            # the registry file is named by pid, so a reused pid overwrites the record
+            # rather than inheriting it; all that is left to rule out is a pid that now
+            # belongs to something that is not Claude Code
+            if sid and isinstance(pid, int) and "claude" in pids.get(pid, "").lower():
+                _LIVE_IDS.add(sid)
+    return _LIVE_IDS
+
+
 def _session_alive(session_id: str) -> bool:
-    """A live session leaves its id in the scratchpad path of its child processes."""
-    try:
-        out = subprocess.run(
-            ["ps", "-eo", "command"], capture_output=True, text=True, timeout=10
-        ).stdout
-    except Exception:
-        return False
-    return session_id in out
+    return session_id in _live_session_ids()
 
 
 def _journal_counts(journal: Path):
@@ -101,10 +133,48 @@ def _agents(rundir: Path, now: float):
                 "lines": text.count("\n"),
                 "mtime": mt,
                 "live": (now - mt) < LIVE_WINDOW,
-                "error": errs[-1] if errs else ("session/usage limit" if limit else None),
+                # Only an error the transcript actually *ends* on is that agent's error. The
+                # previous substring match over the whole transcript turned an agent that
+                # merely discussed a rate limit into a failure, and on 2026-08-21 that put a
+                # "machine-wide usage limit" into a repository's event log. No such limit
+                # occurred: the terminal had crashed.
+                "error": errs[-1] if errs else None,
+                "mentions_limit": bool(limit),
             }
         )
     return out
+
+
+_SCRIPT_INDEX: dict[str, str] | None = None
+_RUN_ID_RE = re.compile(r"-(wf_[0-9a-f-]{8,})\.js$")
+
+
+def _script_index() -> dict[str, str]:
+    """run id -> persisted script path, indexed once across every project directory.
+
+    A snapshot is only written when a run completes, so `snapshot.scriptPath` is null for
+    exactly the runs that need recovering. The script itself is persisted at launch and
+    survives — but under the project directory of the *shell's* working directory at that
+    moment, while the journal is filed under the project directory of the session's
+    *original* cwd. Any session working in a subdirectory or worktree splits its own state
+    across two project directories, so the script has to be looked up by run id rather than
+    joined onto the journal's path.
+
+    Measured 2026-08-21: a session whose journals sat under `-Users-x-Dev` had its scripts
+    under `-Users-x-Dev-orderly`. Reporting "no script path" for those runs is what sent a
+    recovery down the hand-authored path and lost three runners' context.
+    """
+    global _SCRIPT_INDEX
+    if _SCRIPT_INDEX is None:
+        _SCRIPT_INDEX = {}
+        for path in glob.iglob(str(PROJECTS / "*" / "*" / "workflows" / "scripts" / "*.js")):
+            m = _RUN_ID_RE.search(path)
+            if not m:
+                continue
+            prev = _SCRIPT_INDEX.get(m.group(1))
+            if prev is None or _mtime(Path(path)) > _mtime(Path(prev)):
+                _SCRIPT_INDEX[m.group(1)] = path
+    return _SCRIPT_INDEX
 
 
 def scan(project_filter: str | None, hours: float):
@@ -151,7 +221,9 @@ def scan(project_filter: str | None, hours: float):
                     "project": proj.name,
                     "session_id": session_id,
                     "session_alive": _session_alive(session_id),
-                    "script_path": snap.get("scriptPath"),
+                    "script_path": snap.get("scriptPath") or _script_index().get(run_id),
+                    "script_from_disk": not snap.get("scriptPath")
+                    and bool(_script_index().get(run_id)),
                     "args": snap.get("args"),
                     "title": (snap.get("title") or snap.get("summary") or "").strip(),
                     "snapshot_status": snap.get("status") if snap else None,

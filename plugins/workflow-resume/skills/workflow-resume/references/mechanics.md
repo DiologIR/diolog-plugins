@@ -1,8 +1,10 @@
 # Runtime mechanics
 
-Read from the shipped `claude 2.1.220` bundle and confirmed against files on disk, July 2026. Names
-are the minified ones so they can be found again. Behaviour may change between versions; the disk
-layout is the part most worth re-checking first, since it is observable without a disassembly.
+Read from the shipped `claude 2.1.220` bundle and confirmed against files on disk, July 2026, with
+the liveness and opts-normalisation sections re-measured against 2.1.238 on 2026-08-21 (those two
+say so where they differ). Names are the minified ones so they can be found again. Behaviour may
+change between versions; the disk layout is the part most worth re-checking first, since it is
+observable without a disassembly.
 
 ## An API error is terminal
 
@@ -59,8 +61,10 @@ function zSd(e, t, r) {              // (prompt, opts, prevKey)
 // call site:  ge = zSd(promptStr, opts, T);  T = ge;
 ```
 
-`Jq_()` normalises only `{schema, model, effort, isolation, agentType}` with keys sorted, so `label`
+`Jq_()` normalises `{schema, model, effort, isolation, agentType}` with keys sorted, so `label`
 and `phase` don't affect the key — agents can be relabelled or regrouped without invalidating cache.
+As of 2.1.238 the list has grown to seven: `disallowedTools` and `bashCommandClamp` are included
+too, so a run that changes either invalidates the chain from that call onward.
 
 ```js
 let Ze = v ? undefined : l?.results.get(ge);
@@ -115,5 +119,17 @@ The contrast between a run at parity and one at 107/55 is still meaningful.
   failure. The work is not suspect; the transport was.
 - **A locked worktree naming a live pid is legitimate.** `git worktree list --porcelain` shows
   `locked claude agent <name> (pid N start ...)`. Check the pid before unlocking.
-- **The scratchpad path carries the session id**, which is how to tell whether a session is alive:
-  `/private/tmp/claude-<uid>/<project>/<SESSION-UUID>/scratchpad/`.
+- **Liveness comes from `~/.claude/sessions/<PID>.json`**, a registry Claude Code keeps of its
+  own open sessions, carrying `sessionId`, `cwd`, the peer `name` and a `status`. Measured
+  2026-08-21 against 21 live sessions.
+
+  Two probes that look right and are not, both measured the same day. **The scratchpad path
+  does not carry the session id** — it is named by a per-process id that coincides with the
+  session id only until the session is resumed once, after which they diverge (a session whose
+  transcript was `d351a7f1-…` was writing scratch output under `…/f61a4b81-…/`). And **`ps`
+  output does not contain the session id** either; `CLAUDE_CODE_SESSION_ID` is set only in the
+  environment of a session's transient children. A probe built on either reported all 21 live
+  sessions as ended.
+
+  For the full set of corrections, including the split project directories and the promotion
+  mechanism, see the `recover-claude-code` skill's `references/mechanics.md`.

@@ -36,9 +36,11 @@ Per run it reports: run id, project, session id, whether that session is still a
 path and args needed to resume, journal `started`/`results`/`pending`, and each agent's item,
 state and error.
 
-Its error detection is a substring match over transcripts, so an agent that merely discusses a rate
-limit reads as failed. Treat the agent list as a map of where to look, and confirm anything
-load-bearing against the transcript or git.
+An agent is reported as failed only when its transcript actually *ends* on an API error. An
+agent that merely discusses one is flagged `mentions_limit` instead. That distinction is not
+cosmetic: the substring version of this check once put a "machine-wide usage limit" into a
+repository's event log for a crash that was a terminal dying. Treat the agent list as a map of
+where to look, and confirm anything load-bearing against the transcript or git.
 
 ## 2. Live runs
 
@@ -82,8 +84,13 @@ Rough rule from `journal started=N results=M`:
 - **M close to N, failures late** — resume. Most of the run replays free.
 - **M well under N** — finish the outstanding items directly. Replay stops at the first miss
   anyway, so a resume pays nearly full price for the tail *and* re-asserts stale cached results.
-- **No script path** (never snapshotted) — the script is still on disk at
-  `<session>/workflows/scripts/`; match it by run id.
+- **No script path in the snapshot** — a snapshot is only written when a run completes, so it
+  is null for exactly the runs worth recovering. The script itself is persisted at launch and
+  survives. The scanner now finds it by indexing every project directory for the run id, and
+  marks it `script_from_disk`. Do not look for it beside the journal: the script is filed under
+  the project directory of the shell's working directory at launch, the journal under the
+  project directory of the session's original cwd, so any session working in a subdirectory or
+  worktree splits its own state in two.
 
 Failed agents are never journaled (only non-null results are), so a failure is never poisoned into
 the cache. The cost of one is everything downstream of it, not the failure itself.
@@ -104,7 +111,10 @@ a long run can orphan its own journal mid-flight.
 Three cases:
 
 - **Session still open** (`session-alive`) — type into that window. Don't `claude --resume` a live
-  session, and don't close it: closing costs the cache and buys nothing.
+  session, and don't close it: closing costs the cache and buys nothing. Liveness comes from
+  `~/.claude/sessions/<PID>.json`, the registry Claude Code keeps of its own open sessions;
+  quietness is not death, because a runner can work for a long time without writing to the
+  parent transcript.
 - **Session ended** — `claude --resume <session-id>` from the project directory. Same id, so the
   journal resolves.
 - **Deliberately starting fresh** — relocate the run first, or the cache is invisible:
@@ -165,3 +175,11 @@ is worth more than a green tick nobody checked.
 - `references/mechanics.md` — the runtime behaviour this rests on, with the code it was read from.
   Read it when something contradicts the guidance above, or to explain *why* to someone.
 - `references/handover-template.md` — the standing-instruction shape for a live run.
+
+## When the process itself died
+
+This skill assumes the session that launched the run is still there, or can be typed into. If a
+terminal or the machine crashed and took the sessions down with it, the shape is different: the
+sessions have to be reopened before any run can be resumed, and an agent that was mid-flight has
+a transcript worth recovering rather than a prompt worth replaying. Use the
+`recover-claude-code` skill for that case.
